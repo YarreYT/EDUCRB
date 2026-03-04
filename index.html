@@ -699,20 +699,29 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .az-dropdown{
   position:absolute;top:calc(100% + 3px);left:0;right:0;
   background:#0a1520;border:1px solid #1a3a20;border-radius:7px;
-  max-height:190px;overflow-y:auto;z-index:200;
+  max-height:230px;overflow-y:auto;z-index:200;
   display:none;box-shadow:0 8px 24px rgba(0,0,0,.8);
+  padding:5px;
 }
 .az-dropdown.open{display:block;}
-.az-dropdown::-webkit-scrollbar{width:3px;}
+.az-dropdown::-webkit-scrollbar{width:4px;}
 .az-dropdown::-webkit-scrollbar-thumb{background:#1a3a20;border-radius:2px;}
-.az-opt{
-  padding:5px 10px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:12px;
-  color:#5fcc00;transition:background .1s;display:flex;justify-content:space-between;
-  background:none;border:none;width:100%;text-align:left;
+/* Grid wrapper inside upgrade dropdown */
+.az-upg-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
 }
-.az-opt:hover{background:rgba(127,255,0,.09);}
-.az-opt.sel{color:#7fff00;background:rgba(127,255,0,.07);}
-.az-opt .az-opt-sub{color:#3a6030;font-size:10px;}
+.az-opt{
+  padding:6px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:12px;
+  color:#5fcc00;transition:all .12s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(127,255,0,.04);border:1px solid #1a3a20;border-radius:5px;
+  text-align:center;gap:1px;min-width:0;
+}
+.az-opt:hover{background:rgba(127,255,0,.13);border-color:#3a6030;}
+.az-opt.sel{color:#7fff00;background:rgba(127,255,0,.12);border-color:#5fcc00;box-shadow:0 0 6px rgba(127,255,0,.2);}
+.az-opt .az-opt-sub{color:#3a6030;font-size:9px;line-height:1.2;}
 
 .az-reforge-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative;}
 .az-ref-btn{
@@ -2390,6 +2399,7 @@ function navigateTo(page) {
   const navBtn = document.getElementById('navbtn-' + page);
   if (navBtn) navBtn.classList.add('active');
   syncConsole(page);
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 /* ── ROLLS PAGE ── */
@@ -2467,7 +2477,7 @@ function renderTable() {
     const rounded = Math.round(v * 1000) / 1000;
     const s = rounded.toFixed(3);
     const trimmed = s.replace(/\.?0+$/, '');
-    return trimmed.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return trimmed;
   };
   const calc = (base, corr, godly) => {
     let v = base;
@@ -2611,6 +2621,11 @@ const T = {
     lbl_damage_res:'Damage:',
     until_level:'until level',
     word_corrupted:'Corrupted',
+    err_below_min:'Your damage is way too low — it doesn\'t match even the minimum roll. Check the value you entered.',
+    err_above_max:'Your damage is too high — it exceeds even the maximum roll. Check the value you entered.',
+    err_armor_below:'Invalid damage for: ',
+    err_armor_below_suffix:' — value is too low for minimum roll.',
+    err_armor_above:' — value is too high for maximum roll.',
     q11_1:'Dude, you literally got the absolute worst roll.',
     q11_2:'Well... at least it\'s not the worst.',
     q11_3:'Not something you\'d really brag about.',
@@ -2689,6 +2704,11 @@ const T = {
     lbl_damage_res:'Урон:',
     until_level:'до уровня',
     word_corrupted:'Коррумпированный',
+    err_below_min:'Твой урон слишком мал — он не совпадает даже с минимальным роллом. Проверь введённое значение.',
+    err_above_max:'Твой урон слишком велик — он превышает даже максимальный ролл. Проверь введённое значение.',
+    err_armor_below:'Недействительный урон у: ',
+    err_armor_below_suffix:' — значение слишком мало для минимального ролла.',
+    err_armor_above:' — значение слишком велико для максимального ролла.',
     q11_1:'Ну, чувак, тебе вообще выпало самое дерьмо!',
     q11_2:'По крайней мере.... не самое худшее оружие',
     q11_3:'Не сказать что таким можно гордиться',
@@ -3110,6 +3130,7 @@ function azSelectItem(item, btn) {
   document.getElementById('az-result-card').style.display = 'none';
   const mabSel = document.getElementById('az-mobile-action-btns');
   if (mabSel) mabSel.style.display = 'none';
+  azClearError();
   document.getElementById('az-quote-panel').classList.remove('visible');
   const mQReset = document.getElementById('az-quote-mobile');
   if (mQReset) mQReset.classList.remove('visible');
@@ -3225,6 +3246,8 @@ function azBuildUpgDrop() {
   if (!azCurrentItem) return;
   const drop = document.getElementById('az-upg-drop');
   drop.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'az-upg-grid';
   for (let i = 0; i <= azCurrentItem.maxUpg; i++) {
     const btn = document.createElement('button');
     btn.className = 'az-opt' + (i === azSelectedUpg ? ' sel' : '');
@@ -3239,8 +3262,9 @@ function azBuildUpgDrop() {
       document.getElementById('az-upg-val').textContent = i;
       azCloseDrops();
     };
-    drop.appendChild(btn);
+    grid.appendChild(btn);
   }
+  drop.appendChild(grid);
 }
 
 function azBuildRefDrop() {
@@ -3319,10 +3343,16 @@ function azUpdateCorrDisplay() {
 
 function azFmtNum(n) {
   if (n == null || isNaN(n)) return '—';
-  if (n >= 1000000000) return (n / 1_000_000_000).toFixed(3).replace(/\.?0+$/, '') + 'B';
+  if (n >= 1000000000) return (n / 1_000_000_000).toFixed(2).replace(/\.?0+$/, '') + 'B';
   if (n >= 1000000)    return (n / 1_000_000).toFixed(2).replace(/\.?0+$/, '') + 'M';
-  if (n >= 1000)       return n.toLocaleString();
+  if (n >= 1000)       return (n / 1000).toFixed(2).replace(/\.?0+$/, '') + 'k';
   return String(n);
+}
+// For damage / HP values — no abbreviation, no separators
+function azFmtDmg(n) {
+  if (n == null || isNaN(n)) return '—';
+  const rounded = Math.round(n * 100) / 100;
+  return String(rounded);
 }
 
 function azOpenModal(which) {
@@ -3351,12 +3381,58 @@ function azCalcRoll(statsDict, hp, upg, corrupted) {
   return best;
 }
 
+// ── ROLL RANGE VALIDATION ──
+// Returns null if valid, or an error message string if invalid.
+// statsDict: the roll→baseValue object for the relevant item/part
+// inferred:  the computed base damage value
+function azCheckRollRange(statsDict, inferred) {
+  const rolls   = Object.keys(statsDict).map(Number).sort((a, b) => a - b);
+  if (rolls.length === 1) return null; // single-roll item (Wooden Sword V2) — always valid
+
+  const minRoll   = Math.min(...rolls);
+  const maxRoll   = Math.max(...rolls);
+  const minBase   = statsDict[minRoll];
+  const maxBase   = statsDict[maxRoll];
+  const tolerance = minBase / 21;          // 1/21 ≈ 4.7619 % of min base
+  const maxTol    = maxBase / 21;
+
+  if (inferred < minBase - tolerance) return 'below';
+  if (inferred > maxBase + maxTol)    return 'above';
+  return null;
+}
+
+// ── INLINE ERROR DISPLAY ──
+function azShowError(msg) {
+  let box = document.getElementById('az-error-box');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'az-error-box';
+    box.style.cssText = [
+      'margin-top:10px',
+      'padding:10px 14px',
+      'background:rgba(180,30,30,.18)',
+      'border:1px solid rgba(255,80,80,.45)',
+      'border-radius:9px',
+      'font-family:\'Share Tech Mono\',monospace',
+      'font-size:12px',
+      'color:#ff7070',
+      'line-height:1.55',
+      'animation:fade-in-up .3s ease'
+    ].join(';');
+    // Insert before the ANALYZE button
+    const analyzeBtn = document.querySelector('.az-analyze-btn');
+    if (analyzeBtn) analyzeBtn.parentNode.insertBefore(box, analyzeBtn);
+  }
+  box.textContent = '⚠ ' + msg;
+  box.style.display = 'block';
+}
+function azClearError() {
+  const box = document.getElementById('az-error-box');
+  if (box) box.style.display = 'none';
+}
+
 function azDoAnalyze() {
   if (!azCurrentItem) return;
-
-  // Show down-arrow on mobile while processing
-  const vArrowStart = document.getElementById('az-v-arrow');
-  if (vArrowStart && window.innerWidth <= 760) vArrowStart.classList.add('visible');
 
   const isArmor = !!azCurrentItem.isArmor;
 
@@ -3384,6 +3460,30 @@ function azDoAnalyze() {
     parts.forEach(p => {
       if (!filledParts.includes(p)) azArmorResults[p] = null;
     });
+
+    // ── RANGE VALIDATION for each filled armor part ──
+    const armorErrors = [];
+    filledParts.forEach(p => {
+      const d = azArmorPartData[p];
+      const hp = parseFloat(d.hp);
+      const upg = d.upg;
+      const corrupted = d.corrupted;
+      const statsDict = azCurrentItem.stats[p];
+      // Compute inferred base for this part
+      let inferred = hp / (1 + GROWTH_RATE * upg);
+      if (corrupted) inferred /= 1.5;
+      const err = azCheckRollRange(statsDict, inferred);
+      if (err === 'below') {
+        armorErrors.push(azPartLabel(p) + t('err_armor_below_suffix'));
+      } else if (err === 'above') {
+        armorErrors.push(azPartLabel(p) + t('err_armor_above'));
+      }
+    });
+    if (armorErrors.length > 0) {
+      azShowError(t('err_armor_below') + armorErrors.join('; '));
+      return;
+    }
+    azClearError();
 
     // Process ALL filled parts at once
     filledParts.forEach(p => {
@@ -3421,6 +3521,8 @@ function azDoAnalyze() {
     if (window.innerWidth <= 760) {
       const mab = document.getElementById('az-mobile-action-btns');
       if (mab) mab.style.display = 'flex';
+      const vArrowRes = document.getElementById('az-v-arrow');
+      if (vArrowRes) vArrowRes.classList.add('visible');
       document.getElementById('az-result-card').scrollIntoView({behavior:'smooth'});
     }
     document.getElementById('az-arrow-zone').classList.add('visible');
@@ -3447,7 +3549,7 @@ function azDoAnalyze() {
       const res = azArmorResults[p];
       addAnalysis({
         cardType: 'weapon', typeLabel: t('type_armor'), time: nowStr(),
-        main: `${azCurrentItem.name.replace(' Set','')} ${azPartLabel(p)} — ${t('lbl_health')} ${azFmtNum(res.hp)}`,
+        main: `${azCurrentItem.name.replace(' Set','')} ${azPartLabel(p)} — ${t('lbl_health')} ${azFmtDmg(res.hp)}`,
         detail: `Roll: ${res.roll} | Upg: ${res.upg}${res.corrupted ? ' | Corrupted' : ''}`,
         result: `Roll: ${res.roll}`
       });
@@ -3479,6 +3581,12 @@ function azDoAnalyze() {
       if (azIsCorrupted) v /= 1.5;
       inferred = v;
     }
+
+    // ── RANGE VALIDATION ──
+    const rangeErr = azCheckRollRange(statsDict, inferred);
+    if (rangeErr === 'below') { azShowError(t('err_below_min')); return; }
+    if (rangeErr === 'above') { azShowError(t('err_above_max')); return; }
+    azClearError();
 
     const roll = (function(dict, inf) {
       const keys = Object.keys(dict).map(Number);
@@ -3565,7 +3673,7 @@ function azDoAnalyze() {
     const resDmgValW = document.getElementById('az-res-dmg');
     resDmgValW.className = 'az-res-val dmg';
     resDmgValW.style.color = '';
-    resDmgValW.textContent = azFmtNum(dmg);
+    resDmgValW.textContent = azFmtDmg(dmg);
     document.getElementById('az-res-delay').textContent = azCurrentItem.delay ? azCurrentItem.delay + 's' : '—';
     document.getElementById('az-res-delay').parentElement.style.display = '';
     document.getElementById('az-res-upg').textContent = azSelectedUpg;
@@ -3589,6 +3697,8 @@ function azDoAnalyze() {
     if (window.innerWidth <= 760) {
       const mab = document.getElementById('az-mobile-action-btns');
       if (mab) mab.style.display = 'flex';
+      const vArrowRes = document.getElementById('az-v-arrow');
+      if (vArrowRes) vArrowRes.classList.add('visible');
       document.getElementById('az-result-card').scrollIntoView({behavior:'smooth'});
     }
     document.getElementById('az-arrow-zone').classList.add('visible');
@@ -3599,7 +3709,7 @@ function azDoAnalyze() {
 
     addAnalysis({
       cardType:'analyze', typeLabel:t('type_analyze'), time:nowStr(),
-      main:`${azCurrentItem.name} — ${t('card_dmg')} ${azFmtNum(dmg)}`,
+      main:`${azCurrentItem.name} — ${t('card_dmg')} ${azFmtDmg(dmg)}`,
       detail:`Roll: ${roll} | Upg: ${azSelectedUpg} | ${azIsCorrupted ? 'Corrupted' : 'Normal'}`,
       result:`Roll: ${roll}`
     });
@@ -3681,7 +3791,7 @@ function azRenderArmorResultCard(ri) {
   const resDmgVal = document.getElementById('az-res-dmg');
   resDmgVal.className = 'az-res-val';
   resDmgVal.style.color = '#7fff00';
-  resDmgVal.textContent = azFmtNum(res.hp);
+  resDmgVal.textContent = azFmtDmg(res.hp);
 
   // Hide delay row for armor
   const delayRow = document.getElementById('az-res-delay').parentElement;
@@ -3756,7 +3866,7 @@ function azRenderArmorResultCard(ri) {
   const totalRow = document.getElementById('az-total-hp-row');
   if (analyzedParts.length === 3) {
     const total = parts.reduce((sum, p) => sum + (azArmorResults[p] ? azArmorResults[p].hp : 0), 0);
-    document.getElementById('az-total-hp-val').textContent = azFmtNum(Math.round(total));
+    document.getElementById('az-total-hp-val').textContent = azFmtDmg(Math.round(total));
     totalRow.classList.add('visible');
   } else {
     totalRow.classList.remove('visible');
@@ -3823,7 +3933,7 @@ function azRenderProcessTablet(dmg) {
 
   const fmt = v => {
     const s = (Math.round(v * 1000) / 1000).toFixed(3).replace(/\.?0+$/, '');
-    return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return s;
   };
 
   const upgMult  = 1 + GROWTH_RATE * azSelectedUpg;

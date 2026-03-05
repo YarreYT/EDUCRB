@@ -25,175 +25,58 @@
   const db = firebase.database();
   const consoleRef = db.ref('console_log');
 
-  // Совместимые обёртки под старый API (чтобы не менять весь код ниже)
-  function ref(database, path) { return database.ref(path); }
-  function push(r, val) { return r.push(val); }
-  function set(r, val) { return r.set(val); }
-  function remove(r) { return r.remove(); }
-  function onValue(r, cb, errOrOpts) {
-    if (errOrOpts && errOrOpts.onlyOnce) { r.once('value').then(cb).catch(() => {}); return; }
-    r.on('value', cb, typeof errOrOpts === 'function' ? errOrOpts : () => {});
-  }
-  function query(r, ...constraints) {
-    let q = r;
-    constraints.forEach(c => { q = c(q); });
-    return q;
-  }
-  function limitToLast(n) { return q => q.limitToLast(n); }
-  function onDisconnect(r) { return r.onDisconnect(); }
+  // ── PRESENCE (онлайн счётчик) ──
+  // uid — постоянный ID браузера (один на весь браузер)
+  let uid = localStorage.getItem('_ed_uid');
+  if (!uid) { uid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('_ed_uid', uid); }
 
-  // ── PRESENCE SYSTEM ──────────────────────────────────────────────────────────
-  // Защита от множества вкладок:
-  //   - visitorId хранится в localStorage (уникален для браузера/устройства)
-  //   - tabKey хранится в sessionStorage (уникален для вкладки)
-  //   - В Firebase пишем одну запись на visitorId, а не на вкладку
-  //   - Поле tabCount считает активные вкладки через BroadcastChannel,
-  //     чтобы onDisconnect срабатывал только когда закрыты ВСЕ вкладки
+  // tabId — уникальный ID этой вкладки
+  const tabId = Math.random().toString(36).slice(2);
+  const tabRef = db.ref('online/' + uid + '/tabs/' + tabId);
 
-  (function initPresence() {
-    const PRESENCE_PATH = 'presence';
-    const TAB_TIMEOUT   = 90000; // 90 сек — heartbeat интервал + запас
+  // Heartbeat каждые 15 сек
+  function heartbeat() { tabRef.set({ t: Date.now() }); }
+  heartbeat();
+  const hbTimer = setInterval(heartbeat, 15000);
 
-    // 1. Уникальный ID посетителя (постоянный на браузер)
-    let visitorId = localStorage.getItem('_rvid');
-    if (!visitorId) {
-      visitorId = Math.random().toString(36).slice(2) + Date.now().toString(36);
-      localStorage.setItem('_rvid', visitorId);
+  // Удаляем только эту вкладку при закрытии
+  tabRef.onDisconnect().remove();
+  window.addEventListener('beforeunload', () => { clearInterval(hbTimer); tabRef.remove(); });
+
+  // Считаем уникальных пользователей (по uid, не по вкладкам)
+  db.ref('online').on('value', (snap) => {
+    if (!snap.exists()) {
+      document.querySelectorAll('.online-count').forEach(el => el.textContent = '0');
+      return;
     }
-
-    // 2. Уникальный ID вкладки (живёт только пока открыта вкладка)
-    const tabId = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    sessionStorage.setItem('_rtid', tabId);
-
-    // 3. Счётчик вкладок для этого visitorId через BroadcastChannel
-    //    Каждая вкладка слушает и отвечает на ping
-    let siblingCount = 0; // сколько других вкладок ответили
-    let channel = null;
-    try { channel = new BroadcastChannel('presence_' + visitorId); } catch(e) {}
-
-    function countSiblings() {
-      return new Promise(resolve => {
-        let count = 0;
-        if (!channel) { resolve(0); return; }
-        const tmpCh = new BroadcastChannel('presence_' + visitorId);
-        tmpCh.onmessage = e => { if (e.data === 'pong:' + tabId) count++; };
-        channel.postMessage('ping:' + tabId);
-        setTimeout(() => { tmpCh.close(); resolve(count); }, 200);
-      });
-    }
-
-    if (channel) {
-      channel.onmessage = e => {
-        if (typeof e.data === 'string' && e.data.startsWith('ping:')) {
-          const senderTab = e.data.slice(5);
-          if (senderTab !== tabId) {
-            // Отвечаем отправителю через отдельный канал
-            const rch = new BroadcastChannel('presence_' + visitorId);
-            rch.postMessage('pong:' + senderTab);
-            rch.close();
-          }
-        }
-      };
-    }
-
-    const presenceRef = ref(db, PRESENCE_PATH + '/' + visitorId);
-
-    // 4. Регистрируем присутствие в Firebase
-    async function registerPresence() {
-      const siblings = await countSiblings();
-      // Если есть другие вкладки — не пишем в Firebase (они уже там)
-      // Если это единственная вкладка — создаём/обновляем запись
-      if (siblings === 0) {
-        await set(presenceRef, { t: Date.now(), v: visitorId }).catch(() => {});
-        onDisconnect(presenceRef).remove().catch(() => {});
-      }
-      // В любом случае запускаем heartbeat
-      startHeartbeat();
-    }
-
-    // 5. Heartbeat — обновляем timestamp, Firebase автоудалит устаревшие записи
-    //    + чистим записи старше TAB_TIMEOUT (на случай если onDisconnect не сработал)
-    let hbTimer = null;
-    function startHeartbeat() {
-      clearInterval(hbTimer);
-      hbTimer = setInterval(async () => {
-        const siblings = await countSiblings();
-        if (siblings === 0) {
-          // Я единственная вкладка — обновляю запись
-          set(presenceRef, { t: Date.now(), v: visitorId }).catch(() => {});
-          onDisconnect(presenceRef).remove().catch(() => {});
-        }
-        // Чистим устаревшие записи (защита от зависших)
-        cleanStale();
-      }, 30000);
-    }
-
-    // 6. Очистка устаревших записей (старше TAB_TIMEOUT)
-    function cleanStale() {
-      const presRoot = ref(db, PRESENCE_PATH);
-      onValue(presRoot, snap => {
-        if (!snap.exists()) return;
-        const now = Date.now();
-        snap.forEach(child => {
-          const ts = child.val()?.t;
-          if (ts && (now - ts) > TAB_TIMEOUT) {
-            remove(ref(db, PRESENCE_PATH + '/' + child.key)).catch(() => {});
-          }
-        });
-      }, { onlyOnce: true });
-    }
-
-    // 7. Когда вкладка закрывается — если других вкладок нет, удаляем запись
-    window.addEventListener('beforeunload', () => {
-      // BroadcastChannel синхронно не работает, но onDisconnect Firebase всё равно сработает
-      // Дополнительно: синхронный fetch beacon для мгновенного удаления (best-effort)
-      if (navigator.sendBeacon) {
-        // Просто чистим через onDisconnect (уже настроен выше)
-      }
+    const now = Date.now();
+    let aliveUsers = 0;
+    snap.forEach(userSnap => {
+      const tabs = userSnap.val()?.tabs;
+      if (!tabs) return;
+      const hasAlive = Object.values(tabs).some(tab => tab?.t && (now - tab.t) < 45000);
+      if (hasAlive) aliveUsers++;
     });
+    document.querySelectorAll('.online-count').forEach(el => el.textContent = aliveUsers);
+  });
 
-    // 8. Слушаем реальное количество онлайн
-    function updateOnlineUI(count) {
-      document.querySelectorAll('.online-count').forEach(el => {
-        el.textContent = count > 0 ? count : '0';
-      });
-    }
-
-    const presRootRef = ref(db, PRESENCE_PATH);
-    onValue(presRootRef, snap => {
-      updateOnlineUI(snap.exists() ? snap.numChildren() : 0);
-    });
-
-    // Запускаем
-    registerPresence();
-  })();
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  // Глобальная функция записи в Firebase (вызывается из addAnalysis)
+  // ── CONSOLE LOG ──
   window._fbPushEntry = function(entry) {
-    push(consoleRef, entry).then(() => {
-      // После записи — удаляем лишние записи, оставляем только 10
-      onValue(query(consoleRef, limitToLast(100)), (snap) => {
+    consoleRef.push(entry).then(() => {
+      consoleRef.limitToLast(100).once('value').then(snap => {
         if (!snap.exists()) return;
         const keys = Object.keys(snap.val());
         if (keys.length > 10) {
-          const toDelete = keys.slice(0, keys.length - 10);
-          toDelete.forEach(k => remove(ref(db, 'console_log/' + k)));
+          keys.slice(0, keys.length - 10).forEach(k => db.ref('console_log/' + k).remove());
         }
-      }, { onlyOnce: true });
+      });
     }).catch(e => console.warn('Firebase write error:', e));
   };
 
   // Слушаем последние 10 записей в реальном времени
-  const last10 = query(consoleRef, limitToLast(10));
-  onValue(last10, (snapshot) => {
+  consoleRef.limitToLast(10).on('value', (snapshot) => {
     const data = snapshot.val();
-    if (!data) {
-      window.analysisHistory = [];
-    } else {
-      // Firebase возвращает объект — конвертируем в массив, новые сверху
-      window.analysisHistory = Object.values(data).reverse();
-    }
+    window.analysisHistory = data ? Object.values(data).reverse() : [];
     if (typeof renderAllConsoles === 'function') renderAllConsoles();
   }, (error) => {
     console.warn('Firebase read error:', error);
@@ -255,6 +138,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   transition:all .25s cubic-bezier(.34,1.56,.64,1);}
 .nav-btn:hover{color:var(--gold-bright);background:rgba(200,147,42,.1);transform:scale(1.15);}
 .nav-btn.active{color:var(--gold);background:rgba(200,147,42,.12);}
+.nav-btn-soon{pointer-events:all;cursor:not-allowed !important;}
+.nav-btn-soon:hover{color:#888899 !important;background:none !important;transform:none !important;}
+@media(hover:hover){.nav-btn-soon:hover .tooltip{opacity:1;top:50px;}}
+
 .nav-btn .tooltip{
   position:absolute;top:44px;bottom:auto;left:50%;transform:translateX(-50%);
   background:rgba(10,10,16,.98);border:1px solid var(--border-gold);color:var(--gold-bright);
@@ -360,6 +247,93 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .stat-chip{padding:8px 10px;}
   .stat-num{font-size:16px;}
   .stat-lbl{font-size:10px;}
+}
+
+/* ══════════════════════════════
+   UPDATES PANEL
+══════════════════════════════ */
+.updates-panel {
+  background: rgba(11,11,18,.84);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 24px 28px 22px;
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 16px;
+}
+.updates-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  opacity: .3;
+}
+.updates-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.updates-title {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--gold-bright);
+  letter-spacing: 1px;
+  text-align: center;
+}
+.updates-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.updates-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
+  margin-bottom: 14px;
+  opacity: .6;
+}
+.updates-body {
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-gold) transparent;
+}
+.updates-body::-webkit-scrollbar { width: 4px; }
+.updates-body::-webkit-scrollbar-track { background: transparent; }
+.updates-body::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
+.updates-text {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #9a9080;
+  white-space: pre-wrap;
+}
+.updates-text .upd-accent { color: var(--gold-bright); font-weight: 600; }
+.updates-text .upd-cyan   { color: var(--cyan-rune); }
+.updates-text .upd-green  { color: var(--green-stat); }
+.updates-text .upd-muted  { color: var(--text-muted); font-style: italic; }
+
+@media(max-width:960px){
+  .updates-panel { padding: 18px 16px 16px; border-radius: 12px; margin-top: 12px; }
+  .updates-title { font-size: 15px; }
+  .updates-body  { max-height: 200px; }
+  .updates-text  { font-size: 12.5px; }
+}
+@media(max-width:480px){
+  .updates-panel { padding: 14px 12px 12px; border-radius: 10px; margin-top: 10px; }
+  .updates-title { font-size: 13px; }
+  .updates-body  { max-height: 180px; }
+  .updates-text  { font-size: 12px; }
 }
 
 /* ══════════════════════════════
@@ -1888,13 +1862,13 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       <span class="tooltip" data-i18n="nav_analyze">Analyze Roll</span>
     </button>
-    <button class="nav-btn" id="navbtn-weapon" onclick="navigateTo('weapon')">
+    <button class="nav-btn nav-btn-soon" id="navbtn-weapon" style="opacity:0.375;cursor:not-allowed;" disabled>
       <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-      <span class="tooltip" data-i18n="nav_weapon">Weapon Preview</span>
+      <span class="tooltip">Weapon Preview SOON!</span>
     </button>
-    <button class="nav-btn" id="navbtn-compare" onclick="navigateTo('compare')">
+    <button class="nav-btn nav-btn-soon" id="navbtn-compare" style="opacity:0.375;cursor:not-allowed;" disabled>
       <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 3L2 8l2 .83V15c0 1.1.9 2 2 2h1l-1 2h2l1-2h6l1 2h2l-1-2h1c1.1 0 2-.9 2-2V8.83L22 8l-10-5zm0 2.18L18.7 8.5 17 9.17V15H7V9.17L5.3 8.5 12 5.18zM7 10l-3 6h6l-3-6zm10 0l-3 6h6l-3-6z"/></svg>
-      <span class="tooltip" data-i18n="nav_compare">Weapon Compare</span>
+      <span class="tooltip">Weapon Compare SOON!</span>
     </button>
   </div>
   <div class="nav-spacer"></div>
@@ -1948,6 +1922,18 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor Sets</span></div>
         <div class="stat-chip"><span class="stat-num">1.0.1</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data</span></div>
+      </div>
+    </div>
+
+    <!-- UPDATES PANEL -->
+    <div class="updates-panel" id="updates-panel">
+      <div class="updates-header">
+        <div class="updates-title" id="upd-title"></div>
+        <div class="updates-subtitle" id="upd-sub"></div>
+      </div>
+      <div class="updates-divider"></div>
+      <div class="updates-body">
+        <div class="updates-text" id="upd-body"></div>
       </div>
     </div>
   </section>
@@ -2936,6 +2922,9 @@ const T = {
     qa_9: 'In my opinion, the optimal roll for health',
     qa_10: 'Don\'t worry so much! The difference from the ideal 11th roll is almost imperceptible',
     qa_11: 'PERFECT ROLL!! You\'re practically invulnerable. Absolute Cinema, fuck yeah.',
+    upd_title: 'UPDATES OF v1.0.1 VERSION!',
+    upd_sub: 'Developer Notes 05.03.2026',
+    upd_body: `This is the first release of the site for analyzing rolls from the game.\nTwo pages are already available to you — <span class="upd-accent">Tables</span> and <span class="upd-accent">Analyze Roll</span>.\n\nThe site will be updated periodically, depending on new features in the games. The developer and author are both testers, so site updates will be nearly instant relative to updates in the main game — <span class="upd-green">Elemental Dungeons</span>.\n\nCurrently: <span class="upd-accent">15 weapon types</span>, <span class="upd-accent">5 armor sets</span>.\nBrand-new weapon and armor icons — genuinely upgraded with modern technology (<span class="upd-muted">okay fine... Artificial Intelligence</span>), same as the entire site.\n<span class="upd-muted">Skilled hands + prompts + enthusiasm + audience + collaboration = A game website.</span>\n\n<span class="upd-accent">Planned for v1.0.2:</span>\n<span class="upd-cyan">›</span> "WEAPON PREVIEW" page — definitely.\n<span class="upd-cyan">›</span> "WEAPON COMPARE" page — possibly.\n<span class="upd-cyan">›</span> Expand the home page — add links to developer and game Discord servers. For Russian-speaking audiences, with game admin approval — a Telegram group link as well.\n\nNew weapons and armor may also arrive, but that\'s a separate matter...\nTo reach the developer for now — find him on the game\'s Discord server: <span class="upd-cyan">@yarreyt</span>\n\nEnjoy using the site!`,
   },
   ru:{
     nav_home:'Главная', nav_rolls:'Таблицы', nav_analyze:'Анализ ролла', nav_weapon:'Просмотр оружия', nav_compare:'Сравнение оружий',
@@ -3020,6 +3009,9 @@ const T = {
     qa_9: 'По моему мнению, оптимальный ролл по здоровью',
     qa_10: 'Не стоит так переживать! Разница с идеальным 11-ым роллом почти незаметна',
     qa_11: 'ИДЕАЛЬНЫЙ РОЛЛ!! Ты практически неуязвим. Абсолют Синема, ебануться.',
+    upd_title: 'ОБНОВЛЕНИЯ ВЕРСИИ v1.0.1!',
+    upd_sub: 'Заметки разработчика 05.03.2026',
+    upd_body: `Это первый релиз сайта для анализа роллов из игры.\nВ ней вам уже доступно две страницы — <span class="upd-accent">Таблицы</span> и <span class="upd-accent">Анализ Роллов</span>.\n\nСайт будет периодически обновляться, в зависимости от нововведений в играх. Разработчик и автор являются тестерами, поэтому обновления сайта будут практически мгновенными к релизу обновлений в основной игре — <span class="upd-green">Elemental Dungeons</span>.\n\nНа данный момент всего <span class="upd-accent">15 видов оружий</span>, <span class="upd-accent">5 сетов брони</span>.\nАбсолютно новые иконки оружий и брони. Они правда улучшены современными технологиями (<span class="upd-muted">чё я выёбываюсь-то... Искусственным интеллектом</span>), как и был весь сайт, тоже ими.\n<span class="upd-muted">Умелые руки + промпты + энтузиазм + аудитория + сотрудничество = Сайт по игре.</span>\n\n<span class="upd-accent">На 1.0.2v версию планируются такие нововведения:</span>\n<span class="upd-cyan">›</span> Страница "ПРОСМОТР ОРУЖИЯ" — уж точно.\n<span class="upd-cyan">›</span> Страница "СРАВНЕНИЕ ОРУЖИЙ" — возможно.\n<span class="upd-cyan">›</span> Расширить домашнюю страницу — добавить ссылки на дискорд сервера разработчиков, игры. Для русской аудитории, по разрешению администратора игры — ещё и ссылка на Телеграм-группу этой игры.\n\nВозможно, новые оружия и броня, но это уже другое дело...\nК разработчику пока — обращайтесь через дискорд-сервер игры по его контакту: <span class="upd-cyan">@yarreyt</span>\n\nХорошего вам использования сайта!`,
   }
 };
 
@@ -3064,6 +3056,13 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
   });
+  // Render updates panel
+  const updTitle = document.getElementById('upd-title');
+  const updSub   = document.getElementById('upd-sub');
+  const updBody  = document.getElementById('upd-body');
+  if (updTitle) updTitle.textContent = t('upd_title');
+  if (updSub)   updSub.textContent   = t('upd_sub');
+  if (updBody)  updBody.innerHTML    = t('upd_body').replace(/\n/g, '<br>');
   document.querySelectorAll('.console-input').forEach(inp => {
     inp.placeholder = t('input_placeholder');
   });
@@ -4406,6 +4405,7 @@ function azRenderProcessTablet(dmg) {
   azRenderList();
   renderAllConsoles();
   renderReforgeTable();
+  applyLang();
 
   (function initSlideshow() {
     const slides = document.querySelectorAll('.banner-slide');

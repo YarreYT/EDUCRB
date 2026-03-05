@@ -161,7 +161,7 @@
 
     const presRootRef = ref(db, PRESENCE_PATH);
     onValue(presRootRef, snap => {
-      updateOnlineUI(snap.exists() ? snap.size : 0);
+      updateOnlineUI(snap.exists() ? snap.numChildren() : 0);
     });
 
     // Запускаем

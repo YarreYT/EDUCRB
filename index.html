@@ -48,8 +48,12 @@
   // Каждый uid = один пользователь, независимо от кол-ва вкладок
   const onlineRef = ref(db, 'online');
   onValue(onlineRef, (snap) => {
+    console.log('[Firebase] online snap:', JSON.stringify(snap.val()));
     const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-    document.querySelectorAll('.online-count').forEach(el => el.textContent = count);
+    console.log('[Firebase] user count:', count);
+    const els = document.querySelectorAll('.online-count');
+    console.log('[Firebase] found elements:', els.length);
+    els.forEach(el => el.textContent = count);
   });
 
   // Глобальная функция записи в Firebase (вызывается из addAnalysis)

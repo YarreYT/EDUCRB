@@ -7,10 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, query, limitToLast, remove, set, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyD8ZFjvEGxAZJw97mJ6fgI0E0x0Ik7E6WQ",
     authDomain: "calculate-roll-base.firebaseapp.com",
@@ -22,9 +21,26 @@
     measurementId: "G-W1MZ497SV0"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const consoleRef = ref(db, 'console_log');
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const consoleRef = db.ref('console_log');
+
+  // Совместимые обёртки под старый API (чтобы не менять весь код ниже)
+  function ref(database, path) { return database.ref(path); }
+  function push(r, val) { return r.push(val); }
+  function set(r, val) { return r.set(val); }
+  function remove(r) { return r.remove(); }
+  function onValue(r, cb, errOrOpts) {
+    if (errOrOpts && errOrOpts.onlyOnce) { r.once('value').then(cb).catch(() => {}); return; }
+    r.on('value', cb, typeof errOrOpts === 'function' ? errOrOpts : () => {});
+  }
+  function query(r, ...constraints) {
+    let q = r;
+    constraints.forEach(c => { q = c(q); });
+    return q;
+  }
+  function limitToLast(n) { return q => q.limitToLast(n); }
+  function onDisconnect(r) { return r.onDisconnect(); }
 
   // ── PRESENCE SYSTEM ──────────────────────────────────────────────────────────
   // Защита от множества вкладок:

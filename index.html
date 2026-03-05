@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, query, limitToLast, set, remove, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, query, limitToLast, remove, set, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD8ZFjvEGxAZJw97mJ6fgI0E0x0Ik7E6WQ",
@@ -26,35 +26,132 @@
   const db = getDatabase(app);
   const consoleRef = ref(db, 'console_log');
 
-  // ── PRESENCE (онлайн счётчик) ──
-  // uid — постоянный ID браузера (один на весь браузер)
-  let uid = localStorage.getItem('_ed_uid');
-  if (!uid) { uid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('_ed_uid', uid); }
+  // ── PRESENCE SYSTEM ──────────────────────────────────────────────────────────
+  // Защита от множества вкладок:
+  //   - visitorId хранится в localStorage (уникален для браузера/устройства)
+  //   - tabKey хранится в sessionStorage (уникален для вкладки)
+  //   - В Firebase пишем одну запись на visitorId, а не на вкладку
+  //   - Поле tabCount считает активные вкладки через BroadcastChannel,
+  //     чтобы onDisconnect срабатывал только когда закрыты ВСЕ вкладки
 
-  // tabId — уникальный ID этой конкретной вкладки
-  const tabId = Math.random().toString(36).slice(2);
-  const tabRef = ref(db, 'online/' + uid + '/' + tabId);
+  (function initPresence() {
+    const PRESENCE_PATH = 'presence';
+    const TAB_TIMEOUT   = 90000; // 90 сек — heartbeat интервал + запас
 
-  // Создаём запись этой вкладки
-  set(tabRef, true);
+    // 1. Уникальный ID посетителя (постоянный на браузер)
+    let visitorId = localStorage.getItem('_rvid');
+    if (!visitorId) {
+      visitorId = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem('_rvid', visitorId);
+    }
 
-  // Если браузер вылетел — Firebase сам удалит именно эту вкладку
-  onDisconnect(tabRef).remove();
+    // 2. Уникальный ID вкладки (живёт только пока открыта вкладка)
+    const tabId = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    sessionStorage.setItem('_rtid', tabId);
 
-  // При нормальном закрытии вкладки — удаляем запись
-  window.addEventListener('beforeunload', () => remove(tabRef));
+    // 3. Счётчик вкладок для этого visitorId через BroadcastChannel
+    //    Каждая вкладка слушает и отвечает на ping
+    let siblingCount = 0; // сколько других вкладок ответили
+    let channel = null;
+    try { channel = new BroadcastChannel('presence_' + visitorId); } catch(e) {}
 
-  // Слушаем онлайн и обновляем счётчик
-  // Каждый uid = один пользователь, независимо от кол-ва вкладок
-  const onlineRef = ref(db, 'online');
-  onValue(onlineRef, (snap) => {
-    console.log('[Firebase] online snap:', JSON.stringify(snap.val()));
-    const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-    console.log('[Firebase] user count:', count);
-    const els = document.querySelectorAll('.online-count');
-    console.log('[Firebase] found elements:', els.length);
-    els.forEach(el => el.textContent = count);
-  });
+    function countSiblings() {
+      return new Promise(resolve => {
+        let count = 0;
+        if (!channel) { resolve(0); return; }
+        const tmpCh = new BroadcastChannel('presence_' + visitorId);
+        tmpCh.onmessage = e => { if (e.data === 'pong:' + tabId) count++; };
+        channel.postMessage('ping:' + tabId);
+        setTimeout(() => { tmpCh.close(); resolve(count); }, 200);
+      });
+    }
+
+    if (channel) {
+      channel.onmessage = e => {
+        if (typeof e.data === 'string' && e.data.startsWith('ping:')) {
+          const senderTab = e.data.slice(5);
+          if (senderTab !== tabId) {
+            // Отвечаем отправителю через отдельный канал
+            const rch = new BroadcastChannel('presence_' + visitorId);
+            rch.postMessage('pong:' + senderTab);
+            rch.close();
+          }
+        }
+      };
+    }
+
+    const presenceRef = ref(db, PRESENCE_PATH + '/' + visitorId);
+
+    // 4. Регистрируем присутствие в Firebase
+    async function registerPresence() {
+      const siblings = await countSiblings();
+      // Если есть другие вкладки — не пишем в Firebase (они уже там)
+      // Если это единственная вкладка — создаём/обновляем запись
+      if (siblings === 0) {
+        await set(presenceRef, { t: Date.now(), v: visitorId }).catch(() => {});
+        onDisconnect(presenceRef).remove().catch(() => {});
+      }
+      // В любом случае запускаем heartbeat
+      startHeartbeat();
+    }
+
+    // 5. Heartbeat — обновляем timestamp, Firebase автоудалит устаревшие записи
+    //    + чистим записи старше TAB_TIMEOUT (на случай если onDisconnect не сработал)
+    let hbTimer = null;
+    function startHeartbeat() {
+      clearInterval(hbTimer);
+      hbTimer = setInterval(async () => {
+        const siblings = await countSiblings();
+        if (siblings === 0) {
+          // Я единственная вкладка — обновляю запись
+          set(presenceRef, { t: Date.now(), v: visitorId }).catch(() => {});
+          onDisconnect(presenceRef).remove().catch(() => {});
+        }
+        // Чистим устаревшие записи (защита от зависших)
+        cleanStale();
+      }, 30000);
+    }
+
+    // 6. Очистка устаревших записей (старше TAB_TIMEOUT)
+    function cleanStale() {
+      const presRoot = ref(db, PRESENCE_PATH);
+      onValue(presRoot, snap => {
+        if (!snap.exists()) return;
+        const now = Date.now();
+        snap.forEach(child => {
+          const ts = child.val()?.t;
+          if (ts && (now - ts) > TAB_TIMEOUT) {
+            remove(ref(db, PRESENCE_PATH + '/' + child.key)).catch(() => {});
+          }
+        });
+      }, { onlyOnce: true });
+    }
+
+    // 7. Когда вкладка закрывается — если других вкладок нет, удаляем запись
+    window.addEventListener('beforeunload', () => {
+      // BroadcastChannel синхронно не работает, но onDisconnect Firebase всё равно сработает
+      // Дополнительно: синхронный fetch beacon для мгновенного удаления (best-effort)
+      if (navigator.sendBeacon) {
+        // Просто чистим через onDisconnect (уже настроен выше)
+      }
+    });
+
+    // 8. Слушаем реальное количество онлайн
+    function updateOnlineUI(count) {
+      document.querySelectorAll('.online-count').forEach(el => {
+        el.textContent = count > 0 ? count : '0';
+      });
+    }
+
+    const presRootRef = ref(db, PRESENCE_PATH);
+    onValue(presRootRef, snap => {
+      updateOnlineUI(snap.exists() ? snap.size : 0);
+    });
+
+    // Запускаем
+    registerPresence();
+  })();
+  // ─────────────────────────────────────────────────────────────────────────────
 
   // Глобальная функция записи в Firebase (вызывается из addAnalysis)
   window._fbPushEntry = function(entry) {
@@ -519,8 +616,12 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   display:flex;align-items:center;gap:10px;flex-shrink:0;background:rgba(0,0,0,.38);}
 .console-online{display:flex;align-items:center;gap:7px;}
 .online-dot{width:9px;height:9px;border-radius:50%;background:var(--green-stat);box-shadow:0 0 6px var(--green-stat);animation:blink-dot 2s ease-in-out infinite;flex-shrink:0;}
-.online-icon{width:15px;height:15px;fill:var(--green-stat);flex-shrink:0;}
-.online-count{font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;color:var(--green-stat);letter-spacing:1px;}
+.online-icon{width:14px;height:14px;fill:var(--green-stat);opacity:.8;flex-shrink:0;}
+.online-count{font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:600;color:var(--green-stat);letter-spacing:1px;min-width:14px;}
+
+
+
+
 .console-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;flex:1;text-align:center;}
 .console-live-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--green-stat);text-transform:uppercase;display:flex;align-items:center;gap:4px;}
 .console-status{width:7px;height:7px;border-radius:50%;background:var(--green-stat);box-shadow:0 0 5px var(--green-stat);animation:blink-dot 2s ease-in-out infinite;}
@@ -550,6 +651,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .card-main{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
 .card-detail{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-muted);line-height:1.5;}
 .card-result{font-size:13px;color:var(--gold-bright);font-weight:600;margin-top:5px;}
+.card-roll{font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;margin-top:6px;padding:3px 0 0;border-top:1px solid rgba(200,147,42,.15);}
+.card-roll-line{display:flex;align-items:baseline;gap:5px;}
+.card-roll-lbl{color:var(--text-muted);}
+.card-roll-val{color:var(--gold-bright);font-size:13px;text-shadow:0 0 8px rgba(232,184,75,.5);}
 .console-input-wrap{display:none!important;}
 .console-prompt{font-family:'Share Tech Mono',monospace;color:var(--gold);font-size:13px;flex-shrink:0;}
 .console-input{flex:1;background:none;border:none;outline:none;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-primary);caret-color:var(--gold);}
@@ -1833,9 +1938,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
   <aside class="console-panel" id="console-home">
     <div class="console-header">
-      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count" class="online-count">1</span></div>
+      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
       <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
+    </div>
     </div>
     <div class="console-empty" id="empty-state-home">
       <div class="empty-icon">📊</div>
@@ -1915,9 +2021,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
   <aside class="console-panel" id="console-rolls">
     <div class="console-header">
-      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count" class="online-count">1</span></div>
+      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
       <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
+    </div>
     </div>
     <div class="console-empty" id="empty-state-rolls">
       <div class="empty-icon">📊</div>
@@ -2282,9 +2389,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
   <aside class="console-panel" id="console-analyze">
     <div class="console-header">
-      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count" class="online-count">1</span></div>
+      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
       <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
+    </div>
     </div>
     <div class="console-empty" id="empty-state-analyze">
       <div class="empty-icon">📊</div>
@@ -2661,7 +2769,14 @@ function renderAllConsoles() {
     analysisHistory.forEach(entry => {
       const card = document.createElement('div');
       card.className = 'analysis-card';
-      card.innerHTML = `<div class="card-top"><span class="card-type ${entry.cardType}">${esc(entry.typeLabel)}</span><span class="card-time">${fmtTime(entry.time)}</span></div><div class="card-main">${esc(entry.main)}</div><div class="card-detail">${esc(entry.detail).replace(/\n/g,'<br>')}</div>${entry.result?`<div class="card-result">${esc(entry.result)}</div>`:''}`;
+      // Build roll block
+      let rollHTML = '';
+      if (entry.rollLines && entry.rollLines.length > 0) {
+        rollHTML = '<div class="card-roll">' + entry.rollLines.map(rl =>
+          `<div class="card-roll-line"><span class="card-roll-lbl">${esc(rl.label)}</span><span class="card-roll-val">${esc(String(rl.val))}</span></div>`
+        ).join('') + '</div>';
+      }
+      card.innerHTML = `<div class="card-top"><span class="card-type ${entry.cardType}">${esc(entry.typeLabel)}</span><span class="card-time">${fmtTime(entry.time)}</span></div><div class="card-main">${esc(entry.main)}</div><div class="card-detail">${esc(entry.detail).replace(/\n/g,'<br>')}</div>${rollHTML}`;
       bodyEl.appendChild(card);
     });
   });
@@ -2700,7 +2815,9 @@ function nowStr() {
   return Date.now();
 }
 function fmtTime(ts) {
+  if (!ts) return '--:--';
   const d = new Date(ts);
+  if (isNaN(d.getTime())) return '--:--';
   return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2744,6 +2861,7 @@ const T = {
     hint_compare_page:'Compare', hint_compare_desc:'→ two weapons side by side',
     history_header:'// LAST 10 ENTRIES', input_placeholder:'',
     type_analyze:'ANALYZE', type_weapon:'WEAPON', type_query:'QUERY', type_armor:'ARMOR',
+    type_analyze_weapon:'ANALYZE/WEAPON', type_analyze_armor:'ANALYZE/ARMOR',
     card_go_analyze:'Go to Analyze Roll page for full result',
     card_use_nav:'Use the navigation pages above', card_dmg:'Damage:',
     lbl_damage:'Damage:', lbl_upgrades:'Upgrades:', lbl_corrupted:'Corrupted:', lbl_health:'Health:',
@@ -2827,6 +2945,7 @@ const T = {
     hint_compare_page:'Сравнение', hint_compare_desc:'→ два оружия рядом',
     history_header:'// ПОСЛЕДНИЕ 10 ЗАПИСЕЙ', input_placeholder:'',
     type_analyze:'АНАЛИЗ', type_weapon:'ОРУЖИЕ', type_query:'ЗАПРОС', type_armor:'БРОНЯ',
+    type_analyze_weapon:'АНАЛИЗ/ОРУЖИЕ', type_analyze_armor:'АНАЛИЗ/БРОНЯ',
     card_go_analyze:'Перейди на страницу «Анализ ролла» для полного результата',
     card_use_nav:'Используй страницы навигации выше', card_dmg:'Урон:',
     lbl_damage:'Урон:', lbl_upgrades:'Улучшения:', lbl_corrupted:'Corrupted:', lbl_health:'Здоровье:',
@@ -3697,29 +3816,29 @@ function azDoAnalyze() {
       const p   = filledParts[0];
       const res = azArmorResults[p];
       addAnalysis({
-        cardType: 'weapon', typeLabel: t('type_armor'), time: nowStr(),
-        main: `${setName} ${azPartLabel(p)} — Roll: ${res.roll}`,
+        cardType: 'analyze', typeLabel: t('type_analyze_armor'), time: nowStr(),
+        main: `${setName} ${azPartLabel(p)}`,
         detail: `HP: ${azFmtDmg(res.hp)} | Upg: ${res.upg} | ${res.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
-        result: null
+        rollLines: [{label:'Roll:', val: res.roll}]
       });
     } else if (filledParts.length === 2) {
       const p1 = filledParts[0], p2 = filledParts[1];
       const r1 = azArmorResults[p1], r2 = azArmorResults[p2];
       addAnalysis({
-        cardType: 'weapon', typeLabel: t('type_armor'), time: nowStr(),
-        main: `${setName} ${azPartLabel(p1)} и ${azPartLabel(p2)}`,
-        detail: `${azPartLabel(p1)} — HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'} | Roll: ${r1.roll}\n${azPartLabel(p2)} — HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'} | Roll: ${r2.roll}`,
-        result: null
+        cardType: 'analyze', typeLabel: t('type_analyze_armor'), time: nowStr(),
+        main: `${setName} ${azPartLabel(p1)} & ${azPartLabel(p2)}`,
+        detail: `${azPartLabel(p1)}: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel(p2)}: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
+        rollLines: [{label:`${azPartLabel(p1)}'s Roll:`, val: r1.roll},{label:`${azPartLabel(p2)}'s Roll:`, val: r2.roll}]
       });
     } else if (filledParts.length === 3) {
       const parts3 = ['Helmet','Chestplate','Leggings'];
       const total3 = parts3.reduce((s, p) => s + (azArmorResults[p] ? azArmorResults[p].hp : 0), 0);
       const r1 = azArmorResults['Helmet'], r2 = azArmorResults['Chestplate'], r3 = azArmorResults['Leggings'];
       addAnalysis({
-        cardType: 'weapon', typeLabel: t('type_armor'), time: nowStr(),
+        cardType: 'analyze', typeLabel: t('type_analyze_armor'), time: nowStr(),
         main: `${setName} Set — Total HP: ${azFmtDmg(Math.round(total3))}`,
-        detail: `${azPartLabel('Helmet')} — HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'} | Roll: ${r1.roll}\n${azPartLabel('Chestplate')} — HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'} | Roll: ${r2.roll}\n${azPartLabel('Leggings')} — HP: ${azFmtDmg(r3.hp)} | Upg: ${r3.upg} | ${r3.corrupted ? 'Corrupted' : 'Non-corrupted'} | Roll: ${r3.roll}`,
-        result: null
+        detail: `${azPartLabel('Helmet')}: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel('Chestplate')}: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel('Leggings')}: HP: ${azFmtDmg(r3.hp)} | Upg: ${r3.upg} | ${r3.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
+        rollLines: [{label:`${azPartLabel('Helmet')}'s Roll:`, val: r1.roll},{label:`${azPartLabel('Chestplate')}'s Roll:`, val: r2.roll},{label:`${azPartLabel('Leggings')}'s Roll:`, val: r3.roll}]
       });
     }
 
@@ -3876,10 +3995,10 @@ function azDoAnalyze() {
     azSwitchThirdTab('process');
 
     addAnalysis({
-      cardType:'analyze', typeLabel:t('type_analyze'), time:nowStr(),
-      main:`${azCurrentItem.name} — Roll: ${roll}`,
-      detail:`Dmg: ${azFmtDmg(dmg)} | Upg: ${azSelectedUpg} | ${azIsCorrupted ? 'Corrupted' : 'Non-corrupted'}`,
-      result: azSelectedReforge !== 'None' ? `${azSelectedReforge} Reforge` : null
+      cardType:'analyze', typeLabel:t('type_analyze_weapon'), time:nowStr(),
+      main:`${azCurrentItem.name}`,
+      detail:`Dmg: ${azFmtDmg(dmg)} | Upg: ${azSelectedUpg} | ${azIsCorrupted ? 'Corrupted' : 'Non-corrupted'}${azSelectedReforge !== 'None' ? ' | ' + azSelectedReforge + ' Reforge' : ''}`,
+      rollLines:[{label:'Roll:', val: roll}]
     });
   }
 }

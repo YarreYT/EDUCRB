@@ -26,6 +26,7 @@
   const consoleRef = db.ref('console_log');
 
   // ── PRESENCE (онлайн счётчик) ──
+
   // uid — постоянный ID браузера (один на весь браузер)
   let uid = localStorage.getItem('_ed_uid');
   if (!uid) { uid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('_ed_uid', uid); }
@@ -34,16 +35,82 @@
   const tabId = Math.random().toString(36).slice(2);
   const tabRef = db.ref('online/' + uid + '/tabs/' + tabId);
 
-  // Heartbeat каждые 15 сек
-  function heartbeat() { tabRef.set({ t: Date.now() }); }
-  heartbeat();
-  const hbTimer = setInterval(heartbeat, 15000);
+  // ── BroadcastChannel: один мастер на все вкладки одного браузера ──
+  // Мастер — единственная вкладка которая пишет heartbeat в Firebase.
+  // Остальные вкладки молчат → экономим записи в несколько раз.
+  const bc = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('_ed_presence') : null;
+  let isMaster = false;
+  let hbTimer = null;
 
-  // Удаляем только эту вкладку при закрытии
+  function startHeartbeat() {
+    if (hbTimer) return;
+    isMaster = true;
+    heartbeat();
+    hbTimer = setInterval(heartbeat, 30000); // каждые 30 сек (было 15)
+  }
+
+  function stopHeartbeat() {
+    isMaster = false;
+    clearInterval(hbTimer);
+    hbTimer = null;
+  }
+
+  // Heartbeat — пишем только если вкладка видима
+  function heartbeat() {
+    if (document.hidden) return; // мобильный/свёрнутый — не пишем
+    tabRef.set({ t: Date.now() });
+  }
+
+  // Выбор мастера при старте
+  if (bc) {
+    bc.postMessage({ type: 'WHO_IS_MASTER' });
+    // Если за 400мс никто не ответил — становимся мастером
+    setTimeout(() => { if (!isMaster) { startHeartbeat(); if (bc) bc.postMessage({ type: 'I_AM_MASTER' }); } }, 400);
+
+    bc.onmessage = (e) => {
+      if (e.data.type === 'WHO_IS_MASTER' && isMaster) {
+        bc.postMessage({ type: 'I_AM_MASTER' }); // сообщаем новой вкладке что мастер уже есть
+      }
+      if (e.data.type === 'I_AM_MASTER') {
+        stopHeartbeat(); // кто-то другой уже мастер — останавливаемся
+      }
+      if (e.data.type === 'MASTER_CLOSING') {
+        // Мастер закрывается — берём на себя
+        setTimeout(() => { startHeartbeat(); if (bc) bc.postMessage({ type: 'I_AM_MASTER' }); }, 200);
+      }
+    };
+  } else {
+    // BroadcastChannel не поддерживается (старый браузер) — просто пишем сами
+    startHeartbeat();
+  }
+
+  // ── Page Visibility API: пауза/возобновление при сворачивании ──
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      // Вкладка снова активна (вернулся Леон с телефона)
+      heartbeat(); // сразу пишем не дожидаясь таймера
+    }
+  });
+
+  // ── onDisconnect: Firebase сам удалит вкладку при разрыве соединения ──
   tabRef.onDisconnect().remove();
-  window.addEventListener('beforeunload', () => { clearInterval(hbTimer); tabRef.remove(); });
 
-  // Считаем уникальных пользователей (по uid, не по вкладкам)
+  // ── beforeunload: чистим при закрытии вкладки ──
+  window.addEventListener('beforeunload', () => {
+    if (bc && isMaster) bc.postMessage({ type: 'MASTER_CLOSING' }); // передаём роль
+    stopHeartbeat();
+    tabRef.remove();
+    // Чистим uid если это была последняя вкладка
+    db.ref('online/' + uid + '/tabs').once('value', snap => {
+      if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
+        db.ref('online/' + uid).remove();
+      }
+    });
+  });
+
+  // ── Счётчик: считаем уникальных живых пользователей ──
+  // Живой = хотя бы одна вкладка с heartbeat не старше 90 сек
+  // (30 сек интервал × 3 = буфер на лаги сети)
   db.ref('online').on('value', (snap) => {
     if (!snap.exists()) {
       document.querySelectorAll('.online-count').forEach(el => el.textContent = '0');
@@ -54,11 +121,26 @@
     snap.forEach(userSnap => {
       const tabs = userSnap.val()?.tabs;
       if (!tabs) return;
-      const hasAlive = Object.values(tabs).some(tab => tab?.t && (now - tab.t) < 45000);
+      const hasAlive = Object.values(tabs).some(tab => tab?.t && (now - tab.t) < 90000);
       if (hasAlive) aliveUsers++;
     });
     document.querySelectorAll('.online-count').forEach(el => el.textContent = aliveUsers);
   });
+
+  // ── Автоочистка: удаляем мёртвые uid раз в 5 минут ──
+  // Мёртвый uid = все вкладки протухли > 5 минут назад
+  setInterval(() => {
+    db.ref('online').once('value', snap => {
+      if (!snap.exists()) return;
+      const now = Date.now();
+      snap.forEach(userSnap => {
+        const tabs = userSnap.val()?.tabs;
+        if (!tabs) { userSnap.ref.remove(); return; }
+        const allDead = Object.values(tabs).every(tab => !tab?.t || (now - tab.t) > 300000);
+        if (allDead) userSnap.ref.remove();
+      });
+    });
+  }, 300000);
 
   // ── CONSOLE LOG ──
   window._fbPushEntry = function(entry) {

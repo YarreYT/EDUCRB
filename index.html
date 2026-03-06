@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://www.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.googleapis.com;">
 <title>Calculate Roll Bot — Elemental Dungeon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,41 +43,67 @@
   let isMaster = false;
   let hbTimer = null;
 
+  // ФИX #1: флаг ожидания — предотвращает race condition когда две вкладки
+  // одновременно не получают ответ и обе становятся мастером.
+  // Пока waitingForMaster=true — мы ещё не приняли решение.
+  let waitingForMaster = false;
+
   function startHeartbeat() {
-    if (hbTimer) return;
+    if (isMaster) return; // уже мастер — не запускаем дважды
     isMaster = true;
+    waitingForMaster = false;
     heartbeat();
-    hbTimer = setInterval(heartbeat, 30000); // каждые 30 сек (было 15)
+    hbTimer = setInterval(heartbeat, 30000); // каждые 30 сек
+    // ФИX #4: запускаем автоочистку только у мастера
+    startMasterCleanup();
   }
 
   function stopHeartbeat() {
     isMaster = false;
+    waitingForMaster = false;
     clearInterval(hbTimer);
     hbTimer = null;
+    stopMasterCleanup();
   }
 
-  // Heartbeat — пишем только если вкладка видима
+  // ФИX #3: используем серверное время Firebase вместо Date.now() клиента.
+  // Это защищает от случаев когда часы на устройстве пользователя сбиты.
   function heartbeat() {
     if (document.hidden) return; // мобильный/свёрнутый — не пишем
-    tabRef.set({ t: Date.now() });
+    tabRef.set({ t: firebase.database.ServerValue.TIMESTAMP });
   }
 
   // Выбор мастера при старте
   if (bc) {
+    waitingForMaster = true;
     bc.postMessage({ type: 'WHO_IS_MASTER' });
     // Если за 400мс никто не ответил — становимся мастером
-    setTimeout(() => { if (!isMaster) { startHeartbeat(); if (bc) bc.postMessage({ type: 'I_AM_MASTER' }); } }, 400);
+    setTimeout(() => {
+      if (waitingForMaster && !isMaster) {
+        startHeartbeat();
+        if (bc) bc.postMessage({ type: 'I_AM_MASTER' });
+      }
+    }, 400);
 
     bc.onmessage = (e) => {
       if (e.data.type === 'WHO_IS_MASTER' && isMaster) {
         bc.postMessage({ type: 'I_AM_MASTER' }); // сообщаем новой вкладке что мастер уже есть
       }
       if (e.data.type === 'I_AM_MASTER') {
+        // ФИX #1: сбрасываем флаг ожидания — мастер уже есть, не будем им становиться
+        waitingForMaster = false;
         stopHeartbeat(); // кто-то другой уже мастер — останавливаемся
       }
       if (e.data.type === 'MASTER_CLOSING') {
-        // Мастер закрывается — берём на себя
-        setTimeout(() => { startHeartbeat(); if (bc) bc.postMessage({ type: 'I_AM_MASTER' }); }, 200);
+        // Мастер закрывается — берём на себя через небольшой случайный delay
+        // чтобы несколько вкладок не стали мастером одновременно
+        const delay = 100 + Math.random() * 300;
+        setTimeout(() => {
+          if (!isMaster) {
+            startHeartbeat();
+            if (bc) bc.postMessage({ type: 'I_AM_MASTER' });
+          }
+        }, delay);
       }
     };
   } else {
@@ -86,26 +113,23 @@
 
   // ── Page Visibility API: пауза/возобновление при сворачивании ──
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      // Вкладка снова активна (вернулся Леон с телефона)
-      heartbeat(); // сразу пишем не дожидаясь таймера
+    if (!document.hidden && isMaster) {
+      // Вкладка снова активна — сразу пишем не дожидаясь таймера
+      heartbeat();
     }
   });
 
   // ── onDisconnect: Firebase сам удалит вкладку при разрыве соединения ──
   tabRef.onDisconnect().remove();
 
-  // ── beforeunload: чистим при закрытии вкладки ──
+  // ФИX #2: beforeunload — убираем ненадёжные async-операции.
+  // tabRef.remove() — синхронная Firebase операция, может успеть.
+  // Проверку "последняя ли вкладка" убираем — onDisconnect() надёжно
+  // почистит данные даже если браузер не дождётся async callback.
   window.addEventListener('beforeunload', () => {
     if (bc && isMaster) bc.postMessage({ type: 'MASTER_CLOSING' }); // передаём роль
     stopHeartbeat();
-    tabRef.remove();
-    // Чистим uid если это была последняя вкладка
-    db.ref('online/' + uid + '/tabs').once('value', snap => {
-      if (!snap.exists() || Object.keys(snap.val() || {}).length === 0) {
-        db.ref('online/' + uid).remove();
-      }
-    });
+    tabRef.remove(); // best-effort; onDisconnect() подстрахует
   });
 
   // ── Счётчик: считаем уникальных живых пользователей ──
@@ -127,20 +151,29 @@
     document.querySelectorAll('.online-count').forEach(el => el.textContent = aliveUsers);
   });
 
-  // ── Автоочистка: удаляем мёртвые uid раз в 5 минут ──
+  // ФИX #4: Автоочистка только у мастера — не нагружаем Firebase у каждого клиента.
   // Мёртвый uid = все вкладки протухли > 5 минут назад
-  setInterval(() => {
-    db.ref('online').once('value', snap => {
-      if (!snap.exists()) return;
-      const now = Date.now();
-      snap.forEach(userSnap => {
-        const tabs = userSnap.val()?.tabs;
-        if (!tabs) { userSnap.ref.remove(); return; }
-        const allDead = Object.values(tabs).every(tab => !tab?.t || (now - tab.t) > 300000);
-        if (allDead) userSnap.ref.remove();
+  let cleanupTimer = null;
+  function startMasterCleanup() {
+    if (cleanupTimer) return;
+    cleanupTimer = setInterval(() => {
+      if (!isMaster) return; // двойная проверка
+      db.ref('online').once('value', snap => {
+        if (!snap.exists()) return;
+        const now = Date.now();
+        snap.forEach(userSnap => {
+          const tabs = userSnap.val()?.tabs;
+          if (!tabs) { userSnap.ref.remove(); return; }
+          const allDead = Object.values(tabs).every(tab => !tab?.t || (now - tab.t) > 300000);
+          if (allDead) userSnap.ref.remove();
+        });
       });
-    });
-  }, 300000);
+    }, 300000);
+  }
+  function stopMasterCleanup() {
+    clearInterval(cleanupTimer);
+    cleanupTimer = null;
+  }
 
   // ── CONSOLE LOG ──
   window._fbPushEntry = function(entry) {

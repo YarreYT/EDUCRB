@@ -180,15 +180,15 @@
       consoleRef.limitToLast(100).once('value').then(snap => {
         if (!snap.exists()) return;
         const keys = Object.keys(snap.val());
-        if (keys.length > 10) {
-          keys.slice(0, keys.length - 10).forEach(k => db.ref('console_log/' + k).remove());
+        if (keys.length > 25) {
+          keys.slice(0, keys.length - 25).forEach(k => db.ref('console_log/' + k).remove());
         }
       });
     }).catch(e => console.warn('Firebase write error:', e));
   };
 
-  // Слушаем последние 10 записей в реальном времени
-  consoleRef.limitToLast(10).on('value', (snapshot) => {
+  // Слушаем последние 25 записей в реальном времени
+  consoleRef.limitToLast(25).on('value', (snapshot) => {
     const data = snapshot.val();
     window.analysisHistory = data ? Object.values(data).reverse() : [];
     if (typeof renderAllConsoles === 'function') renderAllConsoles();
@@ -2055,14 +2055,14 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   <aside class="console-panel" id="console-home">
     <div class="console-header">
       <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
-      <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
+      <div class="console-title" data-i18n="console_title">RECENT PROCESSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
     </div>
     </div>
     <div class="console-empty" id="empty-state-home">
       <div class="empty-icon">📊</div>
       <div class="empty-title" data-i18n="empty_title">EMPTY</div>
-      <div class="empty-desc" data-i18n="empty_desc">Your last 10 analyses and forecasts will appear here.</div>
+      <div class="empty-desc" data-i18n="empty_desc">Your last 25 analyses and forecasts will appear here.</div>
       <div class="empty-hint">
         <div class="hint-row"><span class="hint-page" data-i18n="hint_analyze_page">Analyze</span><span class="hint-desc" data-i18n="hint_analyze_desc">→ input damage, get roll</span></div>
         <div class="hint-row"><span class="hint-page" data-i18n="hint_weapon_page">Preview</span><span class="hint-desc" data-i18n="hint_weapon_desc">→ forecast by wished roll and stats</span></div>
@@ -2070,7 +2070,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       </div>
     </div>
     <div class="console-body" id="console-body-home">
-      <div class="history-header" id="history-header-home">// LAST 10 ENTRIES</div>
+      <div class="history-header" id="history-header-home">// LAST 25 ENTRIES</div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -2138,14 +2138,14 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   <aside class="console-panel" id="console-rolls">
     <div class="console-header">
       <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
-      <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
+      <div class="console-title" data-i18n="console_title">RECENT PROCESSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
     </div>
     </div>
     <div class="console-empty" id="empty-state-rolls">
       <div class="empty-icon">📊</div>
       <div class="empty-title" data-i18n="empty_title">EMPTY</div>
-      <div class="empty-desc" data-i18n="empty_desc">Your last 10 analyses and forecasts will appear here.</div>
+      <div class="empty-desc" data-i18n="empty_desc">Your last 25 analyses and forecasts will appear here.</div>
       <div class="empty-hint">
         <div class="hint-row"><span class="hint-page" data-i18n="hint_analyze_page">Analyze</span><span class="hint-desc" data-i18n="hint_analyze_desc">→ input damage, get roll</span></div>
         <div class="hint-row"><span class="hint-page" data-i18n="hint_weapon_page">Weapon</span><span class="hint-desc" data-i18n="hint_weapon_desc">→ forecast by level</span></div>
@@ -2153,7 +2153,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       </div>
     </div>
     <div class="console-body" id="console-body-rolls">
-      <div class="history-header" id="history-header-rolls">// LAST 10 ENTRIES</div>
+      <div class="history-header" id="history-header-rolls">// LAST 25 ENTRIES</div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -2506,20 +2506,20 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   <aside class="console-panel" id="console-analyze">
     <div class="console-header">
       <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
-      <div class="console-title" data-i18n="console_title">RECENT ANALYSES</div>
+      <div class="console-title" data-i18n="console_title">RECENT PROCESSES</div>
       <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
     </div>
     </div>
     <div class="console-empty" id="empty-state-analyze">
       <div class="empty-icon">📊</div>
       <div class="empty-title" data-i18n="empty_title">EMPTY</div>
-      <div class="empty-desc" data-i18n="empty_desc">Your last 10 analyses and forecasts will appear here.</div>
+      <div class="empty-desc" data-i18n="empty_desc">Your last 25 analyses and forecasts will appear here.</div>
       <div class="empty-hint">
         <div class="hint-row"><span class="hint-page" data-i18n="hint_analyze_page">Analyze</span><span class="hint-desc" data-i18n="hint_analyze_desc">→ input damage, get roll</span></div>
       </div>
     </div>
     <div class="console-body" id="console-body-analyze">
-      <div class="history-header" id="history-header-analyze">// LAST 10 ENTRIES</div>
+      <div class="history-header" id="history-header-analyze">// LAST 25 ENTRIES</div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -2970,12 +2970,12 @@ const T = {
     reforge_table_title:'// REFORGE REFERENCE',
     th_ref_name:'Reforge', th_ref_dmg:'Damage', th_ref_crit:'Critical', th_ref_knk:'Knock',
     table_empty_title:'SELECT AN ITEM', table_empty_desc:'Choose a weapon or armor piece from the list to see its roll table.',
-    console_title:'RECENT ANALYSES', empty_title:'EMPTY',
-    empty_desc:'Your last 10 analyses and forecasts will appear here.',
+    console_title:'RECENT PROCESSES', empty_title:'EMPTY',
+    empty_desc:'Your last 25 analyses and forecasts will appear here.',
     hint_analyze_page:'Analyze', hint_analyze_desc:'→ input damage, get roll',
     hint_weapon_page:'Weapon', hint_weapon_desc:'→ forecast by level',
     hint_compare_page:'Compare', hint_compare_desc:'→ two weapons side by side',
-    history_header:'// LAST 10 ENTRIES', input_placeholder:'',
+    history_header:'// LAST 25 ENTRIES', input_placeholder:'',
     type_analyze:'ANALYZE', type_weapon:'WEAPON', type_query:'QUERY', type_armor:'ARMOR',
     type_analyze_weapon:'ANALYZE/WEAPON', type_analyze_armor:'ANALYZE/ARMOR',
     card_go_analyze:'Go to Analyze Roll page for full result',
@@ -3057,12 +3057,12 @@ const T = {
     reforge_table_title:'// СПРАВКА ПО ЗАКЛИНАНИЯМ',
     th_ref_name:'Заклинание', th_ref_dmg:'Урон', th_ref_crit:'Крит', th_ref_knk:'Отдача',
     table_empty_title:'ВЫБЕРИТЕ ПРЕДМЕТ', table_empty_desc:'Выбери оружие или броню из списка слева, чтобы увидеть таблицу роллов.',
-    console_title:'ПОСЛЕДНИЕ АНАЛИЗЫ', empty_title:'ПУСТО',
-    empty_desc:'Здесь будут отображаться твои последние 10 анализов и прогнозов.',
+    console_title:'ПОСЛЕДНИЕ ПРОЦЕССЫ', empty_title:'ПУСТО',
+    empty_desc:'Здесь будут отображаться твои последние 25 анализов и прогнозов.',
     hint_analyze_page:'Анализ', hint_analyze_desc:'→ введи урон, получи ролл',
     hint_weapon_page:'Оружие', hint_weapon_desc:'→ прогноз по уровню',
     hint_compare_page:'Сравнение', hint_compare_desc:'→ два оружия рядом',
-    history_header:'// ПОСЛЕДНИЕ 10 ЗАПИСЕЙ', input_placeholder:'',
+    history_header:'// ПОСЛЕДНИЕ 25 ЗАПИСЕЙ', input_placeholder:'',
     type_analyze:'АНАЛИЗ', type_weapon:'ОРУЖИЕ', type_query:'ЗАПРОС', type_armor:'БРОНЯ',
     type_analyze_weapon:'АНАЛИЗ/ОРУЖИЕ', type_analyze_armor:'АНАЛИЗ/БРОНЯ',
     card_go_analyze:'Перейди на страницу «Анализ ролла» для полного результата',

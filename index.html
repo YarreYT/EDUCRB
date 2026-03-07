@@ -177,7 +177,7 @@
   // ── CONSOLE LOG ──
   window._fbPushEntry = function(entry) {
     consoleRef.push(entry).then(() => {
-      consoleRef.limitToLast(100).once('value').then(snap => {
+      consoleRef.orderByKey().limitToFirst(1000).once('value').then(snap => {
         if (!snap.exists()) return;
         const keys = Object.keys(snap.val());
         if (keys.length > 25) {

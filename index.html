@@ -177,13 +177,21 @@
   // ── CONSOLE LOG ──
   window._fbPushEntry = function(entry) {
     consoleRef.push(entry).then(() => {
-      consoleRef.orderByKey().limitToFirst(1000).once('value').then(snap => {
-        if (!snap.exists()) return;
-        const keys = Object.keys(snap.val());
-        if (keys.length > 25) {
-          keys.slice(0, keys.length - 25).forEach(k => db.ref('console_log/' + k).remove());
-        }
-      });
+      // limitToFirst(1) + orderByKey даёт самую старую запись — удаляем только её.
+      // Повторяем пока записей не останется ровно 25.
+      // Используем snap.forEach() чтобы порядок ключей был гарантирован Firebase.
+      function trimOnce() {
+        consoleRef.orderByKey().limitToFirst(26).once('value').then(snap => {
+          if (!snap.exists()) return;
+          const keys = [];
+          snap.forEach(child => { keys.push(child.key); });
+          if (keys.length > 25) {
+            // Удаляем только один самый старый ключ и повторяем
+            db.ref('console_log/' + keys[0]).remove().then(trimOnce);
+          }
+        });
+      }
+      trimOnce();
     }).catch(e => console.warn('Firebase write error:', e));
   };
 

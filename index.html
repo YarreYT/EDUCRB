@@ -175,73 +175,109 @@
     cleanupTimer = null;
   }
 
-  // ── CONSOLE LOG ──
+  // ── CONSOLE LOG (numbered slots 1..25, shift-on-overflow) ──
+  const CONSOLE_MAX = 25;
+
   window._fbPushEntry = function(entry) {
-    // Используем транзакцию для атомарной операции push+trim
-    const newRef = consoleRef.push();
-    newRef.set(entry)
-      .then(() => {
-        // Теперь проверяем общее количество и удаляем лишние одной операцией
-        return consoleRef.orderByKey().once('value');
-      })
+    consoleRef.once('value')
       .then(snap => {
-        if (!snap.exists()) return;
-      
-        const keys = [];
-        snap.forEach(child => { keys.push(child.key); });
-        
-        // Если записей больше 25, удаляем ВСЕ лишние сразу (не по одной)
-        if (keys.length > 25) {
-          const toDelete = keys.slice(0, keys.length - 25); // Все кроме последних 25
-          const updates = {};
-          toDelete.forEach(key => {
-          updates['console_log/' + key] = null;
-          });
-          return db.ref().update(updates);
+        const data = snap.val() || {};
+        const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
+        const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
+
+        const newSlots = Object.assign({}, data);
+        newSlots[String(nextNum)] = entry;
+
+        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
+        let updates = {};
+
+        if (allNums.length > CONSOLE_MAX) {
+          const excess = allNums.length - CONSOLE_MAX;
+          const toRemove = allNums.slice(0, excess);
+          toRemove.forEach(n => { updates['console_log/' + n] = null; delete newSlots[String(n)]; });
+          allNums = allNums.slice(excess);
         }
+
+        // Перенумеруем все слоты с 1 до N — всегда пишем финальное состояние
+        allNums.forEach((oldNum, idx) => {
+          const newIdx = idx + 1;
+          updates['console_log/' + newIdx] = newSlots[String(oldNum)];
+          if (String(oldNum) !== String(newIdx)) {
+            updates['console_log/' + oldNum] = null;
+          }
+        });
+
+        return db.ref().update(updates);
       })
       .catch(e => console.warn('Firebase write error:', e));
   };
 
-  // Слушаем последние 25 записей в реальном времени
-  consoleRef.limitToLast(25).on('value', (snapshot) => {
+  // Слушаем все записи console_log (ключи 1..25)
+  consoleRef.on('value', (snapshot) => {
     const data = snapshot.val();
-    window.analysisHistory = data ? Object.values(data).reverse() : [];
+    if (!data) {
+      window.analysisHistory = [];
+    } else {
+      // Сортируем по числовому ключу убывающе (25=новейший → 1=старейший)
+      const sorted = Object.keys(data)
+        .map(Number)
+        .sort((a, b) => b - a); // убывающий порядок — новые сверху
+      window.analysisHistory = sorted.map(k => data[String(k)]);
+    }
     window.previewHistory = window.previewHistory || [];
     if (typeof renderAllConsoles === 'function') renderAllConsoles();
   }, (error) => {
     console.warn('Firebase read error:', error);
   });
 
-  // ── PREVIEW LOG (shared, max 15) ──
+  // ── PREVIEW LOG (numbered slots 1..25, shift-on-overflow) ──
+  const PREVIEW_MAX = 25;
+
   window._fbPushPreview = function(entry) {
-    const newRef = previewRef.push();
-    newRef.set(entry)
-      .then(() => {
-        return previewRef.orderByKey().once('value');
-      })
+    previewRef.once('value')
       .then(snap => {
-        if (!snap.exists()) return;
-      
-        const keys = [];
-        snap.forEach(child => { keys.push(child.key); });
-      
-        if (keys.length > 15) {
-          const toDelete = keys.slice(0, keys.length - 15);
-          const updates = {};
-          toDelete.forEach(key => {
-            updates['preview_log/' + key] = null;
-          });
-          return db.ref().update(updates);
+        const data = snap.val() || {};
+        const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
+        const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
+
+        const newSlots = Object.assign({}, data);
+        newSlots[String(nextNum)] = entry;
+
+        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
+        let updates = {};
+
+        if (allNums.length > PREVIEW_MAX) {
+          const excess = allNums.length - PREVIEW_MAX;
+          const toRemove = allNums.slice(0, excess);
+          toRemove.forEach(n => { updates['preview_log/' + n] = null; delete newSlots[String(n)]; });
+          allNums = allNums.slice(excess);
         }
+
+        // Перенумеруем все слоты с 1 до N — всегда пишем финальное состояние
+        allNums.forEach((oldNum, idx) => {
+          const newIdx = idx + 1;
+          updates['preview_log/' + newIdx] = newSlots[String(oldNum)];
+          if (String(oldNum) !== String(newIdx)) {
+            updates['preview_log/' + oldNum] = null;
+          }
+        });
+
+        return db.ref().update(updates);
       })
       .catch(e => console.warn('Firebase preview write error:', e));
   };
 
-  // Слушаем последние 15 preview-записей в реальном времени
-  previewRef.limitToLast(15).on('value', (snapshot) => {
+  // Слушаем все записи preview_log (ключи 1..25)
+  previewRef.on('value', (snapshot) => {
     const data = snapshot.val();
-    window.previewHistory = data ? Object.values(data).reverse() : [];
+    if (!data) {
+      window.previewHistory = [];
+    } else {
+      const sorted = Object.keys(data)
+        .map(Number)
+        .sort((a, b) => b - a); // новые сверху
+      window.previewHistory = sorted.map(k => data[String(k)]);
+    }
     if (typeof renderAllConsoles === 'function') renderAllConsoles();
   }, (error) => {
     console.warn('Firebase preview read error:', error);
@@ -1321,6 +1357,22 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 .az-analyze-btn:active{transform:translateY(1px);}
 .az-btn-chevrons{font-size:14px;opacity:.8;letter-spacing:-2px;}
+
+/* ── Cooldown fill animation ── */
+.az-analyze-btn.cd-active {
+  cursor: not-allowed;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,#22cc00 0%,#18a000 100%) left / var(--cd-fill, 0%) 100% no-repeat,
+    linear-gradient(180deg,#0d4400 0%,#082e00 100%);
+  box-shadow: 0 4px 16px rgba(34,204,0,.1), 0 2px 0 #051800 !important;
+  transform: none !important;
+  animation: cdFill var(--cd-duration, 2s) linear forwards;
+}
+@keyframes cdFill {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
 
 .az-result-card {
   width: 100%;
@@ -2848,7 +2900,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
             </div>
           </div>
 
-          <button class="az-analyze-btn" onclick="azDoAnalyze()">
+          <button class="az-analyze-btn" id="az-analyze-btn" onclick="azDoAnalyze()">
             <span class="az-btn-chevrons">»</span>
             <span data-i18n="btn_analyze">ANALYZE ROLL</span>
           </button>
@@ -3279,7 +3331,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
             </div>
             </div><!-- end .sp-input-spacer -->
 
-            <button class="az-analyze-btn" onclick="spDoAnalyze()">
+            <button class="az-analyze-btn" id="sp-analyze-btn" onclick="spDoAnalyze()">
               <span class="az-btn-chevrons">»</span>
               <span>CHECK SPECIFICS</span>
             </button>
@@ -3903,7 +3955,7 @@ function renderAllConsoles() {
     emptyEl.style.display = 'none';
     bodyEl.classList.add('visible');
     bodyEl.innerHTML = '';
-    history.slice(0, 15).forEach(entry => {
+    history.slice(0, 25).forEach(entry => {
       const card = document.createElement('div');
       card.className = 'analysis-card';
       let rollHTML = '';
@@ -3929,7 +3981,7 @@ function addPreview(entry) {
     // Fallback
     window.previewHistory = window.previewHistory || [];
     window.previewHistory.unshift(entry);
-    if (window.previewHistory.length > 15) window.previewHistory.length = 15;
+    if (window.previewHistory.length > 25) window.previewHistory.length = 25;
     renderAllConsoles();
   }
 }
@@ -5036,6 +5088,20 @@ function azShowError(key) { showSiteError(key, true); }
 function azClearError() { /* auto-dismiss via timer */ }
 
 
+// ── Button cooldown (2s fill animation) ──
+const _btnCdTimers = {};
+function triggerBtnCooldown(btnId, ms) {
+  ms = ms || 2000;
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.style.setProperty('--cd-duration', ms + 'ms');
+  btn.classList.add('cd-active');
+  clearTimeout(_btnCdTimers[btnId]);
+  _btnCdTimers[btnId] = setTimeout(() => {
+    btn.classList.remove('cd-active');
+  }, ms);
+}
+
 function azDoAnalyze() {
   if (!azCurrentItem) return;
 
@@ -5151,6 +5217,7 @@ function azDoAnalyze() {
 
     // Log to console — format depends on number of analyzed parts
     const setName = azCurrentItem.name.replace(' Set','');
+    triggerBtnCooldown('az-analyze-btn', 2000);
     if (filledParts.length === 1) {
       const p   = filledParts[0];
       const res = azArmorResults[p];
@@ -5323,6 +5390,7 @@ function azDoAnalyze() {
     document.getElementById('az-third-panel').classList.add('visible');
     azSwitchThirdTab('process');
 
+    triggerBtnCooldown('az-analyze-btn', 2000);
     addAnalysis({
       cardType:'analyze', typeLabel:'ANALYZE/WEAPON', time:nowStr(),
       main:`${azCurrentItem.name}`,
@@ -6386,7 +6454,7 @@ function spShowError(key) { showSiteError(key, true); }
 function spClearError() { /* auto-dismiss via timer */ }
 
 
-function spDoAnalyze() {
+function spDoAnalyze(skipCd) {
   const item = spCurrentItem;
   if (!item) return;
 
@@ -6399,7 +6467,7 @@ function spDoAnalyze() {
     if (fallback) {
       spSelectPart(fallback);
       // Now re-run with the switched part
-      spDoAnalyze();
+      spDoAnalyze(true);
       return;
     }
   }
@@ -6513,6 +6581,7 @@ function spDoAnalyze() {
   }
 
   // ── Log to Previews console ──
+  if (!skipCd) triggerBtnCooldown('sp-analyze-btn', 2000);
   if (!isArmor) {
     // Weapon preview
     addPreview({

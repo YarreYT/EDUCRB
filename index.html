@@ -185,11 +185,15 @@
         const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
         const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
 
-        const newSlots = Object.assign({}, data);
+        const newSlots = {};
+        nums.forEach(n => { newSlots[String(n)] = data[String(n)]; }); // только числовые ключи
         newSlots[String(nextNum)] = entry;
 
-        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
+        // Пометить мусорные push-ID на удаление
         let updates = {};
+        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates['console_log/' + k] = null; });
+
+        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
 
         if (allNums.length > CONSOLE_MAX) {
           const excess = allNums.length - CONSOLE_MAX;
@@ -221,6 +225,7 @@
       // Сортируем по числовому ключу убывающе (25=новейший → 1=старейший)
       const sorted = Object.keys(data)
         .map(Number)
+        .filter(n => !isNaN(n))
         .sort((a, b) => b - a); // убывающий порядок — новые сверху
       window.analysisHistory = sorted.map(k => data[String(k)]);
     }
@@ -240,11 +245,15 @@
         const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
         const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
 
-        const newSlots = Object.assign({}, data);
+        const newSlots = {};
+        nums.forEach(n => { newSlots[String(n)] = data[String(n)]; }); // только числовые ключи
         newSlots[String(nextNum)] = entry;
 
-        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
+        // Пометить мусорные push-ID на удаление
         let updates = {};
+        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates['preview_log/' + k] = null; });
+
+        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
 
         if (allNums.length > PREVIEW_MAX) {
           const excess = allNums.length - PREVIEW_MAX;
@@ -275,6 +284,7 @@
     } else {
       const sorted = Object.keys(data)
         .map(Number)
+        .filter(n => !isNaN(n))
         .sort((a, b) => b - a); // новые сверху
       window.previewHistory = sorted.map(k => data[String(k)]);
     }
@@ -3918,7 +3928,8 @@ function renderAllConsoles() {
     const hdrEl   = document.getElementById('history-header-' + pg);
     if (!emptyEl || !bodyEl) return;
     if (hdrEl) hdrEl.textContent = t('history_header');
-    if (analysisHistory.length === 0) {
+    const validHistory = analysisHistory.filter(e => e != null);
+    if (validHistory.length === 0) {
       emptyEl.style.display = 'flex';
       bodyEl.classList.remove('visible');
       return;
@@ -3926,7 +3937,7 @@ function renderAllConsoles() {
     emptyEl.style.display = 'none';
     bodyEl.classList.add('visible');
     bodyEl.innerHTML = '';
-    analysisHistory.forEach(entry => {
+    validHistory.forEach(entry => {
       const card = document.createElement('div');
       card.className = 'analysis-card';
       // Build roll block
@@ -3946,7 +3957,7 @@ function renderAllConsoles() {
     const emptyEl = document.getElementById('empty-state-' + pg + '-previews');
     const bodyEl  = document.getElementById('console-body-' + pg + '-previews');
     if (!emptyEl || !bodyEl) return;
-    const history = window.previewHistory || [];
+    const history = (window.previewHistory || []).filter(e => e != null);
     if (history.length === 0) {
       emptyEl.style.display = 'flex';
       bodyEl.classList.remove('visible');

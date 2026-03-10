@@ -5610,9 +5610,10 @@ function azRenderProcessTablet(dmg) {
   const baseRollVal = statsDict[roll];
 
   const fmt = v => {
-    const s = (Math.round(v * 1000) / 1000).toFixed(3).replace(/\.?0+$/, '');
-    return s;
+    if (Number.isInteger(v)) return String(v);
+    return v.toPrecision(17).replace(/0+$/, '').replace(/\.$/, '');
   };
+  const fmtInt = v => String(Math.floor(v));
 
   const upgMult  = 1 + GROWTH_RATE * azSelectedUpg;
   const afterUpg = dmg / upgMult;
@@ -5646,9 +5647,9 @@ function azRenderProcessTablet(dmg) {
     leftHTML += mkStep(stepN++, t('proc_s1_none'), '', '', '', '', true);
   } else {
     leftHTML += mkStep(stepN++, t('proc_s1'),
-      `${fmt(dmg)} ÷ ${upgMult.toFixed(4)}`,
+      `${fmt(dmg)} ÷ ${fmt(upgMult)}`,
       fmt(afterUpg), 'c-teal',
-      `${t('proc_factor')} = 1 + (1/21 × ${azSelectedUpg}) = ${upgMult.toFixed(4)}`);
+      `${t('proc_factor')} = 1 + (1/21 × ${azSelectedUpg}) = ${fmt(upgMult)}`);
   }
 
   if (azSelectedReforge !== 'None' && !isArmor) {
@@ -5674,7 +5675,7 @@ function azRenderProcessTablet(dmg) {
   leftHTML += `<div class="az-step">
     <div class="az-step-formula" style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.12);border-radius:8px;">
       <span class="az-step-lhs" style="color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;">${t('proc_base')}</span>
-      <span class="az-step-rhs c-gold">${fmt(inferred)}</span>
+      <span class="az-step-rhs c-gold">${fmtInt(inferred)}</span>
     </div>
   </div>`;
 
@@ -6698,7 +6699,14 @@ function spSyncPanelHeight() {
 
 function spRenderProcess(item, roll, upg, corr, refName, refMult, finalStat, base, growthFactor) {
   const isArmor = !!item.isArmor;
-  const fmt = v => (Math.round(v * 1000) / 1000).toFixed(3).replace(/\.?0+$/, '');
+  // fmt — полное число без лишних нулей (для формул внутри шагов)
+  const fmt = v => {
+    if (Number.isInteger(v)) return String(v);
+    // Убираем trailing zeros но показываем всю точность
+    return v.toPrecision(17).replace(/0+$/, '').replace(/\.$/, '');
+  };
+  // fmtInt — целое число для Base/Final (скрываем дробь)
+  const fmtInt = v => String(Math.floor(v));
 
   const mkStep = (n, lbl, lhs, rhs, cls, note, inactive) => {
     if (inactive) return `<div class="az-step-skip">
@@ -6727,9 +6735,9 @@ function spRenderProcess(item, roll, upg, corr, refName, refMult, finalStat, bas
     html += mkStep(stepN++, t('sp_proc_s1_none'), '', '', '', '', true);
   } else {
     html += mkStep(stepN++, t('sp_proc_s1'),
-      `${fmt(base)} × ${growthFactor.toFixed(4)}`,
+      `${fmt(base)} × ${fmt(growthFactor)}`,
       fmt(afterGrowth), 'c-teal',
-      `${t('proc_factor')} = 1 + (1/21 × ${upg}) = ${growthFactor.toFixed(4)}`);
+      `${t('proc_factor')} = 1 + (1/21 × ${upg}) = ${fmt(growthFactor)}`);
   }
 
   // Step 2: Reforge (weapon only)
@@ -6752,11 +6760,11 @@ function spRenderProcess(item, roll, upg, corr, refName, refMult, finalStat, bas
     html += mkStep(stepN++, t('sp_proc_s3_no'), '', '', '', '', true);
   }
 
-  // Final
+  // Final — целое число
   html += `<div class="az-step">
     <div class="az-step-formula" style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.12);border-radius:8px;">
       <span class="az-step-lhs" style="color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;">✓ FINAL ${isArmor ? 'HP' : 'DMG'}</span>
-      <span class="az-step-rhs c-gold">${azFmtDmg(finalStat)}</span>
+      <span class="az-step-rhs c-gold">${fmtInt(finalStat)}</span>
     </div>
   </div>`;
 

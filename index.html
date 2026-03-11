@@ -5174,9 +5174,14 @@ function azCalcRoll(statsDict, hp, upg, corrupted) {
 // Returns null if valid, or an error message string if invalid.
 // statsDict: the roll→baseValue object for the relevant item/part
 // inferred:  the computed base damage value
-function azCheckRollRange(statsDict, inferred) {
-  const rolls   = Object.keys(statsDict).map(Number).sort((a, b) => a - b);
-  if (rolls.length === 1) return null; // single-roll item (Wooden Sword V2) — always valid
+// itemMinRoll: minimum valid roll for this item (default 1)
+function azCheckRollRange(statsDict, inferred, itemMinRoll) {
+  const allRolls = Object.keys(statsDict).map(Number).sort((a, b) => a - b);
+  if (allRolls.length === 1) return null; // single-roll item — always valid
+
+  const minR = itemMinRoll || 1;
+  const rolls = allRolls.filter(r => r >= minR);
+  if (rolls.length === 0) return null;
 
   const minRoll   = Math.min(...rolls);
   const maxRoll   = Math.max(...rolls);
@@ -5292,7 +5297,7 @@ function azDoAnalyze() {
       // Compute inferred base for this part
       let inferred = hp / (1 + GROWTH_RATE * upg);
       if (corrupted) inferred /= 1.5;
-      const err = azCheckRollRange(statsDict, inferred);
+      const err = azCheckRollRange(statsDict, inferred, azCurrentItem.minRoll || 1);
       if (err === 'below') {
         armorErrors.push(azPartLabel(p) + t('err_armor_below_suffix'));
       } else if (err === 'above') {
@@ -5425,18 +5430,19 @@ function azDoAnalyze() {
     }
 
     // ── RANGE VALIDATION ──
-    const rangeErr = azCheckRollRange(statsDict, inferred);
+    const rangeErr = azCheckRollRange(statsDict, inferred, azCurrentItem.minRoll || 1);
     if (rangeErr === 'below') { azShowError('err_below_min'); return; }
     if (rangeErr === 'above') { azShowError('err_above_max'); return; }
     azClearError();
 
-    const roll = (function(dict, inf) {
-      const keys = Object.keys(dict).map(Number);
+    const roll = (function(dict, inf, minR) {
+      let keys = Object.keys(dict).map(Number).filter(k => k >= minR);
+      if (keys.length === 0) keys = Object.keys(dict).map(Number);
       if (keys.length === 1) return keys[0];
       let best = keys[0], bestDiff = Math.abs(inf - dict[best]);
       keys.forEach(k => { const d = Math.abs(inf - dict[k]); if (d < bestDiff) { bestDiff = d; best = k; } });
       return best;
-    })(statsDict, inferred);
+    })(statsDict, inferred, azCurrentItem.minRoll || 1);
 
     const nextCost = azSelectedUpg < maxUpg ? (UPGRADE_COSTS[azSelectedUpg + 1] || 0) : 0;
     let goldSpent = 0;

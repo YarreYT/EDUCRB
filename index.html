@@ -191,27 +191,27 @@
 
         // Пометить мусорные push-ID на удаление
         let updates = {};
-        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates['console_log/' + k] = null; });
+        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates[k] = null; });
 
         let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
 
         if (allNums.length > CONSOLE_MAX) {
           const excess = allNums.length - CONSOLE_MAX;
           const toRemove = allNums.slice(0, excess);
-          toRemove.forEach(n => { updates['console_log/' + n] = null; delete newSlots[String(n)]; });
+          toRemove.forEach(n => { updates[String(n)] = null; delete newSlots[String(n)]; });
           allNums = allNums.slice(excess);
         }
 
         // Перенумеруем все слоты с 1 до N — всегда пишем финальное состояние
         allNums.forEach((oldNum, idx) => {
           const newIdx = idx + 1;
-          updates['console_log/' + newIdx] = newSlots[String(oldNum)];
+          updates[String(newIdx)] = newSlots[String(oldNum)];
           if (String(oldNum) !== String(newIdx)) {
-            updates['console_log/' + oldNum] = null;
+            updates[String(oldNum)] = null;
           }
         });
 
-        return db.ref().update(updates);
+        return consoleRef.update(updates);
       })
       .catch(e => console.warn('Firebase write error:', e));
   };
@@ -251,27 +251,27 @@
 
         // Пометить мусорные push-ID на удаление
         let updates = {};
-        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates['preview_log/' + k] = null; });
+        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates[k] = null; });
 
         let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
 
         if (allNums.length > PREVIEW_MAX) {
           const excess = allNums.length - PREVIEW_MAX;
           const toRemove = allNums.slice(0, excess);
-          toRemove.forEach(n => { updates['preview_log/' + n] = null; delete newSlots[String(n)]; });
+          toRemove.forEach(n => { updates[String(n)] = null; delete newSlots[String(n)]; });
           allNums = allNums.slice(excess);
         }
 
         // Перенумеруем все слоты с 1 до N — всегда пишем финальное состояние
         allNums.forEach((oldNum, idx) => {
           const newIdx = idx + 1;
-          updates['preview_log/' + newIdx] = newSlots[String(oldNum)];
+          updates[String(newIdx)] = newSlots[String(oldNum)];
           if (String(oldNum) !== String(newIdx)) {
-            updates['preview_log/' + oldNum] = null;
+            updates[String(oldNum)] = null;
           }
         });
 
-        return db.ref().update(updates);
+        return previewRef.update(updates);
       })
       .catch(e => console.warn('Firebase preview write error:', e));
   };

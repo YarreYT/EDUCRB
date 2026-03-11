@@ -183,6 +183,14 @@
       .then(snap => {
         const data = snap.val() || {};
         const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
+
+        // ── Дедупликация: проверяем все записи в базе ──
+        const isDuplicate = nums.some(n => {
+          const e = data[String(n)];
+          return e && e.typeLabel === entry.typeLabel && e.main === entry.main && e.detail === entry.detail;
+        });
+        if (isDuplicate) return;
+
         const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
 
         const newSlots = {};
@@ -243,6 +251,14 @@
       .then(snap => {
         const data = snap.val() || {};
         const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
+
+        // ── Дедупликация: проверяем все записи в базе ──
+        const isDuplicate = nums.some(n => {
+          const e = data[String(n)];
+          return e && e.typeLabel === entry.typeLabel && e.main === entry.main && e.detail === entry.detail;
+        });
+        if (isDuplicate) return;
+
         const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
 
         const newSlots = {};
@@ -702,6 +718,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 /* Armor part row */
 .armor-part-row{display:none;gap:8px;flex-wrap:wrap;}
 .armor-part-row.visible{display:flex;}
+
+/* Accessories subcat row — horizontal scroll on mobile, no wrap */
+#acc-subcat-row .mod-btn { flex-shrink: 0; }
+#acc-subcat-row::-webkit-scrollbar { display: none; }
 
 /* Roll table */
 .roll-table-wrap{background:rgba(8,8,14,.82);border:1px solid var(--border-rune);border-radius:12px;overflow:hidden;}
@@ -2628,7 +2648,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <div class="stats-row">
         <div class="stat-chip"><span class="stat-num">15</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor Sets</span></div>
-        <div class="stat-chip"><span class="stat-num">1.0.2</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.2.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data</span></div>
       </div>
     </div>
@@ -2719,6 +2739,17 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
         <span data-i18n="tab_armor">Armor</span>
       </button>
+      <button class="cat-tab" id="tab-accessories" onclick="switchCategory('accessories')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        <span data-i18n="tab_accessories">Accessories</span>
+      </button>
+    </div>
+
+    <!-- Accessories sub-category row -->
+    <div class="armor-part-row" id="acc-subcat-row" style="gap:8px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;">
+      <button class="mod-btn active" id="acc-btn-underworld" onclick="selectAccSubcat('underworld')"><span data-i18n="acc_underworld">Underworld Accessories</span></button>
+      <button class="mod-btn" id="acc-btn-angel" onclick="selectAccSubcat('angel')"><span data-i18n="acc_angel">Angel's Sanctuary Accessories</span></button>
+      <button class="mod-btn" id="acc-btn-extra" onclick="selectAccSubcat('extra')"><span data-i18n="acc_extra">Extra Accessories</span></button>
     </div>
 
     <div class="content-area">
@@ -3716,6 +3747,32 @@ const ITEMS = {
   ]
 };
 
+// ── ACCESSORIES DATA ──
+const ACC_DATA = {
+  underworld: [
+    { id:'wise_necklace',    name:'Wise Necklace',           type:'health', rolls:{1:17.60,2:17.78,3:17.95,4:18.13,5:18.30,6:18.48,7:18.66,8:18.83,9:19.01,10:19.18,11:19.36} },
+    { id:'holy_pendant',     name:'Holy Pendant',            type:'health', rolls:{1:17.60,2:17.78,3:17.95,4:18.13,5:18.30,6:18.48,7:18.66,8:18.83,9:19.01,10:19.18,11:19.36} },
+    { id:'sword_necklace_uw',name:'Sword Damage Necklace',   type:'sword',  rolls:{1:17.60,2:17.78,3:17.95,4:18.13,5:18.30,6:18.48,7:18.66,8:18.83,9:19.01,10:19.18,11:19.36} },
+    { id:'lunar_necklace',   name:'Lunar Necklace',          type:'magic',  rolls:{1:17.60,2:17.78,3:17.95,4:18.13,5:18.30,6:18.48,7:18.66,8:18.83,9:19.01,10:19.18,11:19.36} },
+    { id:'tranquil_necklace',name:'Tranquil Necklace',       type:'health', rolls:{1:19.80,2:20.00,3:20.20,4:20.39,5:20.59,6:20.79,7:20.99,8:21.19,9:21.38,10:21.58,11:21.78} },
+    { id:'sorcerous_ring',   name:'Sorcerous Ring',          type:'magic',  rolls:{1:19.80,2:20.00,3:20.20,4:20.39,5:20.59,6:20.79,7:20.99,8:21.19,9:21.38,10:21.58,11:21.78} },
+    { id:'ancient_runes',    name:'Ancient Runes',           type:'sword',  rolls:{1:19.80,2:20.00,3:20.20,4:20.39,5:20.59,6:20.79,7:20.99,8:21.19,9:21.38,10:21.58,11:21.78} },
+  ],
+  angel: [
+    { id:'skyborne_runes',       name:'Skyborne Runes',           type:'sword',  rolls:{1:23.10,2:23.33,3:23.56,4:23.79,5:24.02,6:24.26,7:24.49,8:24.72,9:24.95,10:25.18,11:25.41} },
+    { id:'angels_holy_pendant',  name:"Angel's Holy Pendant",     type:'sword',  rolls:{1:23.10,2:23.33,3:23.56,4:23.79,5:24.02,6:24.26,7:24.49,8:24.72,9:24.95,10:25.18,11:25.41} },
+    { id:'angels_wise_necklace', name:"Angel's Wise Necklace",    type:'health', rolls:{1:24.20,2:24.44,3:24.68,4:24.93,5:25.17,6:25.41,7:25.65,8:25.89,9:26.14,10:26.38,11:26.62} },
+    { id:'angels_lunar_necklace',name:"Angel's Lunar Necklace",   type:'magic',  rolls:{1:26.40,2:26.66,3:26.93,4:27.19,5:27.46,6:27.72,7:27.98,8:28.25,9:28.51,10:28.78,11:29.04} },
+    { id:'celestial_ring',       name:'Celestial Ring',           type:'magic',  rolls:{1:27.50,2:27.78,3:28.05,4:28.33,5:28.60,6:28.88,7:29.15,8:29.43,9:29.70,10:29.98,11:30.25} },
+  ],
+  extra: [
+    { id:'lucky_charm_banner',   name:'Lucky Charm Banner',       type:'luck',   rolls:{1:5.50,2:5.56,3:5.61,4:5.67,5:5.72,6:5.78,7:5.83,8:5.89,9:5.94,10:6.00,11:6.05} },
+  ]
+};
+
+let currentAccSubcat = 'underworld';
+let currentAccItem = null;
+
 const IMAGE_PATHS = {
   baseDir: 'images/Stuff/',
   weapons: {
@@ -3803,17 +3860,82 @@ function switchCategory(cat) {
   currentCategory = cat;
   currentItem = null;
   currentArmorPart = 'Helmet';
+  currentAccItem = null;
   document.getElementById('tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('tab-armor').classList.toggle('active',  cat === 'armor');
+  document.getElementById('tab-accessories').classList.toggle('active', cat === 'accessories');
   document.getElementById('armor-part-row').classList.remove('visible');
-  renderItemList();
+  const accSubcatRow = document.getElementById('acc-subcat-row');
+  if (cat === 'accessories') {
+    accSubcatRow.classList.add('visible');
+    renderAccItemList();
+  } else {
+    accSubcatRow.classList.remove('visible');
+    renderItemList();
+  }
   showEmptyTable();
+}
+
+function selectAccSubcat(subcat) {
+  currentAccSubcat = subcat;
+  currentAccItem = null;
+  ['underworld','angel','extra'].forEach(s => {
+    const btn = document.getElementById('acc-btn-' + s);
+    if (btn) btn.classList.toggle('active', s === subcat);
+  });
+  renderAccItemList();
+  showEmptyTable();
+}
+
+function renderAccItemList() {
+  const list = document.getElementById('item-list');
+  list.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  const items = ACC_DATA[currentAccSubcat] || [];
+  items.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'item-btn';
+    btn.textContent = item.name;
+    btn.dataset.itemId = item.id;
+    btn.onclick = () => selectAccItem(item, btn);
+    list.appendChild(btn);
+  });
+}
+
+function selectAccItem(item, btn) {
+  currentAccItem = item;
+  document.querySelectorAll('#item-list .item-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAccTable();
+}
+
+function renderAccTable() {
+  if (!currentAccItem) { showEmptyTable(); return; }
+  const item = currentAccItem;
+  const colorStyle = item.type === 'health' || item.type === 'luck'
+    ? 'color:#4cff80;font-weight:700;'
+    : item.type === 'sword'
+    ? 'color:#ff4444;font-weight:700;'
+    : 'color:#cc66ff;font-weight:700;';
+  const rollLabel = t('th_roll_acc') || t('th_roll') || 'Roll';
+  const coefLabel = t('th_coef_acc') || 'Coefficient';
+  let html = `<div class="roll-table-wrap"><table><thead><tr>
+    <th>${rollLabel}</th>
+    <th>${coefLabel}</th>
+  </tr></thead><tbody>`;
+  const rolls = Object.keys(item.rolls).map(Number).sort((a,b)=>a-b);
+  rolls.forEach(roll => {
+    const val = item.rolls[roll];
+    const best = roll === Math.max(...rolls) ? ' class="row-best"' : '';
+    html += `<tr${best}><td class="td-roll">${roll}</td><td style="${colorStyle}">${val.toFixed(2).replace('.',',')}%</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('table-container').innerHTML = html;
 }
 
 function renderItemList() {
   const list = document.getElementById('item-list');
   list.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
-  ITEMS[currentCategory].forEach(item => {
+  (ITEMS[currentCategory] || []).forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'item-btn';
     btn.textContent = item.name;
@@ -4062,7 +4184,9 @@ const T = {
     stat_weapons:'Weapons', stat_sets:'Armor Sets', stat_version:'Bot Version', stat_date:'Data',
     rolls_page_title:'Tables', rolls_page_sub:'Roll Tables · Reforge Reference', analyze_page_sub:'Roll Analyzing',
     page_stuff_title:'Stuff Preview', page_stuff_sub:'Item Preview & Stats',
-    tab_weapon:'Weapon', tab_armor:'Armor',
+    tab_weapon:'Weapon', tab_armor:'Armor', tab_accessories:'Accessories',
+    acc_underworld:'Underworld Accessories', acc_angel:"Angel's Sanctuary Accessories", acc_extra:'Extra Accessories',
+    th_roll_acc:'Roll', th_coef_acc:'Coefficient',
     list_header:'// SELECT ITEM', lbl_max_level:'MAX LEVEL',
     mod_upgrade:'Upgrade', mod_reforge:'Reforge', ref_none:'None',
     part_helm:'Helmet', part_chest:'Chestplate', part_legs:'Leggings',
@@ -4154,6 +4278,9 @@ const T = {
     upd2_title: 'UPDATES OF v1.0.2 VERSION!',
     upd2_sub: 'Developer Notes 09.03.2026',
     upd2_body: `<span class="upd-accent">Release of updates in 1.0.2</span>\n\n<span class="upd-cyan">›</span> Added the <span class="upd-accent"><s>WEAPON PREVIEW</s></span> — <span class="upd-accent">STUFF PREVIEW</span> page. From now on, you can preview your desired specifications and their cost. A pleasant interface is also welcome.\n<span class="upd-cyan">›</span> In connection with this, a new console category has been added — <span class="upd-accent">Previews</span>. You can observe examples from other users, compare them and build a verdict. How good is your weapon / armor?\n\n<span class="upd-accent">What is planned for v1.0.3</span>\n<span class="upd-cyan">›</span> Adding the <span class="upd-accent">STUFF COMPARE</span> page — guaranteed\n<span class="upd-cyan">›</span> Possible rebalancing of some weapons — roll reduction. Not sure.\n<span class="upd-cyan">›</span> Adding new weapons possibly... armor... but that\'s a different matter\n<span class="upd-cyan">›</span> Adding <span class="upd-cyan">ACCESSORIES</span> tables on the TABLES page\n\n<span class="upd-muted">It\'s 16:58 here right now. I don\'t know about you all, but I wish you a good evening / day.</span>`,
+    upd3_title: 'UPDATES OF v1.0.2.5 VERSION!',
+    upd3_sub: 'Developer Notes 11.03.2026',
+    upd3_body: `<span class="upd-accent">Security patch &amp; Accessories</span>\n\nUser <span class="upd-cyan">TRAP204s</span> and possibly other developers pointed out a potential site vulnerability — so the site was updated ahead of schedule, with minor console improvements.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">ACCESSORIES</span> have been added to the Tables page. At least all the relevant end-game accessories: items from two dungeons — <span class="upd-accent">Underworld</span> and <span class="upd-accent">Angel\'s Sanctuary</span>. Also includes the luck-banner amulet available at spawn.\n\n<span class="upd-accent">Plans for v1.0.3</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Stuff Compare</span> page — coming for sure. Here\'s how it will work in more detail:\n  You\'ll be able to compare the same weapon at one roll with different specs, or one weapon type with two different rolls.\n  Keep in mind: if you enter two different ROLL values, those are treated as two separate weapons of the same type — so results may be less straightforward than with a single roll.\n  With this page you\'ll find out:\n  · How much gold remains between one upgrade level and another (when using a single roll value);\n  · What the damage difference is between two different specs.\n<span class="upd-cyan">›</span> Possibly new weapon types, armor... and especially <span class="upd-cyan">more ACCESSORIES</span>. But that\'s a story for another time.\n\n<span class="upd-muted">Good evening / morning to everyone... or whatever time it is for you. Hehe.</span>`,
   },
   ru:{
     nav_home:'Главная', nav_rolls:'Таблицы', nav_analyze:'Анализ ролла', nav_weapon:'Просмотр оружия', nav_compare:'Сравнение оружий', nav_stuff:'Прогноз лута',
@@ -4165,7 +4292,9 @@ const T = {
     stat_weapons:'Оружий', stat_sets:'Сета брони', stat_version:'Версия бота', stat_date:'Дата',
     rolls_page_title:'Таблицы', rolls_page_sub:'Таблицы роллов · Справка по заклинаниям', analyze_page_sub:'Анализ ролла',
     page_stuff_title:'Прогноз лута', page_stuff_sub:'Проверка вещей & Характеристики',
-    tab_weapon:'Оружие', tab_armor:'Броня',
+    tab_weapon:'Оружие', tab_armor:'Броня', tab_accessories:'Аксессуары',
+    acc_underworld:'Аксессуары Подземелья', acc_angel:'Аксессуары Обители Ангелов', acc_extra:'Дополнительные аксессуары',
+    th_roll_acc:'Ролл', th_coef_acc:'Коэффициент',
     list_header:'// ВЫБЕРИТЕ ПРЕДМЕТ', lbl_max_level:'МАКС. УРОВЕНЬ',
     mod_upgrade:'Улучшение', mod_reforge:'Зачарование', ref_none:'Нет',
     part_helm:'Шлем', part_chest:'Нагрудник', part_legs:'Штаны',
@@ -4258,6 +4387,9 @@ const T = {
     upd2_title: 'ОБНОВЛЕНИЯ ВЕРСИИ v1.0.2',
     upd2_sub: 'Заметки разработчика 09.03.2026',
     upd2_body: `<span class="upd-accent">Релиз обновлений в 1.0.2</span>\n\n<span class="upd-cyan">›</span> Добавлена страница <span class="upd-accent"><s>ПРОГНОЗ ОРУЖИЯ</s></span> — <span class="upd-accent">ПРОГНОЗ ЛУТА (STUFF PREVIEW)</span>. Отныне, вы можете просмотреть желаемые характеристики и их стоимость. Приятный интерфейс так-же приветствуется.\n<span class="upd-cyan">›</span> В связи с этим добавлена и новая категория консоли — <span class="upd-accent">Прогнозы (Previews)</span>. Вы можете наблюдать за примерами других пользователей, сравнивать и строить вердикт. Насколько хорошо ваше оружие/броня?\n\n<span class="upd-accent">Что планируется на v1.0.3</span>\n<span class="upd-cyan">›</span> Добавление страницы ПРОГНОЗ ЛУТА (STUFF PREVIEW) — гарантировано\n<span class="upd-cyan">›</span> Ребаланс возможно некоторых оружий — сокращение роллов. Не точно.\n<span class="upd-cyan">›</span> Добавление новых оружий возможно... броня... но это другое дело\n<span class="upd-cyan">›</span> Добавление таблиц АКСЕССУАРОВ на странице ТАБЛИЦЫ (Tables)\n\n<span class="upd-muted">У меня сейчас 16:58. Не знаю как у вас, но вам всем хорошего вечера/дня.</span>`,
+    upd3_title: 'ОБНОВЛЕНИЯ ВЕРСИИ v1.0.2.5!',
+    upd3_sub: 'Записи разработчика 11.03.2026',
+    upd3_body: `<span class="upd-accent">Патч безопасности &amp; Аксессуары</span>\n\nПользователь <span class="upd-cyan">TRAP204s</span> и возможно другие программисты отметили одну потенциальную уязвимость сайта, поэтому сайт был досрочно обновлён, с минимальными обновлениями консоли.\n\n<span class="upd-cyan">›</span> Добавлены <span class="upd-accent">АКСЕССУАРЫ</span> на странице Таблицы. По крайней мере все актуальные аксессуары, которыми пользуются в Энд-гейме. Аксессуары с двух подземелий — <span class="upd-accent">Underworld</span> и <span class="upd-accent">Angel\'s Sanctuary</span>. Так-же информация про амулет, дающий удачу на баннер, на спавне.\n\n<span class="upd-accent">Планы на версию v1.0.3</span>\n<span class="upd-cyan">›</span> Страница <span class="upd-accent">Stuff Compare</span> — будет, просто в этот раз расскажу более подробно как она будет работать.\n  Вам будет дана возможность сравнить как одно оружие одного ролла, но с разной спецификой, так и одно оружие с двумя роллами.\n  Однако учитывайте такой момент, что если вы будете вводить два значения РОЛЛА, то это 2 оружия одного типа, поэтому и результаты будут не совсем однозначные с одним значением РОЛЛА.\n  С этой страницей вы узнаете:\n  · Сколько золота вам осталось потратить от одного уровня улучшения к другому, в случае если у вас введено одно значение РОЛЛА;\n  · Какая будет разница в уроне между двумя спецификами.\n<span class="upd-cyan">›</span> Так-же, возможно новые типы оружий... брони.. и особенно <span class="upd-cyan">АКСЕССУАРЫ</span>. Но это уже другая тема.\n\n<span class="upd-muted">Хорошего всем вечера/утра.. утреца-говнеца. Хыхы, капец я долбаёб.</span>`,
   }
 };
 
@@ -4300,10 +4432,11 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 1;
+let updPage = 2;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
+  { title:'upd3_title', sub:'upd3_sub', body:'upd3_body' },
 ];
 
 function updRender() {
@@ -4404,7 +4537,10 @@ function applyLang() {
     }
     // === КОНЕЦ ИСПРАВЛЕНИЯ ===
   }
-  if (currentItem) {
+  if (currentCategory === 'accessories') {
+    if (currentAccItem) renderAccTable();
+    else showEmptyTable();
+  } else if (currentItem) {
     renderTable();
   } else {
     showEmptyTable();
@@ -5107,9 +5243,11 @@ function triggerBtnCooldown(btnId, ms) {
   if (!btn) return;
   btn.style.setProperty('--cd-duration', ms + 'ms');
   btn.classList.add('cd-active');
+  btn.disabled = true;
   clearTimeout(_btnCdTimers[btnId]);
   _btnCdTimers[btnId] = setTimeout(() => {
     btn.classList.remove('cd-active');
+    btn.disabled = false;
   }, ms);
 }
 

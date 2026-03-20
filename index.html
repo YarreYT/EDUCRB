@@ -25,6 +25,7 @@
   const db = firebase.database();
   const consoleRef = db.ref('console_log');
   const previewRef = db.ref('preview_log');
+  const compareRef = db.ref('compare_log');
 
   // ── PRESENCE (онлайн счётчик) ──
 
@@ -292,6 +293,53 @@
       .catch(e => console.warn('Firebase preview write error:', e));
   };
 
+  // ── COMPARE LOG (numbered slots 1..25) ──
+  const COMPARE_MAX = 25;
+
+  window._fbPushCompare = function(entry) {
+    compareRef.once('value')
+      .then(snap => {
+        const data = snap.val() || {};
+        const nums = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b);
+        const isDuplicate = nums.some(n => {
+          const e = data[String(n)];
+          return e && e.typeLabel === entry.typeLabel && e.main === entry.main && e.detail === entry.detail;
+        });
+        if (isDuplicate) return;
+        const nextNum = nums.length > 0 ? nums[nums.length - 1] + 1 : 1;
+        const newSlots = {};
+        nums.forEach(n => { newSlots[String(n)] = data[String(n)]; });
+        newSlots[String(nextNum)] = entry;
+        let updates = {};
+        Object.keys(data).forEach(k => { if (isNaN(Number(k))) updates[k] = null; });
+        let allNums = Object.keys(newSlots).map(Number).sort((a,b) => a-b);
+        if (allNums.length > COMPARE_MAX) {
+          const excess = allNums.length - COMPARE_MAX;
+          const toRemove = allNums.slice(0, excess);
+          toRemove.forEach(n => { updates[String(n)] = null; delete newSlots[String(n)]; });
+          allNums = allNums.slice(excess);
+        }
+        allNums.forEach((oldNum, idx) => {
+          const newIdx = idx + 1;
+          updates[String(newIdx)] = newSlots[String(oldNum)];
+          if (String(oldNum) !== String(newIdx)) updates[String(oldNum)] = null;
+        });
+        return compareRef.update(updates);
+      })
+      .catch(e => console.warn('Firebase compare write error:', e));
+  };
+
+  compareRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) {
+      window.compareHistory = [];
+    } else {
+      const sorted = Object.keys(data).map(Number).filter(n => !isNaN(n)).sort((a,b) => b-a);
+      window.compareHistory = sorted.map(k => data[String(k)]);
+    }
+    if (typeof renderAllConsoles === 'function') renderAllConsoles();
+  }, (error) => { console.warn('Firebase compare read error:', error); });
+
   // Слушаем все записи preview_log (ключи 1..25)
   previewRef.on('value', (snapshot) => {
     const data = snapshot.val();
@@ -301,7 +349,7 @@
       const sorted = Object.keys(data)
         .map(Number)
         .filter(n => !isNaN(n))
-        .sort((a, b) => b - a); // новые сверху
+        .sort((a, b) => b - a);
       window.previewHistory = sorted.map(k => data[String(k)]);
     }
     if (typeof renderAllConsoles === 'function') renderAllConsoles();
@@ -850,7 +898,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .roll-table-wrap table{min-width:360px;}
   .modifier-panels{flex-direction:column;}
   .category-tabs .cat-tab{padding:10px 14px;font-size:13px;}
-  .rolls-section{padding:14px 12px 80px;}
+  .rolls-section{padding:20px 16px calc(var(--nav-h) + 16px) !important;}
 }
 
 /* ══════════════════════════════
@@ -1424,9 +1472,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   animation:az-roll-pop .4s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes az-roll-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
-.az-pink-divider{
-  height:2px;background:linear-gradient(90deg,transparent,#e060c0,transparent);margin:8px 0 10px;
-}
+
 .az-res-stats-box {
   background: linear-gradient(180deg,#0f1a27 0%,#0a1520 100%);
   border-radius: 8px;
@@ -2172,10 +2218,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     font-size: 16px;
   }
   .az-v-arrow {
-    margin: 6px auto 12px;
+    margin: 6px auto 10px;
   }
   #az-result-card {
-    margin-top: 24px;
+    margin-top: 20px;
   }
 }
 
@@ -2451,25 +2497,14 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     background: rgba(200,147,42,.08) !important;
   }
 }
-@media(max-width:480px) {
-  #page-stuff .az-mobile-action-btns {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    width: 100%;
-    margin-top: 8px;
-    margin-bottom: 12px;
-  }
-  #page-stuff .az-mobile-action-btns .az-panel-btn {
-    flex: 1;
-    min-width: 0;
-    padding: 10px 8px;
-    font-size: 13px;
-    letter-spacing: 1px;
-    gap: 6px;
-  }
+@media(max-width:760px) {
   #page-stuff #sp-result-card { margin-top: 0; }
-  #page-stuff .sp-v-arrow { margin: 8px auto 32px; }
+  #page-stuff .sp-v-arrow { margin: 7px auto 28px; }
+  /* SP mobile btns shown via JS (mab.style.display = 'flex') on mobile */
+  #page-stuff .sp-mobile-action-btns {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 }
 /* SP roll selector — horizontal scroll row */
 .sp-roll-row {
@@ -2487,6 +2522,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .sp-roll-row::-webkit-scrollbar { height: 4px; }
 .sp-roll-row::-webkit-scrollbar-track { background: transparent; }
 .sp-roll-row::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
+
+/* SP controls locked until roll chosen */
+.sp-ctrl-locked{opacity:.3 !important;pointer-events:none !important;cursor:not-allowed !important;}
 
 .sp-roll-btn {
   flex-shrink: 0;
@@ -2550,7 +2588,252 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   box-sizing: border-box;
   flex-shrink: 0;
 }
+
+/* ══════════════════════════════
+   COMPARE PAGE
+══════════════════════════════ */
+#page-compare{padding-top:var(--nav-h);min-height:100vh;grid-template-columns:1fr 420px;position:relative;z-index:1;}
+.cmp-section{padding:28px 32px 32px 44px;display:flex;flex-direction:column;gap:18px;min-width:0;}
+
+/* table-area — row, aligns left like stuff-area */
+.cmp-table-area{flex:1;min-width:0;display:flex;flex-direction:row;gap:0;align-items:flex-start;}
+.cmp-table-area .table-empty{align-self:flex-start;width:366px;max-width:100%;box-sizing:border-box;}
+
+/* card column width = SP */
+#cmp-active{width:290px;flex-shrink:0;max-width:290px;}
+
+/* ── CMP Result & Third Panel ── */
+.cmp-h-arrow{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 2px;flex-shrink:0;margin-left:-40px;margin-right:8px;
+  align-self:flex-start;
+  padding-top:0;
+  transition:padding-top 0.15s ease;
+}
+.cmp-h-arrow.visible{display:flex;}
+
+/* Mobile: btns spacing around action buttons */
+.cmp-mobile-action-btns{
+  display:none;flex-direction:row;gap:8px;width:100%;margin-top:14px;margin-bottom:14px;
+}
+.cmp-mobile-action-btns .az-panel-btn{flex:1;min-width:0;padding:10px 8px;font-size:13px;letter-spacing:1px;gap:6px;}
+@media(min-width:761px){
+  /* On desktop these are always hidden regardless of .visible class */
+  .cmp-v-arrow, .cmp-mobile-action-btns{display:none!important;}
+}
+@media(max-width:760px){
+  .cmp-v-arrow.visible{display:flex;}
+  .cmp-mobile-action-btns.visible{display:flex;}
+  .cmp-result-card{width:100%!important;max-width:100%!important;}
+  .cmp-h-arrow,.cmp-third-panel{display:none!important;}
+  /* On mobile, stack vertically */
+  .cmp-table-area{flex-direction:column;align-items:stretch;}
+  /* Arrow closer to result — btns already add spacing */
+  .cmp-v-arrow{margin:5px auto 26px;}
+}
+/* Fix SP v-arrow bottom margin */
+#page-stuff .sp-v-arrow{margin:px auto 28px;}
+
+.cmp-result-card{
+  width:290px;flex-shrink:0;max-width:290px;
+  background:linear-gradient(180deg,#1e2d3d 0%,#162131 100%);
+  border-radius:18px;padding:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);
+  align-self:flex-start;
+}
+.cmp-view-btns{display:flex;gap:8px;}
+.cmp-view-btn{
+  flex:1;padding:10px 8px;
+  background:linear-gradient(180deg,#0d2440 0%,#091a30 100%);
+  border:1.5px solid #1a4070;
+  border-radius:12px;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1.5px;
+  color:var(--gold-bright);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.cmp-view-btn:hover{border-color:currentColor;background:rgba(200,147,42,.13);transform:translateY(-1px);box-shadow:0 4px 18px rgba(200,147,42,.18);}
+.cmp-view-btn:active{transform:translateY(0);}
+.cmp-view-btn.active{border-color:currentColor;background:rgba(200,147,42,.18);box-shadow:0 0 12px rgba(200,147,42,.15);}
+.cmp-diff-badge{
+  font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;
+  padding:2px 7px;border-radius:5px;
+}
+.cmp-diff-badge.pos{color:#00c878;background:rgba(0,200,120,.1);border:1px solid rgba(0,200,120,.25);}
+.cmp-diff-badge.neg{color:#ff4444;background:rgba(255,68,68,.08);border:1px solid rgba(255,68,68,.2);}
+.cmp-diff-badge.zero{color:var(--text-dim);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
+.cmp-diff-inline{
+  font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;
+  padding:1px 5px;border-radius:4px;margin-left:4px;
+}
+.cmp-diff-inline.pos{color:#00c878;}
+.cmp-diff-inline.neg{color:#ff4444;}
+.cmp-diff-inline.zero{color:var(--text-dim);}
+.cmp-ref-diff-row{text-align:center;margin-top:-4px;margin-bottom:4px;}
+.cmp-third-panel{
+  display:none;flex-direction:column;
+  min-width:0;flex:1;margin-left:14px;
+  background:linear-gradient(180deg,rgba(18,13,6,.97) 0%,rgba(8,6,2,.99) 100%);
+  border:1px solid var(--border-gold);border-radius:16px;
+  overflow:hidden;align-self:stretch;
+  position:sticky;top:calc(var(--nav-h) + 14px);
+  box-shadow:0 0 30px rgba(200,147,42,.07),inset 0 1px 0 rgba(200,147,42,.15);
+}
+.cmp-third-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);
+  opacity:.4;pointer-events:none;
+}
+.cmp-third-panel.visible{display:flex;}
+
+/* Category title — centred, no colon */
+.cmp-cat-title{
+  text-align:center;margin-bottom:7px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;
+}
+
+/* ── CMP Roll section ── */
+.cmp-slots-row{
+  display:flex;align-items:center;gap:0;
+  margin:0 0 5px;
+}
+.cmp-slot-sign{
+  font-family:'Cinzel',serif;font-size:22px;font-weight:900;line-height:1;
+  flex-shrink:0;width:28px;text-align:center;
+  color:#e8dcc8;
+}
+.cmp-slots-inner{
+  flex:1;display:flex;align-items:center;
+}
+/* Slot A pushes left toward ! */
+#cmp-slot-a{ margin-right:auto; }
+/* Slot B pushes right toward ? */
+#cmp-slot-b{ margin-left:auto; }
+
+/* Big > in center */
+.cmp-slot-sep{
+  font-family:'Cinzel',serif;font-size:26px;font-weight:900;
+  color:rgba(255,255,255,.25);flex-shrink:0;padding:0 10px;line-height:1;
+}
+/* Fixed 50x50 squares */
+.cmp-slot{
+  width:50px;height:50px;flex-shrink:0;
+  background:rgba(10,16,26,.7);
+  border:2px solid #2a3a4a;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,background .15s;
+  user-select:none;
+}
+.cmp-slot:hover:not(.cmp-locked){background:rgba(255,255,255,.06);}
+.cmp-slot.cmp-slot-open{background:rgba(255,255,255,.05);}
+.cmp-slot.cmp-locked{opacity:.28;cursor:not-allowed;pointer-events:none;}
+.cmp-slot-val{
+  font-family:'Cinzel',serif;font-size:22px;font-weight:900;line-height:1;color:var(--text-dim);
+}
+.cmp-slot-val.placeholder{font-size:13px;opacity:.3;font-family:'Share Tech Mono',monospace;}
+
+/* Roll picker */
+.cmp-roll-section{margin:0 0 6px;}
+.cmp-roll-picker{display:none;margin:0 0 2px;}
+.cmp-roll-picker.open{display:block;}
+.cmp-roll-picker-inner{
+  display:flex;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;overflow-y:hidden;
+  padding:4px 2px 7px;
+  scrollbar-width:thin;scrollbar-color:rgba(200,147,42,.3) transparent;
+  -webkit-overflow-scrolling:touch;
+}
+.cmp-roll-picker-inner::-webkit-scrollbar{height:3px;}
+.cmp-roll-picker-inner::-webkit-scrollbar-thumb{background:rgba(200,147,42,.25);border-radius:2px;}
+.cmp-roll-picker-inner .sp-roll-btn{width:38px;height:38px;flex-shrink:0;font-size:16px;}
+
+/* Category inputs */
+.cmp-two-inputs{display:flex;align-items:center;gap:4px;margin:0;}
+.cmp-two-inputs > .az-selector .az-sel-btn{border-radius:7px;}
+.cmp-two-inputs > .az-selector .az-ref-btn{border-radius:7px;}
+
+/* › separator between category pairs */
+.cmp-cat-sep{
+  font-family:'Cinzel',serif;font-size:22px;font-weight:900;
+  color:rgba(255,255,255,.22);flex-shrink:0;padding:0 4px;line-height:1;
+}
+
+/* Compact buttons for CMP — shorter text, overflow hidden */
+.cmp-sel-btn, .cmp-ref-btn{
+  overflow:hidden;
+}
+.cmp-sel-btn span:first-child, .cmp-ref-btn span:first-child{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:11px;
+}
+
+.cmp-corr-side{flex:1;justify-content:center;}
+.cmp-corr-slash{font-family:'Cinzel',serif;font-size:16px;font-weight:900;color:rgba(255,255,255,.18);flex-shrink:0;line-height:1;}
+.az-selector.cmp-locked{opacity:.35;pointer-events:none;}
+.az-corr-toggle.cmp-locked{opacity:.35;pointer-events:none;}
+.az-analyze-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none;background:linear-gradient(180deg,#1a5500,#103a00 100%);box-shadow:none;transform:none;}
+
+/* Mobile */
+@media(max-width:960px){
+  #page-compare{grid-template-columns:1fr;}
+  .cmp-section{padding:20px 16px 24px;}
+}
+@media(max-width:760px){
+  #page-compare .content-area{flex-direction:column;}
+  #page-compare .item-list-panel{
+    width:100%;position:static;align-self:auto;
+    max-height:none;overflow:visible;flex-direction:row;flex-wrap:wrap;
+  }
+  #page-compare .item-list-header{display:none;}
+  .cmp-table-area{flex-direction:column;}
+  .cmp-table-area .table-empty{width:100%;box-sizing:border-box;}
+  #cmp-active{width:100%;max-width:100%;}
+  #cmp-active .az-card{width:100%;max-width:100%;box-sizing:border-box;}
+}
+@media(max-width:600px){
+  #page-compare{padding-top:0;padding-bottom:var(--nav-h);}
+  .cmp-section{padding:20px 16px calc(var(--nav-h) + 16px) !important;}
+
+  /* Item list grid */
+  #page-compare .item-list-panel{
+    display:grid!important;grid-template-columns:1fr 1fr!important;
+    grid-auto-rows:min-content!important;gap:4px!important;padding:6px!important;
+    max-height:200px!important;overflow-y:auto!important;overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch;width:100%!important;position:static!important;
+    align-self:auto!important;align-items:start!important;
+  }
+  #page-compare .item-list-header{display:none!important;}
+  #page-compare .item-btn{
+    display:block!important;width:100%!important;margin:0!important;padding:7px 10px!important;
+    font-size:12px!important;text-align:center!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+    border:1px solid var(--border-rune)!important;border-radius:7px!important;
+    height:auto!important;min-height:unset!important;line-height:1.4!important;
+  }
+  #page-compare .item-btn.active{border-color:var(--gold)!important;color:var(--gold)!important;background:rgba(200,147,42,.08)!important;}
+
+  /* CMP card full width */
+  #cmp-active{width:100%!important;max-width:100%!important;}
+  #cmp-card{width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
+
+  /* Slots row — scale with screen */
+  .cmp-slots-row{width:100%;}
+  .cmp-slots-inner{flex:1;}
+  .cmp-slot{width:44px;height:44px;}
+  .cmp-slot-val{font-size:20px;}
+  .cmp-slot-sign{font-size:20px;width:24px;}
+
+  /* Two-col inputs full width */
+  .cmp-two-inputs{width:100%;}
+  .cmp-two-inputs > .az-selector{min-width:0;flex:1;}
+  .cmp-sel-btn,.cmp-ref-btn,.az-sel-btn,.az-ref-btn{
+    min-width:0;width:100%;
+  }
+}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="page-bg"></div>
@@ -2594,9 +2877,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
       <span class="tooltip" data-i18n="nav_stuff">Stuff Preview</span>
     </button>
-    <button class="nav-btn nav-btn-soon" id="navbtn-compare" style="opacity:0.375;cursor:not-allowed;" disabled>
+    <button class="nav-btn" id="navbtn-compare" onclick="navigateTo('compare')">
       <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 3L2 8l2 .83V15c0 1.1.9 2 2 2h1l-1 2h2l1-2h6l1 2h2l-1-2h1c1.1 0 2-.9 2-2V8.83L22 8l-10-5zm0 2.18L18.7 8.5 17 9.17V15H7V9.17L5.3 8.5 12 5.18zM7 10l-3 6h6l-3-6zm10 0l-3 6h6l-3-6z"/></svg>
-      <span class="tooltip">Stuff Compare SOON!</span>
+      <span class="tooltip" data-i18n="nav_compare">Stuff Compare</span>
     </button>
   </div>
   <div class="nav-spacer"></div>
@@ -2648,7 +2931,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <div class="stats-row">
         <div class="stat-chip"><span class="stat-num">15</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor Sets</span></div>
-        <div class="stat-chip"><span class="stat-num">1.0.2.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.3</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data</span></div>
       </div>
     </div>
@@ -2679,6 +2962,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     <div class="console-tabs">
       <button class="console-tab-btn active" onclick="switchConsoleTab('home','analyses')" data-i18n="tab_analyses">Analyses</button>
       <button class="console-tab-btn" onclick="switchConsoleTab('home','previews')" data-i18n="tab_previews">Previews</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('home','compares')" data-i18n="tab_compares">Compares</button>
     </div>
     <!-- ANALYSES TAB -->
     <div class="console-tab-pane active" id="console-tab-home-analyses">
@@ -2707,6 +2991,15 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       </div>
       <div class="console-body" id="console-body-home-previews">
       </div>
+    </div>
+    <!-- COMPARES TAB -->
+    <div class="console-tab-pane" id="console-tab-home-compares">
+      <div class="console-empty" id="empty-state-home-compares">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc">Your last 25 comparisons will appear here.</div>
+      </div>
+      <div class="console-body" id="console-body-home-compares"></div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -2766,7 +3059,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
         <div id="table-container">
           <div class="table-empty" id="table-empty-state">
-            <div class="table-empty-icon">⚔️</div>
+            <div class="table-empty-icon">📃</div>
             <div class="table-empty-title" data-i18n="table_empty_title">SELECT AN ITEM</div>
             <div class="table-empty-desc" data-i18n="table_empty_desc">Choose a weapon or armor piece from the list to see its roll table.</div>
           </div>
@@ -2791,6 +3084,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     <div class="console-tabs">
       <button class="console-tab-btn active" onclick="switchConsoleTab('rolls','analyses')" data-i18n="tab_analyses">Analyses</button>
       <button class="console-tab-btn" onclick="switchConsoleTab('rolls','previews')" data-i18n="tab_previews">Previews</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('rolls','compares')" data-i18n="tab_compares">Compares</button>
     </div>
     <!-- ANALYSES TAB -->
     <div class="console-tab-pane active" id="console-tab-rolls-analyses">
@@ -2820,6 +3114,15 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <div class="console-body" id="console-body-rolls-previews">
       </div>
     </div>
+    <!-- COMPARES TAB -->
+    <div class="console-tab-pane" id="console-tab-rolls-compares">
+      <div class="console-empty" id="empty-state-rolls-compares">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc">Your last 25 comparisons will appear here.</div>
+      </div>
+      <div class="console-body" id="console-body-rolls-compares"></div>
+    </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
       <input type="text" class="console-input" id="console-input-rolls"
@@ -2838,7 +3141,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <svg class="page-title-icon" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       <div>
         <div class="page-title-text" data-i18n="nav_analyze">Analyze Roll</div>
-        <div class="page-title-sub" data-i18n="analyze_page_sub">Roll Analyzing</div>
+        <div class="page-title-sub" data-i18n="analyze_page_sub">Roll Analyzing By Calculations</div>
       </div>
     </div>
 
@@ -2860,7 +3163,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
       <div class="table-area analyze-area">
         <div class="table-empty" id="az-empty">
-          <div class="table-empty-icon">⚔️</div>
+          <div class="table-empty-icon">🔍</div>
           <div class="table-empty-title" data-i18n="table_empty_title">SELECT AN ITEM</div>
           <div class="table-empty-desc" data-i18n="table_empty_desc">Choose a weapon or armor piece from the list to analyze its roll.</div>
         </div>
@@ -2903,7 +3206,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
           <div class="az-stats-box">
             <div class="az-stat-row">
               <span class="az-stat-lbl" id="az-stat-lbl-main" data-i18n="lbl_damage">Damage:</span>
-              <input class="az-stat-input" type="number" id="az-damage" placeholder="0" min="0">
+              <input class="az-stat-input" type="number" id="az-damage" placeholder="0" min="0" oninput="azUpdateAnalyzeBtn();azUpdateControlLocks()">
             </div>
           </div>
 
@@ -3036,7 +3339,6 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
             <div class="az-quote-text" id="az-quote-mobile-text"></div>
           </div>
 
-          <div class="az-pink-divider"></div>
 
           <!-- Mobile: Process / Tablet buttons inside result card, above item name -->
           <div class="az-mobile-action-btns" id="az-mobile-action-btns">
@@ -3177,6 +3479,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     <div class="console-tabs">
       <button class="console-tab-btn active" onclick="switchConsoleTab('analyze','analyses')" data-i18n="tab_analyses">Analyses</button>
       <button class="console-tab-btn" onclick="switchConsoleTab('analyze','previews')" data-i18n="tab_previews">Previews</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('analyze','compares')" data-i18n="tab_compares">Compares</button>
     </div>
     <!-- ANALYSES TAB -->
     <div class="console-tab-pane active" id="console-tab-analyze-analyses">
@@ -3203,6 +3506,15 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       </div>
       <div class="console-body" id="console-body-analyze-previews">
       </div>
+    </div>
+    <!-- COMPARES TAB -->
+    <div class="console-tab-pane" id="console-tab-analyze-compares">
+      <div class="console-empty" id="empty-state-analyze-compares">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc">Your last 25 comparisons will appear here.</div>
+      </div>
+      <div class="console-body" id="console-body-analyze-compares"></div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -3267,7 +3579,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       <svg class="page-title-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
       <div>
         <div class="page-title-text" data-i18n="page_stuff_title">Stuff Preview</div>
-        <div class="page-title-sub" data-i18n="page_stuff_sub">Item Preview &amp; Stats</div>
+        <div class="page-title-sub" data-i18n="page_stuff_sub">Item Preview · Check Specifications</div>
       </div>
     </div>
 
@@ -3289,7 +3601,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
       <div class="table-area stuff-area">
         <div class="table-empty" id="sp-empty">
-          <div class="table-empty-icon">⚔️</div>
+          <div class="table-empty-icon">👁️</div>
           <div class="table-empty-title" data-i18n="table_empty_title">SELECT AN ITEM</div>
           <div class="table-empty-desc" data-i18n="sp_empty_desc">Choose a weapon or armor piece from the list to see your wished specifications.</div>
         </div>
@@ -3421,6 +3733,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
         </div>
 
         <div class="az-result-card" id="sp-result-card" style="display:none;">
+
           <div class="az-img-box" id="sp-res-img-box">
             <svg class="az-img-placeholder" id="sp-res-placeholder" viewBox="0 0 100 100" fill="#a0c0e0">
               <circle cx="50" cy="50" r="32" fill="none" stroke="#a0c0e0" stroke-width="2.5"/>
@@ -3431,12 +3744,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
             <img id="sp-res-img" src="" alt="">
           </div>
 
-          <div class="az-res-row" id="sp-res-roll-row" style="justify-content:center;padding:4px 0 2px;">
-            <span style="font-size:13px;font-weight:600;color:var(--text-muted);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-right:8px;" data-i18n="lbl_roll">ROLL:</span>
-            <span id="sp-res-roll-val" style="font-size:15px;font-weight:900;font-family:'Cinzel',serif;letter-spacing:1px;">—</span>
-          </div>
-
-          <!-- Mobile: Process / Tablet buttons inside result card -->
+          <!-- Mobile: Process/Tablet buttons — between image and stats -->
           <div class="az-mobile-action-btns sp-mobile-action-btns" id="sp-mobile-action-btns">
             <button class="az-panel-btn" onclick="spOpenModal('process')">
               <span class="az-panel-btn-icon">⚙</span>
@@ -3446,6 +3754,11 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
               <span class="az-panel-btn-icon">📋</span>
               <span data-i18n="btn_tablet">TABLET</span>
             </button>
+          </div>
+
+          <div class="az-res-row" id="sp-res-roll-row" style="justify-content:center;padding:4px 0 2px;">
+            <span style="font-size:13px;font-weight:600;color:var(--text-muted);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-right:8px;" data-i18n="lbl_roll">ROLL:</span>
+            <span id="sp-res-roll-val" style="font-size:15px;font-weight:900;font-family:'Cinzel',serif;letter-spacing:1px;">—</span>
           </div>
 
           <div class="az-res-stats-box">
@@ -3568,6 +3881,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     <div class="console-tabs">
       <button class="console-tab-btn active" onclick="switchConsoleTab('stuff','analyses')" data-i18n="tab_analyses">Analyses</button>
       <button class="console-tab-btn" onclick="switchConsoleTab('stuff','previews')" data-i18n="tab_previews">Previews</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('stuff','compares')" data-i18n="tab_compares">Compares</button>
     </div>
     <!-- ANALYSES TAB -->
     <div class="console-tab-pane active" id="console-tab-stuff-analyses">
@@ -3594,6 +3908,15 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
       </div>
       <div class="console-body" id="console-body-stuff-previews">
       </div>
+    </div>
+    <!-- COMPARES TAB -->
+    <div class="console-tab-pane" id="console-tab-stuff-compares">
+      <div class="console-empty" id="empty-state-stuff-compares">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc">Your last 25 comparisons will appear here.</div>
+      </div>
+      <div class="console-body" id="console-body-stuff-compares"></div>
     </div>
     <div class="console-input-wrap">
       <span class="console-prompt">›</span>
@@ -3637,6 +3960,451 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     </div>
   </div>
 
+</main>
+
+<!-- ══════════════════════════════
+     COMPARE PAGE
+══════════════════════════════ -->
+<main id="page-compare" class="page">
+  <section class="rolls-section cmp-section">
+    <div class="page-title-block">
+      <svg class="page-title-icon" viewBox="0 0 24 24"><path d="M12 3L2 8l2 .83V15c0 1.1.9 2 2 2h1l-1 2h2l1-2h6l1 2h2l-1-2h1c1.1 0 2-.9 2-2V8.83L22 8l-10-5zm0 2.18L18.7 8.5 17 9.17V15H7V9.17L5.3 8.5 12 5.18zM7 10l-3 6h6l-3-6zm10 0l-3 6h6l-3-6z"/></svg>
+      <div>
+        <div class="page-title-text" data-i18n="page_compare_title">Stuff Compare</div>
+        <div class="page-title-sub" data-i18n="page_compare_sub">Item Type Comparison · Type Actual and Wished Specifics</div>
+      </div>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="category-tabs">
+      <button class="cat-tab active" id="cmp-tab-weapon" onclick="cmpSwitchCategory('weapon')">
+        <svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-14 14H1v-6.5l13.5-14.5zm-2 4.5L4 15.5V19h3.5L14 12l-1.5-5z"/></svg>
+        <span data-i18n="tab_weapon">Weapon</span>
+      </button>
+      <button class="cat-tab" id="cmp-tab-armor" onclick="cmpSwitchCategory('armor')">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
+        <span data-i18n="tab_armor">Armor</span>
+      </button>
+    </div>
+
+    <div class="content-area">
+      <!-- LEFT: single item list (one weapon chosen for both sides) -->
+      <div class="item-list-panel" id="cmp-item-list">
+        <div class="item-list-header" data-i18n="list_header">// SELECT ITEM</div>
+      </div>
+
+      <!-- RIGHT: compare area -->
+      <div class="table-area cmp-table-area">
+
+        <!-- Empty state -->
+        <div class="table-empty" id="cmp-empty">
+          <div class="table-empty-icon">⚖️</div>
+          <div class="table-empty-title" data-i18n="table_empty_title">SELECT AN ITEM</div>
+          <div class="table-empty-desc" data-i18n="cmp_empty_desc">Choose a weapon or armor piece from the list to start comparing.</div>
+        </div>
+
+        <!-- Active compare area — same positioning as SP/AZ left col -->
+        <div id="cmp-active" style="display:none; flex-direction:column; gap:14px; align-items:flex-start;">
+
+          <div class="az-card" id="cmp-card" style="width:100%;display:flex;flex-direction:column;">
+
+            <!-- Item image -->
+            <div class="az-img-box" id="cmp-img-box">
+              <svg class="az-img-placeholder" id="cmp-img-ph" viewBox="0 0 100 100" fill="#a0c0e0">
+                <circle cx="50" cy="50" r="32" fill="none" stroke="#a0c0e0" stroke-width="2.5"/>
+                <path d="M30 70 L70 30 M70 70 L30 30" stroke="#a0c0e0" stroke-width="2"/>
+              </svg>
+              <img id="cmp-item-img" src="" alt="" style="display:none;">
+            </div>
+            <div class="az-weapon-name" id="cmp-item-name">—</div>
+            <div class="az-weapon-rarity" id="cmp-item-rarity">—</div>
+
+            <!-- ROLL header -->
+            <div class="az-roll-header" style="margin-bottom:8px;">
+              <span class="az-roll-lbl" data-i18n="lbl_roll_short">ROLL</span>
+              <span id="cmp-roll-display-val" class="az-roll-val" style="font-size:15px;line-height:1;color:var(--text-dim);display:block;">SELECT ROLL</span>
+            </div>
+
+            <!-- Armor part toggle (shown only for armor) -->
+            <div class="az-armor-part-row" id="cmp-armor-part-row">
+              <div class="az-part-slot">
+                <button class="az-part-btn active-part" id="cmp-part-btn-Helmet" onclick="cmpSelectPart('Helmet')"><span data-i18n="part_helm">Helmet</span></button>
+              </div>
+              <div class="az-part-sep-slot"><span class="az-part-sep" id="cmp-part-sep-1">/</span></div>
+              <div class="az-part-slot">
+                <button class="az-part-btn dim-part" id="cmp-part-btn-Chestplate" onclick="cmpSelectPart('Chestplate')"><span data-i18n="part_chest">Chestplate</span></button>
+              </div>
+              <div class="az-part-sep-slot"><span class="az-part-sep dim-sep" id="cmp-part-sep-2">/</span></div>
+              <div class="az-part-slot">
+                <button class="az-part-btn dim-part" id="cmp-part-btn-Leggings" onclick="cmpSelectPart('Leggings')"><span data-i18n="part_legs">Leggings</span></button>
+              </div>
+            </div>
+
+            <!-- Two slot buttons: ! [A] [B] ? -->
+            <div class="cmp-slots-row">
+              <span class="cmp-slot-sign">!</span>
+              <div class="cmp-slots-inner">
+                <div class="cmp-slot" id="cmp-slot-a" onclick="cmpOpenRollPicker('a')">
+                  <span class="cmp-slot-val placeholder" id="cmp-slot-a-val">—</span>
+                </div>
+                <span class="cmp-slot-sep">›</span>
+                <div class="cmp-slot cmp-locked" id="cmp-slot-b" onclick="cmpOpenRollPicker('b')">
+                  <span class="cmp-slot-val placeholder" id="cmp-slot-b-val">—</span>
+                </div>
+              </div>
+              <span class="cmp-slot-sign" id="cmp-slot-icon-b">?</span>
+            </div>
+
+            <!-- Roll picker — shown below slots, switches between A and B -->
+            <div class="cmp-roll-section">
+              <div class="cmp-roll-picker open" id="cmp-roll-picker-a">
+                <div class="cmp-roll-picker-inner" id="cmp-roll-btns-a"></div>
+              </div>
+              <div class="cmp-roll-picker" id="cmp-roll-picker-b">
+                <div class="cmp-roll-picker-inner" id="cmp-roll-btns-b"></div>
+              </div>
+            </div>
+
+            <!-- Hidden legacy elements for JS compat -->
+            <div id="cmp-roll-list-a" style="display:none;"></div>
+            <div id="cmp-roll-list-b" style="display:none;"></div>
+
+            <div class="az-divider"></div>
+
+            <!-- UPGRADES — centred heading, no colon -->
+            <div class="cmp-cat-title" style="color:#7fff00;">
+              <span data-i18n="mod_upgrade">Upgrades</span>
+            </div>
+            <div class="cmp-two-inputs" style="margin-bottom:8px;">
+              <div class="az-selector" style="flex:1;min-width:0;">
+                <button class="az-sel-btn cmp-sel-btn" id="cmp-upg-a-btn" onclick="cmpToggleDrop('upg-a')">
+                  <span id="cmp-upg-a-val">None (select)</span>
+                  <span class="az-arrow" id="cmp-upg-a-arrow">▼</span>
+                </button>
+                <div class="az-dropdown" id="cmp-upg-a-drop"></div>
+              </div>
+              <span class="cmp-cat-sep">›</span>
+              <div class="az-selector cmp-locked" id="cmp-upg-b-wrap" style="flex:1;min-width:0;">
+                <button class="az-sel-btn cmp-sel-btn" id="cmp-upg-b-btn" onclick="cmpToggleDrop('upg-b')">
+                  <span id="cmp-upg-b-val">None (select)</span>
+                  <span class="az-arrow" id="cmp-upg-b-arrow">▼</span>
+                </button>
+                <div class="az-dropdown" id="cmp-upg-b-drop"></div>
+              </div>
+            </div>
+
+            <!-- REFORGES (weapon only) — centred heading, no colon, short labels -->
+            <div id="cmp-ref-block">
+              <div class="az-divider"></div>
+              <div class="cmp-cat-title" style="color:#8aacee;">
+                <span data-i18n="mod_reforge">Reforge</span>
+              </div>
+              <div class="cmp-two-inputs" style="margin-bottom:8px;">
+                <div class="az-selector" style="flex:1;min-width:0;">
+                  <button class="az-ref-btn cmp-ref-btn" id="cmp-ref-a-btn" onclick="cmpToggleDrop('ref-a')">
+                    <span id="cmp-ref-a-val">None</span>
+                    <span class="az-arrow" id="cmp-ref-a-arrow">▼</span>
+                  </button>
+                  <div class="az-dropdown" id="cmp-ref-a-drop"></div>
+                </div>
+                <span class="cmp-cat-sep">›</span>
+                <div class="az-selector cmp-locked" id="cmp-ref-b-wrap" style="flex:1;min-width:0;">
+                  <button class="az-ref-btn cmp-ref-btn" id="cmp-ref-b-btn" onclick="cmpToggleDrop('ref-b')">
+                    <span id="cmp-ref-b-val">None</span>
+                    <span class="az-arrow" id="cmp-ref-b-arrow">▼</span>
+                  </button>
+                  <div class="az-dropdown" id="cmp-ref-b-drop"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CORRUPTED — centred heading, no colon -->
+            <div class="az-divider"></div>
+            <div class="cmp-cat-title" style="color:#bf7cf0;">
+              <span>Corrupted</span>
+            </div>
+            <div class="cmp-two-inputs" style="margin-bottom:10px;">
+              <div class="az-corr-toggle cmp-corr-side" id="cmp-corr-a-wrap" style="flex:1;">
+                <button class="az-corr-btn yes dim" id="cmp-corr-a-yes" onclick="cmpSetCorr('a',true)">Yes</button>
+                <span class="cmp-corr-slash" id="cmp-corr-a-slash">\</span>
+                <button class="az-corr-btn no" id="cmp-corr-a-no" onclick="cmpSetCorr('a',false)">No</button>
+              </div>
+              <div class="az-corr-toggle cmp-corr-side cmp-locked" id="cmp-corr-b-wrap" style="flex:1;">
+                <button class="az-corr-btn yes dim" id="cmp-corr-b-yes" onclick="cmpSetCorr('b',true)">Yes</button>
+                <span class="cmp-corr-slash" id="cmp-corr-b-slash">\</span>
+                <button class="az-corr-btn no" id="cmp-corr-b-no" onclick="cmpSetCorr('b',false)">No</button>
+              </div>
+            </div>
+
+            <!-- CHECK -->
+            <button class="az-analyze-btn" id="cmp-check-btn" onclick="cmpCheckSpecifics()" style="font-size:13px;letter-spacing:2px;padding:12px 0;margin-top:auto;">
+              <span class="az-btn-chevrons">»</span>
+              <span data-i18n="cmp_check_btn">FIND DIFFERENT</span>
+            </button>
+
+          </div><!-- end az-card -->
+        </div>
+
+        <!-- Desktop: horizontal arrow -->
+        <div class="sp-h-arrow cmp-h-arrow" id="cmp-h-arrow">
+          <svg class="sp-h-arrow-svg" width="64" height="44" viewBox="0 0 64 44" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <defs><linearGradient id="cmpArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(200,147,42,0.2)"/>
+              <stop offset="50%" stop-color="#f5d070"/>
+              <stop offset="100%" stop-color="#e8b84b"/>
+            </linearGradient></defs>
+            <line x1="4" y1="22" x2="50" y2="22" stroke="url(#cmpArrowGrad)" stroke-width="3"/>
+            <polygon points="50,13 64,22 50,31" fill="#f5d070" stroke="#c8932a" stroke-width="0.5"/>
+          </svg>
+        </div>
+
+        <!-- Mobile: vertical arrow before result card -->
+        <div class="az-v-arrow cmp-v-arrow" id="cmp-v-arrow">
+          <svg class="az-v-arrow-svg" width="44" height="64" viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <defs><linearGradient id="cmpArrowGradV" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(200,147,42,0.2)"/>
+              <stop offset="50%" stop-color="#f5d070"/>
+              <stop offset="100%" stop-color="#e8b84b"/>
+            </linearGradient></defs>
+            <line x1="22" y1="4" x2="22" y2="50" stroke="url(#cmpArrowGradV)" stroke-width="3"/>
+            <polygon points="13,44 22,60 31,44" fill="#f5d070" stroke="#c8932a" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="az-result-card cmp-result-card" id="cmp-result-card" style="display:none;">
+
+          <!-- Item image -->
+          <div class="az-img-box" id="cmp-res-img-box">
+            <svg class="az-img-placeholder" id="cmp-res-ph" viewBox="0 0 100 100" fill="#a0c0e0">
+              <circle cx="50" cy="50" r="32" fill="none" stroke="#a0c0e0" stroke-width="2.5"/>
+              <path d="M30 70 L70 30 M70 70 L30 30" stroke="#a0c0e0" stroke-width="2"/>
+            </svg>
+            <img id="cmp-res-img" src="" alt="" style="display:none;">
+          </div>
+
+          <!-- Mobile: Process/Tablet buttons right under image -->
+          <div class="az-mobile-action-btns cmp-mobile-action-btns" id="cmp-mobile-action-btns">
+            <button class="az-panel-btn" onclick="cmpOpenModal('process')">
+              <span class="az-panel-btn-icon">⚙</span>
+              <span data-i18n="btn_process">PROCESS</span>
+            </button>
+            <button class="az-panel-btn" onclick="cmpOpenModal('tablet')">
+              <span class="az-panel-btn-icon">📋</span>
+              <span data-i18n="btn_tablet">TABLET</span>
+            </button>
+          </div>
+
+          <!-- Name / rarity / damage -->
+          <!-- Roll row — shown only in dual-roll mode -->
+          <div class="az-res-row" id="cmp-res-roll-row" style="display:none;justify-content:center;padding:4px 0 2px;">
+            <span style="font-size:13px;font-weight:600;color:var(--text-muted);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-right:8px;" data-i18n="lbl_roll">ROLL:</span>
+            <span id="cmp-res-roll-val" style="font-size:15px;font-weight:900;font-family:'Cinzel',serif;letter-spacing:1px;">—</span>
+          </div>
+
+          <div class="az-res-stats-box">
+            <div class="az-res-row"><span class="az-weapon-name" id="cmp-res-name">—</span></div>
+            <div class="az-res-row"><span id="cmp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;">—</span></div>
+            <div class="az-res-row">
+              <span id="cmp-res-dmg-lbl" style="font-size:14px;font-weight:600;color:#ff4444;" data-i18n="lbl_damage">Damage:</span>
+              <span class="az-res-val dmg" id="cmp-res-dmg">—</span>
+            </div>
+            <!-- Diff badges: shown only in single-roll Wished view -->
+            <div class="az-res-row" id="cmp-res-diff-row" style="display:none;gap:6px;flex-wrap:wrap;justify-content:center;">
+              <span class="cmp-diff-badge" id="cmp-diff-abs"></span>
+              <span class="cmp-diff-badge cmp-diff-pct" id="cmp-diff-pct"></span>
+            </div>
+            <div class="az-res-row" id="sp-res-delay-row-cmp" style="display:none;">
+              <span style="font-size:16px;">⏱</span>
+              <span class="az-res-val delay" id="cmp-res-delay">—</span>
+            </div>
+          </div>
+
+          <div class="az-res-bottom">
+            <div class="az-res-upg">
+              <span class="az-res-upg-lbl" data-i18n="lbl_upgrades">Upgrades:</span>
+              <span class="az-res-upg-val" id="cmp-res-upg">—</span>
+            </div>
+            <div class="az-res-corr">
+              <span class="az-res-corr-lbl">Corrupted:</span>
+              <span class="az-res-corr-val" id="cmp-res-corr">—</span>
+            </div>
+          </div>
+
+          <!-- Reforge — inline with diff badge -->
+          <div class="az-res-reforge" id="cmp-res-reforge" style="display:none;align-items:center;justify-content:center;gap:6px;">
+            <span id="cmp-res-reforge-name">—</span>
+            <span class="cmp-diff-inline" id="cmp-diff-ref" style="display:none;"></span>
+          </div>
+
+          <!-- Armor: part switcher -->
+          <div class="az-res-part-row" id="cmp-res-part-row">
+            <div class="az-res-part-slot">
+              <button class="az-res-part-btn" id="cmp-res-part-btn-Helmet" onclick="cmpResSelectPart('Helmet')"><span data-i18n="part_helm">Helmet</span></button>
+            </div>
+            <div class="az-res-part-sep-slot"><span class="az-res-part-sep" id="cmp-res-part-sep-1">/</span></div>
+            <div class="az-res-part-slot">
+              <button class="az-res-part-btn" id="cmp-res-part-btn-Chestplate" onclick="cmpResSelectPart('Chestplate')"><span data-i18n="part_chest">Chestplate</span></button>
+            </div>
+            <div class="az-res-part-sep-slot"><span class="az-res-part-sep" id="cmp-res-part-sep-2">/</span></div>
+            <div class="az-res-part-slot">
+              <button class="az-res-part-btn" id="cmp-res-part-btn-Leggings" onclick="cmpResSelectPart('Leggings')"><span data-i18n="part_legs">Leggings</span></button>
+            </div>
+          </div>
+
+          <!-- Armor: Total HP row with inline diff -->
+          <div class="az-total-hp-row" id="cmp-total-hp-row" style="flex-wrap:wrap;gap:6px;">
+            <span class="az-total-hp-lbl" data-i18n="lbl_total_hp">TOTAL HP:</span>
+            <span class="az-total-hp-val" id="cmp-total-hp-actual">—</span>
+            <span class="cmp-diff-badge" id="cmp-total-diff-abs" style="display:none;"></span>
+            <span class="cmp-diff-badge" id="cmp-total-diff-pct" style="display:none;"></span>
+          </div>
+
+          <!-- Actual / Wished toggle — between stats and gold -->
+          <div class="cmp-view-btns" id="cmp-view-btns" style="margin-top:10px;margin-bottom:2px;">
+            <button class="cmp-view-btn" id="cmp-view-actual" onclick="cmpSetView('actual')">
+              <span data-i18n="cmp_actual">Actual</span>
+            </button>
+            <button class="cmp-view-btn active" id="cmp-view-wished" onclick="cmpSetView('wished')">
+              <span data-i18n="cmp_wished">Wished</span>
+            </button>
+          </div>
+
+          <!-- Gold rows -->
+          <div style="margin-top:6px;">
+            <div class="az-gold-row">
+              <span class="az-gold-icon">🥇</span>
+              <div class="az-gold-info">
+                <div class="az-gold-lbl" id="cmp-gold-1-lbl">—</div>
+                <div class="az-gold-val next" id="cmp-gold-1">—</div>
+              </div>
+            </div>
+            <div class="az-gold-row">
+              <span class="az-gold-icon">🥈</span>
+              <div class="az-gold-info">
+                <div class="az-gold-lbl" id="cmp-gold-2-lbl">—</div>
+                <div class="az-gold-val spent" id="cmp-gold-2">—</div>
+              </div>
+            </div>
+            <div class="az-gold-row">
+              <span class="az-gold-icon">🥉</span>
+              <div class="az-gold-info">
+                <div class="az-gold-lbl" id="cmp-gold-3-lbl" data-i18n="lbl_to_max">Gold to max</div>
+                <div class="az-gold-val total" id="cmp-gold-3">—</div>
+                <div class="az-gold-sub" id="cmp-gold-3-sub"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Third panel: Process + Tablet -->
+        <div class="sp-third-panel cmp-third-panel" id="cmp-third-panel">
+          <div class="sp-third-split">
+            <div class="sp-third-half sp-third-half-top" id="cmp-proc-half">
+              <div class="sp-third-half-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span data-i18n="btn_process">PROCESS</span>
+              </div>
+              <div class="sp-third-half-body" id="cmp-proc-body">
+                <div class="sp-proc-empty">Awaiting compare…</div>
+              </div>
+            </div>
+            <div class="sp-third-divider-h"></div>
+            <div class="sp-third-half sp-third-half-bot" id="cmp-tbl-half">
+              <div class="sp-third-half-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h8v2H3z"/></svg>
+                <span data-i18n="btn_tablet">TABLET</span>
+              </div>
+              <div class="sp-third-half-body" id="cmp-tbl-body" style="padding:0;overflow-y:auto;">
+                <div class="sp-proc-empty" style="padding:16px;">Awaiting compare…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CMP Process modal (mobile) -->
+  <div class="az-modal" id="cmp-modal-process" onclick="if(event.target===this)cmpCloseModal('process')">
+    <div class="az-modal-box">
+      <div class="az-modal-head">
+        <span class="az-modal-ttl">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span data-i18n="btn_process">PROCESS</span>
+        </span>
+        <button class="az-modal-x" onclick="cmpCloseModal('process')">✕</button>
+      </div>
+      <div class="az-modal-content" style="overflow-y:auto;overflow-x:hidden;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
+        <div id="cmp-modal-proc-body"><div class="sp-proc-empty">Awaiting compare…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMP Tablet modal (mobile) -->
+  <div class="az-modal" id="cmp-modal-tablet" onclick="if(event.target===this)cmpCloseModal('tablet')">
+    <div class="az-modal-box narrow">
+      <div class="az-modal-head">
+        <span class="az-modal-ttl">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h8v2H3z"/></svg>
+          <span data-i18n="btn_tablet">TABLET</span>
+        </span>
+        <button class="az-modal-x" onclick="cmpCloseModal('tablet')">✕</button>
+      </div>
+      <div class="az-modal-content" id="cmp-modal-tbl-body" style="display:flex;flex-direction:column;padding:12px 16px;gap:2px;">
+        <div class="sp-proc-empty">Awaiting compare…</div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="console-panel" id="console-compare">
+    <div class="console-header">
+      <div class="console-online"><div class="online-dot"></div><svg class="online-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span class="online-count">…</span></div>
+      <div class="console-title" data-i18n="console_title">RECENT PROCESSES</div>
+      <div class="console-live-badge"><div class="console-status"></div><span>LIVE</span></div>
+    </div>
+    <div class="console-tabs">
+      <button class="console-tab-btn active" onclick="switchConsoleTab('compare','analyses')" data-i18n="tab_analyses">Analyses</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('compare','previews')" data-i18n="tab_previews">Previews</button>
+      <button class="console-tab-btn" onclick="switchConsoleTab('compare','compares')" data-i18n="tab_compares">Compares</button>
+    </div>
+    <div class="console-tab-pane active" id="console-tab-compare-analyses">
+      <div class="console-empty" id="empty-state-compare">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc" data-i18n="empty_desc">Your last 25 analyses and forecasts will appear here.</div>
+        <div class="empty-hint">
+          <div class="hint-row"><span class="hint-page" data-i18n="hint_compare_page">Compare</span><span class="hint-desc" data-i18n="hint_compare_desc">→ two weapons side by side</span></div>
+        </div>
+      </div>
+      <div class="console-body" id="console-body-compare"></div>
+    </div>
+    <div class="console-tab-pane" id="console-tab-compare-compares">
+      <div class="console-empty" id="empty-state-compare-compares">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title" data-i18n="empty_title">EMPTY</div>
+        <div class="empty-desc">Your last 25 comparisons will appear here.</div>
+        <div class="empty-hint">
+          <div class="hint-row"><span class="hint-page" data-i18n="hint_compare_page">Compare</span><span class="hint-desc" data-i18n="hint_compare_desc">→ two weapons side by side</span></div>
+        </div>
+      </div>
+      <div class="console-body" id="console-body-compare-compares"></div>
+    </div>
+    <div class="console-tab-pane" id="console-tab-compare-previews">
+      <div class="console-empty" id="empty-state-compare-previews">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">EMPTY</div>
+        <div class="empty-desc">Your last 15 previews will appear here.</div>
+      </div>
+      <div class="console-body" id="console-body-compare-previews"></div>
+    </div>
+    <div class="console-input-wrap">
+      <span class="console-prompt">›</span>
+      <input type="text" class="console-input" id="console-input-compare"
+        placeholder="" autocomplete="off"
+        onkeydown="handleConsoleInput(event,'compare')">
+    </div>
+  </aside>
 </main>
 
 <script>
@@ -3781,8 +4549,8 @@ const IMAGE_PATHS = {
   baseDir: 'images/Stuff/',
   weapons: {
     'cb':       'Weapons/conqblade.png',
-    'tl':       'Weapons/conqblade.png',
-    'tl_le':    'Weapons/conqblade.png',
+    'tl':       'Weapons/tlconqblade.png',
+    'tl_le':    'Weapons/tlconqblade.png',
     'db':       'Weapons/doombringer.png',
     'dcr':      'Weapons/diamondcrack.png',
     'asc_mb':   'Weapons/mentav2.png',
@@ -3823,6 +4591,18 @@ function getRolls(item) {
   const keys = Object.keys(item.isArmor ? item.stats.Helmet : item.stats).map(Number).sort((a,b)=>a-b);
   const minR = item.minRoll || 1;
   return keys.filter(r => r >= minR);
+}
+
+// CMP-specific: uses cmpCurrentPart for armor
+function cmpGetRolls(item) {
+  if (!item) return [];
+  if (item.isArmor) {
+    const part = cmpCurrentPart || 'Helmet';
+    const keys = Object.keys(item.stats[part] || item.stats.Helmet).map(Number).sort((a,b)=>a-b);
+    const minR = item.minRoll || 1;
+    return keys.filter(r => r >= minR);
+  }
+  return getRolls(item);
 }
 
 /* ── STATE ── */
@@ -3981,7 +4761,7 @@ function showEmptyTable() {
   container.innerHTML = '';
   const empty = document.createElement('div');
   empty.className = 'table-empty';
-  empty.innerHTML = `<div class="table-empty-icon">⚔️</div>
+  empty.innerHTML = `<div class="table-empty-icon">📃</div>
     <div class="table-empty-title">${t('table_empty_title')}</div>
     <div class="table-empty-desc">${t('table_empty_desc')}</div>`;
   container.appendChild(empty);
@@ -4032,23 +4812,26 @@ function renderTable() {
 let consoleTabChoice = 'analyses';
 
 function switchConsoleTab(pg, tab) {
-  const analysesPane = document.getElementById('console-tab-' + pg + '-analyses');
-  const previewsPane = document.getElementById('console-tab-' + pg + '-previews');
-  if (!analysesPane || !previewsPane) return;
   const panel = document.getElementById('console-' + pg);
   if (!panel) return;
+  // Toggle all panes
+  ['analyses','previews','compares'].forEach(t => {
+    const pane = document.getElementById('console-tab-' + pg + '-' + t);
+    if (pane) pane.classList.toggle('active', t === tab);
+  });
+  // Toggle all buttons
   const btns = panel.querySelectorAll('.console-tab-btn');
-  btns.forEach((b, i) => b.classList.toggle('active', (tab === 'analyses' ? i === 0 : i === 1)));
-  analysesPane.classList.toggle('active', tab === 'analyses');
-  previewsPane.classList.toggle('active', tab === 'previews');
-  // Persist the user's choice globally so navigateTo won't reset it
+  btns.forEach(b => {
+    const onclick = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', onclick.includes("'" + tab + "'"));
+  });
   consoleTabChoice = tab;
 }
 
 function syncConsole(page) { renderAllConsoles(); }
 
 function renderAllConsoles() {
-  ['home','rolls','analyze','stuff'].forEach(pg => {
+  ['home','rolls','analyze','stuff','compare'].forEach(pg => {
     const emptyEl = document.getElementById('empty-state-' + pg);
     const bodyEl  = document.getElementById('console-body-' + pg);
     const hdrEl   = document.getElementById('history-header-' + pg);
@@ -4066,7 +4849,6 @@ function renderAllConsoles() {
     validHistory.forEach(entry => {
       const card = document.createElement('div');
       card.className = 'analysis-card';
-      // Build roll block
       let rollHTML = '';
       if (entry.rollLines && entry.rollLines.length > 0) {
         rollHTML = '<div class="card-roll">' + entry.rollLines.map(rl =>
@@ -4078,8 +4860,36 @@ function renderAllConsoles() {
     });
   });
 
-  // Previews tabs — render previewHistory (max 15)
-  ['home','rolls','analyze','stuff'].forEach(pg => {
+  // Compares tab — render compareHistory for ALL pages
+  ['home','rolls','analyze','stuff','compare'].forEach(pg => {
+    const compareBodyEl  = document.getElementById('console-body-' + pg + '-compares');
+    const compareEmptyEl = document.getElementById('empty-state-' + pg + '-compares');
+    if (!compareBodyEl || !compareEmptyEl) return;
+    const cmpHist = (window.compareHistory || []).filter(e => e != null);
+    if (cmpHist.length === 0) {
+      compareEmptyEl.style.display = 'flex';
+      compareBodyEl.classList.remove('visible');
+    } else {
+      compareEmptyEl.style.display = 'none';
+      compareBodyEl.classList.add('visible');
+      compareBodyEl.innerHTML = '';
+      cmpHist.forEach(entry => {
+        const card = document.createElement('div');
+        card.className = 'analysis-card';
+        let rollHTML = '';
+        if (entry.rollLines && entry.rollLines.length > 0) {
+          rollHTML = '<div class="card-roll">' + entry.rollLines.map(rl => {
+            return `<div class="card-roll-line"><span class="card-roll-lbl">${esc(rl.label)}</span><span class="card-roll-val"${rl.green ? ' style="color:var(--green-stat);"' : ''}>${esc(String(rl.val))}</span></div>`;
+          }).join('') + '</div>';
+        }
+        card.innerHTML = `<div class="card-top"><span class="card-type compare">${esc(entry.typeLabel)}</span><span class="card-time">${fmtTime(entry.time)}</span></div><div class="card-main">${esc(entry.main)}</div><div class="card-detail">${esc(entry.detail || '').replace(/\n/g,'<br>')}</div>${rollHTML}`;
+        compareBodyEl.appendChild(card);
+      });
+    }
+  });
+
+  // Previews tabs
+  ['home','rolls','analyze','stuff','compare'].forEach(pg => {
     const emptyEl = document.getElementById('empty-state-' + pg + '-previews');
     const bodyEl  = document.getElementById('console-body-' + pg + '-previews');
     if (!emptyEl || !bodyEl) return;
@@ -4108,6 +4918,101 @@ function renderAllConsoles() {
   });
 }
 
+// Initialize compare history
+window.compareHistory = window.compareHistory || [];
+
+function addCompare(entry) {
+  if (typeof window._fbPushCompare === 'function') {
+    window._fbPushCompare(entry);
+  } else {
+    window.compareHistory = window.compareHistory || [];
+    window.compareHistory.unshift(entry);
+    if (window.compareHistory.length > 25) window.compareHistory.length = 25;
+    renderAllConsoles();
+  }
+}
+
+// Helper: format A→B or just A if equal
+function _cmpFmt(a, b) { return (a === b) ? String(a) : `${a} → ${b}`; }
+function _cmpDiff(actual, wished) {
+  const delta = wished - actual;
+  const pct   = actual > 0 ? (delta / actual * 100) : 0;
+  const sign  = delta >= 0 ? '+' : '';
+  return `(${sign}${azFmtDmg(delta)}) (${sign}${pct.toFixed(1)}%)`;
+}
+
+function addCompareWeapon(item, rollA, rollB, upgA, upgB, corrA, corrB, refA, refB, dmgActual, dmgWished) {
+  const isDual = rollA !== rollB;
+  const corrAStr = corrA ? 'Yes' : 'No';
+  const corrBStr = corrB ? 'Yes' : 'No';
+
+  // detail line: Roll | Upg | Corr | Reforge
+  const detailParts = [];
+  if (isDual) detailParts.push(`Roll: ${rollA} → ${rollB}`);
+  else        detailParts.push(`Roll: ${rollA}`);
+  detailParts.push(`Upg: ${_cmpFmt(upgA, upgB)}`);
+  detailParts.push(`Corr: ${_cmpFmt(corrAStr, corrBStr)}`);
+  if (refA !== 'None' || refB !== 'None') detailParts.push(`Reforge: ${_cmpFmt(refA, refB)}`);
+
+  addCompare({
+    typeLabel: 'COMPARE/WEAPON',
+    cardType: 'compare',
+    time: nowStr(),
+    main: item.name,
+    detail: detailParts.join(' | '),
+    rollLines: [
+      { label: 'Damage:', val: `${azFmtDmg(dmgActual)} → ${azFmtDmg(dmgWished)}  ${_cmpDiff(dmgActual, dmgWished)}`, green: true },
+    ]
+  });
+}
+
+function addCompareArmor(item, parts) {
+  // parts = [{ part, rollA, rollB, upgA, upgB, corrA, corrB, hpActual, hpWished }]
+  const n = parts.length;
+
+  // main: "Name Helmet" / "Name Helmet & Chestplate" / "Name Set — Total HP: X → Y (+Z) (+P%)"
+  let mainSuffix;
+  if (n === 1)      mainSuffix = azPartLabel(parts[0].part);
+  else if (n === 2) mainSuffix = `${azPartLabel(parts[0].part)} & ${azPartLabel(parts[1].part)}`;
+  else {
+    const tA = parts.reduce((s,p) => s + p.hpActual, 0);
+    const tW = parts.reduce((s,p) => s + p.hpWished, 0);
+    mainSuffix = `Set — Total HP: ${azFmtDmg(Math.round(tA))} → ${azFmtDmg(Math.round(tW))}  ${_cmpDiff(tA, tW)}`;
+  }
+  const main = item.name.replace(' Set','') + ' ' + mainSuffix;
+
+  // detail lines: one per part
+  const detailLines = parts.map(p => {
+    const isDual = p.rollA !== p.rollB;
+    const rollStr = isDual ? `${p.rollA} → ${p.rollB}` : String(p.rollA);
+    const corrAStr = p.corrA ? 'Yes' : 'No';
+    const corrBStr = p.corrB ? 'Yes' : 'No';
+    const line = `Roll: ${rollStr} | Upg: ${_cmpFmt(p.upgA, p.upgB)} | Corr: ${_cmpFmt(corrAStr, corrBStr)}`;
+    return n === 1 ? line : `${azPartLabel(p.part)}: ${line}`;
+  });
+
+  // rollLines: HP per part
+  const rollLines = [];
+  let totalActual = 0, totalWished = 0;
+  parts.forEach(p => {
+    rollLines.push({
+      label: n === 1 ? 'Health:' : `${azPartLabel(p.part)}'s Health:`,
+      val: `${azFmtDmg(p.hpActual)} → ${azFmtDmg(p.hpWished)}  ${_cmpDiff(p.hpActual, p.hpWished)}`,
+      green: true
+    });
+    totalActual += p.hpActual;
+    totalWished += p.hpWished;
+  });
+
+  addCompare({
+    typeLabel: 'COMPARE/ARMOR',
+    cardType: 'compare',
+    time: nowStr(),
+    main,
+    detail: detailLines.join('\n'),
+    rollLines
+  });
+}
 // Initialize preview history in memory (not persisted to Firebase)
 window.previewHistory = window.previewHistory || [];
 
@@ -4179,15 +5084,29 @@ function handleConsoleInput(e, consoleId) {
 /* ── I18N ── */
 const T = {
   en:{
-    nav_home:'Home', nav_rolls:'Tables', nav_analyze:'Analyze Roll', nav_weapon:'Weapon Preview', nav_compare:'Weapon Compare', nav_stuff:'Stuff Preview',
-    tab_analyses:'Analyses', tab_previews:'Previews',
+    nav_home:'Home', nav_rolls:'Tables', nav_analyze:'Analyze Roll', nav_weapon:'Weapon Preview', nav_compare:'Stuff Compare', nav_stuff:'Stuff Preview',
+    tab_analyses:'Analyses', tab_previews:'Previews', tab_compares:'Compares',
     banner_eyebrow:'Toolkit for',
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.',
     credits_author:'Bot Author', credits_dev:'Successor / Dev', credits_data:'Database', credits_data_val:'Elemental Dungeon',
     stat_weapons:'Weapons', stat_sets:'Armor Sets', stat_version:'Bot Version', stat_date:'Data',
-    rolls_page_title:'Tables', rolls_page_sub:'Roll Tables · Reforge Reference', analyze_page_sub:'Roll Analyzing',
-    page_stuff_title:'Stuff Preview', page_stuff_sub:'Item Preview & Stats',
+    rolls_page_title:'Tables', rolls_page_sub:'Roll Tables · Reforge Reference', analyze_page_sub:'Roll Analyzing By Calculations',
+    page_stuff_title:'Stuff Preview', page_stuff_sub:'Item Preview · Check Specifications',
+    page_compare_title:'Stuff Compare', page_compare_sub:'Item Type Comparison · Type Actual and Wished Specifics',
+    cmp_desc:'Compare two weapons or armor pieces side by side. Choose the same item at different specs, or two items of the same type with different rolls.',
+    cmp_empty_desc:'Choose a weapon or armor piece from the list to start comparing.',
+    cmp_item_a:'Item A', cmp_item_b:'Item B',
+    cmp_diff_lbl:'difference',
+    cmp_gold_between:'Gold between levels:',
+    cmp_winner:'wins', cmp_equal:'Equal stats',
+    cmp_check_btn:'FIND DIFFERENT',
+    cmp_actual:'Actual', cmp_wished:'Wished',
+    cmp_gold_next:'Next upgrade',
+    cmp_gold_spent:'Gold spent',
+    cmp_gold_between_levels:'Gold: Actual → Wished',
+    cmp_gold_to_max:'Gold to max',
+    cmp_roll_diff:'Roll difference',
     tab_weapon:'Weapon', tab_armor:'Armor', tab_accessories:'Accessories',
     acc_underworld:'Underworld Accessories', acc_angel:"Angel's Sanctuary Accessories", acc_extra:'Extra Accessories',
     th_roll_acc:'Roll', th_coef_acc:'Coefficient',
@@ -4209,7 +5128,7 @@ const T = {
     card_go_analyze:'Go to Analyze Roll page for full result',
     card_use_nav:'Use the navigation pages above', card_dmg:'Damage:',
     lbl_damage:'Damage:', lbl_upgrades:'Upgrades:', lbl_corrupted:'Corrupted:', lbl_health:'Health:', lbl_total_hp:'TOTAL HP:',
-    lbl_roll:'ROLL:', lbl_next_upg:'Next upgrade', lbl_to_max:'Gold to max',
+    lbl_roll:'ROLL:', lbl_roll_short:'ROLL', lbl_next_upg:'Next upgrade', lbl_to_max:'Gold to max',
     sel_roll:'SELECT ROLL',
     sel_none:'None (select)', ref_none_select:'None Reforge (select)',
     corr_yes:'Yes', corr_no:'No',
@@ -4240,6 +5159,8 @@ const T = {
     word_corrupted:'Corrupted',
     err_no_roll:'Select a roll!',
     err_no_upg:'Select an upgrade level!',
+    err_cmp_upg_a:'Select Actual upgrade level!',
+    err_cmp_upg_b:'Select Wished upgrade level!',
     err_no_dmg:'Enter a valid damage value!',
     err_armor_no_data:'Enter health and upgrade level for at least one armor piece!',
     err_below_min:'Your damage is way too low — it doesn\'t match even the minimum roll. Check the value you entered.',
@@ -4285,17 +5206,34 @@ const T = {
     upd3_title: 'UPDATES OF v1.0.2.5 VERSION!',
     upd3_sub: 'Developer Notes 11.03.2026',
     upd3_body: `<span class="upd-accent">Security patch &amp; Accessories</span>\n\nUser <span class="upd-cyan">TRAP204s</span> and possibly other developers pointed out a potential site vulnerability — so the site was updated ahead of schedule, with minor console improvements.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">ACCESSORIES</span> have been added to the Tables page. At least all the relevant end-game accessories: items from two dungeons — <span class="upd-accent">Underworld</span> and <span class="upd-accent">Angel\'s Sanctuary</span>. Also includes the luck-banner amulet available at spawn.\n\n<span class="upd-accent">Plans for v1.0.3</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Stuff Compare</span> page — coming for sure. Here\'s how it will work in more detail:\n  You\'ll be able to compare the same weapon at one roll with different specs, or one weapon type with two different rolls.\n  Keep in mind: if you enter two different ROLL values, those are treated as two separate weapons of the same type — so results may be less straightforward than with a single roll.\n  With this page you\'ll find out:\n  · How much gold remains between one upgrade level and another (when using a single roll value);\n  · What the damage difference is between two different specs.\n<span class="upd-cyan">›</span> Possibly new weapon types, armor... and especially <span class="upd-cyan">more ACCESSORIES</span>. But that\'s a story for another time.\n\n<span class="upd-muted">Good evening / morning to everyone... or whatever time it is for you. Hehe.</span>`,
+    upd4_title: 'UPDATES OF v1.0.3 VERSION!',
+    upd4_sub: 'Developer Notes 20.03.2026',
+    upd4_body: `<span class="upd-accent">A few words from developer H2O</span>\n\nSomething happened recently between me and Swuh — here\'s the short version:\n\nI was unhappy with a change to one element and also found a bug. Along with that, I was pressuring Swuh to fix the bugs as quickly as possible and take my feedback on board — but in a negative way. After all the commotion, he stood his ground, and I lost my tester role. This happened on March 16th.\n\nI\'ve been trying to let him know about the bugs, and I even sent a message with an apology. Not just to get my tester role back (though I hope so), but to settle my own ego. I really don\'t like being in the wrong after some conflict — so I\'m apologising for all my screw-ups.\n\nJust today, March 20th, my access to the test server was cut off, which means updates will be a bit harder due to the limitations. Before, I could just hop in at an early stage, look around, note things down and write it all up ahead of time — so that with each update I could post new weapons, armor, and so on almost immediately. Now I can\'t do that.\n<span class="upd-muted">I\'m not demanding anything, but I hope for your support and understanding.\nI\'d really love to be forgiven. Whether I get my role back — that\'s entirely his decision.</span>\n\nAnyway, enough of the sad stuff — let\'s figure out how to work around this &gt;:P\nUpdates will keep coming. This won\'t stop me.\n\n<span class="upd-accent">What\'s new in v1.0.3</span>\n<span class="upd-cyan">›</span> Hooray, a new page — <span class="upd-accent">Stuff Compare</span>. You\'ll be able to compare the same type of weapon or armor with one or even two rolls, but with different stats. You\'ll see what things look like, the difference in damage / health, how much everything costs, and how much gold is left to spend!\n<span class="upd-cyan">›</span> Accordingly, a new console category has been added — <span class="upd-accent">Compares</span>, for your curiosity!\n<span class="upd-cyan">›</span> The icon for the swords <span class="upd-accent">Timelost Conqueror\'s Blade</span> and <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span> has been changed. Both swords are now gold, with a golden aura.\n\n<span class="upd-accent">What\'s expected in the next update v1.0.4</span>\n  In general, we\'ve gone through all the pages, but there\'s always room to add more variety.\n  If you have any ideas — write to me at <span class="upd-cyan">@yarreyt</span> on Discord. I also know that most users of this site are in the game\'s Discord server — <span class="upd-green">Elemental Dungeons</span>! So you can absolutely reach me there.\n  As for major plans, here\'s what I have in mind:\n  Since we\'re all from Discord and we\'re used to the bot\'s calculation functions, I\'ll add two input methods for each category!\n  · The first type is naturally our current input method — click this, click that, get a result.\n  · The second type is our old familiar method of entering values through an input field.\n  I\'ll make it possible to type commands directly on the pages. The input fields will have hints, so I don\'t think it\'ll be a problem. And if it is — I\'ll add GUIDES on the home page, as a button next to the bot avatar.\n\n<span class="upd-muted">Good night / evening / morning / afternoon to all of you. Enjoy using the site!\nOnce again — I hope for your support. ♥</span>`,
   },
   ru:{
-    nav_home:'Главная', nav_rolls:'Таблицы', nav_analyze:'Анализ ролла', nav_weapon:'Просмотр оружия', nav_compare:'Сравнение оружий', nav_stuff:'Прогноз лута',
-    tab_analyses:'Анализы', tab_previews:'Прогнозы',
+    nav_home:'Главная', nav_rolls:'Таблицы', nav_analyze:'Анализ ролла', nav_weapon:'Просмотр оружия', nav_compare:'Сравнение вещей', nav_stuff:'Прогноз лута',
+    tab_analyses:'Анализы', tab_previews:'Прогнозы', tab_compares:'Сравнения',
     banner_eyebrow:'Инструментарий для',
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Веб-версия бота для анализа роллов, прогнозов оружия и брони. Определяй роллы по урону, сравнивай предметы и планируй апгрейды.',
     credits_author:'Автор бота', credits_dev:'Преемник / Dev', credits_data:'База данных', credits_data_val:'Elemental Dungeon',
     stat_weapons:'Оружий', stat_sets:'Сета брони', stat_version:'Версия бота', stat_date:'Дата',
-    rolls_page_title:'Таблицы', rolls_page_sub:'Таблицы роллов · Справка по заклинаниям', analyze_page_sub:'Анализ ролла',
-    page_stuff_title:'Прогноз лута', page_stuff_sub:'Проверка вещей & Характеристики',
+    rolls_page_title:'Таблицы', rolls_page_sub:'Таблицы роллов · Справка по заклинаниям', analyze_page_sub:'Анализирование ролла путём калькуляции',
+    page_stuff_title:'Прогноз лута', page_stuff_sub:'Проверка вещей · Узнай характеристики',
+    page_compare_title:'Сравнение вещей', page_compare_sub:'Сравнение предметов одного типа · Ввод актуальных и желаемых характеристик',
+    cmp_desc:'Сравни два оружия или части брони рядом. Выбери один предмет с разными характеристиками, или два предмета одного типа с разными роллами.',
+    cmp_empty_desc:'Выбери оружие или броню из списка слева, чтобы начать сравнение.',
+    cmp_item_a:'Предмет A', cmp_item_b:'Предмет B',
+    cmp_diff_lbl:'разница',
+    cmp_gold_between:'Золото между уровнями:',
+    cmp_winner:'побеждает', cmp_equal:'Характеристики равны',
+    cmp_actual:'Нынешнее', cmp_wished:'Желаемое',
+    cmp_gold_next:'След. улучшение',
+    cmp_gold_spent:'Потрачено золота',
+    cmp_gold_between_levels:'Золото: Нынешнее → Желаемое',
+    cmp_gold_to_max:'Золото до макс.',
+    cmp_roll_diff:'Разница роллов',
+    cmp_check_btn:'СРАВНИТЬ',
     tab_weapon:'Оружие', tab_armor:'Броня', tab_accessories:'Аксессуары',
     acc_underworld:'Аксессуары Подземелья', acc_angel:'Аксессуары Обители Ангелов', acc_extra:'Дополнительные аксессуары',
     th_roll_acc:'Ролл', th_coef_acc:'Коэффициент',
@@ -4317,7 +5255,7 @@ const T = {
     card_go_analyze:'Перейди на страницу «Анализ ролла» для полного результата',
     card_use_nav:'Используй страницы навигации выше', card_dmg:'Урон:',
     lbl_damage:'Урон:', lbl_upgrades:'Улучшения:', lbl_corrupted:'Corrupted:', lbl_health:'Здоровье:', lbl_total_hp:'ИТОГО HP:',
-    lbl_roll:'РОЛЛ:', lbl_next_upg:'След. улучшение', lbl_to_max:'Золото до макс.',
+    lbl_roll:'РОЛЛ:', lbl_roll_short:'РОЛЛ', lbl_next_upg:'След. улучшение', lbl_to_max:'Золото до макс.',
     sel_roll:'ВЫБЕРИТЕ РОЛЛ',
     sel_none:'None (выбрать)', ref_none_select:'None Зачарование (выбрать)',
     corr_yes:'Yes', corr_no:'No',
@@ -4327,8 +5265,8 @@ const T = {
     proc_s1:'Делим на фактор улучшений:',
     proc_s1_none:'Улучшений нет — фактор ×1.0',
     proc_s2_yes:'Делим на Зачарование',
-    proc_s2_no:'Зачарование: None (×1.0) — без действий',
-    proc_s3_yes:'Делим на Испорченным (×1.5):',
+    proc_s2_no:'Зачарование: None (×1.0) — ничего не делаем',
+    proc_s3_yes:'Делим на Испорченное состояние (×1.5):',
     proc_s3_no:'Предмет не является Испорченным — без действий',
     proc_s4:'Делим на Godly зачарование (×1.5):',
     proc_base:'Базовый урон (вычислен):',
@@ -4342,13 +5280,15 @@ const T = {
     sp_proc_s1:'Применяем фактор улучшений:',
     sp_proc_s1_none:'Улучшений нет — фактор ×1.0',
     sp_proc_s2_no:'Зачарование не выбрано',
-    sp_proc_s3_yes:'Применяем Испорченным (×1.5):',
+    sp_proc_s3_yes:'Применяем Испорченное состояние (×1.5):',
     sp_proc_s3_no:'Предмет не является Испорченным',
     tbl_gold:'ЗОЛОТО',
     sp_step_reforge: 'Зачарование ({refName} ×{mult}):',
     word_corrupted:'Испорченный',
     err_no_roll:'Выбери ролл!',
     err_no_upg:'Выбери уровень улучшения!',
+    err_cmp_upg_a:'Выбери уровень улучшения (Actual)!',
+    err_cmp_upg_b:'Выбери уровень улучшения (Wished)!',
     err_no_dmg:'Введи корректное значение урона!',
     err_armor_no_data:'Введи здоровье и уровень улучшений хотя бы для одной части брони!',
     err_below_min:'Твой урон слишком мал — он не совпадает даже с минимальным роллом. Проверь введённое значение.',
@@ -4394,6 +5334,9 @@ const T = {
     upd3_title: 'ОБНОВЛЕНИЯ ВЕРСИИ v1.0.2.5!',
     upd3_sub: 'Записи разработчика 11.03.2026',
     upd3_body: `<span class="upd-accent">Патч безопасности &amp; Аксессуары</span>\n\nПользователь <span class="upd-cyan">TRAP204s</span> и возможно другие программисты отметили одну потенциальную уязвимость сайта, поэтому сайт был досрочно обновлён, с минимальными обновлениями консоли.\n\n<span class="upd-cyan">›</span> Добавлены <span class="upd-accent">АКСЕССУАРЫ</span> на странице Таблицы. По крайней мере все актуальные аксессуары, которыми пользуются в Энд-гейме. Аксессуары с двух подземелий — <span class="upd-accent">Underworld</span> и <span class="upd-accent">Angel\'s Sanctuary</span>. Так-же информация про амулет, дающий удачу на баннер, на спавне.\n\n<span class="upd-accent">Планы на версию v1.0.3</span>\n<span class="upd-cyan">›</span> Страница <span class="upd-accent">Stuff Compare</span> — будет, просто в этот раз расскажу более подробно как она будет работать.\n  Вам будет дана возможность сравнить как одно оружие одного ролла, но с разной спецификой, так и одно оружие с двумя роллами.\n  Однако учитывайте такой момент, что если вы будете вводить два значения РОЛЛА, то это 2 оружия одного типа, поэтому и результаты будут не совсем однозначные с одним значением РОЛЛА.\n  С этой страницей вы узнаете:\n  · Сколько золота вам осталось потратить от одного уровня улучшения к другому, в случае если у вас введено одно значение РОЛЛА;\n  · Какая будет разница в уроне между двумя спецификами.\n<span class="upd-cyan">›</span> Так-же, возможно новые типы оружий... брони.. и особенно <span class="upd-cyan">АКСЕССУАРЫ</span>. Но это уже другая тема.\n\n<span class="upd-muted">Хорошего всем вечера/утра.. утреца-говнеца. Хыхы, капец я долбаёб.</span>`,
+    upd4_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.3v!',
+    upd4_sub: 'Записи разработчика 20.03.2026',
+    upd4_body: `Немного новостей о разработчике H2O (то есть мне), произошёл недавний конфликт со Swuh, в котором, если вкратце, было так:\n\nЯ был недоволен изменениями одного элемента и так-же нашёл баг. Вместе со всем этим я навязывал Swuh\'у как можно быстрее исправить баги и прислушаться к мнению, в негативной форме. В результате переполоха он остался на своей позиции, а я лишился роли тестера. Это произошло 16 марта.\n\nЯ ему уже пытался сообщить о багах, и даже отправил сообщение с извинениями. По крайней мере не ради того чтобы вернуть роль тестера (хотя надеюсь), а ради утешения своего собственного эго. Мне не очень нравится в результате какого-то конфликта быть не правым и в итоге за все свои косяки - извиняюсь.\n\nТолько сегодня, 20 марта, мне отключили доступ к тест-серверу, поэтому обновления будут немного затруднены из-за ограничений. Раньше я мог просто зайти на ранней стадии, посмотреть, зафиксировать и записать вам заранее, чтобы с обновлением практически сразу загрузить новые виды оружий, брони. Теперь я этого не могу.\n<span class="upd-muted">Я в этом не настаиваю, но надеюсь на вашу поддержку и ваше понимание.\nМне бы очень хотелось чтобы меня простили. А вот возвращать на должность - полностью его решение.</span>\n\nА теперь, давайте без этого грустного говнеца, я придумаю что делать в этом случае &gt;:P\nОбновления будут. Мне даже это не помешает.\n\n<span class="upd-accent">Что нового в новом обновлении 1.0.3v</span>\n<span class="upd-cyan">›</span> Ура, новая страница — <span class="upd-accent">Stuff Compare</span>. Вы сможете сравнить одного типа оружие/брони с одним или даже двумя роллами, но с разными характеристиками. Вы узнаете что как выглядит, в чём разница в уроне/здоровьи, как что, сколько стоит, и сколько осталось потратить!\n<span class="upd-cyan">›</span> В соответствии с этим добавлена новая категория консоли — <span class="upd-accent">Compares</span>, ради вашего любопытства!\n<span class="upd-cyan">›</span> Изменена иконка для мечей: <span class="upd-accent">Timelost Conqueror\'s Blade</span> и <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span>. Теперь оба меча — золотые, с золотой аурой.\n\n<span class="upd-accent">Что ожидается в следующем обновлении 1.0.4v</span>\n  В целом, по страницам мы все прошлись, но и можно будет добавить разнообразия.\n  Если есть какие-то идеи, напишите мне по юзеру <span class="upd-cyan">@yarreyt</span> в дискорде. Я так-же знаю что в целом основные пользователи этого сайта, присутствуют в дискорд сервере игры — <span class="upd-green">Elemental Dungeons</span>! Поэтому вы тем более сможете написать мне!\n  Однако, из крупного у меня планы вот какие:\n  Так как мы все с дискорда и мы в целом привыкли к местным функциям бота для калькуляции ролла, то я сделаю два способа ввода данных для каждой категории!\n  · Первый тип — это естественно наш нынешний способ ввода данных, там нажал, нажал то, и получил результат.\n  · Второй тип — это наш, старый привычный ввод значений через поле ввода.\n  Я добавлю такую возможность, чтобы можно было вводить команды на страницах. Поле ввода будут с подсказками, так что не думаю что проблемы с этим будут. Даже если и будут, то добавлю ГАЙДЫ на домашней страницы, в виде кнопки возле аватара бота.\n\n<span class="upd-muted">Всем доброй ночи/вечера/утра/дня, удачного использования!\nЕщё раз, надеюсь на вашу поддержку. ♥</span>`,
   }
 };
 
@@ -4417,7 +5360,7 @@ function renderReforgeTable() {
   const secTitle = document.querySelector('#reforge-section .reforge-section-title');
   if (secTitle) secTitle.textContent = t('reforge_table_title');
   let html = `<thead><tr>
-    <th style="text-align:left;padding-left:16px">${t('th_ref_name')}</th>
+    <th>${t('th_ref_name')}</th>
     <th>${t('th_ref_dmg')}</th>
     <th>${t('th_ref_crit')}</th>
     <th>${t('th_ref_knk')}</th>
@@ -4436,11 +5379,12 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 2;
+let updPage = 3;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
   { title:'upd3_title', sub:'upd3_sub', body:'upd3_body' },
+  { title:'upd4_title', sub:'upd4_sub', body:'upd4_body' },
 ];
 
 function updRender() {
@@ -4475,7 +5419,8 @@ function applyLang() {
   });
   renderAllConsoles();
   renderReforgeTable();
-  // Update Damage/Health label in result panel
+  cmpRenderLists();
+  cmpUpdateRollHeader(); // update SELECT ROLL placeholder text on lang change
   const _resDmgLbl = document.getElementById('az-res-dmg-lbl');
   if (_resDmgLbl) {
     const _isArmorLang = azCurrentItem && azCurrentItem.isArmor;
@@ -4641,6 +5586,27 @@ function applyLang() {
       }
     }
   }
+  // ── CMP: refresh result view if visible ──
+  const cmpResCard = document.getElementById('cmp-result-card');
+  if (cmpResCard && cmpResCard.style.display !== 'none') {
+    const actBtn = document.getElementById('cmp-view-actual');
+    const wisBtn = document.getElementById('cmp-view-wished');
+    if (actBtn) actBtn.querySelector('span').textContent = t('cmp_actual');
+    if (wisBtn) wisBtn.querySelector('span').textContent = t('cmp_wished');
+    if (cmpCurrentItem?.isArmor) cmpRenderArmorResultView();
+    else if (cmpResultActual && cmpResultWished) cmpRenderResultView();
+  }
+  // ── CMP: refresh dropdown placeholder text if nothing selected ──
+  if (cmpCurrentItem) {
+    const upgAVal = document.getElementById('cmp-upg-a-val');
+    const upgBVal = document.getElementById('cmp-upg-b-val');
+    const refAVal = document.getElementById('cmp-ref-a-val');
+    const refBVal = document.getElementById('cmp-ref-b-val');
+    if (upgAVal && cmpUpgA === null) upgAVal.textContent = t('sel_none');
+    if (upgBVal && cmpUpgB === null) upgBVal.textContent = t('sel_none');
+    if (refAVal && (!cmpRefA || cmpRefA === 'None')) refAVal.textContent = t('ref_none');
+    if (refBVal && (!cmpRefB || cmpRefB === 'None')) refBVal.textContent = t('ref_none');
+  }
 }
 
 function toggleLang() {
@@ -4726,41 +5692,222 @@ let azArmorResults = {
 };
 let azResCurrentPart = 'Helmet'; // which part is shown in result card
 
+// ── AZ Category snapshots ──
+const azCategorySnapshot = { weapon: null, armor: null };
+
+function azSaveCategorySnapshot(cat) {
+  if (cat === 'weapon') {
+    // Save the rendered result card state for restoration
+    const resCard = document.getElementById('az-result-card');
+    const resVisible = resCard?.style.display !== 'none';
+    azCategorySnapshot.weapon = {
+      item: azCurrentItem,
+      upg: azSelectedUpg, intUpg: azIntendedUpg,
+      reforge: azSelectedReforge,
+      corrupted: azIsCorrupted,
+      dmg: document.getElementById('az-damage')?.value || '',
+      lastDmg: azLastDmg,
+      resultVisible: resVisible,
+      // Snapshot the rendered result card HTML for instant restore
+      resultCardHTML: resVisible ? resCard?.innerHTML : null,
+      procBodyHTML: document.getElementById('az-proc-left')?.innerHTML || null,
+      procRightHTML: document.getElementById('az-proc-right')?.innerHTML || null,
+      tblBodyHTML:  document.getElementById('az-tablet-body')?.innerHTML  || null,
+      arrowZoneVisible: document.getElementById('az-arrow-zone')?.classList.contains('visible'),
+      thirdPanelVisible: document.getElementById('az-third-panel')?.classList.contains('visible'),
+      hArrowVisible: document.getElementById('az-h-arrow')?.classList.contains('visible'),
+      quotePanelVisible: document.getElementById('az-quote-panel')?.classList.contains('visible'),
+      quotePanelHTML: document.getElementById('az-quote-panel')?.innerHTML || null,
+      quoteMobileVisible: document.getElementById('az-quote-mobile')?.classList.contains('visible'),
+      quoteMobileHTML: document.getElementById('az-quote-mobile')?.innerHTML || null,
+    };
+  } else {
+    // Save live input values for current part before snapshotting
+    if (azCurrentItem?.isArmor && azCurrentArmorPart) {
+      azArmorPartData[azCurrentArmorPart].hp        = document.getElementById('az-damage')?.value || '';
+      azArmorPartData[azCurrentArmorPart].upg       = azSelectedUpg;
+      azArmorPartData[azCurrentArmorPart].corrupted = azIsCorrupted;
+    }
+    azCategorySnapshot.armor = {
+      item: azCurrentItem,
+      currentPart: azCurrentArmorPart,
+      partData: JSON.parse(JSON.stringify(azArmorPartData)),
+      armorResults: JSON.parse(JSON.stringify(azArmorResults)),
+      resCurrentPart: azResCurrentPart,
+      resultVisible: document.getElementById('az-result-card')?.style.display !== 'none',
+    };
+  }
+}
+
 function azSwitchCat(cat) {
+  syncBtnCdForCat('az-analyze-btn', cat, azUpdateAnalyzeBtn);
+  const prevCat = azCurrentCat === 'weapon' ? 'weapon' : 'armor';
+  if (azCurrentItem) azSaveCategorySnapshot(prevCat);
+
   azCurrentCat = cat;
-  azCurrentItem = null;
-  azSelectedUpg = null;
-  azIntendedUpg = null;
-  azSelectedReforge = 'None';
-  azIsCorrupted = false;
-  azCurrentArmorPart = 'Helmet';
-  azArmorPartData = {
-    Helmet:     {hp: '', upg: null, corrupted: false},
-    Chestplate: {hp: '', upg: null, corrupted: false},
-    Leggings:   {hp: '', upg: null, corrupted: false}
-  };
-  azArmorResults = { Helmet: null, Chestplate: null, Leggings: null };
-  azResCurrentPart = 'Helmet';
   document.getElementById('az-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('az-tab-armor').classList.toggle('active',  cat === 'armor');
-  azRenderList();
-  document.getElementById('az-empty').style.display = 'flex';
-  document.getElementById('az-input-card').style.display = 'none';
+
+  const snap = azCategorySnapshot[cat];
+
+  // Hide current results
   document.getElementById('az-result-card').style.display = 'none';
-  const mabReset = document.getElementById('az-mobile-action-btns');
-  if (mabReset) mabReset.style.display = 'none';
-  const azLeftCol = document.getElementById('az-left-col');
-  if (azLeftCol) azLeftCol.style.display = 'none';
-  const az = document.getElementById('az-arrow-zone');
-  if (az) az.classList.remove('visible');
-  const hArrow = document.getElementById('az-h-arrow');
-  if (hArrow) hArrow.classList.remove('visible');
-  const vArrow = document.getElementById('az-v-arrow');
-  if (vArrow) vArrow.classList.remove('visible');
-  const thirdPanel = document.getElementById('az-third-panel');
-  if (thirdPanel) thirdPanel.classList.remove('visible');
-  const mQSwitch = document.getElementById('az-quote-mobile');
-  if (mQSwitch) mQSwitch.classList.remove('visible');
+  document.getElementById('az-empty').style.display = 'flex';
+  const _azMab = document.getElementById('az-mobile-action-btns');
+  if (_azMab) _azMab.style.display = 'none';
+  const _azLc = document.getElementById('az-left-col');
+  if (_azLc) _azLc.style.display = 'none';
+  ['az-arrow-zone','az-h-arrow','az-v-arrow','az-third-panel','az-quote-mobile','az-quote-panel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('visible');
+  });
+
+  if (snap && snap.item) {
+    if (cat === 'weapon') {
+      azCurrentItem      = snap.item;
+      azSelectedUpg      = snap.upg;   azIntendedUpg = snap.intUpg;
+      azSelectedReforge  = snap.reforge;
+      azIsCorrupted      = snap.corrupted;
+      azCurrentArmorPart = 'Helmet';
+      azArmorPartData    = { Helmet:{hp:'',upg:null,corrupted:false}, Chestplate:{hp:'',upg:null,corrupted:false}, Leggings:{hp:'',upg:null,corrupted:false} };
+      azArmorResults     = { Helmet:null, Chestplate:null, Leggings:null };
+      azResCurrentPart   = 'Helmet';
+    } else {
+      azCurrentItem      = snap.item;
+      azCurrentArmorPart = snap.currentPart;
+      azArmorPartData    = snap.partData;
+      azArmorResults     = snap.armorResults;
+      azResCurrentPart   = snap.resCurrentPart;
+      azSelectedUpg      = azArmorPartData[azCurrentArmorPart].upg;
+      azIntendedUpg      = azSelectedUpg;
+      azIsCorrupted      = azArmorPartData[azCurrentArmorPart].corrupted;
+      azSelectedReforge  = 'None';
+    }
+    azRenderList();
+    document.querySelectorAll('#az-item-list-panel .item-btn').forEach(b => {
+      if (b.textContent === snap.item.name) b.classList.add('active');
+    });
+    const ri = RARITY_INFO[snap.item.rarity] || RARITY_INFO.legendary;
+    const isArmor = !!snap.item.isArmor;
+    const box = document.getElementById('az-img-box');
+    azApplyRarityBorder(box, ri);
+    const img = document.getElementById('az-weapon-img');
+    const ph  = box.querySelector('.az-img-placeholder');
+    img.src = azGetArmorImageSrc(snap.item, isArmor ? azCurrentArmorPart : null);
+    img.onload  = () => { img.style.display='block'; ph.style.display='none'; };
+    img.onerror = () => { img.style.display='none';  ph.style.display='block'; };
+    document.getElementById('az-weapon-name').textContent = snap.item.name;
+    document.getElementById('az-weapon-name').className = 'az-weapon-name ' + ri.css;
+    document.getElementById('az-weapon-rarity').textContent = ri.label.toUpperCase();
+    document.getElementById('az-weapon-rarity').className = 'az-weapon-rarity ' + ri.css;
+    document.getElementById('az-input-card').style.display = '';
+    document.getElementById('az-empty').style.display = 'none';
+    // Show left column (hidden during category switch)
+    const azLcRestore = document.getElementById('az-left-col');
+    if (azLcRestore) azLcRestore.style.display = '';
+    // Restore damage field — from partData for armor, from snapshot for weapon
+    const dmgEl = document.getElementById('az-damage');
+    if (dmgEl) {
+      if (cat === 'armor' && isArmor) {
+        dmgEl.value = azArmorPartData[azCurrentArmorPart]?.hp || '';
+      } else if (cat === 'weapon' && snap.dmg !== undefined) {
+        dmgEl.value = snap.dmg;
+      } else {
+        dmgEl.value = '';
+      }
+    }
+    azBuildUpgDrop();
+    azBuildRefDrop();
+    azUpdatePartToggle(ri);
+    azUpdateCorrDisplay();
+    // Fix armor/weapon specific UI elements
+    const _partRow = document.getElementById('az-armor-part-row');
+    if (_partRow) _partRow.classList.toggle('visible', isArmor);
+    const _refWrap = document.getElementById('az-reforge-wrap');
+    if (_refWrap) _refWrap.style.display = isArmor ? 'none' : '';
+    const _lblMain = document.getElementById('az-stat-lbl-main');
+    if (_lblMain) {
+      _lblMain.textContent = isArmor ? t('lbl_health') : t('lbl_damage');
+      if (isArmor) _lblMain.classList.add('health-mode');
+      else _lblMain.classList.remove('health-mode');
+    }
+    // Restore upg/ref val labels
+    const _upgVal = document.getElementById('az-upg-val');
+    if (_upgVal) _upgVal.textContent = azSelectedUpg !== null ? azSelectedUpg : t('sel_none');
+    if (!isArmor) {
+      const _refVal = document.getElementById('az-ref-val');
+      if (_refVal) _refVal.textContent = azSelectedReforge === 'None' ? t('ref_none_select') : azSelectedReforge + ' Reforge';
+    }
+    azUpdateAnalyzeBtn();
+    azUpdateControlLocks();
+    // Restore results if they were visible
+    if (snap.resultVisible) {
+      if (isArmor) {
+        azResCurrentPart = snap.resCurrentPart;
+        azLastDmg = azArmorResults[azResCurrentPart]?.hp ?? null;
+        azRenderArmorResultCard(ri);
+        document.getElementById('az-result-card').style.display = 'block';
+        document.getElementById('az-arrow-zone').classList.add('visible');
+        document.getElementById('az-h-arrow').classList.add('visible');
+        document.getElementById('az-third-panel').classList.add('visible');
+        // Render process/tablet for restored part
+        const shownRes = azArmorResults[azResCurrentPart];
+        if (shownRes) {
+          const _prevPart = azCurrentArmorPart;
+          const _prevUpg  = azSelectedUpg;
+          const _prevCorr = azIsCorrupted;
+          azCurrentArmorPart = azResCurrentPart;
+          azSelectedUpg  = shownRes.upg;
+          azIsCorrupted  = shownRes.corrupted;
+          azRenderProcessTablet(shownRes.hp);
+          azCurrentArmorPart = _prevPart;
+          azSelectedUpg  = _prevUpg;
+          azIsCorrupted  = _prevCorr;
+        }
+        if (window.innerWidth <= 760) {
+          const mab = document.getElementById('az-mobile-action-btns');
+          if (mab) mab.style.display = 'flex';
+          document.getElementById('az-v-arrow')?.classList.add('visible');
+        }
+      } else {
+        // Weapon: restore from saved HTML snapshot — no re-analysis
+        if (snap.resultCardHTML) {
+          const azLc = document.getElementById('az-left-col');
+          if (azLc) azLc.style.display = '';
+          document.getElementById('az-result-card').innerHTML = snap.resultCardHTML;
+          document.getElementById('az-result-card').style.display = 'block';
+          if (snap.procBodyHTML) document.getElementById('az-proc-left').innerHTML = snap.procBodyHTML;
+          if (snap.procRightHTML) document.getElementById('az-proc-right').innerHTML = snap.procRightHTML;
+          if (snap.tblBodyHTML)  document.getElementById('az-tablet-body').innerHTML  = snap.tblBodyHTML;
+          azLastDmg = snap.lastDmg;
+          if (snap.arrowZoneVisible)  document.getElementById('az-arrow-zone')?.classList.add('visible');
+          if (snap.hArrowVisible)     document.getElementById('az-h-arrow')?.classList.add('visible');
+          if (snap.thirdPanelVisible) document.getElementById('az-third-panel')?.classList.add('visible');
+          if (snap.quotePanelVisible && snap.quotePanelHTML) {
+            const qp = document.getElementById('az-quote-panel');
+            if (qp) { qp.innerHTML = snap.quotePanelHTML; qp.classList.add('visible'); }
+          }
+          if (snap.quoteMobileVisible && snap.quoteMobileHTML) {
+            const qm = document.getElementById('az-quote-mobile');
+            if (qm) { qm.innerHTML = snap.quoteMobileHTML; qm.classList.add('visible'); }
+          }
+          if (window.innerWidth <= 760) {
+            const mab = document.getElementById('az-mobile-action-btns');
+            if (mab) mab.style.display = 'flex';
+            document.getElementById('az-v-arrow')?.classList.add('visible');
+          }
+        }
+      }
+    }
+  } else {
+    azCurrentItem = null; azSelectedUpg = null; azIntendedUpg = null;
+    azSelectedReforge = 'None'; azIsCorrupted = false;
+    azCurrentArmorPart = 'Helmet';
+    azArmorPartData = { Helmet:{hp:'',upg:null,corrupted:false}, Chestplate:{hp:'',upg:null,corrupted:false}, Leggings:{hp:'',upg:null,corrupted:false} };
+    azArmorResults = { Helmet:null, Chestplate:null, Leggings:null };
+    azResCurrentPart = 'Helmet';
+    azRenderList();
+  }
 }
 
 function azRenderList() {
@@ -4924,6 +6071,8 @@ function azSelectItem(item, btn) {
   if (vArrow) vArrow.classList.remove('visible');
   const thirdPanel = document.getElementById('az-third-panel');
   if (thirdPanel) thirdPanel.classList.remove('visible');
+  azUpdateAnalyzeBtn();
+  azUpdateControlLocks();
 }
 
 function azPartLabel(part) {
@@ -4978,6 +6127,8 @@ function azSelectPart(part) {
 
   const nameEl = document.getElementById('az-weapon-name');
   nameEl.textContent = azCurrentItem.name.replace(' Set','') + ' ' + azPartLabel(part);
+  azUpdateAnalyzeBtn();
+  azUpdateControlLocks();
 }
 
 function azUpdatePartToggle(ri) {
@@ -5039,9 +6190,11 @@ function azBuildUpgDrop() {
     btn.innerHTML = `<span>${i}</span>${costHTML}`;
     btn.onclick = () => {
       azSelectedUpg = i;
-      azIntendedUpg = i;  // сохраняем желаемый
+      azIntendedUpg = i;
       document.getElementById('az-upg-val').textContent = i;
+      azBuildUpgDrop();
       azCloseDrops();
+      azUpdateAnalyzeBtn();
     };
     grid.appendChild(btn);
   }
@@ -5112,9 +6265,59 @@ document.addEventListener('click', (e) => {
   }
 });
 
+function azUpdateAnalyzeBtn() {
+  const btn = document.getElementById('az-analyze-btn');
+  if (!btn || btn.classList.contains('cd-active')) return;
+  if (!azCurrentItem) { btn.disabled = true; return; }
+  const isArmor = !!azCurrentItem.isArmor;
+  let canAnalyze;
+  if (isArmor) {
+    // Sync current part live values before checking all parts
+    const curHpVal = document.getElementById('az-damage')?.value || '';
+    const syncedData = {
+      ...azArmorPartData,
+      [azCurrentArmorPart]: {
+        hp:        curHpVal,
+        upg:       azSelectedUpg,
+        corrupted: azIsCorrupted
+      }
+    };
+    const parts = ['Helmet','Chestplate','Leggings'];
+    canAnalyze = parts.some(p => {
+      const d = syncedData[p];
+      const hp = parseFloat(d.hp);
+      return d.hp !== '' && !isNaN(hp) && hp > 0 && d.upg !== null;
+    });
+  } else {
+    const dmg = parseFloat(document.getElementById('az-damage')?.value || '');
+    canAnalyze = !isNaN(dmg) && dmg > 0 && azSelectedUpg !== null && azIsCorrupted !== null;
+  }
+  btn.disabled = !canAnalyze;
+}
+
+function azUpdateControlLocks() {
+  if (!azCurrentItem) return;
+  const isArmor = !!azCurrentItem.isArmor;
+  const dmgVal = document.getElementById('az-damage')?.value || '';
+  const hasDmg = dmgVal.trim() !== '' && parseFloat(dmgVal) > 0;
+  const locked = !hasDmg;
+
+  const upgWrap = document.getElementById('az-upg-btn')?.closest('.az-selector');
+  const corrY   = document.getElementById('az-corr-yes');
+  const corrN   = document.getElementById('az-corr-no');
+  // Reforge only exists for weapons
+  const refWrap = !isArmor ? document.getElementById('az-ref-btn')?.closest('.az-selector') : null;
+
+  if (upgWrap) upgWrap.classList.toggle('sp-ctrl-locked', locked);
+  if (corrY)   corrY.classList.toggle('sp-ctrl-locked', locked);
+  if (corrN)   corrN.classList.toggle('sp-ctrl-locked', locked);
+  if (refWrap) refWrap.classList.toggle('sp-ctrl-locked', locked);
+}
+
 function azSetCorrupted(val) {
   azIsCorrupted = val;
   azUpdateCorrDisplay();
+  azUpdateAnalyzeBtn();
 }
 
 function azUpdateCorrDisplay() {
@@ -5181,7 +6384,6 @@ function azCalcRoll(statsDict, hp, upg, corrupted) {
 // itemMinRoll: minimum valid roll for this item (default 1)
 function azCheckRollRange(statsDict, inferred, itemMinRoll) {
   const allRolls = Object.keys(statsDict).map(Number).sort((a, b) => a - b);
-  if (allRolls.length === 1) return null; // single-roll item — always valid
 
   const minR = itemMinRoll || 1;
   const rolls = allRolls.filter(r => r >= minR);
@@ -5246,18 +6448,47 @@ function azClearError() { /* auto-dismiss via timer */ }
 
 // ── Button cooldown (2s fill animation) ──
 const _btnCdTimers = {};
-function triggerBtnCooldown(btnId, ms) {
+const _btnCdEnd = {}; // stores cdEndTime per "btnId:catKey"
+
+// catKey: current category string for this button's page, or '' if not category-aware
+function triggerBtnCooldown(btnId, ms, catKey, onExpire) {
   ms = ms || 2000;
+  catKey = catKey || '';
   const btn = document.getElementById(btnId);
   if (!btn) return;
+  btn.disabled = false;
+  btn.classList.remove('sp-ctrl-locked');
   btn.style.setProperty('--cd-duration', ms + 'ms');
   btn.classList.add('cd-active');
-  btn.disabled = true;
+  _btnCdEnd[btnId + ':' + catKey] = Date.now() + ms;
   clearTimeout(_btnCdTimers[btnId]);
   _btnCdTimers[btnId] = setTimeout(() => {
     btn.classList.remove('cd-active');
-    btn.disabled = false;
+    if (onExpire) onExpire();
   }, ms);
+}
+
+// Call on category switch — restores correct cd-active state for the new category
+function syncBtnCdForCat(btnId, catKey, onExpire) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  const key = btnId + ':' + (catKey || '');
+  const remaining = (_btnCdEnd[key] || 0) - Date.now();
+  clearTimeout(_btnCdTimers[btnId]);
+  if (remaining > 0) {
+    btn.disabled = false;
+    btn.classList.remove('sp-ctrl-locked');
+    btn.style.setProperty('--cd-duration', remaining + 'ms');
+    btn.classList.add('cd-active');
+    _btnCdTimers[btnId] = setTimeout(() => {
+      btn.classList.remove('cd-active');
+      if (onExpire) onExpire();
+    }, remaining);
+  } else {
+    btn.classList.remove('cd-active');
+    // Defer onExpire so the caller has time to restore snapshot state first
+    if (onExpire) setTimeout(onExpire, 0);
+  }
 }
 
 function azDoAnalyze() {
@@ -5375,7 +6606,7 @@ function azDoAnalyze() {
 
     // Log to console — format depends on number of analyzed parts
     const setName = azCurrentItem.name.replace(' Set','');
-    triggerBtnCooldown('az-analyze-btn', 2000);
+    triggerBtnCooldown('az-analyze-btn', 2000, azCurrentCat, azUpdateAnalyzeBtn);
     if (filledParts.length === 1) {
       const p   = filledParts[0];
       const res = azArmorResults[p];
@@ -5407,16 +6638,10 @@ function azDoAnalyze() {
     }
 
   } else {
-    // ── WEAPON path (unchanged) ──
+    // ── WEAPON path ──
     const dmg = parseFloat(document.getElementById('az-damage').value);
-    if (isNaN(dmg) || dmg <= 0) {
-      showSiteError('err_no_dmg', true);
-      return;
-    }
-    if (azSelectedUpg === null) {
-      showSiteError('err_no_upg', true);
-      return;
-    }
+    if (isNaN(dmg) || dmg <= 0) return;
+    if (azSelectedUpg === null) return;
     azLastDmg = dmg;
 
     const refMult   = REFORGE_MODS[azSelectedReforge] || 1.0;
@@ -5424,14 +6649,10 @@ function azDoAnalyze() {
     const maxUpg    = azCurrentItem.maxUpg;
 
     let inferred;
-    if (azCurrentItem.id === 'asc_ws') {
-      inferred = WS[11];
-    } else {
-      let v = dmg / refMult;
-      v = v / (1 + GROWTH_RATE * azSelectedUpg);
-      if (azIsCorrupted) v /= 1.5;
-      inferred = v;
-    }
+    let v = dmg / refMult;
+    v = v / (1 + GROWTH_RATE * azSelectedUpg);
+    if (azIsCorrupted) v /= 1.5;
+    inferred = v;
 
     // ── RANGE VALIDATION ──
     const rangeErr = azCheckRollRange(statsDict, inferred, azCurrentItem.minRoll || 1);
@@ -5549,7 +6770,7 @@ function azDoAnalyze() {
     document.getElementById('az-third-panel').classList.add('visible');
     azSwitchThirdTab('process');
 
-    triggerBtnCooldown('az-analyze-btn', 2000);
+    triggerBtnCooldown('az-analyze-btn', 2000, azCurrentCat, azUpdateAnalyzeBtn);
     addAnalysis({
       cardType:'analyze', typeLabel:'ANALYZE/WEAPON', time:nowStr(),
       main:`${azCurrentItem.name}`,
@@ -5772,6 +6993,7 @@ function azRenderProcessTablet(dmg) {
     if (Number.isInteger(v)) return String(v);
     return v.toPrecision(17).replace(/0+$/, '').replace(/\.$/, '');
   };
+  const fmtTbl = v => (Math.round(v * 1000) / 1000).toFixed(3).replace(/\.?0+$/, '');
   const fmtInt = v => String(Math.floor(v));
 
   const upgMult  = 1 + GROWTH_RATE * azSelectedUpg;
@@ -5899,16 +7121,16 @@ function azRenderProcessTablet(dmg) {
     const goldCost   = u > 0 ? azFmtNum(UPGRADE_COSTS[u] || 0) : '—';
     const isCur = u === azSelectedUpg;
     tRows += `<tr class="${isCur ? 'cur' : ''}"><td class="c-upg">${u}${isCur ? ' ★' : ''}</td>`;
-    tRows += `<td class="c-base">${fmt(baseVal)}</td>`;
+    tRows += `<td class="c-base">${fmtTbl(baseVal)}</td>`;
     tRows += `<td class="c-gold" style="color:var(--gold);font-size:11px;">${goldCost}</td>`;
     if (hasCorrupted && hasReforge) {
-      tRows += `<td class="c-corr">${fmt(corruptedVal)}</td>`;
-      tRows += `<td class="c-ref">${fmt(reforgeVal)}</td>`;
-      tRows += `<td class="c-both">${fmt(bothVal)}</td>`;
+      tRows += `<td class="c-corr">${fmtTbl(corruptedVal)}</td>`;
+      tRows += `<td class="c-ref">${fmtTbl(reforgeVal)}</td>`;
+      tRows += `<td class="c-both">${fmtTbl(bothVal)}</td>`;
     } else if (hasCorrupted) {
-      tRows += `<td class="c-corr">${fmt(corruptedVal)}</td>`;
+      tRows += `<td class="c-corr">${fmtTbl(corruptedVal)}</td>`;
     } else if (hasReforge) {
-      tRows += `<td class="c-ref">${fmt(reforgeVal)}</td>`;
+      tRows += `<td class="c-ref">${fmtTbl(reforgeVal)}</td>`;
     }
     tRows += '</tr>';
   }
@@ -5957,21 +7179,141 @@ let spArmorPartData = {
   Leggings:   {roll: null, upg: null, corrupted: false}
 };
 
+// ── SP Category snapshots ──
+const spCategorySnapshot = { weapon: null, armor: null };
+
+function spSaveCategorySnapshot(cat) {
+  if (cat === 'weapon') {
+    spCategorySnapshot.weapon = {
+      item: spCurrentItem,
+      roll: spSelectedRoll, intRoll: spIntendedRoll,
+      upg: spSelectedUpg,   intUpg:  spIntendedUpg,
+      reforge: spSelectedReforge,
+      corrupted: spIsCorrupted,
+      resultVisible: document.getElementById('sp-result-card')?.style.display !== 'none',
+    };
+  } else {
+    if (spCurrentItem?.isArmor) {
+      spArmorPartData[spCurrentArmorPart].roll      = spSelectedRoll;
+      spArmorPartData[spCurrentArmorPart].upg       = spSelectedUpg;
+      spArmorPartData[spCurrentArmorPart].corrupted = spIsCorrupted;
+    }
+    spCategorySnapshot.armor = {
+      item: spCurrentItem,
+      currentPart: spCurrentArmorPart,
+      partData: JSON.parse(JSON.stringify(spArmorPartData)),
+      armorResults: JSON.parse(JSON.stringify(spArmorResults)),
+      resCurrentPart: spResCurrentPart,
+      resultVisible: document.getElementById('sp-result-card')?.style.display !== 'none',
+    };
+  }
+}
+
 function spSwitchCat(cat) {
+  syncBtnCdForCat('sp-analyze-btn', cat, spUpdateControlLocks);
+  // Save current category before switching
+  const prevCat = spCurrentCat === 'weapon' ? 'weapon' : 'armor';
+  if (spCurrentItem) spSaveCategorySnapshot(prevCat);
+
   spCurrentCat = cat;
-  spCurrentItem = null;
-  spCurrentPart = 'Helmet';
-  spSelectedUpg = null;
-  spSelectedRoll = null;
-  spIntendedRoll = null;
-  spIntendedUpg = null;
-  spSelectedReforge = 'None';
-  spIsCorrupted = false;
-  spArmorResults = { Helmet: null, Chestplate: null, Leggings: null }; spResCurrentPart = 'Helmet';
   document.getElementById('sp-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('sp-tab-armor').classList.toggle('active',  cat === 'armor');
-  spRenderList();
+
+  const snap = spCategorySnapshot[cat];
+  // Always hide results from previous category first
   spShowEmpty();
+  if (snap && snap.item) {
+    // Restore snapshot
+    if (cat === 'weapon') {
+      spCurrentItem      = snap.item;
+      spSelectedRoll     = snap.roll;    spIntendedRoll = snap.intRoll;
+      spSelectedUpg      = snap.upg;     spIntendedUpg  = snap.intUpg;
+      spSelectedReforge  = snap.reforge;
+      spIsCorrupted      = snap.corrupted;
+      spCurrentArmorPart = 'Helmet';
+      spArmorPartData    = { Helmet:{roll:null,upg:null,corrupted:false}, Chestplate:{roll:null,upg:null,corrupted:false}, Leggings:{roll:null,upg:null,corrupted:false} };
+      spArmorResults     = { Helmet:null, Chestplate:null, Leggings:null };
+    } else {
+      spCurrentItem      = snap.item;
+      spCurrentArmorPart = snap.currentPart;
+      spCurrentPart      = snap.currentPart;
+      spArmorPartData    = snap.partData;
+      spArmorResults     = snap.armorResults;
+      spResCurrentPart   = snap.resCurrentPart;
+      spSelectedRoll     = spArmorPartData[spCurrentArmorPart].roll;
+      spSelectedUpg      = spArmorPartData[spCurrentArmorPart].upg;
+      spIsCorrupted      = spArmorPartData[spCurrentArmorPart].corrupted;
+      spIntendedRoll = spSelectedRoll; spIntendedUpg = spSelectedUpg;
+      spSelectedReforge  = 'None';
+    }
+    spRenderList();
+    // Re-highlight active item button
+    document.querySelectorAll('#sp-item-list-panel .item-btn').forEach(b => {
+      if (b.textContent === snap.item.name) b.classList.add('active');
+    });
+    spRestoreUI(snap.item, snap.resultVisible);
+  } else {
+    // No snapshot — fresh
+    spCurrentItem = null; spCurrentPart = 'Helmet'; spCurrentArmorPart = 'Helmet';
+    spSelectedUpg = null; spSelectedRoll = null;
+    spIntendedRoll = null; spIntendedUpg = null;
+    spSelectedReforge = 'None'; spIsCorrupted = false;
+    spArmorResults = { Helmet:null, Chestplate:null, Leggings:null }; spResCurrentPart = 'Helmet';
+    spArmorPartData = { Helmet:{roll:null,upg:null,corrupted:false}, Chestplate:{roll:null,upg:null,corrupted:false}, Leggings:{roll:null,upg:null,corrupted:false} };
+    spRenderList();
+    spShowEmpty();
+  }
+}
+
+function spRestoreUI(item, resultVisible) {
+  const isArmor = !!item.isArmor;
+  const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  const imgBox = document.getElementById('sp-img-box');
+  azApplyRarityBorder(imgBox, ri);
+  const img = document.getElementById('sp-weapon-img');
+  const ph  = imgBox.querySelector('.az-img-placeholder');
+  img.src = azGetArmorImageSrc(item, isArmor ? spCurrentArmorPart : null);
+  img.onload  = () => { img.style.display='block'; ph.style.display='none'; };
+  img.onerror = () => { img.style.display='none';  ph.style.display='block'; };
+  const nameEl = document.getElementById('sp-weapon-name');
+  nameEl.textContent = isArmor ? (item.name.replace(' Set','') + ' ' + azPartLabel(spCurrentArmorPart)) : item.name;
+  nameEl.className = 'az-weapon-name ' + ri.css;
+  document.getElementById('sp-weapon-rarity').textContent = ri.label.toUpperCase();
+  document.getElementById('sp-weapon-rarity').className = 'az-weapon-rarity ' + ri.css;
+  // Show input card
+  const lc = document.getElementById('sp-left-col');
+  if (lc) lc.style.display = '';
+  document.getElementById('sp-empty').style.display = 'none';
+  // Armor part toggle
+  const armorPartRow = document.getElementById('sp-armor-part-row');
+  if (armorPartRow) armorPartRow.classList.toggle('visible', isArmor);
+  spUpdatePartToggle(ri);
+  // Reforge — hidden for armor
+  const refWrap = document.getElementById('sp-reforge-wrap');
+  if (refWrap) refWrap.style.display = isArmor ? 'none' : '';
+  // Damage/Health label
+  const lblMain = document.getElementById('sp-stat-lbl-main');
+  if (lblMain) {
+    lblMain.textContent = isArmor ? t('lbl_health') : t('lbl_damage');
+    if (isArmor) lblMain.classList.add('health-mode');
+    else lblMain.classList.remove('health-mode');
+  }
+  spBuildRollBtns();
+  spBuildUpgDrop();
+  if (!isArmor) spBuildRefDrop();
+  spUpdateControlLocks();
+  spUpdateRollDisplay();
+  // Restore displayed values
+  const upgVal = document.getElementById('sp-upg-val');
+  if (upgVal) upgVal.textContent = spSelectedUpg !== null ? spSelectedUpg : t('sel_none');
+  if (!isArmor) {
+    const refVal = document.getElementById('sp-ref-val');
+    if (refVal) refVal.textContent = spSelectedReforge === 'None' ? t('ref_none_select') : spSelectedReforge + ' Reforge';
+  }
+  // Restore result if it was visible
+  if (resultVisible) {
+    spDoAnalyze(true);
+  }
 }
 
 function spRenderList() {
@@ -6133,6 +7475,7 @@ function spSelectItem(item, btn) {
   }
   spUpdateCorrDisplay();
   spUpdateRollDisplay();
+  spUpdateControlLocks();
 
   // Show card, hide rest
   document.getElementById('sp-empty').style.display = 'none';
@@ -6167,13 +7510,17 @@ function spBuildUpgDrop() {
     btn.innerHTML = `<span>${i}</span>${costHTML}`;
     btn.onclick = () => {
       spSelectedUpg = i;
-      spIntendedUpg = i;  // сохраняем желаемый
+      spIntendedUpg = i;
       document.getElementById('sp-upg-val').textContent = i;
+      spBuildUpgDrop();
       spCloseDrops();
+        
+      // ДОБАВЛЕНО: обновляем состояние кнопки
+      spUpdateControlLocks();
     };
     grid.appendChild(btn);
   }
-  drop.appendChild(grid);
+  drop.appendChild(grid); 
 }
 
 function spBuildRefDrop() {
@@ -6232,6 +7579,7 @@ function spBuildRollBtns() {
     container.appendChild(autoDiv);
     spSelectedRoll = 11;
     spUpdateRollDisplay();
+    spUpdateControlLocks();
     return;
   }
   container.style.overflowX = '';
@@ -6275,26 +7623,11 @@ function spSelectRollNone() {
   spIntendedRoll = null;
 
   if (spCurrentItem && spCurrentItem.isArmor) {
-    // Clear this part's saved result
+    // Immediately sync null into spArmorPartData so savedReady sees it
+    spArmorPartData[spCurrentArmorPart].roll = null;
+    spArmorPartData[spCurrentArmorPart].upg  = null;
+    // Clear this part's result so it's removed on next button press
     spArmorResults[spCurrentArmorPart] = null;
-
-    // Update result card only if it's currently visible
-    const resCard = document.getElementById('sp-result-card');
-    if (resCard && resCard.style.display !== 'none') {
-      const parts = ['Helmet','Chestplate','Leggings'];
-      const remaining = parts.filter(p => spArmorResults[p] !== null);
-      if (remaining.length > 0) {
-        spResCurrentPart = remaining[0];
-        spRenderArmorResultCard();
-        spRenderArmorProcessTablet(spResCurrentPart);
-      } else {
-        // No analyzed parts left — hide result + third panel
-        resCard.style.display = 'none';
-        document.getElementById('sp-third-panel').classList.remove('visible');
-        document.getElementById('sp-h-arrow').classList.remove('visible');
-        document.getElementById('sp-v-arrow').classList.remove('visible');
-      }
-    }
   }
 
   // Update roll buttons active state
@@ -6302,6 +7635,7 @@ function spSelectRollNone() {
     btn.classList.toggle('active', btn.classList.contains('sp-roll-none'));
   });
   spUpdateRollDisplay();
+  spUpdateControlLocks();
 }
 
 function spSelectRoll(roll) {
@@ -6312,6 +7646,42 @@ function spSelectRoll(roll) {
     else btn.classList.toggle('active', Number(btn.textContent) === roll);
   });
   spUpdateRollDisplay();
+  spUpdateControlLocks();
+}
+
+function spUpdateControlLocks() {
+  const rollChosen = spSelectedRoll !== null;
+  const upgChosen  = spSelectedUpg  !== null;
+  const corrChosen = spIsCorrupted  !== null;
+  // Lock upgrade, reforge, corrupted until roll chosen
+  const upg  = document.getElementById('sp-upg-btn')?.closest('.az-selector');
+  const ref  = document.getElementById('sp-ref-btn')?.closest('.az-selector');
+  const corrY = document.getElementById('sp-corr-yes');
+  const corrN = document.getElementById('sp-corr-no');
+  const btn  = document.getElementById('sp-analyze-btn');
+  const isArmor = !!spCurrentItem?.isArmor;
+  if (upg)   upg.classList.toggle('sp-ctrl-locked', !rollChosen);
+  if (ref)   ref.classList.toggle('sp-ctrl-locked', !rollChosen);
+  if (corrY) corrY.classList.toggle('sp-ctrl-locked', !rollChosen);
+  if (corrN) corrN.classList.toggle('sp-ctrl-locked', !rollChosen);
+  if (btn) {
+    let canAnalyze;
+    if (spCurrentItem?.isArmor) {
+      const currentReady = rollChosen && upgChosen && corrChosen;
+      const savedReady = ['Helmet','Chestplate','Leggings'].some(p => {
+        if (p === spCurrentArmorPart) return currentReady;
+        const d = spArmorPartData[p];
+        return d && d.roll !== null && d.upg !== null;
+      });
+      canAnalyze = savedReady;
+    } else {
+      canAnalyze = rollChosen && upgChosen && corrChosen;
+    }
+    if (!btn.classList.contains('cd-active')) {
+      btn.disabled = !canAnalyze;
+      btn.classList.remove('sp-ctrl-locked');
+    }
+  }
 }
 
 function spUpdateRollDisplay() {
@@ -6418,6 +7788,8 @@ function spSelectPart(part) {
   img.onerror = () => { img.style.display = 'none';  ph.style.display = 'block'; };
   document.getElementById('sp-weapon-name').textContent =
     spCurrentItem.name.replace(' Set','') + ' ' + azPartLabel(part);
+
+  spUpdateControlLocks();
 }
 
 function spToggleDrop(which) {
@@ -6618,29 +7990,37 @@ function spDoAnalyze(skipCd) {
   const item = spCurrentItem;
   if (!item) return;
 
+  // ── КД ставится сразу при реальном нажатии кнопки, до любой логики авто-переключения ──
+  if (!skipCd) triggerBtnCooldown('sp-analyze-btn', 2000, spCurrentCat, spUpdateControlLocks);
+
   const isArmor = !!item.isArmor;
 
-  // ── For armor: if current part has no data, auto-switch to first part that does ──
+  // ── For armor: if current part has no data, use first part that does (no visual switch) ──
   if (isArmor && (spSelectedRoll === null || spSelectedUpg === null)) {
     const parts = ['Helmet','Chestplate','Leggings'];
     const fallback = parts.find(p => spArmorPartData[p].roll !== null && spArmorPartData[p].upg !== null);
     if (fallback) {
-      spSelectPart(fallback);
-      // Now re-run with the switched part
+      // Temporarily load fallback part data into state vars — no UI switch
+      const _prevPart = spCurrentArmorPart;
+      const _prevRoll = spSelectedRoll;
+      const _prevUpg  = spSelectedUpg;
+      const _prevCorr = spIsCorrupted;
+      spCurrentArmorPart = fallback;
+      spSelectedRoll     = spArmorPartData[fallback].roll;
+      spSelectedUpg      = spArmorPartData[fallback].upg;
+      spIsCorrupted      = spArmorPartData[fallback].corrupted;
       spDoAnalyze(true);
+      // Restore original state
+      spCurrentArmorPart = _prevPart;
+      spSelectedRoll     = _prevRoll;
+      spSelectedUpg      = _prevUpg;
+      spIsCorrupted      = _prevCorr;
       return;
     }
   }
 
-  // ── Validation ──
-  if (spSelectedRoll === null) {
-    spShowError('err_no_roll');
-    return;
-  }
-  if (spSelectedUpg === null) {
-    spShowError('err_no_upg');
-    return;
-  }
+  // ── Validation — button gating handles these, but guard against direct calls ──
+  if (spSelectedRoll === null || spSelectedUpg === null) return;
   spClearError();
   const upg     = spSelectedUpg;
   const roll    = spSelectedRoll;
@@ -6667,12 +8047,14 @@ function spDoAnalyze(skipCd) {
     spArmorResults[spCurrentArmorPart] = { part: spCurrentArmorPart, roll, upg, corrupted: corr, hp: stat, base, growthFactor };
     spResCurrentPart = spCurrentArmorPart;
 
-    // Backfill spArmorResults from spArmorPartData for parts that have input data
-    // but weren't computed yet in this session (e.g. carried over from a previous
-    // armor set switch). This ensures the result card shows all available parts.
+    // Backfill spArmorResults from spArmorPartData — always recompute so changed
+    // data on other parts is reflected. Save current live data first.
+    spArmorPartData[spCurrentArmorPart].roll      = roll;
+    spArmorPartData[spCurrentArmorPart].upg       = upg;
+    spArmorPartData[spCurrentArmorPart].corrupted = corr;
     const _bfParts = ['Helmet','Chestplate','Leggings'];
     _bfParts.forEach(p => {
-      if (spArmorResults[p] !== null) return; // already computed
+      if (p === spCurrentArmorPart) return; // already saved above
       const pd = spArmorPartData[p];
       if (pd.roll === null || pd.upg === null) return; // no data
       const sd = item.stats[p];
@@ -6741,7 +8123,6 @@ function spDoAnalyze(skipCd) {
   }
 
   // ── Log to Previews console ──
-  if (!skipCd) triggerBtnCooldown('sp-analyze-btn', 2000);
   if (!isArmor) {
     // Weapon preview
     addPreview({
@@ -6821,7 +8202,7 @@ function spDoAnalyze(skipCd) {
     // Align horizontal arrow to ROLL row (armor) or Damage row (weapon)
     requestAnimationFrame(() => {
       const arrow = document.getElementById('sp-h-arrow');
-      const targetId = item.isArmor ? 'sp-res-roll-row' : 'sp-res-dmg-lbl';
+      const targetId = 'sp-res-dmg-lbl';
       const targetEl = document.getElementById(targetId);
       if (arrow && targetEl) {
         const arrowRect    = arrow.getBoundingClientRect();
@@ -7008,12 +8389,1547 @@ function spRenderTablet(item, roll, upg, corr, refName, refMult) {
   }, 50);
 }
 
+/* ── COMPARE PAGE ── */
+let cmpCategory = 'weapon';
+let cmpCurrentItem = null;
+
+// Intended values (preserved across item switches)
+let cmpIntendedRollA = null, cmpIntendedRollB = null;
+let cmpIntendedUpgA  = null, cmpIntendedUpgB  = null;
+
+// Actual (clamped) values
+let cmpRollA = null, cmpRollB = null;
+let cmpUpgA  = null, cmpUpgB  = null;
+let cmpRefA  = 'None', cmpRefB = 'None';
+let cmpCorrA = null, cmpCorrB = null;
+
+let cmpOpenPicker = null; // null | 'a' | 'b'
+
+// Armor part state
+let cmpCurrentPart = 'Helmet';
+// Per-part data storage: { rollA, rollB, upgA, upgB, corrA, corrB, corrAChosen, openPicker }
+let cmpArmorPartData = {};
+function cmpInitArmorPartData() {
+  cmpArmorPartData = {
+    Helmet:     { rollA:null, rollB:null, upgA:null, upgB:null, corrA:null, corrB:null, corrAChosen:false, openPicker:'a' },
+    Chestplate: { rollA:null, rollB:null, upgA:null, upgB:null, corrA:null, corrB:null, corrAChosen:false, openPicker:'a' },
+    Leggings:   { rollA:null, rollB:null, upgA:null, upgB:null, corrA:null, corrB:null, corrAChosen:false, openPicker:'a' },
+  };
+}
+
+function cmpIsDual() { return cmpRollA !== null && cmpRollB !== null; }
+
+// ── Category snapshots — preserve state when switching weapon↔armor ──
+const cmpCategorySnapshot = { weapon: null, armor: null };
+
+function cmpSaveCategorySnapshot(cat) {
+  if (cat === 'weapon') {
+    cmpCategorySnapshot.weapon = {
+      item: cmpCurrentItem,
+      rollA: cmpRollA, rollB: cmpRollB,
+      upgA: cmpUpgA, upgB: cmpUpgB,
+      intRollA: cmpIntendedRollA, intRollB: cmpIntendedRollB,
+      intUpgA: cmpIntendedUpgA, intUpgB: cmpIntendedUpgB,
+      refA: cmpRefA, refB: cmpRefB,
+      corrA: cmpCorrA, corrB: cmpCorrB,
+      refAChosen: cmpRefAChosen, corrAChosen: cmpCorrAChosen,
+      openPicker: cmpOpenPicker,
+      resultActual: cmpResultActual ? JSON.parse(JSON.stringify(cmpResultActual)) : null,
+      resultWished: cmpResultWished ? JSON.parse(JSON.stringify(cmpResultWished)) : null,
+      resultVisible: document.getElementById('cmp-result-card')?.style.display !== 'none',
+      currentView: cmpCurrentView,
+    };
+  } else {
+    if (cmpCurrentItem?.isArmor) cmpSavePartData(cmpCurrentPart);
+    cmpCategorySnapshot.armor = {
+      item: cmpCurrentItem,
+      currentPart: cmpCurrentPart,
+      armorComputed: JSON.parse(JSON.stringify(cmpArmorComputedResults)),
+      resultVisible: document.getElementById('cmp-result-card')?.style.display !== 'none',
+      currentView: cmpCurrentView,
+    };
+  }
+}
+
+function cmpRestoreCategorySnapshot(cat) {
+  const snap = cmpCategorySnapshot[cat];
+  if (!snap || !snap.item) return false;
+  if (cat === 'weapon') {
+    cmpRollA = snap.rollA; cmpRollB = snap.rollB;
+    cmpUpgA = snap.upgA; cmpUpgB = snap.upgB;
+    cmpIntendedRollA = snap.intRollA; cmpIntendedRollB = snap.intRollB;
+    cmpIntendedUpgA = snap.intUpgA; cmpIntendedUpgB = snap.intUpgB;
+    cmpRefA = snap.refA; cmpRefB = snap.refB;
+    cmpCorrA = snap.corrA; cmpCorrB = snap.corrB;
+    cmpRefAChosen = snap.refAChosen; cmpCorrAChosen = snap.corrAChosen;
+    cmpOpenPicker = snap.openPicker;
+    cmpResultActual = snap.resultActual || null;
+    cmpResultWished = snap.resultWished || null;
+    cmpCurrentView  = snap.currentView || 'wished';
+  } else {
+    cmpCurrentPart = snap.currentPart;
+    cmpLoadPartData(cmpCurrentPart);
+    cmpArmorComputedResults = snap.armorComputed || { Helmet:null, Chestplate:null, Leggings:null };
+    cmpCurrentView = snap.currentView || 'wished';
+  }
+  return snap.item;
+}
+
+// ── Category switch ──
+function cmpSwitchCategory(cat) {
+  syncBtnCdForCat('cmp-check-btn', cat, cmpUpdateCheckBtn);
+  // Save current category state before switching
+  const prevCat = cmpCategory === 'weapon' ? 'weapon' : 'armor';
+  if (cmpCurrentItem) cmpSaveCategorySnapshot(prevCat);
+
+  cmpCategory = cat;
+  document.getElementById('cmp-tab-weapon').classList.toggle('active', cat === 'weapon');
+  document.getElementById('cmp-tab-armor').classList.toggle('active',  cat === 'armor');
+
+  // Try to restore previous state for this category
+  // Always hide results from previous category first
+  const _cmpResCard = document.getElementById('cmp-result-card');
+  if (_cmpResCard) _cmpResCard.style.display = 'none';
+  document.getElementById('cmp-h-arrow').classList.remove('visible');
+  document.getElementById('cmp-third-panel').classList.remove('visible');
+  document.getElementById('cmp-v-arrow').classList.remove('visible');
+  document.getElementById('cmp-mobile-action-btns').classList.remove('visible');
+  // Reset only current category results, not the other category's
+  if (cat === 'weapon') {
+    cmpArmorComputedResults = { Helmet: null, Chestplate: null, Leggings: null };
+  } else {
+    cmpResultActual = null; cmpResultWished = null;
+  }
+
+  const restoredItem = cmpRestoreCategorySnapshot(cat);
+
+  if (restoredItem) {
+    // Restore: find the item button and re-select it
+    cmpCurrentItem = restoredItem;
+    const partRow = document.getElementById('cmp-armor-part-row');
+    if (partRow) partRow.classList.toggle('visible', cat === 'armor');
+    if (cat === 'armor') cmpUpdatePartToggle();
+    // Highlight item button
+    document.querySelectorAll('#cmp-item-list .item-btn').forEach(b => b.classList.remove('active'));
+    cmpRenderLists();
+    // Refind and activate the button for restored item
+    document.querySelectorAll('#cmp-item-list .item-btn').forEach(b => {
+      if (b.textContent === restoredItem.name) b.classList.add('active');
+    });
+    document.getElementById('cmp-empty').style.display = 'none';
+    document.getElementById('cmp-active').style.display = 'flex';
+    // Restore image + name
+    const ri = RARITY_INFO[restoredItem.rarity] || RARITY_INFO.legendary;
+    const imgBox = document.getElementById('cmp-img-box');
+    const imgEl  = document.getElementById('cmp-item-img');
+    const phEl   = document.getElementById('cmp-img-ph');
+    azApplyRarityBorder(imgBox, ri);
+    const imgSrc = cat === 'armor'
+      ? (IMAGE_PATHS.armors[restoredItem.id]?.[cmpCurrentPart] ? IMAGE_PATHS.baseDir + IMAGE_PATHS.armors[restoredItem.id][cmpCurrentPart] : '')
+      : (IMAGE_PATHS.weapons[restoredItem.id] ? IMAGE_PATHS.baseDir + IMAGE_PATHS.weapons[restoredItem.id] : '');
+    if (imgSrc) { imgEl.src = imgSrc; imgEl.onload = () => { imgEl.style.display='block'; phEl.style.display='none'; }; imgEl.onerror = () => { imgEl.style.display='none'; phEl.style.display='block'; }; }
+    else { imgEl.style.display='none'; phEl.style.display='block'; }
+    const nameEl = document.getElementById('cmp-item-name');
+    nameEl.textContent = restoredItem.name; nameEl.className = 'az-weapon-name ' + ri.css;
+    const rarEl = document.getElementById('cmp-item-rarity');
+    rarEl.textContent = ri.label.toUpperCase(); rarEl.className = 'az-weapon-rarity ' + ri.css;
+    const refBlock = document.getElementById('cmp-ref-block');
+    if (refBlock) refBlock.style.display = cat === 'armor' ? 'none' : '';
+    cmpRefreshAll();
+    // Restore results if they were visible
+    const snap2 = cmpCategorySnapshot[cat];
+    if (snap2?.resultVisible) {
+      // Reset result card UI state for correct category
+      const isResArmor = cat === 'armor';
+      // Damage/Health label
+      const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
+      if (dmgLbl) {
+        dmgLbl.textContent = isResArmor ? t('lbl_health') : t('lbl_damage');
+        dmgLbl.style.color = isResArmor ? '#7fff00' : '#ff4444';
+      }
+      const dmgVal = document.getElementById('cmp-res-dmg');
+      if (dmgVal) dmgVal.style.color = isResArmor ? '#7fff00' : '';
+      // Reforge — hidden for armor
+      const refEl = document.getElementById('cmp-res-reforge');
+      if (refEl) refEl.style.display = 'none';
+      // Part row — hidden for weapon
+      const partRow2 = document.getElementById('cmp-res-part-row');
+      if (partRow2) partRow2.classList.toggle('visible', isResArmor);
+      // Total HP row — hidden for weapon
+      const totalRow = document.getElementById('cmp-total-hp-row');
+      if (totalRow) totalRow.classList.toggle('visible', isResArmor);
+      // Roll row — hidden unless needed
+      const rollRow = document.getElementById('cmp-res-roll-row');
+      if (rollRow) rollRow.style.display = 'none';
+      // Diff row — reset
+      const diffRow = document.getElementById('cmp-res-diff-row');
+      if (diffRow) diffRow.style.display = 'none';
+      // Set view button rarity color and image border for both weapon and armor
+      const resRiShared = RARITY_INFO[restoredItem.rarity] || RARITY_INFO.legendary;
+      const rarColorShared = { 'rarity-legendary':'#e8b84b', 'rarity-secret':'#a8d8f0' }[resRiShared.css] || 'var(--gold-bright)';
+      document.getElementById('cmp-view-actual').style.color = rarColorShared;
+      document.getElementById('cmp-view-wished').style.color = rarColorShared;
+      azApplyRarityBorder(document.getElementById('cmp-res-img-box'), resRiShared);
+      // Restore result card image for weapon
+      if (!isResArmor && snap2.resultActual) {
+        const resRi = resRiShared;
+        const resImgBox = document.getElementById('cmp-res-img-box');
+        const resImg = document.getElementById('cmp-res-img');
+        const resPh  = document.getElementById('cmp-res-ph');
+        azApplyRarityBorder(resImgBox, resRi);
+        const resSrc = IMAGE_PATHS.weapons[restoredItem.id] ? IMAGE_PATHS.baseDir + IMAGE_PATHS.weapons[restoredItem.id] : '';
+        if (resSrc) { resImg.src = resSrc; resImg.style.display = 'block'; resPh.style.display = 'none'; }
+        else { resImg.style.display = 'none'; resPh.style.display = 'block'; }
+        document.getElementById('cmp-res-name').textContent = restoredItem.name;
+        document.getElementById('cmp-res-name').className = 'az-weapon-name ' + resRi.css;
+        document.getElementById('cmp-res-rarity').textContent = resRi.label.toUpperCase();
+        document.getElementById('cmp-res-rarity').className = 'az-res-val ' + resRi.css;
+        const delayRow = document.getElementById('sp-res-delay-row-cmp');
+        if (delayRow) delayRow.style.display = restoredItem.delay ? 'flex' : 'none';
+        if (restoredItem.delay) document.getElementById('cmp-res-delay').textContent = restoredItem.delay + 's';
+      }
+      // Update view buttons
+      const actBtn = document.getElementById('cmp-view-actual');
+      const wisBtn = document.getElementById('cmp-view-wished');
+      if (actBtn) { actBtn.querySelector('span').textContent = t('cmp_actual'); actBtn.classList.toggle('active', cmpCurrentView === 'actual'); }
+      if (wisBtn) { wisBtn.querySelector('span').textContent = t('cmp_wished'); wisBtn.classList.toggle('active', cmpCurrentView === 'wished'); }
+      document.getElementById('cmp-result-card').style.display = 'block';
+      document.getElementById('cmp-h-arrow').classList.add('visible');
+      document.getElementById('cmp-third-panel').classList.add('visible');
+      document.getElementById('cmp-v-arrow').classList.add('visible');
+      document.getElementById('cmp-mobile-action-btns').classList.add('visible');
+      if (cat === 'armor') cmpRenderArmorResultView();
+      else if (cmpResultActual && cmpResultWished) cmpRenderResultView();
+    }
+  } else {
+    // No snapshot — fresh state
+    cmpCurrentItem = null;
+    cmpCurrentPart = 'Helmet';
+    cmpIntendedRollA = cmpIntendedRollB = cmpIntendedUpgA = cmpIntendedUpgB = null;
+    cmpRollA = cmpRollB = cmpUpgA = cmpUpgB = null;
+    cmpRefA = cmpRefB = 'None'; cmpCorrA = cmpCorrB = null;
+    cmpOpenPicker = null;
+    cmpRefAChosen = false; cmpCorrAChosen = false;
+    // Note: cmpArmorAllData is NOT reset — per-item data persists
+    const partRow = document.getElementById('cmp-armor-part-row');
+    if (partRow) partRow.classList.remove('visible');
+    cmpShowEmpty();
+    cmpRenderLists();
+  }
+}
+
+function cmpShowEmpty() {
+  document.getElementById('cmp-empty').style.display = '';
+  document.getElementById('cmp-active').style.display = 'none';
+  const btn = document.getElementById('cmp-check-btn');
+  // Don't interrupt active cooldown animation
+  if (btn && !btn.classList.contains('cd-active')) { btn.disabled = true; }
+  // Hide result card and related panels
+  const resCard = document.getElementById('cmp-result-card');
+  if (resCard) resCard.style.display = 'none';
+  document.getElementById('cmp-h-arrow').classList.remove('visible');
+  document.getElementById('cmp-third-panel').classList.remove('visible');
+  document.getElementById('cmp-v-arrow').classList.remove('visible');
+  document.getElementById('cmp-mobile-action-btns').classList.remove('visible');
+  // Reset stored results
+  cmpResultActual = null;
+  cmpResultWished = null;
+  cmpArmorComputedResults = { Helmet: null, Chestplate: null, Leggings: null };
+}
+
+function cmpRenderLists() {
+  const listEl = document.getElementById('cmp-item-list');
+  if (!listEl) return;
+  listEl.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  (ITEMS[cmpCategory] || []).forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'item-btn' + (cmpCurrentItem && cmpCurrentItem.id === item.id ? ' active' : '');
+    btn.textContent = item.name;
+    btn.onclick = () => cmpSelectItem(item, btn);
+    listEl.appendChild(btn);
+  });
+}
+
+// ── Item select ──
+function cmpSelectItem(item, btn) {
+  const isFirst = cmpCurrentItem === null || cmpCurrentItem.id !== item.id;
+  const wasArmor = cmpCurrentItem?.isArmor;
+  const isFirstEver = cmpCurrentItem === null;
+  cmpCurrentItem = item;
+  const isArmor = !!item.isArmor;
+
+  // Hide result panels when switching to a different item
+  if (isFirst) {
+    const resCard = document.getElementById('cmp-result-card');
+    if (resCard) resCard.style.display = 'none';
+    document.getElementById('cmp-h-arrow').classList.remove('visible');
+    document.getElementById('cmp-third-panel').classList.remove('visible');
+    document.getElementById('cmp-v-arrow').classList.remove('visible');
+    document.getElementById('cmp-mobile-action-btns').classList.remove('visible');
+    cmpResultActual = null;
+    cmpResultWished = null;
+    cmpArmorComputedResults = { Helmet: null, Chestplate: null, Leggings: null };
+  }
+
+  if (isArmor) {
+    if (isFirstEver || !wasArmor) {
+      // Very first selection ever, or coming from weapon → reset armor data
+      cmpInitArmorPartData();
+      cmpCurrentPart = 'Helmet';
+    } else {
+      // Armor → armor (same or different item): save current part, then clamp to new item's limits
+      cmpSavePartData(cmpCurrentPart);
+      if (isFirst) cmpCurrentPart = 'Helmet'; // different item → go back to Helmet
+      const maxUpg = item.maxUpg;
+      const rolls  = cmpGetRolls(item);
+      const minR   = Math.min(...rolls), maxR = Math.max(...rolls);
+      ['Helmet','Chestplate','Leggings'].forEach(p => {
+        const d = cmpArmorPartData[p];
+        if (!d) return;
+        if (d.rollA !== null) d.rollA = Math.max(minR, Math.min(maxR, d.rollA));
+        if (d.rollB !== null) d.rollB = Math.max(minR, Math.min(maxR, d.rollB));
+        if (d.upgA !== null && d.upgA > maxUpg) d.upgA = null;
+        if (d.upgB !== null && d.upgB > maxUpg) d.upgB = maxUpg;
+      });
+    }
+    cmpLoadPartData(cmpCurrentPart);
+  } else {
+    // Weapon
+    const rolls  = getRolls(item);
+    const minR   = item.minRoll || 1;
+    const maxRoll = Math.max(...rolls);
+    const maxUpg  = item.maxUpg;
+
+    if (isFirstEver || wasArmor) {
+      // First ever selection or coming from armor → reset intended
+      cmpRollA = cmpRollB = cmpUpgA = cmpUpgB = null;
+      cmpIntendedRollA = cmpIntendedRollB = cmpIntendedUpgA = cmpIntendedUpgB = null;
+      cmpRefA = cmpRefB = 'None'; cmpCorrA = cmpCorrB = null;
+      cmpRefAChosen = false; cmpCorrAChosen = false;
+    } else {
+      // Weapon → weapon: restore from intended with clamping
+      // Roll A
+      if (cmpIntendedRollA !== null)
+        cmpRollA = Math.max(minR, Math.min(maxRoll, cmpIntendedRollA));
+      else cmpRollA = null;
+      // Roll B
+      if (cmpIntendedRollB !== null) {
+        let rb = Math.max(minR, Math.min(maxRoll, cmpIntendedRollB));
+        if (cmpRollA !== null && rb <= cmpRollA) rb = null;
+        cmpRollB = rb;
+      } else cmpRollB = null;
+      // UpgA: if intended > maxUpg → null (None)
+      cmpUpgA = (cmpIntendedUpgA !== null && cmpIntendedUpgA <= maxUpg) ? cmpIntendedUpgA : null;
+      // UpgB: if intended > maxUpg → maxUpg
+      if (cmpIntendedUpgB !== null)
+        cmpUpgB = cmpIntendedUpgB > maxUpg ? maxUpg : cmpIntendedUpgB;
+      else cmpUpgB = null;
+    }
+    cmpOpenPicker = 'a';
+
+    if (item.id === 'asc_ws') {
+      cmpRollA = 11; cmpIntendedRollA = 11;
+      cmpRollB = null; cmpIntendedRollB = null;
+      cmpOpenPicker = null;
+    }
+  }
+
+  document.querySelectorAll('#cmp-item-list .item-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('cmp-empty').style.display = 'none';
+  document.getElementById('cmp-active').style.display = 'flex';
+
+  // Image + name
+  const imgBox = document.getElementById('cmp-img-box');
+  const imgEl  = document.getElementById('cmp-item-img');
+  const phEl   = document.getElementById('cmp-img-ph');
+  const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  azApplyRarityBorder(imgBox, ri);
+  const imgSrc = isArmor
+    ? (IMAGE_PATHS.armors[item.id]?.Helmet ? IMAGE_PATHS.baseDir + IMAGE_PATHS.armors[item.id].Helmet : '')
+    : (IMAGE_PATHS.weapons[item.id] ? IMAGE_PATHS.baseDir + IMAGE_PATHS.weapons[item.id] : '');
+  if (imgSrc) {
+    imgEl.src = imgSrc;
+    imgEl.onload  = () => { imgEl.style.display = 'block'; phEl.style.display = 'none'; };
+    imgEl.onerror = () => { imgEl.style.display = 'none';  phEl.style.display = 'block'; };
+  } else { imgEl.style.display = 'none'; phEl.style.display = 'block'; }
+
+  const nameEl = document.getElementById('cmp-item-name');
+  nameEl.textContent = item.name; nameEl.className = 'az-weapon-name ' + ri.css;
+  const rarEl = document.getElementById('cmp-item-rarity');
+  rarEl.textContent = ri.label.toUpperCase(); rarEl.className = 'az-weapon-rarity ' + ri.css;
+
+  // Show/hide reforge block and armor part row
+  const refBlock = document.getElementById('cmp-ref-block');
+  if (refBlock) refBlock.style.display = isArmor ? 'none' : '';
+  const partRow = document.getElementById('cmp-armor-part-row');
+  if (partRow) partRow.classList.toggle('visible', isArmor);
+
+  if (isArmor) cmpUpdatePartToggle();
+
+  cmpRefreshAll();
+}
+
+// ── Armor part switching ──
+function cmpSavePartData(part) {
+  if (!cmpArmorPartData[part]) return;
+  cmpArmorPartData[part] = {
+    rollA: cmpRollA, rollB: cmpRollB,
+    upgA: cmpUpgA, upgB: cmpUpgB,
+    corrA: cmpCorrA, corrB: cmpCorrB,
+    corrAChosen: cmpCorrAChosen,
+    openPicker: cmpOpenPicker,
+  };
+}
+
+function cmpLoadPartData(part) {
+  const d = cmpArmorPartData[part];
+  if (!d) return;
+  cmpRollA = d.rollA; cmpRollB = d.rollB;
+  cmpIntendedRollA = d.rollA; cmpIntendedRollB = d.rollB;
+  cmpUpgA = d.upgA; cmpUpgB = d.upgB;
+  cmpIntendedUpgA = d.upgA; cmpIntendedUpgB = d.upgB;
+  cmpCorrA = d.corrA; cmpCorrB = d.corrB;
+  cmpCorrAChosen = d.corrAChosen;
+  cmpOpenPicker = d.openPicker ?? 'a';
+  // Armor has no reforge
+  cmpRefA = 'None'; cmpRefB = 'None'; cmpRefAChosen = false;
+}
+
+function cmpSelectPart(part) {
+  if (!cmpCurrentItem?.isArmor) return;
+  cmpSavePartData(cmpCurrentPart);
+  cmpCurrentPart = part;
+  cmpLoadPartData(part);
+
+  // Update image to this part
+  const imgEl = document.getElementById('cmp-item-img');
+  const phEl  = document.getElementById('cmp-img-ph');
+  const partImgPath = IMAGE_PATHS.armors[cmpCurrentItem.id]?.[part];
+  if (partImgPath) {
+    imgEl.src = IMAGE_PATHS.baseDir + partImgPath;
+    imgEl.onload  = () => { imgEl.style.display = 'block'; phEl.style.display = 'none'; };
+    imgEl.onerror = () => { imgEl.style.display = 'none';  phEl.style.display = 'block'; };
+  }
+  cmpUpdatePartToggle();
+  cmpRefreshAll();
+}
+
+function cmpUpdatePartToggle() {
+  if (!cmpCurrentItem?.isArmor) return;
+  const ri = RARITY_INFO[cmpCurrentItem.rarity] || RARITY_INFO.legendary;
+  ['Helmet','Chestplate','Leggings'].forEach(p => {
+    const btn = document.getElementById('cmp-part-btn-' + p);
+    if (!btn) return;
+    btn.className = 'az-part-btn ' + (p === cmpCurrentPart ? 'active-part' : 'dim-part') + ' ' + ri.css;
+  });
+  // Separators
+  const s1 = document.getElementById('cmp-part-sep-1');
+  const s2 = document.getElementById('cmp-part-sep-2');
+  if (s1) s1.className = 'az-part-sep' + (cmpCurrentPart === 'Helmet' ? '' : ' dim-sep');
+  if (s2) s2.className = 'az-part-sep' + (cmpCurrentPart === 'Leggings' ? '' : ' dim-sep');
+}
+
+// ── Roll picker ──
+// cmpOpenPicker: 'a' | 'b' | null — which slot's list is shown below
+// On item select → auto-open picker A
+// Click slot A → toggle A open (close B)
+// Click slot B (unlocked) → toggle B open (close A)
+function cmpOpenRollPicker(side) {
+  if (side === 'b' && cmpRollA === null) return; // B locked
+  cmpOpenPicker = side; // always open the clicked side, no collapsing
+  cmpRefreshAll();
+}
+
+function cmpBuildRollLists() {
+  if (!cmpCurrentItem) return;
+  const rolls = cmpGetRolls(cmpCurrentItem);
+  const isAutoRoll = cmpCurrentItem.id === 'asc_ws';
+
+  // Picker A
+  const contA = document.getElementById('cmp-roll-btns-a');
+  contA.innerHTML = '';
+
+  if (isAutoRoll) {
+    // Single roll — show AUTO badge, no buttons
+    const autoDiv = document.createElement('div');
+    autoDiv.className = 'sp-roll-auto';
+    autoDiv.textContent = 'ROLL 11 — AUTO';
+    contA.appendChild(autoDiv);
+  } else {
+    if (cmpCurrentItem.isArmor) {
+      const clrBtn = document.createElement('button');
+      clrBtn.className = 'sp-roll-btn sp-roll-none' + (cmpRollA === null ? ' active' : '');
+      clrBtn.textContent = '✕';
+      clrBtn.onclick = e => { e.stopPropagation(); cmpPickRoll('a', null); };
+      contA.appendChild(clrBtn);
+    }
+    rolls.forEach(r => {
+      const color = ROLL_COLORS[getRollClass(cmpCurrentItem, r)] || 'var(--gold)';
+      const btn = document.createElement('button');
+      btn.className = 'sp-roll-btn' + (cmpRollA === r ? ' active' : '');
+      btn.style.color = color;
+      btn.textContent = r;
+      btn.onclick = e => { e.stopPropagation(); cmpPickRoll('a', r); };
+      contA.appendChild(btn);
+    });
+  }
+
+  // Picker B — only for non-auto items
+  const contB = document.getElementById('cmp-roll-btns-b');
+  contB.innerHTML = '';
+  if (!isAutoRoll) {
+    const clrBtn = document.createElement('button');
+    clrBtn.className = 'sp-roll-btn sp-roll-none' + (cmpRollB === null ? ' active' : '');
+    clrBtn.textContent = '✕';
+    clrBtn.onclick = e => { e.stopPropagation(); cmpPickRoll('b', null); };
+    contB.appendChild(clrBtn);
+
+    const bRolls = cmpRollA !== null ? rolls.filter(r => r > cmpRollA) : rolls;
+    bRolls.forEach(r => {
+      const color = ROLL_COLORS[getRollClass(cmpCurrentItem, r)] || 'var(--gold)';
+      const btn = document.createElement('button');
+      btn.className = 'sp-roll-btn' + (cmpRollB === r ? ' active' : '');
+      btn.style.color = color;
+      btn.textContent = r;
+      btn.onclick = e => { e.stopPropagation(); cmpPickRoll('b', r); };
+      contB.appendChild(btn);
+    });
+  }
+}
+
+function cmpPickRoll(side, r) {
+  const isArmorPick = !!cmpCurrentItem?.isArmor;
+  if (side === 'a') {
+    if (r === null || r === cmpRollA) {
+      cmpRollA = null; cmpIntendedRollA = null;
+      cmpRollB = null; cmpIntendedRollB = null;
+      if (!isArmorPick) { cmpUpgB = null; cmpIntendedUpgB = null; }
+      if (!isArmorPick) { cmpCorrAChosen = false; cmpCorrB = null; }
+    } else {
+      cmpRollA = r; cmpIntendedRollA = r;
+      if (cmpRollB !== null && cmpRollB <= r) {
+        cmpRollB = null; cmpIntendedRollB = null;
+        if (!isArmorPick) { cmpUpgB = null; cmpIntendedUpgB = null; }
+      }
+    }
+    cmpOpenPicker = 'a'; // always stay on picker A after any A interaction
+  } else {
+    if (r === null || r === cmpRollB) {
+      cmpRollB = null; cmpIntendedRollB = null;
+      cmpUpgB  = null; cmpIntendedUpgB  = null;
+    } else {
+      cmpRollB = r; cmpIntendedRollB = r;
+    }
+    cmpOpenPicker = 'b'; // always stay on picker B after any B interaction
+  }
+  cmpRefreshAll();
+}
+
+// ── Full refresh ──
+function cmpRefreshAll() {
+  // Save current armor part data before rebuilding
+  if (cmpCurrentItem?.isArmor) cmpSavePartData(cmpCurrentPart);
+
+  const isAutoRoll = cmpCurrentItem?.id === 'asc_ws';
+  cmpBuildRollLists();
+
+  // Show/hide pickers
+  const pickerA = document.getElementById('cmp-roll-picker-a');
+  const pickerB = document.getElementById('cmp-roll-picker-b');
+  if (isAutoRoll) {
+    // Always show picker A (AUTO badge), never show picker B
+    if (pickerA) pickerA.classList.add('open');
+    if (pickerB) pickerB.classList.remove('open');
+  } else {
+    if (pickerA) pickerA.classList.toggle('open', cmpOpenPicker === 'a' || (cmpOpenPicker === null && cmpRollA === null));
+    if (pickerB) pickerB.classList.toggle('open', cmpOpenPicker === 'b');
+  }
+
+  cmpUpdateSlotDisplay();
+  cmpUpdateRollHeader();
+  cmpBuildUpgDrop('a');
+  cmpBuildUpgDrop('b');
+  if (cmpCurrentItem && !cmpCurrentItem.isArmor) {
+    cmpBuildRefDrop('a');
+    cmpBuildRefDrop('b');
+  }
+  cmpUpdateCorrDisplay();
+  cmpUpdateLocks();
+
+  // For asc_ws: lock slot B and keep slot A showing 11 auto
+  if (isAutoRoll) {
+    const slotB = document.getElementById('cmp-slot-b');
+    if (slotB) slotB.classList.add('cmp-locked');
+    const slotA = document.getElementById('cmp-slot-a');
+    if (slotA) slotA.style.pointerEvents = 'none';
+  } else {
+    const slotA = document.getElementById('cmp-slot-a');
+    if (slotA) slotA.style.pointerEvents = '';
+  }
+
+  cmpUpdateCheckBtn();
+}
+
+function cmpUpdateRollHeader() {
+  const el = document.getElementById('cmp-roll-display-val');
+  if (!el) return;
+  if (!cmpCurrentItem || cmpRollA === null) {
+    el.textContent = t('sel_roll');
+    el.style.display = 'block';
+    el.style.color = 'var(--text-dim)';
+    el.style.fontSize = '15px';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function cmpUpdateSlotDisplay() {
+  const slotA = document.getElementById('cmp-slot-a');
+  const slotB = document.getElementById('cmp-slot-b');
+  const valA  = document.getElementById('cmp-slot-a-val');
+  const valB  = document.getElementById('cmp-slot-b-val');
+
+  // Slot A — border and text color = roll color
+  if (cmpRollA !== null && cmpCurrentItem) {
+    const color = ROLL_COLORS[getRollClass(cmpCurrentItem, cmpRollA)] || '#7fff00';
+    valA.textContent = cmpRollA;
+    valA.style.color = color;
+    valA.classList.remove('placeholder');
+    slotA.style.borderColor = color + '99'; // semi-transparent
+    slotA.classList.add('selected');
+  } else {
+    valA.textContent = '—';
+    valA.style.color = '';
+    valA.classList.add('placeholder');
+    slotA.style.borderColor = '';
+    slotA.classList.remove('selected');
+  }
+  slotA.classList.toggle('cmp-slot-open', cmpOpenPicker === 'a');
+
+  // Slot B — locked until A chosen
+  const bLocked = cmpRollA === null;
+  slotB.classList.toggle('cmp-locked', bLocked);
+  if (cmpRollB !== null && cmpCurrentItem) {
+    const color = ROLL_COLORS[getRollClass(cmpCurrentItem, cmpRollB)] || 'var(--cyan-rune)';
+    valB.textContent = cmpRollB;
+    valB.style.color = color;
+    valB.classList.remove('placeholder');
+    slotB.style.borderColor = color + '99';
+    slotB.classList.add('selected');
+  } else {
+    valB.textContent = '—';
+    valB.style.color = '';
+    valB.classList.add('placeholder');
+    slotB.style.borderColor = '';
+    slotB.classList.remove('selected');
+  }
+  slotB.classList.toggle('cmp-slot-open', cmpOpenPicker === 'b');
+}
+
+// ── Upgrades ──
+function cmpBuildUpgDrop(side) {
+  if (!cmpCurrentItem) return;
+  const isA     = side === 'a';
+  const drop    = document.getElementById(`cmp-upg-${side}-drop`);
+  const valEl   = document.getElementById(`cmp-upg-${side}-val`);
+  const maxUpg  = cmpCurrentItem.maxUpg;
+  const curVal  = isA ? cmpUpgA : cmpUpgB;
+  const dual    = cmpIsDual();
+  const isArmor = !!cmpCurrentItem.isArmor;
+
+  // B single-mode: if A chose max → show Maxed
+  if (!isA && !dual && cmpUpgA !== null && cmpUpgA >= maxUpg) {
+    drop.innerHTML = ''; valEl.textContent = t('lbl_max_level'); return;
+  }
+
+  drop.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'az-upg-grid';
+
+  // Other conditions already satisfied?
+  const refOk  = !isArmor && cmpRefAChosen && cmpRefB && cmpRefB !== 'None' && cmpRefA !== cmpRefB;
+  const corrOk = cmpCorrAChosen && cmpCorrA === false && cmpCorrB === true;
+  const otherCondMet = refOk || corrOk;
+
+  // B starts from upgA (equal allowed if other cond met, else from upgA+1... but we allow equal too — check is in checkBtn)
+  // Actually: allow equal always in list, but cmpUpdateCheckBtn enforces the logic
+  const start = (!isA && !dual && cmpUpgA !== null) ? cmpUpgA : 0;
+
+  // A: if B is set and no other condition met, cap A at upgB (inclusive — equal allowed since corrOk/refOk can come later)
+  // But must prevent A > B when no other cond: cap at upgB
+  const endA = (!isA || dual || cmpUpgB === null || otherCondMet) ? maxUpg : cmpUpgB;
+  const end  = isA ? endA : maxUpg;
+
+  for (let i = start; i <= end; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'az-opt' + (i === curVal ? ' sel' : '');
+    const cost = i > 0 ? `<span class="az-opt-sub">${azFmtNum(UPGRADE_COSTS[i]||0)} 🪙</span>` : '';
+    btn.innerHTML = `<span>${i}</span>${cost}`;
+    btn.onclick = () => {
+      if (isA) {
+        cmpUpgA = i; cmpIntendedUpgA = i;
+        // Reset B only if B < A (strictly — B must be >= A)
+        if (!dual && cmpUpgB !== null && cmpUpgB < i) {
+          cmpUpgB = null; cmpIntendedUpgB = null;
+          document.getElementById('cmp-upg-b-val').textContent = t('sel_none');
+        }
+        cmpBuildUpgDrop('a');
+        cmpBuildUpgDrop('b');
+      } else {
+        cmpUpgB = i; cmpIntendedUpgB = i;
+        cmpBuildUpgDrop('b');
+        cmpBuildUpgDrop('a');
+      }
+      valEl.textContent = i;
+      cmpCloseDrops();
+      cmpUpdateUpgLocks();
+      cmpUpdateCheckBtn();
+    };
+    grid.appendChild(btn);
+  }
+  drop.appendChild(grid);
+  valEl.textContent = curVal !== null ? curVal : t('sel_none');
+}
+
+// Only updates Upg B lock — called after upg selection
+// ── Full locks ──
+// Rule: everything locked until rollA is chosen.
+// After rollA: all A-slots open. B-slots open after their A is chosen.
+function cmpUpdateLocks() {
+  const rollChosen = cmpRollA !== null;
+  const dual = cmpIsDual();
+
+  // Slot B roll lock
+  const slotB = document.getElementById('cmp-slot-b');
+  if (slotB) slotB.classList.toggle('cmp-locked', !rollChosen);
+
+  // Upgrade A — locked until roll chosen
+  const upgA = document.getElementById('cmp-upg-a-btn')?.closest('.az-selector');
+  if (upgA) upgA.classList.toggle('cmp-locked', !rollChosen);
+
+  // Upgrade B — locked until upgA chosen (and roll chosen)
+  cmpUpdateUpgLocks();
+
+  // Reforge A — locked until roll chosen (weapons only)
+  if (!cmpCurrentItem?.isArmor) {
+    const refA = document.getElementById('cmp-ref-a-btn')?.closest('.az-selector');
+    if (refA) refA.classList.toggle('cmp-locked', !rollChosen);
+    // Reforge B — locked until refA explicitly chosen
+    cmpUpdateRefLocks();
+  }
+
+  // Corrupted A — locked until roll chosen
+  const corrAWrap = document.getElementById('cmp-corr-a-wrap');
+  if (corrAWrap) corrAWrap.classList.toggle('cmp-locked', !rollChosen);
+
+  // Corrupted B — locked until corrA explicitly chosen
+  cmpUpdateCorrLocks();
+}
+
+function cmpUpdateUpgLocks() {
+  const rollChosen = cmpRollA !== null;
+  const dual = cmpIsDual();
+  const upgB = document.getElementById('cmp-upg-b-wrap');
+  if (!upgB) return;
+  const bLocked = !rollChosen || cmpUpgA === null;
+  const maxed = !dual && cmpUpgA !== null && cmpCurrentItem && cmpUpgA >= cmpCurrentItem.maxUpg;
+  upgB.classList.toggle('cmp-locked', bLocked || maxed);
+}
+
+// ── Reforges ──
+function cmpBuildRefDrop(side) {
+  if (!cmpCurrentItem || cmpCurrentItem.isArmor) return;
+  const isA  = side === 'a';
+  const drop = document.getElementById(`cmp-ref-${side}-drop`);
+  const valEl= document.getElementById(`cmp-ref-${side}-val`);
+  const cur  = isA ? cmpRefA : cmpRefB;
+  const dual = cmpIsDual();
+  // Single-roll mode: B cannot select None
+  const excludeNone = !isA && !dual;
+
+  drop.innerHTML = '';
+  if (!excludeNone) {
+    const nb = document.createElement('button');
+    nb.className = 'az-ref-opt' + (cur === 'None' ? ' sel' : '');
+    nb.innerHTML = `<span>${t('ref_none')}</span><span class="az-ref-dmg">×1.0</span>`;
+    nb.onclick = () => {
+      if (isA) { cmpRefA = 'None'; cmpRefAChosen = true; } else { cmpRefB = 'None'; }
+      valEl.textContent = t('ref_none');
+      cmpCloseDrops();
+      cmpUpdateRefLocks();
+      cmpBuildUpgDrop('a'); cmpBuildUpgDrop('b');
+      cmpUpdateCheckBtn();
+    };
+    drop.appendChild(nb);
+  }
+  REFORGES.forEach(ref => {
+    const btn = document.createElement('button');
+    btn.className = 'az-ref-opt' + (ref.name === cur ? ' sel' : '');
+    btn.innerHTML = `<span>${ref.name}</span><span class="az-ref-dmg">${ref.dmg}</span>`;
+    btn.onclick = () => {
+      if (isA) { cmpRefA = ref.name; cmpRefAChosen = true; } else { cmpRefB = ref.name; }
+      valEl.textContent = ref.name;
+      cmpCloseDrops();
+      cmpUpdateRefLocks();
+      cmpBuildUpgDrop('a'); cmpBuildUpgDrop('b');
+      cmpUpdateCheckBtn();
+    };
+    drop.appendChild(btn);
+  });
+  valEl.textContent = (!cur || cur === 'None') ? t('ref_none') : cur;
+}
+
+// Only updates Ref B lock
+function cmpUpdateRefLocks() {
+  if (!cmpCurrentItem || cmpCurrentItem.isArmor) return;
+  const dual = cmpIsDual();
+  const refB = document.getElementById('cmp-ref-b-wrap');
+  if (!refB) return;
+  // B locked until A has chosen ANY value (including None)
+  // "chosen" means the user explicitly clicked something in ref A
+  // We use cmpRefA being set as proxy — but since default is 'None',
+  // we track whether A was ever explicitly set with a flag.
+  // Simplest: B unlocks when refA !== 'None' OR (dual mode, any choice)
+  // Per spec: "Второй слот заблокирован пока не выберешь зачарование в первом слоту"
+  // So: B locked if refA has never been explicitly picked.
+  // We use cmpRefAChosen flag:
+  const locked = !cmpRefAChosen;
+  refB.classList.toggle('cmp-locked', locked);
+  // Single mode: ensure refB isn't None
+  if (!locked && !dual && (cmpRefB === 'None' || !cmpRefB)) {
+    cmpRefB = cmpRefA !== 'None' ? cmpRefA : (REFORGES[0]?.name || 'Godly');
+    const bVal = document.getElementById('cmp-ref-b-val');
+    if (bVal) bVal.textContent = cmpRefB;
+    cmpBuildRefDrop('b');
+  }
+}
+
+// ── Corrupted ──
+let cmpCorrAChosen = false; // tracks if user explicitly picked corr A
+let cmpRefAChosen  = false; // tracks if user explicitly picked ref A
+
+function cmpSetCorr(side, val) {
+  if (side === 'b') {
+    if (document.getElementById('cmp-corr-b-wrap').classList.contains('cmp-locked')) return;
+    cmpCorrB = val;
+  } else {
+    cmpCorrA = val;
+    cmpCorrAChosen = true;
+  }
+  cmpUpdateCorrDisplay();
+  cmpUpdateCorrLocks();
+  cmpBuildUpgDrop('a'); cmpBuildUpgDrop('b');
+  cmpUpdateCheckBtn();
+}
+
+function cmpUpdateCorrLocks() {
+  const dual  = cmpIsDual();
+  const corrB = document.getElementById('cmp-corr-b-wrap');
+  if (!corrB) return;
+  // B locked until corrA explicitly chosen AND roll is chosen
+  let locked = !cmpCorrAChosen || cmpRollA === null;
+  // Single + corrA = Yes → B locked AND mirrors Yes (can't un-corrupt, so Wished is also Yes)
+  if (!locked && !dual && cmpCorrA === true) {
+    locked = true;
+    cmpCorrB = true; // mirror corrA=Yes into B
+    cmpUpdateCorrDisplay();
+  } else if (locked) {
+    if (!cmpCurrentItem?.isArmor) cmpCorrB = null;
+    cmpUpdateCorrDisplay();
+  }
+  corrB.classList.toggle('cmp-locked', locked);
+}
+
+function cmpUpdateCorrDisplay() {
+  ['a','b'].forEach(s => {
+    const val   = s === 'a' ? cmpCorrA : cmpCorrB;
+    const yBtn  = document.getElementById(`cmp-corr-${s}-yes`);
+    const nBtn  = document.getElementById(`cmp-corr-${s}-no`);
+    const slash = document.getElementById(`cmp-corr-${s}-slash`);
+    if (!yBtn || !nBtn) return;
+    if (val === null) {
+      // Not chosen yet — both dim
+      yBtn.classList.add('dim'); nBtn.classList.add('dim');
+      if (slash) slash.textContent = '\\';
+    } else if (val === true) {
+      yBtn.classList.remove('dim'); nBtn.classList.add('dim');
+      if (slash) slash.textContent = '/';
+    } else {
+      nBtn.classList.remove('dim'); yBtn.classList.add('dim');
+      if (slash) slash.textContent = '\\';
+    }
+  });
+}
+
+// (cmpUpdateLocks is defined above with cmpUpdateUpgLocks)
+
+// ── Check button enable logic ──
+// Weapon single roll: at least ONE category condition met (upgrades both set, reforges differ, corr A=No→B=Yes)
+// Weapon dual rolls: always enabled
+// Armor: at least ONE part has conditions met (checks saved part data + current live state)
+function cmpPartMeetsConditions(d) {
+  // d = { rollA, rollB, upgA, upgB, corrA, corrB, corrAChosen }
+  if (d.rollA === null) return false;
+  // Dual rolls for this part
+  if (d.rollA !== null && d.rollB !== null) return true;
+  // Single roll — check categories (mutual: equal upg allowed if corrOk, and vice versa)
+  const corrOk    = d.corrA === false && d.corrB === true;
+  const upgBothSet = d.upgA !== null && d.upgB !== null;
+  const upgOk    = upgBothSet && (d.upgA < d.upgB || corrOk);
+  return upgOk || corrOk;
+}
+
+function cmpUpdateCheckBtn() {
+  const btn = document.getElementById('cmp-check-btn');
+  if (!btn) return;
+  // Don't touch disabled while cooldown animation is running
+  if (btn.classList.contains('cd-active')) return;
+
+  // ── Armor: check all parts ──
+  if (cmpCurrentItem?.isArmor) {
+    cmpSavePartData(cmpCurrentPart);
+    const partsOk = ['Helmet','Chestplate','Leggings'].some(p =>
+      cmpPartMeetsConditions(cmpArmorPartData[p])
+    );
+    btn.disabled = !partsOk;
+    return;
+  }
+
+  // ── Weapon ──
+  if (cmpRollA === null) { btn.disabled = true; return; }
+  if (cmpIsDual()) { btn.disabled = false; return; }
+
+  const bUpgLocked  = document.getElementById('cmp-upg-b-wrap')?.classList.contains('cmp-locked');
+  const bRefLocked  = document.getElementById('cmp-ref-b-wrap')?.classList.contains('cmp-locked');
+  const bCorrLocked = document.getElementById('cmp-corr-b-wrap')?.classList.contains('cmp-locked');
+
+  const refOk  = !bRefLocked  && cmpRefAChosen && cmpRefB && cmpRefB !== 'None' && cmpRefA !== cmpRefB;
+  const corrOk = !bCorrLocked && cmpCorrA === false && cmpCorrB === true;
+  // upgOk: both chosen AND (A < B, OR another condition already met)
+  const upgBothSet = !bUpgLocked && cmpUpgA !== null && cmpUpgB !== null;
+  const upgOk  = upgBothSet && (cmpUpgA < cmpUpgB || refOk || corrOk);
+
+  btn.disabled = !(upgOk || refOk || corrOk);
+}
+
+// ── CMP current view: 'actual' | 'wished' ──
+let cmpCurrentView = 'wished';
+let cmpResultActual = null;
+let cmpResultWished = null;
+// Armor: per-part computed results { actual: {hp,base,gf,upg,roll,corr}, wished: same }
+let cmpArmorComputedResults = { Helmet: null, Chestplate: null, Leggings: null };
+let cmpResCurrentPart = 'Helmet'; // currently viewed part in result card
+
+function cmpSetView(view) {
+  cmpCurrentView = view;
+  document.getElementById('cmp-view-actual').classList.toggle('active', view === 'actual');
+  document.getElementById('cmp-view-wished').classList.toggle('active', view === 'wished');
+  if (cmpCurrentItem?.isArmor) cmpRenderArmorResultView();
+  else if (cmpResultActual && cmpResultWished) cmpRenderResultView();
+}
+
+function cmpResSelectPart(part) {
+  if (!cmpArmorComputedResults[part]) return;
+  cmpResCurrentPart = part;
+  cmpRenderArmorResultView();
+}
+
+function cmpCalcDmg(item, roll, upg, corr, refMult, refName) {
+  const statsDict = item.stats;
+  const base = statsDict[roll];
+  const gf = 1 + GROWTH_RATE * upg;
+  const dmg = Math.floor(base * gf * (corr ? 1.5 : 1.0) * refMult);
+  return { dmg, base, gf, upg, roll, corr, refMult, refName: refName || 'None' };
+}
+
+function cmpCalcHp(item, part, roll, upg, corr) {
+  const statsDict = item.stats[part];
+  if (!statsDict || !(roll in statsDict)) return null;
+  const base = statsDict[roll];
+  const gf = 1 + GROWTH_RATE * upg;
+  const hp = Math.floor(base * gf * (corr ? 1.5 : 1.0));
+  return { hp, base, gf, upg, roll, corr, part };
+}
+
+function cmpCheckSpecifics() {
+  const item = cmpCurrentItem;
+  if (!item) return;
+  const btn = document.getElementById('cmp-check-btn');
+  if (!btn || btn.disabled || btn.classList.contains('cd-active')) return;
+  triggerBtnCooldown('cmp-check-btn', 2000, cmpCategory, cmpUpdateCheckBtn);
+
+  const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  cmpCurrentView = 'wished';
+  document.getElementById('cmp-view-actual').classList.remove('active');
+  document.getElementById('cmp-view-wished').classList.add('active');
+
+  // Rarity color for view buttons
+  const rarColor = { 'rarity-legendary':'#e8b84b', 'rarity-secret':'#a8d8f0' }[ri.css] || 'var(--gold-bright)';
+  document.getElementById('cmp-view-actual').style.color = rarColor;
+  document.getElementById('cmp-view-wished').style.color = rarColor;
+
+  // ── ARMOR ──
+  if (item.isArmor) {
+    cmpSavePartData(cmpCurrentPart);
+    const parts = ['Helmet','Chestplate','Leggings'];
+    // Compute results only for parts that fully meet conditions — no errors, just skip the rest
+    cmpArmorComputedResults = { Helmet: null, Chestplate: null, Leggings: null };
+    parts.forEach(p => {
+      const d = cmpArmorPartData[p];
+      if (!d || !cmpPartMeetsConditions(d)) return;
+      if (d.upgA === null || d.upgB === null) return; // incomplete — silently skip
+      const actual = cmpCalcHp(item, p, d.rollA, d.upgA, d.corrA === true);
+      if (!actual) return;
+      const rollB = d.rollB ?? d.rollA;
+      const corrB = d.corrB === true;
+      const wished = cmpCalcHp(item, p, rollB, d.upgB, corrB);
+      cmpArmorComputedResults[p] = { actual, wished };
+    });
+    // Show current part if it has results, otherwise fall back to first available
+    const firstPart = parts.find(p => cmpArmorComputedResults[p] !== null) || 'Helmet';
+    cmpResCurrentPart = cmpArmorComputedResults[cmpCurrentPart] !== null ? cmpCurrentPart : firstPart;
+
+    // Image
+    const imgBox = document.getElementById('cmp-res-img-box');
+    const imgEl  = document.getElementById('cmp-res-img');
+    const phEl   = document.getElementById('cmp-res-ph');
+    azApplyRarityBorder(imgBox, ri);
+    const partImgPath = IMAGE_PATHS.armors[item.id]?.[cmpResCurrentPart];
+    if (partImgPath) { imgEl.src = IMAGE_PATHS.baseDir + partImgPath; imgEl.style.display = 'block'; phEl.style.display = 'none'; }
+    else { imgEl.style.display = 'none'; phEl.style.display = 'block'; }
+
+    document.getElementById('sp-res-delay-row-cmp').style.display = 'none';
+
+    document.getElementById('cmp-result-card').style.display = 'block';
+    document.getElementById('cmp-h-arrow').classList.add('visible');
+    document.getElementById('cmp-third-panel').classList.add('visible');
+    document.getElementById('cmp-v-arrow').classList.add('visible');
+    document.getElementById('cmp-mobile-action-btns').classList.add('visible');
+
+    cmpRenderArmorResultView();
+
+    if (window.innerWidth <= 760) {
+      document.getElementById('cmp-result-card').scrollIntoView({behavior:'smooth'});
+    }
+
+    // Log to Compares console
+    const _cmpArmorParts = ['Helmet','Chestplate','Leggings']
+      .filter(p => cmpArmorComputedResults[p] !== null)
+      .map(p => {
+        const d = cmpArmorPartData[p];
+        const r = cmpArmorComputedResults[p];
+        return {
+          part: p,
+          rollA: d.rollA, rollB: d.rollB ?? d.rollA,
+          upgA: d.upgA ?? 0, upgB: d.upgB ?? d.upgA ?? 0,
+          corrA: d.corrA === true, corrB: d.corrB === true,
+          hpActual: r.actual.hp, hpWished: r.wished.hp,
+        };
+      });
+    if (_cmpArmorParts.length > 0) addCompareArmor(item, _cmpArmorParts);
+    return;
+  }
+
+  // ── WEAPON ──
+  const isDual = cmpIsDual();
+  const refNameA = cmpRefA && cmpRefA !== 'None' ? cmpRefA : 'None';
+  const refNameB = cmpRefB && cmpRefB !== 'None' ? cmpRefB : 'None';
+  const refMultA = REFORGE_MODS[refNameA] ?? 1.0;
+  const refMultB = REFORGE_MODS[refNameB] ?? 1.0;
+
+  const rollA = cmpRollA;
+  const rollB = isDual ? cmpRollB : cmpRollA;
+
+  // Validate upgrades
+  if (cmpUpgA === null) { showSiteError('err_cmp_upg_a', true); return; }
+  if (cmpUpgB === null) { showSiteError('err_cmp_upg_b', true); return; }
+
+  const upgA  = cmpUpgA;
+  const upgB  = cmpUpgB;
+  const corrA = cmpCorrA === true;
+  const corrB = cmpCorrB === true;
+
+  cmpResultActual = cmpCalcDmg(item, rollA, upgA, corrA, refMultA, refNameA);
+  cmpResultWished = cmpCalcDmg(item, rollB, upgB, corrB, refMultB, refNameB);
+
+  // Setup result card UI
+  const imgBox = document.getElementById('cmp-res-img-box');
+  const imgEl  = document.getElementById('cmp-res-img');
+  const phEl   = document.getElementById('cmp-res-ph');
+  azApplyRarityBorder(imgBox, ri);
+  const imgSrc = IMAGE_PATHS.weapons[item.id] ? IMAGE_PATHS.baseDir + IMAGE_PATHS.weapons[item.id] : '';
+  if (imgSrc) { imgEl.src = imgSrc; imgEl.style.display = 'block'; phEl.style.display = 'none'; }
+  else { imgEl.style.display = 'none'; phEl.style.display = 'block'; }
+
+  document.getElementById('cmp-res-name').textContent = item.name;
+  document.getElementById('cmp-res-name').className = 'az-weapon-name ' + ri.css;
+  document.getElementById('cmp-res-rarity').textContent = ri.label.toUpperCase();
+  document.getElementById('cmp-res-rarity').className = 'az-res-val ' + ri.css;
+
+  const delayRow = document.getElementById('sp-res-delay-row-cmp');
+  if (item.delay) { delayRow.style.display = 'flex'; document.getElementById('cmp-res-delay').textContent = item.delay + 's'; }
+  else delayRow.style.display = 'none';
+
+  // Hide armor-only elements
+  document.getElementById('cmp-res-part-row').classList.remove('visible');
+  document.getElementById('cmp-total-hp-row').classList.remove('visible');
+  const _tdA = document.getElementById('cmp-total-diff-abs'); if (_tdA) _tdA.style.display = 'none';
+  const _tdP = document.getElementById('cmp-total-diff-pct'); if (_tdP) _tdP.style.display = 'none';
+
+  document.getElementById('cmp-result-card').style.display = 'block';
+  document.getElementById('cmp-h-arrow').classList.add('visible');
+  document.getElementById('cmp-third-panel').classList.add('visible');
+  document.getElementById('cmp-v-arrow').classList.add('visible');
+  document.getElementById('cmp-mobile-action-btns').classList.add('visible');
+
+  cmpRenderResultView();
+
+  if (window.innerWidth <= 760) {
+    document.getElementById('cmp-result-card').scrollIntoView({behavior:'smooth'});
+  }
+
+  // Log to Compares console
+  addCompareWeapon(item, rollA, rollB, upgA, upgB, corrA, corrB, refNameA, refNameB, cmpResultActual.dmg, cmpResultWished.dmg);
+}
+
+function cmpRenderResultView() {
+  const item = cmpCurrentItem;
+  if (!item || !cmpResultActual || !cmpResultWished) return;
+  const isDual = cmpIsDual();
+  const view = cmpCurrentView;
+  const res   = view === 'actual' ? cmpResultActual : cmpResultWished;
+  const other = view === 'actual' ? cmpResultWished : cmpResultActual;
+
+  // Ensure label always shows Damage (not Health from armor)
+  const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
+  if (dmgLbl) { dmgLbl.textContent = t('lbl_damage_res'); dmgLbl.style.color = '#ff4444'; }
+  const dmgVal = document.getElementById('cmp-res-dmg');
+  if (dmgVal) dmgVal.style.color = '';
+
+  // Roll row — shown only in dual mode, shows current view's roll with color
+  const rollRow = document.getElementById('cmp-res-roll-row');
+  const rollValEl = document.getElementById('cmp-res-roll-val');
+  if (isDual && rollRow && rollValEl) {
+    rollRow.style.display = 'flex';
+    const cls = getRollClass(item, res.roll);
+    const color = ROLL_COLORS[cls] || 'var(--gold)';
+    rollValEl.textContent = res.roll;
+    rollValEl.style.color = color;
+    rollValEl.style.textShadow = `0 0 14px ${color}66`;
+  } else if (rollRow) {
+    rollRow.style.display = 'none';
+  }
+
+  document.getElementById('cmp-res-dmg').textContent = azFmtDmg(res.dmg);
+
+  // Diff badges — Wished view always shows damage difference
+  const diffRow = document.getElementById('cmp-res-diff-row');
+  if (view === 'wished') {
+    diffRow.style.display = 'flex';
+    const delta = res.dmg - other.dmg;
+    const pct   = other.dmg > 0 ? (delta / other.dmg * 100) : 0;
+    const cls   = delta > 0 ? 'pos' : delta < 0 ? 'neg' : 'zero';
+    const s     = delta >= 0 ? '+' : '';
+    document.getElementById('cmp-diff-abs').textContent = s + azFmtDmg(delta);
+    document.getElementById('cmp-diff-abs').className = 'cmp-diff-badge ' + cls;
+    document.getElementById('cmp-diff-pct').textContent = s + pct.toFixed(1) + '%';
+    document.getElementById('cmp-diff-pct').className = 'cmp-diff-badge cmp-diff-pct ' + cls;
+  } else {
+    diffRow.style.display = 'none';
+  }
+
+  // Upgrades diff
+  document.getElementById('cmp-res-upg').textContent = res.upg;
+
+  // Corrupted
+  const corrEl = document.getElementById('cmp-res-corr');
+  corrEl.textContent = res.corr ? 'Yes' : 'No';
+  corrEl.className = 'az-res-corr-val ' + (res.corr ? 'yes' : 'no');
+
+  // Reforge — inline with diff badge
+  const refEl = document.getElementById('cmp-res-reforge');
+  const refNameEl = document.getElementById('cmp-res-reforge-name');
+  const refDiffEl  = document.getElementById('cmp-diff-ref');
+  if (res.refName !== 'None') {
+    refEl.style.display = 'flex';
+    refNameEl.textContent = res.refName + ' Reforge';
+    if (!isDual && view === 'wished' && cmpRefAChosen && cmpResultActual.refName !== cmpResultWished.refName) {
+      const dm = (REFORGE_MODS[cmpResultWished.refName] ?? 1.0) - (REFORGE_MODS[cmpResultActual.refName] ?? 1.0);
+      const s = dm >= 0 ? '+' : '';
+      refDiffEl.textContent = s + dm.toFixed(2) + '×';
+      refDiffEl.className = 'cmp-diff-inline ' + (dm > 0 ? 'pos' : dm < 0 ? 'neg' : 'zero');
+      refDiffEl.style.display = '';
+    } else refDiffEl.style.display = 'none';
+  } else { refEl.style.display = 'none'; if (refDiffEl) refDiffEl.style.display = 'none'; }
+
+  // Gold rows
+  const maxUpg = item.maxUpg;
+  let g1, g2, g3, lbl1, lbl2, lbl3, sub3 = '';
+
+  if (isDual) {
+    const next = res.upg < maxUpg ? (UPGRADE_COSTS[res.upg + 1] || 0) : null;
+    let spent = 0; for (let i = 1; i <= res.upg; i++) spent += (UPGRADE_COSTS[i]||0);
+    let total = 0; for (let i = 1; i <= maxUpg; i++) total += (UPGRADE_COSTS[i]||0);
+    const rem = Math.max(0, total - spent);
+    g1 = next !== null ? azFmtNum(next) + ' 🪙' : t('lbl_max_level');
+    g2 = azFmtNum(spent) + ' 🪙';
+    g3 = rem > 0 ? azFmtNum(rem) + ' 🪙' : '✓';
+    lbl1 = t('cmp_gold_next'); lbl2 = t('cmp_gold_spent'); lbl3 = t('cmp_gold_to_max');
+    sub3 = rem > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  } else if (view === 'actual') {
+    const next = res.upg < maxUpg ? (UPGRADE_COSTS[res.upg + 1] || 0) : null;
+    let spent = 0; for (let i = 1; i <= res.upg; i++) spent += (UPGRADE_COSTS[i]||0);
+    let total = 0; for (let i = 1; i <= maxUpg; i++) total += (UPGRADE_COSTS[i]||0);
+    const rem = Math.max(0, total - spent);
+    g1 = next !== null ? azFmtNum(next) + ' 🪙' : t('lbl_max_level');
+    g2 = azFmtNum(spent) + ' 🪙';
+    g3 = rem > 0 ? azFmtNum(rem) + ' 🪙' : '✓';
+    lbl1 = t('cmp_gold_next'); lbl2 = t('cmp_gold_spent'); lbl3 = t('cmp_gold_to_max');
+    sub3 = rem > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  } else {
+    // Wished: next / actual→wished (with level numbers) / wished→max
+    const next = res.upg < maxUpg ? (UPGRADE_COSTS[res.upg + 1] || 0) : null;
+    const lo = Math.min(cmpResultActual.upg, cmpResultWished.upg);
+    const hi = Math.max(cmpResultActual.upg, cmpResultWished.upg);
+    let between = 0; for (let i = lo + 1; i <= hi; i++) between += (UPGRADE_COSTS[i]||0);
+    let total = 0; for (let i = 1; i <= maxUpg; i++) total += (UPGRADE_COSTS[i]||0);
+    let ws = 0; for (let i = 1; i <= res.upg; i++) ws += (UPGRADE_COSTS[i]||0);
+    const rem = Math.max(0, total - ws);
+    g1 = next !== null ? azFmtNum(next) + ' 🪙' : t('lbl_max_level');
+    g2 = azFmtNum(between) + ' 🪙';
+    g3 = rem > 0 ? azFmtNum(rem) + ' 🪙' : '✓';
+    lbl1 = t('cmp_gold_next');
+    // "lvl 7 → 18" format
+    lbl2 = `lvl ${cmpResultActual.upg} → ${cmpResultWished.upg}`;
+    lbl3 = t('cmp_gold_to_max');
+    sub3 = rem > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  }
+
+  document.getElementById('cmp-gold-1-lbl').textContent = lbl1;
+  document.getElementById('cmp-gold-1').textContent = g1;
+  document.getElementById('cmp-gold-2-lbl').textContent = lbl2;
+  document.getElementById('cmp-gold-2').textContent = g2;
+  document.getElementById('cmp-gold-3-lbl').textContent = lbl3;
+  document.getElementById('cmp-gold-3').textContent = g3;
+  document.getElementById('cmp-gold-3-sub').textContent = sub3;
+
+  cmpRenderProcess(item, res);
+  cmpRenderTablet(item, res);
+  requestAnimationFrame(() => cmpAlignArrow());
+}
+
+function cmpRenderArmorResultView() {
+  const item = cmpCurrentItem;
+  if (!item || !item.isArmor) return;
+  const parts = ['Helmet','Chestplate','Leggings'];
+  const view = cmpCurrentView;
+  const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  const rarClass = 'rarity-' + item.rarity;
+
+  const d = cmpArmorComputedResults[cmpResCurrentPart];
+  if (!d) return;
+  const res   = view === 'actual' ? d.actual : d.wished;
+  const other = view === 'actual' ? d.wished : d.actual;
+
+  // Image for this part
+  const imgEl = document.getElementById('cmp-res-img');
+  const phEl  = document.getElementById('cmp-res-ph');
+  const partImgPath = IMAGE_PATHS.armors[item.id]?.[cmpResCurrentPart];
+  if (partImgPath) { imgEl.src = IMAGE_PATHS.baseDir + partImgPath; imgEl.style.display = 'block'; phEl.style.display = 'none'; }
+  else { imgEl.style.display = 'none'; phEl.style.display = 'block'; }
+
+  // Name = set name + part label
+  const nameEl = document.getElementById('cmp-res-name');
+  nameEl.textContent = item.name.replace(' Set','') + ' ' + azPartLabel(cmpResCurrentPart);
+  nameEl.className = 'az-weapon-name ' + ri.css;
+  document.getElementById('cmp-res-rarity').textContent = ri.label.toUpperCase();
+  document.getElementById('cmp-res-rarity').className = 'az-res-val ' + ri.css;
+
+  // Roll row (dual only)
+  const rollRow = document.getElementById('cmp-res-roll-row');
+  const rollValEl = document.getElementById('cmp-res-roll-val');
+  const isDualPart = d.actual.roll !== d.wished.roll;
+  if (rollRow && rollValEl) {
+    rollRow.style.display = 'flex';
+    const cls = getRollClass(item, res.roll);
+    const color = ROLL_COLORS[cls] || '#7fff00';
+    rollValEl.textContent = res.roll;
+    rollValEl.style.color = color;
+    rollValEl.style.textShadow = `0 0 14px ${color}66`;
+  } else if (rollRow) { rollRow.style.display = 'none'; }
+
+  // Health label green
+  const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
+  const dmgVal = document.getElementById('cmp-res-dmg');
+  dmgLbl.textContent = t('lbl_health'); dmgLbl.style.color = '#7fff00';
+  dmgVal.style.color = '#7fff00';
+  dmgVal.textContent = azFmtDmg(res.hp);
+
+  // Diff badges (Wished view)
+  const diffRow = document.getElementById('cmp-res-diff-row');
+  if (view === 'wished') {
+    diffRow.style.display = 'flex';
+    const delta = res.hp - other.hp;
+    const pct = other.hp > 0 ? (delta / other.hp * 100) : 0;
+    const cls = delta > 0 ? 'pos' : delta < 0 ? 'neg' : 'zero';
+    const s = delta >= 0 ? '+' : '';
+    document.getElementById('cmp-diff-abs').textContent = s + azFmtDmg(delta);
+    document.getElementById('cmp-diff-abs').className = 'cmp-diff-badge ' + cls;
+    document.getElementById('cmp-diff-pct').textContent = s + pct.toFixed(1) + '%';
+    document.getElementById('cmp-diff-pct').className = 'cmp-diff-badge cmp-diff-pct ' + cls;
+  } else { diffRow.style.display = 'none'; }
+
+  // Delay hidden
+  document.getElementById('sp-res-delay-row-cmp').style.display = 'none';
+
+  // Upgrades
+  document.getElementById('cmp-res-upg').textContent = res.upg;
+
+  // Corrupted
+  const corrEl = document.getElementById('cmp-res-corr');
+  corrEl.textContent = res.corr ? 'Yes' : 'No';
+  corrEl.className = 'az-res-corr-val ' + (res.corr ? 'yes' : 'no');
+
+  // Hide reforge (armor has none)
+  document.getElementById('cmp-res-reforge').style.display = 'none';
+
+  // Part switcher
+  const analyzedParts = parts.filter(p => cmpArmorComputedResults[p] !== null);
+  const partRow = document.getElementById('cmp-res-part-row');
+  if (analyzedParts.length >= 2) {
+    partRow.classList.add('visible');
+    parts.forEach(p => {
+      const btnEl = document.getElementById('cmp-res-part-btn-' + p);
+      if (!btnEl) return;
+      if (cmpArmorComputedResults[p] !== null) {
+        btnEl.className = 'az-res-part-btn ' + rarClass + (p === cmpResCurrentPart ? ' active-part' : ' dim-part');
+        btnEl.classList.remove('hidden-part');
+      } else {
+        btnEl.className = 'az-res-part-btn hidden-part';
+      }
+    });
+    const hOk = cmpArmorComputedResults.Helmet !== null;
+    const cOk = cmpArmorComputedResults.Chestplate !== null;
+    const lOk = cmpArmorComputedResults.Leggings !== null;
+    const curIdx = parts.indexOf(cmpResCurrentPart);
+    const sep1 = document.getElementById('cmp-res-part-sep-1');
+    const sep2 = document.getElementById('cmp-res-part-sep-2');
+    if (sep1) { if (!hOk || !cOk) sep1.className = 'az-res-part-sep hidden-sep'; else { sep1.className = 'az-res-part-sep' + (curIdx >= 1 ? ' dim-sep' : ''); sep1.textContent = curIdx >= 1 ? '\\' : '/'; } }
+    if (sep2) { if (!cOk || !lOk) sep2.className = 'az-res-part-sep hidden-sep'; else { sep2.className = 'az-res-part-sep' + (curIdx >= 2 ? ' dim-sep' : ''); sep2.textContent = curIdx >= 2 ? '\\' : '/'; } }
+  } else { partRow.classList.remove('visible'); }
+
+  // Total HP
+  const totalRow = document.getElementById('cmp-total-hp-row');
+  if (analyzedParts.length === 3) {
+    const totalActual = parts.reduce((s,p) => s + (cmpArmorComputedResults[p]?.actual.hp || 0), 0);
+    const totalWished = parts.reduce((s,p) => s + (cmpArmorComputedResults[p]?.wished.hp || 0), 0);
+    const showTotal = view === 'actual' ? totalActual : totalWished;
+    document.getElementById('cmp-total-hp-actual').textContent = azFmtDmg(Math.round(showTotal));
+    totalRow.classList.add('visible');
+    const absEl = document.getElementById('cmp-total-diff-abs');
+    const pctEl = document.getElementById('cmp-total-diff-pct');
+    if (view === 'wished') {
+      const td = totalWished - totalActual;
+      const tpct = totalActual > 0 ? (td / totalActual * 100) : 0;
+      const tcls = td > 0 ? 'pos' : td < 0 ? 'neg' : 'zero';
+      const ts = td >= 0 ? '+' : '';
+      absEl.textContent = ts + azFmtDmg(Math.round(td));
+      absEl.className = 'cmp-diff-badge ' + tcls;
+      absEl.style.display = '';
+      pctEl.textContent = ts + tpct.toFixed(1) + '%';
+      pctEl.className = 'cmp-diff-badge ' + tcls;
+      pctEl.style.display = '';
+    } else {
+      absEl.style.display = 'none';
+      pctEl.style.display = 'none';
+    }
+  } else { totalRow.classList.remove('visible'); }
+
+  // Gold rows
+  const maxUpg = item.maxUpg;
+  const next = res.upg < maxUpg ? (UPGRADE_COSTS[res.upg + 1] || 0) : null;
+  let g1, g2, g3, lbl1, lbl2, lbl3, sub3 = '';
+  if (view === 'actual') {
+    let spent = 0; for (let i = 1; i <= res.upg; i++) spent += (UPGRADE_COSTS[i]||0);
+    let total = 0; for (let i = 1; i <= maxUpg; i++) total += (UPGRADE_COSTS[i]||0);
+    const rem = Math.max(0, total - spent);
+    g1 = next !== null ? azFmtNum(next) + ' 🪙' : t('lbl_max_level');
+    g2 = azFmtNum(spent) + ' 🪙'; g3 = rem > 0 ? azFmtNum(rem) + ' 🪙' : '✓';
+    lbl1 = t('cmp_gold_next'); lbl2 = t('cmp_gold_spent'); lbl3 = t('cmp_gold_to_max');
+    sub3 = rem > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  } else {
+    const lo = Math.min(other.upg, res.upg), hi = Math.max(other.upg, res.upg);
+    let between = 0; for (let i = lo+1; i <= hi; i++) between += (UPGRADE_COSTS[i]||0);
+    let total = 0; for (let i = 1; i <= maxUpg; i++) total += (UPGRADE_COSTS[i]||0);
+    let ws = 0; for (let i = 1; i <= res.upg; i++) ws += (UPGRADE_COSTS[i]||0);
+    const rem = Math.max(0, total - ws);
+    g1 = next !== null ? azFmtNum(next) + ' 🪙' : t('lbl_max_level');
+    g2 = azFmtNum(between) + ' 🪙'; g3 = rem > 0 ? azFmtNum(rem) + ' 🪙' : '✓';
+    lbl1 = t('cmp_gold_next'); lbl2 = `lvl ${other.upg} → ${res.upg}`; lbl3 = t('cmp_gold_to_max');
+    sub3 = rem > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  }
+  document.getElementById('cmp-gold-1-lbl').textContent = lbl1;
+  document.getElementById('cmp-gold-1').textContent = g1;
+  document.getElementById('cmp-gold-2-lbl').textContent = lbl2;
+  document.getElementById('cmp-gold-2').textContent = g2;
+  document.getElementById('cmp-gold-3-lbl').textContent = lbl3;
+  document.getElementById('cmp-gold-3').textContent = g3;
+  document.getElementById('cmp-gold-3-sub').textContent = sub3;
+
+  // Process + Tablet for current part
+  const partRes = cmpArmorComputedResults[cmpResCurrentPart];
+  if (partRes) {
+    const r = view === 'actual' ? partRes.actual : partRes.wished;
+    cmpRenderProcess(item, { ...r, dmg: r.hp, refMult: 1.0, refName: 'None', isArmor: true });
+    cmpRenderTablet(item, { ...r, dmg: r.hp, refMult: 1.0, refName: 'None', isArmor: true });
+  }
+  requestAnimationFrame(() => cmpAlignArrow());
+}
+
+// ── Arrow alignment: positions the desktop arrow to vertically align
+//    with the Damage / Health stat row in the result card ──
+function cmpAlignArrow() {
+  const arrow   = document.getElementById('cmp-h-arrow');
+  const statRow = document.getElementById('cmp-res-dmg-lbl');
+  if (!arrow || !statRow || !arrow.classList.contains('visible')) return;
+  if (window.getComputedStyle(arrow).display === 'none') return;
+
+  const arrowRect = arrow.getBoundingClientRect();
+  const statRect  = statRow.getBoundingClientRect();
+  const svgHalf   = 22; // half of SVG height (44px)
+
+  // Center of stat label in viewport
+  const statMidY   = statRect.top + statRect.height / 2;
+  // Current top of the arrow container in viewport (padding-top is currently 0)
+  const arrowTopY  = arrowRect.top;
+
+  const desiredPad = statMidY - arrowTopY - svgHalf;
+  arrow.style.paddingTop = Math.max(0, desiredPad) + 'px';
+}
+
+function cmpRenderProcess(item, res) {
+  const isArmor = !!res.isArmor;
+  const fmt = v => Number.isInteger(v) ? String(v) : v.toPrecision(17).replace(/0+$/,'').replace(/\.$/,'');
+  const fmtInt = v => String(Math.floor(v));
+  const mkStep = (n, lbl, lhs, rhs, cls, note, inactive) => inactive
+    ? `<div class="az-step-skip"><span class="az-step-n">${n}.</span><span class="az-step-lbl" style="color:var(--text-dim);">${lbl}</span></div><div class="az-sep"></div>`
+    : `<div class="az-step"><div class="az-step-title"><span class="az-step-n">${n}.</span><span class="az-step-lbl">${lbl}</span></div><div class="az-step-formula"><span class="az-step-lhs">${lhs}</span><span class="az-step-rhs ${cls}">= ${rhs}</span></div>${note?`<div class="az-step-note">${note}</div>`:''}</div><div class="az-sep"></div>`;
+
+  let n = 1, html = '';
+  const afterGrowth = res.base * res.gf;
+  if (res.upg === 0) html += mkStep(n++, t('sp_proc_s1_none'),'','','','',true);
+  else html += mkStep(n++, t('sp_proc_s1'), `${fmt(res.base)} × ${fmt(res.gf)}`, fmt(afterGrowth), 'c-teal', `${t('proc_factor')} = 1 + (1/21 × ${res.upg}) = ${fmt(res.gf)}`);
+  if (!isArmor) {
+    const afterRef = afterGrowth * res.refMult;
+    if (res.refMult !== 1.0) html += mkStep(n++, t('sp_step_reforge').replace('{refName}',res.refName).replace('{mult}',res.refMult), `${fmt(afterGrowth)} × ${res.refMult}`, fmt(afterRef), 'c-teal', '');
+    else html += mkStep(n++, t('sp_proc_s2_no'),'','','','',true);
+    const afterCorr = res.corr ? afterRef * 1.5 : afterRef;
+    if (res.corr) html += mkStep(n++, t('sp_proc_s3_yes'), `${fmt(afterRef)} × 1.5`, fmt(afterCorr), 'c-purple', '');
+    else html += mkStep(n++, t('sp_proc_s3_no'),'','','','',true);
+  } else {
+    const afterCorr = res.corr ? afterGrowth * 1.5 : afterGrowth;
+    if (res.corr) html += mkStep(n++, t('sp_proc_s3_yes'), `${fmt(afterGrowth)} × 1.5`, fmt(afterCorr), 'c-purple', '');
+    else html += mkStep(n++, t('sp_proc_s3_no'),'','','','',true);
+  }
+  const finalLabel = isArmor ? 'FINAL HP' : 'FINAL DMG';
+  const finalVal = isArmor ? fmtInt(res.hp ?? res.dmg) : fmtInt(res.dmg);
+  html += `<div class="az-step"><div class="az-step-formula" style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.12);border-radius:8px;"><span class="az-step-lhs" style="color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;">✓ ${finalLabel}</span><span class="az-step-rhs c-gold">${finalVal}</span></div></div>`;
+  document.getElementById('cmp-proc-body').innerHTML = html;
+  const mproc = document.getElementById('cmp-modal-proc-body');
+  if (mproc) mproc.innerHTML = html;
+}
+
+function cmpRenderTablet(item, res) {
+  const isArmor = !!res.isArmor;
+  const statsDict = isArmor ? item.stats[res.part] : item.stats;
+  if (!statsDict) return;
+  const baseRollVal = statsDict[res.roll];
+  if (baseRollVal === undefined) return;
+  const fmt = v => (Math.round(v*1000)/1000).toFixed(3).replace(/\.?0+$/,'');
+  const hasCorr = res.corr;
+  const hasRef  = !isArmor && res.refMult !== 1.0;
+  let tHead = `<tr><th>${t('tbl_upg')}</th><th>${t('tbl_base')}</th><th>${t('tbl_gold')}</th>`;
+  if (hasCorr && hasRef) tHead += `<th>${t('tbl_corr')||'CORR'}</th><th>${res.refName}</th><th>${t('tbl_corr_ref')||'C+R'}</th>`;
+  else if (hasCorr) tHead += `<th>${t('tbl_corr')||'CORR'}</th>`;
+  else if (hasRef)  tHead += `<th>${res.refName}</th>`;
+  tHead += '</tr>';
+  let tRows = '';
+  for (let u = 0; u <= item.maxUpg; u++) {
+    const gf = 1 + GROWTH_RATE * u;
+    const b  = baseRollVal * gf;
+    const gc = u > 0 ? azFmtNum(UPGRADE_COSTS[u]||0) : '—';
+    const isCur = u === res.upg;
+    tRows += `<tr class="${isCur?'cur':''}"><td class="c-upg">${u}${isCur?' ★':''}</td><td class="c-base">${fmt(b)}</td><td class="c-gold" style="color:var(--gold);font-size:11px;">${gc}</td>`;
+    if (hasCorr && hasRef) tRows += `<td class="c-corr">${fmt(b*1.5)}</td><td class="c-ref">${fmt(b*res.refMult)}</td><td class="c-both">${fmt(b*1.5*res.refMult)}</td>`;
+    else if (hasCorr) tRows += `<td class="c-corr">${fmt(b*1.5)}</td>`;
+    else if (hasRef)  tRows += `<td class="c-ref">${fmt(b*res.refMult)}</td>`;
+    tRows += '</tr>';
+  }
+  const fp = [`★ = upg ${res.upg} | Roll ${res.roll}`, ...(hasCorr?['Corrupted']:[]), ...(hasRef?[res.refName]:[])];
+  document.getElementById('cmp-tbl-body').innerHTML = `<div class="az-tbl-wrap" style="flex:1;"><table class="az-tbl"><thead>${tHead}</thead><tbody>${tRows}</tbody></table></div><div class="az-tbl-foot">${fp.join(' | ')}</div>`;
+  const mtbl = document.getElementById('cmp-modal-tbl-body');
+  if (mtbl) mtbl.innerHTML = document.getElementById('cmp-tbl-body').innerHTML;
+  setTimeout(() => { const cur = document.querySelector('#cmp-tbl-body tr.cur'); if (cur) cur.scrollIntoView({block:'center',behavior:'smooth'}); }, 50);
+}
+
+// ── Dropdowns ──
+// ── CMP Modals (mobile) ──
+function cmpOpenModal(which) {
+  // Sync modal content from desktop panels
+  if (which === 'process') {
+    const src = document.getElementById('cmp-proc-body');
+    const dst = document.getElementById('cmp-modal-proc-body');
+    if (src && dst) dst.innerHTML = src.innerHTML;
+    document.getElementById('cmp-modal-process').classList.add('open');
+  } else {
+    const src = document.getElementById('cmp-tbl-body');
+    const dst = document.getElementById('cmp-modal-tbl-body');
+    if (src && dst) dst.innerHTML = src.innerHTML;
+    document.getElementById('cmp-modal-tablet').classList.add('open');
+  }
+}
+function cmpCloseModal(which) {
+  document.getElementById(which === 'process' ? 'cmp-modal-process' : 'cmp-modal-tablet').classList.remove('open');
+}
+
+function cmpToggleDrop(which) {
+  const drop  = document.getElementById(`cmp-${which}-drop`);
+  const arrow = document.getElementById(`cmp-${which}-arrow`);
+  if (!drop) return;
+  const wasOpen = drop.classList.contains('open');
+  cmpCloseDrops();
+  if (!wasOpen) {
+    drop.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+    setTimeout(() => _scrollToDropBottom(drop), 50);
+  }
+}
+
+function cmpCloseDrops() {
+  document.querySelectorAll('[id^="cmp-"][id$="-drop"].open').forEach(d => d.classList.remove('open'));
+  ['upg-a','upg-b','ref-a','ref-b'].forEach(x => {
+    const el = document.getElementById(`cmp-${x}-arrow`);
+    if (el) el.style.transform = '';
+  });
+}
+
+document.addEventListener('click', e => {
+  const inDrop = e.target.closest('[id^="cmp-"][id$="-drop"]') ||
+                 e.target.closest('[id^="cmp-upg"]') ||
+                 e.target.closest('[id^="cmp-ref"]');
+  if (!inDrop) cmpCloseDrops();
+  // Roll strips are always visible in new design — no close needed
+});
+
 /* ── INIT ── */
 (function init() {
   document.getElementById('lang-other-label').textContent = 'RU';
   renderItemList();
   azRenderList();
   spRenderList();
+  cmpRenderLists();
   renderAllConsoles();
   renderReforgeTable();
   applyLang();
@@ -7060,6 +9976,11 @@ function spRenderTablet(item, roll, upg, corr, refName, refMult) {
       focused.blur();
     }
   }, {passive:true});
+
+  // Realign compare arrow on resize
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(() => cmpAlignArrow());
+  });
 })();
 </script>
 <div id="site-error-toast">

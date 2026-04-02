@@ -5112,7 +5112,7 @@ function getItemImageSrc(item) {
   return `images/Analyze Page/${item.id}.png`;
 }
 
-const GODLY_AUTO  = new Set(['asc_ws','asc_mb','asc_lk','asc_me','asc_at','asc_ad','asc_av','gl_st']);
+const GODLY_AUTO  = new Set(['asc_ws','asc_mb','asc_lk','asc_me','asc_at','asc_ad','asc_av','gl_st','vl_st','sr_st']);
 
 function getRolls(item) {
   const keys = Object.keys(item.isArmor ? item.stats.Helmet : item.stats).map(Number).sort((a,b)=>a-b);

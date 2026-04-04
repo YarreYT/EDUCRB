@@ -29,30 +29,46 @@
   const totalRef   = db.ref('total_processes');
 
   // ── TOTAL PROCESSES: скролл-состояние (объявляем рано, до listener'а) ──
-  window._totalProcScrollPos = { desk: 0, mob: 0 };
 
-  window._totalProcUpdateArrows = function(el) {
-    if (!el) return;
-    const key = el.id.includes('desk') ? 'desk' : 'mob';
+  window._totalProcUpdateArrows = function(clip) {
+    if (!clip) return;
+    const key = clip.id.includes('desk') ? 'desk' : 'mob';
     const prefix = 'total-' + key;
     const btnL = document.getElementById(prefix + '-left');
     const btnR = document.getElementById(prefix + '-right');
     if (!btnL || !btnR) return;
-    const overflow = el.scrollWidth > el.offsetWidth + 2;
-    const pos = window._totalProcScrollPos[key];
-    const atEnd = pos >= el.scrollWidth - el.offsetWidth - 2;
-    btnL.classList.toggle('visible', overflow && pos > 0);
-    btnR.classList.toggle('visible', overflow && !atEnd);
+    const canScroll = clip.scrollWidth > clip.clientWidth + 2;
+    const atStart = clip.scrollLeft <= 1;
+    const atEnd   = clip.scrollLeft + clip.clientWidth >= clip.scrollWidth - 1;
+    btnL.classList.toggle('visible', canScroll && !atStart);
+    btnR.classList.toggle('visible', canScroll && !atEnd);
+  };
+
+  let _totalProcScrollTimer = null;
+  window._totalProcSmoothScroll = function(clip, targetLeft, duration) {
+    if (_totalProcScrollTimer) cancelAnimationFrame(_totalProcScrollTimer);
+    const start = clip.scrollLeft;
+    const delta = targetLeft - start;
+    const startTime = performance.now();
+    function ease(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      clip.scrollLeft = start + delta * ease(progress);
+      if (progress < 1) {
+        _totalProcScrollTimer = requestAnimationFrame(step);
+      } else {
+        _totalProcScrollTimer = null;
+        window._totalProcUpdateArrows(clip);
+      }
+    }
+    _totalProcScrollTimer = requestAnimationFrame(step);
   };
 
   window._totalProcScroll = function(key, dir) {
-    const el = document.getElementById('total-' + key + '-count');
-    if (!el) return;
-    const step = Math.round(el.offsetWidth * 0.6);
-    const maxScroll = el.scrollWidth - el.offsetWidth;
-    window._totalProcScrollPos[key] = Math.max(0, Math.min(maxScroll, (window._totalProcScrollPos[key] || 0) + dir * step));
-    el.style.transform = `translateX(-${window._totalProcScrollPos[key]}px)`;
-    window._totalProcUpdateArrows(el);
+    const clip = document.getElementById('total-' + key + '-clip');
+    if (!clip) return;
+    const step = Math.round(clip.clientWidth * 0.55);
+    window._totalProcSmoothScroll(clip, clip.scrollLeft + dir * step, 320);
   };
 
   // ── TOTAL PROCESSES: атомарный инкремент при каждом нажатии кнопки ──
@@ -63,17 +79,18 @@
   // Слушаем и обновляем все элементы .total-proc-count
   totalRef.on('value', snap => {
     const val = snap.exists() ? snap.val() : 0;
-    const formatted = val.toLocaleString('en-US');
+    const formatted = String(val);
     ['total-desk-count', 'total-mob-count'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.textContent = formatted;
       // Сбросить скролл при обновлении
       const key = id.includes('desk') ? 'desk' : 'mob';
-      window._totalProcScrollPos[key] = 0;
-      el.style.transform = '';
-      // После рендера — проверить стрелки
-      requestAnimationFrame(() => window._totalProcUpdateArrows(el));
+      const clip = document.getElementById('total-' + key + '-clip');
+      if (clip) {
+        clip.scrollLeft = 0;
+        requestAnimationFrame(() => window._totalProcUpdateArrows(clip));
+      }
     });
   });
 
@@ -688,7 +705,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .stats-col .stat-num { font-size: 18px; }
 .stats-col .stat-lbl { font-size: 10px; letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .stats-col .stat-chip--total .stat-lbl { white-space: normal; line-height: 1.3; }
-.stats-col .total-proc-count { font-size: 18px; max-width: 100px; }
+.stats-col .total-proc-count { font-size: 18px; max-width: none; }
 /* stats-col-mobile — только на мобиле */
 .stats-col-mobile {
   display: none;
@@ -715,20 +732,22 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   justify-content: center;
   gap: 4px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   max-width: 100%;
+}
+.total-proc-clip {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: block;
 }
 .total-proc-count {
   font-family: 'Cinzel', serif;
   font-size: 22px;
   font-weight: 600;
   color: var(--gold-bright);
-  display: block;
-  overflow: hidden;
+  display: inline-block;
   white-space: nowrap;
-  text-overflow: clip;
-  max-width: 90px;
-  transition: max-width .2s;
 }
 .total-proc-arrow {
   background: none;
@@ -778,7 +797,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .stats-col-mobile .stat-chip:nth-child(6){grid-column:5 / span 2;}
   .stats-col-mobile .stat-num{font-size:18px;}
   .stats-col-mobile .stat-lbl{font-size:10px;}
-  .stats-col-mobile .total-proc-count{font-size:18px;max-width:140px;}
+  .stats-col-mobile .total-proc-count{font-size:18px;max-width:none;}
   .updates-panel{flex:none;}
   .updates-body{max-height:240px;}
 }
@@ -4147,7 +4166,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
               <button class="total-proc-arrow" id="total-mob-left" onclick="_totalProcScroll('mob',-1)">&#8592;</button>
-              <span class="total-proc-count" id="total-mob-count">…</span>
+              <div class="total-proc-clip" id="total-mob-clip"><span class="total-proc-count" id="total-mob-count">…</span></div>
               <button class="total-proc-arrow" id="total-mob-right" onclick="_totalProcScroll('mob',1)">&#8594;</button>
             </div>
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
@@ -4166,7 +4185,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
         <div class="stat-chip stat-chip--total">
           <div class="total-proc-wrap">
             <button class="total-proc-arrow" id="total-desk-left" onclick="_totalProcScroll('desk',-1)">&#8592;</button>
-            <span class="total-proc-count" id="total-desk-count">…</span>
+            <div class="total-proc-clip" id="total-desk-clip"><span class="total-proc-count" id="total-desk-count">…</span></div>
             <button class="total-proc-arrow" id="total-desk-right" onclick="_totalProcScroll('desk',1)">&#8594;</button>
           </div>
           <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
@@ -12462,6 +12481,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial state check after fonts/layout settle
     setTimeout(() => _cmpFormulaUpdateArrows(box), 100);
   }
+
+  // Total processes clips — scroll listener for arrow visibility
+  ['desk', 'mob'].forEach(key => {
+    const clip = document.getElementById('total-' + key + '-clip');
+    if (clip) {
+      clip.addEventListener('scroll', () => window._totalProcUpdateArrows(clip), {passive:true});
+      setTimeout(() => window._totalProcUpdateArrows(clip), 100);
+    }
+  });
 });
 
 // Real-time parser called on every input keystroke

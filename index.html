@@ -7567,6 +7567,18 @@ function applyLang() {
     if (refAVal && (!cmpRefA || cmpRefA === 'None')) refAVal.textContent = t('ref_none');
     if (refBVal && (!cmpRefB || cmpRefB === 'None')) refBVal.textContent = t('ref_none');
   }
+  // ── DT: restore dropdown labels after i18n reset ──
+  if (_entryType !== 'old') {
+    ['check', 'confirm'].forEach(mode => {
+      const s = _dtSlots[_dtActiveSlot];
+      if (!s) return;
+      const sd = s[mode];
+      const upgValEl = document.getElementById('dt-upg-val-' + mode);
+      if (upgValEl) upgValEl.textContent = sd.upg !== null ? sd.upg : t('sel_none');
+      const refValEl = document.getElementById('dt-ref-val-' + mode);
+      if (refValEl) refValEl.textContent = (sd.ref && sd.ref !== 'None') ? (sd.ref + ' Reforge') : t('ref_none_select');
+    });
+  }
 }
 
 function toggleLang() {
@@ -14861,6 +14873,7 @@ function dtGetSlotInputs(i, mode) {
     return { val: sd.disc.val, upg: sd.disc.upg, yn: (sd.disc.yn === 'y' || sd.disc.yn === 'yes'), ref: sd.disc.ref };
   } else {
     if (sd.val === null || isNaN(sd.val) || sd.val <= 0) return null;
+    if (sd.upg === null) return null;
     return { val: sd.val, upg: sd.upg, yn: sd.corrupted, ref: (sd.ref !== 'None' ? sd.ref : null) };
   }
 }
@@ -14929,7 +14942,9 @@ function dtValidateSlots(mode) {
         }
       }
     } else {
+      // Skip slot entirely if no data at all, or if val exists but upg not selected (treated as incomplete, not an error)
       if (sd.val === null && sd.upg === null) return;
+      if (sd.val !== null && sd.upg === null) return;
       if (sd.val === null || isNaN(sd.val) || sd.val <= 0) {
         errors.push(t('err_dt_val_neg'));
       }

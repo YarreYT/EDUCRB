@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculate Roll Bot — Elemental Dungeon | Awake Galaxy</title>
+<title>Calculate Roll Bot — Elemental Dungeons | Awake Galaxy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -621,8 +621,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .lang-other{position:fixed;bottom:56px;left:16px;top:auto;transform:none;padding:6px 12px;}
   main{padding-top:0!important;padding-bottom:var(--nav-h)!important;}
   .game-banner{aspect-ratio:16/7!important;max-height:180px!important;}
-  .banner-game-title{font-size:clamp(16px,5.5vw,24px)!important;letter-spacing:2px!important;}
-  .banner-eyebrow{font-size:clamp(10px,3vw,15px)!important;letter-spacing:3px!important;}
+  .banner-game-title{font-size:clamp(30px,4.75vw,68px)!important;letter-spacing:2px!important;}
+  .banner-eyebrow{font-size:clamp(11px,3.2vw,18px)!important;letter-spacing:3px!important;}
   .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
   .banner-title-block{padding:6px 12px!important;}
 }
@@ -820,8 +820,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   #page-home{grid-template-columns:1fr;}
   .hero-section{padding:12px 12px 10px;}
   .game-banner{aspect-ratio:16/7!important;max-height:160px!important;}
-  .banner-game-title{font-size:clamp(13px,4vw,20px)!important;letter-spacing:1px!important;}
-  .banner-eyebrow{font-size:clamp(8px,2.2vw,12px)!important;letter-spacing:2px!important;}
+  .banner-game-title{font-size:clamp(22px,8.5vw,38px)!important;letter-spacing:2px!important;}
+  .banner-eyebrow{font-size:clamp(10px,3vw,16px)!important;letter-spacing:3px!important;}
   .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
   .banner-title-block{padding:6px 12px!important;}
   .bot-updates-row{gap:12px;}
@@ -2249,25 +2249,25 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .az-btn-row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 .az-panel-btn {
   width: 100%;
   background: linear-gradient(180deg,#0d2440 0%,#091a30 100%);
   border: 1.5px solid #1a4070;
-  border-radius: 12px;
-  padding: 14px 18px;
+  border-radius: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   color: var(--gold-bright);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 7px;
   transition: all .2s;
 }
 .az-panel-btn:hover {
@@ -2277,7 +2277,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   box-shadow: 0 4px 18px color-mix(in srgb, var(--gold) 18%, transparent);
 }
 .az-panel-btn:active { transform: translateY(0); }
-.az-panel-btn-icon { font-size: 20px; line-height: 1; }
+.az-panel-btn-icon { font-size: 16px; line-height: 1; }
 
 .az-modal {
   display: none;
@@ -2625,6 +2625,29 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   max-width: 290px;
 }
 .az-mobile-action-btns { display: none; }
+@media(max-width:960px){
+  .az-third-panel { display: none !important; }
+  .az-arrow-zone { display: none !important; }
+  .az-mobile-action-btns {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 12px;
+  }
+  .az-mobile-action-btns .az-panel-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    gap: 6px;
+  }
+  .az-mobile-action-btns .az-panel-btn-icon {
+    font-size: 16px;
+  }
+}
 .az-quote-mobile {
   display: none;
   position: relative;
@@ -3008,6 +3031,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   #page-stuff .az-quote-mobile.visible { display: block; }
   #page-stuff .az-arrow-zone { display: none !important; }
 }
+@media(max-width:960px){
+  #page-stuff .sp-third-panel { display: none !important; }
+  #page-stuff .az-arrow-zone { display: none !important; }
+}
 @media(max-width:600px) {
   #page-stuff { padding-top: 0; padding-bottom: var(--nav-h); }
   .stuff-section { padding-bottom: 24px !important; }
@@ -3187,18 +3214,23 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   display:none;flex-direction:row;gap:8px;width:100%;margin-top:14px;margin-bottom:14px;
 }
 .cmp-mobile-action-btns .az-panel-btn{flex:1;min-width:0;padding:10px 8px;font-size:13px;letter-spacing:1px;gap:6px;}
-@media(min-width:761px){
-  /* On desktop these are always hidden regardless of .visible class */
+@media(min-width:961px){
+  /* On desktop: hide vertical arrow and mobile btns */
   .cmp-v-arrow, .cmp-mobile-action-btns{display:none!important;}
+}
+/* 761-960px: horizontal layout, h-arrow visible, no third panel, show mobile btns */
+@media(min-width:761px) and (max-width:960px){
+  .cmp-third-panel{display:none!important;}
+  .cmp-mobile-action-btns.visible{display:flex;}
+  .cmp-v-arrow{display:none!important;}
+  .cmp-result-card{width:var(--card-w);max-width:290px;}
 }
 @media(max-width:760px){
   .cmp-v-arrow.visible{display:flex;}
   .cmp-mobile-action-btns.visible{display:flex;}
   .cmp-result-card{width:100%!important;max-width:100%!important;}
   .cmp-h-arrow,.cmp-third-panel{display:none!important;}
-  /* On mobile, stack vertically */
   .cmp-table-area{flex-direction:column;align-items:stretch;}
-  /* Arrow closer to result — btns already add spacing */
   .cmp-v-arrow{margin:5px auto 26px;}
 }
 /* Fix SP v-arrow bottom margin */
@@ -4239,7 +4271,7 @@ body.scale-active .console-panel {
       <div class="banner-overlay"></div>
       <div class="banner-title-block">
         <div class="banner-eyebrow" data-i18n="banner_eyebrow">Toolkit for</div>
-        <div class="banner-game-title">Elemental Dungeon</div>
+        <div class="banner-game-title">Elemental Dungeons</div>
       </div>
       <div class="banner-glow-line"></div>
     </div>
@@ -4284,7 +4316,7 @@ body.scale-active .console-panel {
             <div class="credit-card-icon">⚔</div>
             <div class="credit-card-text">
               <div class="credit-card-role" data-i18n="credits_data">Database</div>
-              <div class="credit-card-name green" data-i18n="credits_data_val">Elemental Dungeon</div>
+              <div class="credit-card-name green" data-i18n="credits_data_val">Elemental Dungeons</div>
             </div>
           </div>
         </div>
@@ -6628,7 +6660,7 @@ window._analysisHistory = [];
 function isTrulyMobile(threshold) {
   // innerWidth matches CSS media queries and is correct on mobile
   // (scale transform is never active on touch/narrow devices, so innerWidth is reliable)
-  var t = threshold || 760;
+  var t = threshold || 960;
   return window.innerWidth <= t;
 }
 
@@ -7114,7 +7146,7 @@ const T = {
     banner_eyebrow:'Toolkit for',
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.',
-    credits_author:'Bot Author', credits_dev:'Successor / Dev', credits_data:'Database', credits_data_val:'Elemental Dungeon',
+    credits_author:'Bot Author', credits_dev:'Successor / Dev', credits_data:'Database', credits_data_val:'Elemental Dungeons',
     stat_weapons:'Weapons', stat_sets:'Armor', stat_accessories:'Relics', stat_version:'Bot Version', stat_date:'Data Created', stat_total:'Total Processes',
     rolls_page_title:'Tables', rolls_page_sub:'Roll Tables · Reforge Reference', analyze_page_sub:'Roll Analyzing By Calculations',
     page_stuff_title:'Stuff Preview', page_stuff_sub:'Item Preview · Check Specifications',
@@ -7299,7 +7331,7 @@ const T = {
     banner_eyebrow:'Инструментарий для',
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Веб-версия бота для анализа роллов, прогнозов оружия и брони. Определяй роллы по урону, сравнивай предметы и планируй апгрейды.',
-    credits_author:'Автор бота', credits_dev:'Преемник / Dev', credits_data:'База данных', credits_data_val:'Elemental Dungeon',
+    credits_author:'Автор бота', credits_dev:'Преемник / Dev', credits_data:'База данных', credits_data_val:'Elemental Dungeons',
     stat_weapons:'Оружие', stat_sets:'Броня', stat_accessories:'Релики', stat_version:'Версия бота', stat_date:'Дата создания', stat_total:'Записи за всё время',
     rolls_page_title:'Таблицы', rolls_page_sub:'Таблицы роллов · Справка по заклинаниям', analyze_page_sub:'Анализирование ролла путём калькуляции',
     page_stuff_title:'Прогноз лута', page_stuff_sub:'Проверка вещей · Узнай характеристики',
@@ -10572,16 +10604,21 @@ function spDoAnalyze(skipCd) {
   document.getElementById('sp-left-col').style.display = 'flex';
 
   const isMobile = isTrulyMobile();
+  const isTrueMobile = isTrulyMobile(760);
   const mab = document.getElementById('sp-mobile-action-btns');
   if (mab) mab.style.display = isMobile ? 'flex' : 'none';
 
   if (!isMobile) {
     document.getElementById('sp-h-arrow').classList.add('visible');
     document.getElementById('sp-third-panel').classList.add('visible');
-
-    // Align horizontal arrow to ROLL row (double rAF: wait for layout after display change)
+    requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
+  } else if (!isTrueMobile) {
+    // 761-960px: horizontal layout, h-arrow yes, third panel no
+    document.getElementById('sp-h-arrow').classList.add('visible');
+    document.getElementById('sp-third-panel').classList.remove('visible');
     requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
   } else {
+    // <=760px: vertical layout
     document.getElementById('sp-h-arrow').classList.remove('visible');
     requestAnimationFrame(() => document.getElementById('sp-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
   }

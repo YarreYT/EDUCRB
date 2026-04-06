@@ -620,6 +620,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .nav-btn .tooltip{position:absolute!important;bottom:50px!important;left:50%!important;transform:translateX(-50%)!important;top:auto!important;z-index:300;}
   .lang-other{position:fixed;bottom:56px;left:16px;top:auto;transform:none;padding:6px 12px;}
   main{padding-top:0!important;padding-bottom:var(--nav-h)!important;}
+  .banner-game-title{font-size:clamp(18px,7vw,36px);letter-spacing:2px;}
+  .banner-eyebrow{font-size:clamp(10px,3.5vw,16px);letter-spacing:3px;}
 }
 
 /* ── PAGE SYSTEM ── */
@@ -4034,11 +4036,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 /* ── Scale wrap: JS sets transform to counter browser zoom ── */
 #scale-wrap {
   transform-origin: top left;
-  will-change: transform;
-}
-
-.page-bg {
-  will-change: transform;
+  /* will-change intentionally NOT set in CSS — it creates a containing block
+     that breaks position:fixed on mobile even when no transform is applied.
+     JS sets will-change only when scale is actually active (desktop). */
 }
 
 /* When scale is active:
@@ -4090,6 +4090,7 @@ body.scale-active .console-panel {
     const isTouch  = window.matchMedia('(pointer: coarse)').matches;
     const isNarrow = window.innerWidth <= 960;
     if (isTouch || isNarrow) {
+      wrap.style.willChange = '';
       wrap.style.transform = '';
       wrap.style.width     = '';
       wrap.style.height    = '';
@@ -4108,6 +4109,7 @@ body.scale-active .console-panel {
     const layoutH = Math.round(zoom * window.innerHeight);
     const layoutW = Math.round(zoom * window.innerWidth);
 
+    wrap.style.willChange = 'transform';
     wrap.style.transform = `scale(${scale})`;
     wrap.style.width     = layoutW + 'px';
     wrap.style.height    = layoutH + 'px';
@@ -7559,6 +7561,9 @@ function applyLang() {
   });
   renderAllConsoles();
   renderReforgeTable();
+  // UPDATE SELECT ITEM headers on Tables and Stuff Preview pages
+  if (currentCategory === 'accessories') renderAccItemList(); else renderItemList();
+  spRenderList();
   cmpRenderLists();
   cmpUpdateRollHeader(); // update SELECT ROLL placeholder text on lang change
   const _resDmgLbl = document.getElementById('az-res-dmg-lbl');
@@ -7896,6 +7901,14 @@ function azSwitchCat(cat) {
   const prevCat = azCurrentCat === 'weapon' ? 'weapon' : 'armor';
   if (azCurrentItem) azSaveCategorySnapshot(prevCat);
 
+  // Reset parsed Discord state so previous category's data doesn't bleed into the new one
+  _azDiscWeapon = { dmg: null, upg: null, yn: null, ref: null };
+  _azDiscArmor  = {
+    Helmet:     { hp: null, upg: null, yn: null },
+    Chestplate: { hp: null, upg: null, yn: null },
+    Leggings:   { hp: null, upg: null, yn: null }
+  };
+
   azCurrentCat = cat;
   document.getElementById('az-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('az-tab-armor').classList.toggle('active',  cat === 'armor');
@@ -8089,17 +8102,44 @@ function azSelectItem(item, btn) {
   const isArmor = !!item.isArmor;
   const isFirstSelection = azCurrentItem === null;
 
+  // Mirror SP approach: reset parsed Discord state on item switch so Discord data
+  // doesn't bleed into Website mode for the new item. Raw input strings are kept.
+  _azDiscWeapon = { dmg: null, upg: null, yn: null, ref: null };
+  _azDiscArmor  = {
+    Helmet:     { hp: null, upg: null, yn: null },
+    Chestplate: { hp: null, upg: null, yn: null },
+    Leggings:   { hp: null, upg: null, yn: null }
+  };
   // For weapons: save/restore inputs across weapon switches
   if (!isArmor) {
-    const savedDmg = isFirstSelection ? '' : document.getElementById('az-damage').value;
     const prevItem = azCurrentItem;
+    // Save current weapon damage before switching (only if previous was also weapon)
+    const savedDmg = (isFirstSelection || (prevItem && prevItem.isArmor)) ? '' : document.getElementById('az-damage').value;
     azCurrentItem = item;
     if (isFirstSelection || (prevItem && prevItem.isArmor)) {
-      azIntendedUpg = null;
-      azSelectedUpg = null;
+      // Coming from armor or first selection — restore from weapon snapshot if available
+      const wSnap = azCategorySnapshot.weapon;
+      if (wSnap && wSnap.item && wSnap.item.name === item.name) {
+        // Same weapon as was saved — fully restore its state
+        azIntendedUpg      = wSnap.intUpg;
+        azSelectedUpg      = wSnap.upg !== null ? Math.min(wSnap.upg, item.maxUpg) : null;
+        azSelectedReforge  = wSnap.reforge || 'None';
+        azIsCorrupted      = wSnap.corrupted || false;
+        // Restore damage field value from snapshot (applied below in restore block)
+        document.getElementById('az-damage').value = wSnap.dmg || '';
+      } else {
+        // Different weapon or no snapshot — start fresh
+        azIntendedUpg = null;
+        azSelectedUpg = null;
+        azSelectedReforge = 'None';
+        azIsCorrupted = false;
+        document.getElementById('az-damage').value = '';
+      }
     } else {
       // Clamp intended к maxUpg нового оружия
       azSelectedUpg = azIntendedUpg !== null ? Math.min(azIntendedUpg, item.maxUpg) : null;
+      // Preserve current damage value (weapon→weapon switch)
+      document.getElementById('az-damage').value = savedDmg;
     }
   } else {
     // For armor: if switching between armor sets, save current part data first
@@ -8193,8 +8233,7 @@ function azSelectItem(item, btn) {
 
   // Restore values
   if (!isArmor) {
-    const savedDmg = isFirstSelection ? '' : document.getElementById('az-damage').value;
-    document.getElementById('az-damage').value = isFirstSelection ? '' : savedDmg;
+    // damage value is already set in the weapon branch above — just sync display labels
     if (azSelectedUpg !== null) {
       document.getElementById('az-upg-val').textContent = azSelectedUpg;
     } else {
@@ -11087,6 +11126,16 @@ function cmpSelectItem(item, btn) {
   const isFirst = cmpCurrentItem === null || cmpCurrentItem.id !== item.id;
   const wasArmor = cmpCurrentItem?.isArmor;
   const isFirstEver = cmpCurrentItem === null;
+
+  // Mirror SP approach: reset parsed Discord state on item switch so Discord data
+  // doesn't bleed into Website mode for the new item. Raw input strings are kept.
+  if (isFirst) {
+    _cmpDisc = { roll1: null, roll2: null, isDual: false,
+                 upg1: null, upg2: null,
+                 yn1: null, yn2: null,
+                 ref1: null, ref2: null };
+  }
+
   cmpCurrentItem = item;
   const isArmor = !!item.isArmor;
 
@@ -12319,12 +12368,13 @@ function spAlignArrow() {
   if (!arrow || !arrow.classList.contains('visible')) return;
   if (window.getComputedStyle(arrow).display === 'none') return;
 
-  // For weapons, roll row is hidden — align to Damage instead
+  // For armor, align to Health row; for weapons, align to Damage (Roll row is hidden for weapons)
   const rollRow = document.getElementById('sp-res-roll-row');
   const rollVal = document.getElementById('sp-res-roll-val');
   const dmgVal  = document.getElementById('sp-res-dmg');
   const isRollHidden = !rollRow || window.getComputedStyle(rollRow).display === 'none';
-  const statRow = isRollHidden ? dmgVal : rollVal;
+  const isArmor = !!(spCurrentItem && spCurrentItem.isArmor);
+  const statRow = (isRollHidden || isArmor) ? dmgVal : rollVal;
   if (!statRow) return;
 
   // Reset before measuring to avoid feedback loop
@@ -12489,6 +12539,10 @@ let _cmpDiscArmorRaw = { Helmet: '', Chestplate: '', Leggings: '' };
 // Weapon Discord raw input — survives category switches
 let _cmpDiscWeaponInput = '';
 
+// Tracks the entry type as of the last cmpSyncInputMode call.
+// Used to detect a real Discord→Website mode switch vs. a re-render in the same mode.
+let _cmpLastEntryType = null;
+
 // Returns the correct discord input element for the current category
 function cmpGetDiscordInput() {
   const isArmor = !!cmpCurrentItem?.isArmor;
@@ -12512,6 +12566,11 @@ function _cmpDiscArmorLoadRaw() {
 // Switches Website / Discord panels for Compare page
 function cmpSyncInputMode() {
   const isDiscord = _entryType === 'old';
+  // True only when the mode actually flipped from Discord to Website in this call.
+  // Category switches and re-renders in the same mode must NOT re-apply Discord data.
+  const switchingToWebsite = !isDiscord && _cmpLastEntryType === 'old';
+  _cmpLastEntryType = _entryType;
+
   const website = document.getElementById('cmp-website-panel');
   const discord = document.getElementById('cmp-discord-panel');
   if (website) website.style.display = isDiscord ? 'none' : 'flex';
@@ -12521,80 +12580,64 @@ function cmpSyncInputMode() {
   const wInp = document.getElementById('cmp-discord-weapon-input');
   const aInp = document.getElementById('cmp-discord-armor-input');
 
-  // Always keep correct input visible and the other hidden
   if (wInp) wInp.style.display = isArmor ? 'none' : '';
   if (aInp) aInp.style.display = isArmor ? '' : 'none';
 
   if (isDiscord) {
     _cmpDiscUpdateFormula();
-    // Load correct saved value into the active input
     if (cmpCurrentItem) {
       if (isArmor) {
         if (aInp) aInp.value = _cmpDiscArmorRaw[cmpCurrentPart] || '';
       } else {
         if (wInp) wInp.value = _cmpDiscWeaponInput;
       }
+      cmpDiscordParse();
     }
-    if (cmpCurrentItem) cmpDiscordParse();
   } else {
-    // Switching to Website mode: parse Discord input and apply to cmp state vars,
-    // then re-render — same concept as AZ/SP do on mode switch (no validation, no Check).
-    if (cmpCurrentItem) {
+    // Website mode — only apply Discord data when we are genuinely switching Discord→Website.
+    // Category switches and same-mode re-renders skip this block entirely, preserving user edits.
+    if (cmpCurrentItem && switchingToWebsite) {
       if (!isArmor) {
-        // ── WEAPON: save current input, re-parse, apply to cmpRoll*/cmpUpg*/etc ──
+        // ── WEAPON: parse fresh from the saved raw input, then apply ──
         const wVal = wInp ? wInp.value : _cmpDiscWeaponInput;
-        if (wVal && wVal.trim()) {
-          // Run the parser silently (it reads from _cmpDiscWeaponInput which is already set)
-          cmpDiscordParse();
-          const d = _cmpDisc;
-          if (d.roll1 !== null) {
-            const ref1Name = d.ref1
-              ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === d.ref1.toLowerCase()) || 'None')
-              : 'None';
-            const ref2Name = d.ref2
-              ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === d.ref2.toLowerCase()) || 'None')
-              : 'None';
-            const rolls   = getRolls(cmpCurrentItem);
-            const minR    = cmpCurrentItem.minRoll || 1;
-            const maxRoll = Math.max(...rolls);
-            const maxUpg  = cmpCurrentItem.maxUpg;
-            // Roll A — clamp to valid range
-            cmpIntendedRollA = d.roll1;
-            cmpRollA = Math.max(minR, Math.min(maxRoll, d.roll1));
-            // Roll B — clamp, then clear if ≤ rollA
-            if (d.isDual && d.roll2 !== null) {
-              cmpIntendedRollB = d.roll2;
-              let rb = Math.max(minR, Math.min(maxRoll, d.roll2));
-              if (rb <= cmpRollA) rb = null;
-              cmpRollB = rb;
-            } else {
-              cmpRollB = null; cmpIntendedRollB = null;
-            }
-            // Upg A — if > maxUpg → null
-            if (d.upg1 !== null) {
-              cmpIntendedUpgA = d.upg1;
-              cmpUpgA = d.upg1 <= maxUpg ? d.upg1 : null;
-            }
-            // Upg B — if > maxUpg → clamp to maxUpg
-            if (d.upg2 !== null) {
-              cmpIntendedUpgB = d.upg2;
-              cmpUpgB = d.upg2 > maxUpg ? maxUpg : d.upg2;
-            }
-            if (d.yn1 !== null) { cmpCorrA = (d.yn1 === 'y' || d.yn1 === 'yes'); cmpCorrAChosen = true; }
-            if (d.yn2 !== null) { cmpCorrB = (d.yn2 === 'y' || d.yn2 === 'yes'); }
-            if (d.ref1 !== null || d.ref2 !== null) {
-              cmpRefA = ref1Name; cmpRefB = ref2Name; cmpRefAChosen = true;
-            }
+        if (_cmpDisc.roll1 === null && wVal && wVal.trim()) cmpDiscordParse();
+        const d = _cmpDisc;
+        if (d.roll1 !== null) {
+          const ref1Name = d.ref1
+            ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === d.ref1.toLowerCase()) || 'None')
+            : 'None';
+          const ref2Name = d.ref2
+            ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === d.ref2.toLowerCase()) || 'None')
+            : 'None';
+          const rolls   = getRolls(cmpCurrentItem);
+          const minR    = cmpCurrentItem.minRoll || 1;
+          const maxRoll = Math.max(...rolls);
+          const maxUpg  = cmpCurrentItem.maxUpg;
+          cmpIntendedRollA = d.roll1;
+          cmpRollA = Math.max(minR, Math.min(maxRoll, d.roll1));
+          if (d.isDual && d.roll2 !== null) {
+            cmpIntendedRollB = d.roll2;
+            let rb = Math.max(minR, Math.min(maxRoll, d.roll2));
+            if (rb <= cmpRollA) rb = null;
+            cmpRollB = rb;
+          } else {
+            cmpRollB = null; cmpIntendedRollB = null;
+          }
+          if (d.upg1 !== null) { cmpIntendedUpgA = d.upg1; cmpUpgA = d.upg1 <= maxUpg ? d.upg1 : null; }
+          if (d.upg2 !== null) { cmpIntendedUpgB = d.upg2; cmpUpgB = d.upg2 > maxUpg ? maxUpg : d.upg2; }
+          if (d.yn1 !== null) { cmpCorrA = (d.yn1 === 'y' || d.yn1 === 'yes'); cmpCorrAChosen = true; }
+          if (d.yn2 !== null) { cmpCorrB = (d.yn2 === 'y' || d.yn2 === 'yes'); }
+          if (d.ref1 !== null || d.ref2 !== null) {
+            cmpRefA = ref1Name; cmpRefB = ref2Name; cmpRefAChosen = true;
           }
         }
       } else {
-        // ── ARMOR: save current part input, then parse all parts silently ──
+        // ── ARMOR: parse all parts fresh from saved raw inputs, overwrite cmpArmorPartData ──
         _cmpDiscArmorSaveRaw();
         const PARTS = ['Helmet', 'Chestplate', 'Leggings'];
         PARTS.forEach(p => {
           const raw = (_cmpDiscArmorRaw[p] || '').trim();
           if (!raw) return;
-          // Parse using same logic as cmpDiscordApplyAndCheck but without validation
           let pRoll1 = null, pRoll2 = null, pIsDual = false;
           let pUpg1 = null, pUpg2 = null, pYn1 = null, pYn2 = null;
           const dashIdx = raw.indexOf('-');
@@ -12602,7 +12645,7 @@ function cmpSyncInputMode() {
             const rollPart = raw.slice(0, dashIdx).trim();
             const statPart = raw.slice(dashIdx + 1).trim();
             const rollTokens = rollPart.split(/\s+/).filter(Boolean);
-            if (rollTokens.length >= 1) { const r = parseInt(rollTokens[0], 10); if (!isNaN(r) && r > 0) { pRoll1 = r; } }
+            if (rollTokens.length >= 1) { const r = parseInt(rollTokens[0], 10); if (!isNaN(r) && r > 0) pRoll1 = r; }
             if (rollTokens.length >= 2 && rollTokens[1] === '>') {
               pIsDual = true;
               if (rollTokens.length >= 3) { const r2 = parseInt(rollTokens[2], 10); if (!isNaN(r2) && r2 > 0) pRoll2 = r2; }
@@ -12617,13 +12660,11 @@ function cmpSyncInputMode() {
               if (sideB.length >= 2) pYn2 = sideB[1].slice(0, 3).toLowerCase();
             }
           }
-          // Only apply if at least roll1 was parsed
           if (pRoll1 !== null) {
             const maxUpg  = cmpCurrentItem.maxUpg;
             const rolls   = getRolls(cmpCurrentItem);
             const minR    = cmpCurrentItem.minRoll || 1;
             const maxRoll = Math.max(...rolls);
-            // Clamp rolls
             const clampedRoll1 = Math.max(minR, Math.min(maxRoll, pRoll1));
             let clampedRoll2 = null;
             if (pIsDual && pRoll2 !== null) {
@@ -12631,16 +12672,13 @@ function cmpSyncInputMode() {
               if (rb <= clampedRoll1) rb = null;
               clampedRoll2 = rb;
             }
-            // Clamp upgrades: upgA > maxUpg → null; upgB > maxUpg → maxUpg
             const clampedUpgA = (pUpg1 !== null && pUpg1 <= maxUpg) ? pUpg1 : null;
             const clampedUpgB = (pUpg2 !== null) ? (pUpg2 > maxUpg ? maxUpg : pUpg2) : null;
             const yn1B = pYn1 === 'y' || pYn1 === 'yes';
             const yn2B = pYn2 === 'y' || pYn2 === 'yes';
             cmpArmorPartData[p] = {
-              rollA: clampedRoll1,
-              rollB: clampedRoll2,
-              upgA: clampedUpgA,
-              upgB: clampedUpgB,
+              rollA: clampedRoll1, rollB: clampedRoll2,
+              upgA: clampedUpgA, upgB: clampedUpgB,
               corrA: pYn1 !== null ? yn1B : null,
               corrB: pYn2 !== null ? yn2B : null,
               corrAChosen: pYn1 !== null,
@@ -12651,8 +12689,8 @@ function cmpSyncInputMode() {
         cmpLoadPartData(cmpCurrentPart);
         cmpUpdatePartToggle();
       }
-      cmpRefreshAll();
     }
+    if (cmpCurrentItem) cmpRefreshAll();
   }
   cmpDiscordUpdateCheckBtn();
 }
@@ -13063,10 +13101,7 @@ function cmpDiscordValidate() {
       errors.push(t('err_disc_nothing_diff'));
     }
 
-    if (!isDual && upg1 === upg2) {
-      errors.push(t('err_disc_upg_equal_single'));
-    }
-
+    // upg1 === upg2 is allowed when yn or reforge differs — nothing_diff above already catches the truly identical case
     if (upgDiff && upg1 > upg2) {
       errors.push(t('err_disc_upg_a_gt_b'));
     }
@@ -13198,7 +13233,7 @@ function cmpDiscordValidateArmor() {
       const upgDiff = pUpg1 !== pUpg2;
       const ynDiff  = yn1Bool !== yn2Bool;
       if (!pIsDual && !upgDiff && !ynDiff) partErrors.push(t('err_disc_nothing_diff'));
-      if (!pIsDual && pUpg1 === pUpg2) partErrors.push(t('err_disc_upg_equal_single'));
+      // upg1 === upg2 is allowed when yn differs — nothing_diff above already catches the truly identical case
     }
 
     if (partErrors.length > 0) {
@@ -13352,9 +13387,7 @@ function cmpDiscordApplyAndCheck() {
         partErrors.push(t('err_disc_nothing_diff'));
       }
 
-      if (!pIsDual && pUpg1 === pUpg2) {
-        partErrors.push(t('err_disc_upg_equal_single'));
-      }
+      // upg1 === upg2 is allowed when yn differs — nothing_diff above already catches the truly identical case
     }
 
     if (partErrors.length > 0) {
@@ -13601,7 +13634,6 @@ function toggleTheme() {
 
 // Хранит распарсенные данные Discord-режима для оружия
 let _azDiscWeapon = { dmg: null, upg: null, yn: null, ref: null };
-
 // Хранит распарсенные данные Discord-режима для брони (по частям)
 let _azDiscArmor = {
   Helmet:     { hp: null, upg: null, yn: null },
@@ -13643,33 +13675,11 @@ function azSyncInputMode() {
       }
     }
   } else {
-    // Website режим — сначала парсим Discord-инпут (если он был заполнен),
-    // чтобы _azDiscWeapon/_azDiscArmor содержали актуальные данные
+    // Website mode: just refresh UI from current state variables.
+    // Do NOT re-parse the Discord input field — that would overwrite user edits.
+    // Discord data is only applied once when switching Discord→Website for the first time
+    // (handled by the caller: _azDiscWeapon/_azDiscArmor are reset on item/category change).
     if (azCurrentItem) {
-      if (azCurrentItem.isArmor) {
-        // Сохраняем текущую видимую часть
-        azDiscordArmorSaveRaw();
-        // Парсим ВСЕ части напрямую из _azDiscArmorRaw (не только текущую)
-        ['Helmet','Chestplate','Leggings'].forEach(p => {
-          const raw = (_azDiscArmorRaw[p] || '').trim();
-          const rp = raw.split(/\s+/);
-          const hpNum  = parseFloat(rp[0] || '');
-          const upgNum = parseInt(rp[1] || '', 10);
-          const ynCut  = (rp[2] || '').slice(0,3).toLowerCase();
-          _azDiscArmor[p].hp  = (!isNaN(hpNum)  && (rp[0]||'') !== '') ? hpNum  : null;
-          _azDiscArmor[p].upg = (!isNaN(upgNum) && (rp[1]||'') !== '') ? upgNum : null;
-          _azDiscArmor[p].yn  = ynCut || null;
-          // Применяем в azArmorPartData сразу
-          if (_azDiscArmor[p].hp !== null || _azDiscArmor[p].upg !== null) {
-            if (!azArmorPartData[p]) azArmorPartData[p] = {};
-            if (_azDiscArmor[p].hp  !== null) azArmorPartData[p].hp  = String(_azDiscArmor[p].hp);
-            if (_azDiscArmor[p].upg !== null) azArmorPartData[p].upg = Math.min(_azDiscArmor[p].upg, azCurrentItem.maxUpg);
-            azArmorPartData[p].corrupted = (ynCut === 'y' || ynCut === 'yes');
-          }
-        });
-      } else {
-        azDiscordParse();
-      }
       azRefreshWebsiteInputs();
     }
   }
@@ -13710,25 +13720,21 @@ function azRefreshWebsiteInputs() {
   // 1. Damage / Health
   const dmgInput = document.getElementById('az-damage');
   if (dmgInput) {
-    let valueToSet = '';
     if (isArmor) {
+      let valueToSet = dmgInput.value;
       const partData = azArmorPartData[azCurrentArmorPart];
-      if (partData && partData.hp != null) valueToSet = String(partData.hp);
+      if (partData && partData.hp != null && partData.hp !== '') valueToSet = String(partData.hp);
       else if (_azDiscArmor[azCurrentArmorPart] && _azDiscArmor[azCurrentArmorPart].hp != null) {
         valueToSet = String(_azDiscArmor[azCurrentArmorPart].hp);
-        // Применяем в основное хранилище
         if (!azArmorPartData[azCurrentArmorPart]) azArmorPartData[azCurrentArmorPart] = {};
         azArmorPartData[azCurrentArmorPart].hp = _azDiscArmor[azCurrentArmorPart].hp;
       }
-    } else {
-      if (typeof azSelectedDmg !== 'undefined' && azSelectedDmg != null) {
-        valueToSet = String(azSelectedDmg);
-      } else if (_azDiscWeapon && _azDiscWeapon.dmg != null) {
-        valueToSet = String(_azDiscWeapon.dmg);
-        azSelectedDmg = _azDiscWeapon.dmg;   // ← КЛЮЧЕВОЕ ПРИМЕНЕНИЕ
-      }
+      dmgInput.value = valueToSet;
+    } else if (_azDiscWeapon && _azDiscWeapon.dmg != null) {
+      // Discord→Website конвертация: данные пришли из Discord-парсера — применяем
+      dmgInput.value = String(_azDiscWeapon.dmg);
     }
-    dmgInput.value = valueToSet;
+    // Оружие в чистом Website-режиме: поле не трогаем — пользователь вводит сам
   }
 
   // 2. Upgrade selector
@@ -13754,15 +13760,18 @@ function azRefreshWebsiteInputs() {
       azIsCorrupted = (d.yn === 'y' || d.yn === 'yes');
     }
   } else if (_azDiscWeapon && _azDiscWeapon.yn != null) {
+    // Discord→Website: применяем corrupted из Discord-данных
     azIsCorrupted = (_azDiscWeapon.yn === 'y' || _azDiscWeapon.yn === 'yes');
   }
   azUpdateCorrDisplay();
 
   // 4. Reforge selector (только оружие)
   if (!isArmor) {
-    if (_azDiscWeapon) {
-      azSelectedReforge = _azDiscWeapon.ref || 'None';
+    if (_azDiscWeapon && _azDiscWeapon.ref != null) {
+      // Discord→Website: применяем reforge из Discord-данных
+      azSelectedReforge = _azDiscWeapon.ref;
     }
+    // Чистый Website-режим: azSelectedReforge остаётся как есть — пользователь выбирает сам
     const refValEl = document.getElementById('az-ref-val');
     if (refValEl) refValEl.textContent = azSelectedReforge === 'None' ? t('ref_none_select') : azSelectedReforge + ' Reforge';
     azBuildRefDrop();

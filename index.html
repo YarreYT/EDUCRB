@@ -620,8 +620,11 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .nav-btn .tooltip{position:absolute!important;bottom:50px!important;left:50%!important;transform:translateX(-50%)!important;top:auto!important;z-index:300;}
   .lang-other{position:fixed;bottom:56px;left:16px;top:auto;transform:none;padding:6px 12px;}
   main{padding-top:0!important;padding-bottom:var(--nav-h)!important;}
-  .banner-game-title{font-size:clamp(18px,7vw,36px);letter-spacing:2px;}
-  .banner-eyebrow{font-size:clamp(10px,3.5vw,16px);letter-spacing:3px;}
+  .game-banner{aspect-ratio:16/7!important;max-height:180px!important;}
+  .banner-game-title{font-size:clamp(16px,5.5vw,24px)!important;letter-spacing:2px!important;}
+  .banner-eyebrow{font-size:clamp(10px,3vw,15px)!important;letter-spacing:3px!important;}
+  .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
+  .banner-title-block{padding:6px 12px!important;}
 }
 
 /* ── PAGE SYSTEM ── */
@@ -816,11 +819,11 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 @media(max-width:480px){
   #page-home{grid-template-columns:1fr;}
   .hero-section{padding:12px 12px 10px;}
-  .game-banner{aspect-ratio:16/7;max-height:180px;}
-  .banner-game-title{font-size:clamp(16px,5.5vw,24px);letter-spacing:2px;}
-  .banner-eyebrow{font-size:clamp(10px,3vw,15px);letter-spacing:3px;}
-  .banner-sub{font-size:9px;letter-spacing:2px;}
-  .banner-title-block{padding:6px 12px;}
+  .game-banner{aspect-ratio:16/7!important;max-height:160px!important;}
+  .banner-game-title{font-size:clamp(13px,4vw,20px)!important;letter-spacing:1px!important;}
+  .banner-eyebrow{font-size:clamp(8px,2.2vw,12px)!important;letter-spacing:2px!important;}
+  .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
+  .banner-title-block{padding:6px 12px!important;}
   .bot-updates-row{gap:12px;}
   .bot-panel{padding:16px 12px 14px;gap:0;width:100%;}
   .bot-avatar-wrap{width:76px;height:76px;margin-bottom:10px;}

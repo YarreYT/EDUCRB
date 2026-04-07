@@ -472,7 +472,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',sans-serif;min-height:var(--real-vh);overflow-x:hidden;}
-body.scale-active{overflow:hidden;height:100vh;}
+body.scale-active{overflow:hidden;height:var(--real-vh);}
 
 /* ── BG ── */
 .page-bg{position:fixed;inset:0;z-index:0;
@@ -4115,7 +4115,7 @@ body.scale-active .console-panel {
 */
 (function() {
   function getZoom() {
-    return Math.min(2.5, Math.max(0.5, window.outerWidth / window.innerWidth));
+    return Math.min(2.5, Math.max(0.25, window.outerWidth / window.innerWidth));
   }
 
   function applyScale() {
@@ -4126,9 +4126,10 @@ body.scale-active .console-panel {
     const isNarrow = window.innerWidth <= 960;
     if (isTouch || isNarrow) {
       wrap.style.willChange = '';
-      wrap.style.transform = '';
-      wrap.style.width     = '';
-      wrap.style.height    = '';
+      wrap.style.transform  = '';
+      wrap.style.zoom       = '';
+      wrap.style.width      = '';
+      wrap.style.height     = '';
       document.body.style.overflow = '';
       document.body.style.height   = '';
       window._pageScale = 1;
@@ -4144,19 +4145,21 @@ body.scale-active .console-panel {
     const layoutH = Math.round(zoom * window.innerHeight);
     const layoutW = Math.round(zoom * window.innerWidth);
 
-    wrap.style.willChange = 'transform';
-    wrap.style.transform = `scale(${scale})`;
-    wrap.style.width     = layoutW + 'px';
-    wrap.style.height    = layoutH + 'px';
-    window._pageScale    = scale;
+    // CSS zoom (not transform:scale) — borders/scrollbars stay physically 1px
+    // at any browser zoom level, without any calc() compensation.
+    wrap.style.willChange = '';
+    wrap.style.transform  = '';
+    wrap.style.zoom       = scale;
+    wrap.style.width      = layoutW + 'px';
+    wrap.style.height     = layoutH + 'px';
+    window._pageScale     = scale;
     document.body.classList.add('scale-active');
 
-    // Lock body to viewport — prevents scale-wrap's large layout size from
-    // causing phantom document scroll. Pages scroll via their own overflow-y:auto (CSS).
-    document.body.style.overflow = 'hidden';
-    document.body.style.height   = '100vh';
+    document.body.style.overflow = '';
+    document.body.style.height   = '';
 
-    // --real-vh = layoutH: pages use this to fill exactly one visual viewport
+    // layoutH = zoom * window.innerHeight = physical pixel height before CSS zoom shrinks it.
+    // This ensures --real-vh always equals the true visible viewport height regardless of zoom level.
     document.documentElement.style.setProperty('--real-vh', layoutH + 'px');
 
     requestAnimationFrame(() => {

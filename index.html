@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculate Roll Bot — Elemental Dungeons | Awake Galaxy</title>
+<!-- ── EARLY THEME: применяем класс темы ДО рендера страницы, без мигания ── -->
+<script>
+(function(){
+  var t = localStorage.getItem('_ed_theme');
+  // Первый визит — пасхальная тема по умолчанию
+  if (!t) { t = 'easter'; localStorage.setItem('_ed_theme', 'easter'); }
+  if (t === 'gold')    document.documentElement.classList.add('theme-gold');
+  if (t === 'easter')  document.documentElement.classList.add('theme-easter');
+  if (t === 'classic') document.documentElement.classList.add('theme-classic');
+  // galaxy — классов нет, просто дефолт
+})();
+</script>
+<link rel="icon" type="image/png" sizes="32x32" href="images/Stuff/Weapons/ascvoidblade.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/Stuff/Weapons/ascvoidblade.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -470,6 +484,1317 @@
   --theme-switch-glow: #9b30ff;
   --gold-rgb: 200, 147, 42;        /* Золотой для Gold темы */
 }
+
+/* ══════════════════════════════════════════════════════
+   EASTER THEME
+   cream  #EDE4DC  — основные панели (bot, updates)
+   mint   #DCE8D8  — списки, боковые панели, console
+   blue   #D5EAF0  — nav, заголовки, overlays
+   pink   #E0607E  — клики, активные состояния, акценты
+   Текст: тёплый тёмно-коричневый — читается на всех светлых фонах
+══════════════════════════════════════════════════════ */
+:root.theme-easter {
+  --gold:           #C84E78;
+  --gold-bright:    #E0607E;
+  --gold-glow:      #F0A0B8;
+  --amber:          #4E9466;
+  --cyan-rune:      #2E8AA5;
+  --green-stat:     #3E7A4A;
+  --border-gold:    #D4B8A4;
+  --border-rune:    #AACCA0;
+  --theme-bg-image: url('images/Home Page/banner3_4.png');
+  --theme-name:     easter;
+  --theme-switch-glow: #E0607E;
+  --gold-rgb:       200, 78, 120;
+  /* Текстовые переменные — тёплый тёмно-коричневый для читаемости на светлом */
+  --text-primary:   #3D2A18;
+  --text-muted:     #7A5A42;
+  --text-dim:       #A08060;
+  /* Утилитарные */
+  --e-cream:        #EDE4DC;
+  --e-mint:         #DCE8D8;
+  --e-blue:         #D5EAF0;
+  --e-pink:         #E0607E;
+}
+
+/* ══════════════════════════════════════════════════════
+   CLASSIC THEME
+   Цвета точно как в игре — тёмные, матовые, без glows.
+   Страница:  #0f1720  (почти чёрный)
+   Nav / page-bar: #131e29
+   Панели:    #172232  (dark panel — едва отличается от фона)
+   Вставки:   #1e2d3e  (заголовки внутри панелей, header'ы)
+   Рамки:     #253a4e  (тонкие, почти не видны)
+   Акцент:    #447194  (кнопки, активные, текст-gold)
+══════════════════════════════════════════════════════ */
+:root.theme-classic {
+  --gold:           #447194;
+  --gold-bright:    #447194;
+  --gold-glow:      #447194;
+  --amber:          #447194;
+  --cyan-rune:      #00d4ff;
+  --green-stat:     #4cffb0;
+  --text-primary:   #8aa4b4;
+  --text-muted:     #3d5a6a;
+  --text-dim:       #253545;
+  --border-rune:    #253a4e;
+  --border-gold:    #253a4e;
+  --bg-void:        #0f1720;
+  --theme-bg-image: url('images/Home Page/banner4_1.png');
+  --theme-name:     classic;
+  --theme-switch-glow: #447194;
+  --gold-rgb:       68, 113, 148;
+}
+
+/* ── Page background ── */
+:root.theme-classic .page-bg {
+  background-color: #0f1720;
+}
+:root.theme-classic .page-bg::after {
+  background:
+    linear-gradient(to right, rgba(15,23,32,.98) 0%, rgba(15,23,32,.72) 50%, rgba(15,23,32,.96) 100%),
+    linear-gradient(to bottom, rgba(15,23,32,.65) 0%, rgba(15,23,32,.20) 35%, rgba(15,23,32,.95) 100%);
+}
+
+/* ── Nav ── */
+:root.theme-classic nav {
+  background: #131e29;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic nav::after { background: none; }
+:root.theme-classic .nav-btn { color: rgba(138,164,180,0.45); }
+:root.theme-classic .nav-btn:hover {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.15);
+  box-shadow: none;
+}
+:root.theme-classic .nav-btn.active {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.18);
+  box-shadow: none;
+}
+:root.theme-classic .lang-other { color: rgba(138,164,180,0.45); }
+:root.theme-classic .nav-btn .tooltip {
+  background: #131e29;
+  border: 1px solid #253a4e;
+  color: #8aa4b4;
+  box-shadow: none;
+}
+:root.theme-classic .nav-btn svg path,
+:root.theme-classic .nav-btn svg circle,
+:root.theme-classic .nav-btn svg line,
+:root.theme-classic .nav-btn svg polyline,
+:root.theme-classic .nav-btn svg rect {
+  stroke: none !important;
+  fill: rgba(138,164,180,0.50) !important;
+}
+:root.theme-classic .nav-btn.active svg path,
+:root.theme-classic .nav-btn.active svg circle,
+:root.theme-classic .nav-btn.active svg line,
+:root.theme-classic .nav-btn.active svg polyline,
+:root.theme-classic .nav-btn.active svg rect {
+  stroke: none !important;
+  fill: #447194 !important;
+}
+:root.theme-classic .online-icon path { stroke: #4cffb0 !important; }
+
+/* ── Banner ── */
+:root.theme-classic .banner-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15,23,32,0.60) 0%,
+    rgba(15,23,32,0.22) 45%,
+    rgba(19,30,41,0.75) 100%
+  );
+}
+:root.theme-classic .banner-eyebrow {
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,.8);
+}
+:root.theme-classic .banner-game-title {
+  color: #8aa4b4;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #8aa4b4;
+  background-clip: unset;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+}
+:root.theme-classic .banner-glow-line {
+  background: #253a4e;
+  box-shadow: none;
+  height: 1px;
+  opacity: 0.8;
+}
+
+/* ── Основные панели (bot-panel, updates-panel и т.д.) ── */
+:root.theme-classic .bot-panel,
+:root.theme-classic .updates-panel {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+:root.theme-classic .bot-panel::before,
+:root.theme-classic .updates-panel::before { background: none; }
+:root.theme-classic .bot-panel *,
+:root.theme-classic .updates-panel * { color: #8aa4b4; }
+:root.theme-classic .bot-name { color: #447194 !important; text-shadow: none !important; }
+:root.theme-classic .bot-tagline { color: rgba(138,164,180,0.60) !important; }
+:root.theme-classic .bot-desc { color: rgba(138,164,180,0.65) !important; }
+
+/* ── Credit card ── */
+:root.theme-classic .credit-card {
+  background: #1e2d3e;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .credit-card-role { color: rgba(138,164,180,0.45) !important; }
+:root.theme-classic .credit-card-name { color: #8aa4b4 !important; }
+:root.theme-classic .credit-card-name.cyan { color: #447194 !important; }
+:root.theme-classic .credit-card-name.green { color: #4cffb0 !important; }
+
+/* ── Stat chips ── */
+:root.theme-classic .stat-chip {
+  background: #1e2d3e;
+  border: 1px solid #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .stat-num { color: #447194 !important; }
+:root.theme-classic .stat-lbl { color: rgba(138,164,180,0.50) !important; }
+:root.theme-classic .stat-chip--total {
+  background: #1e2d3e;
+  border-color: #4a7090;
+  box-shadow: none;
+}
+:root.theme-classic .stat-chip--total .stat-lbl { color: rgba(138,164,180,0.50) !important; }
+:root.theme-classic .total-proc-count { color: #447194 !important; }
+:root.theme-classic .total-proc-arrow { color: #447194 !important; }
+
+/* ── Updates panel ── */
+:root.theme-classic .updates-title { color: #447194 !important; text-shadow: none !important; }
+:root.theme-classic .updates-subtitle { color: rgba(138,164,180,0.50) !important; }
+:root.theme-classic .updates-text { color: rgba(138,164,180,0.70) !important; }
+:root.theme-classic .updates-text .upd-accent { color: #447194 !important; }
+:root.theme-classic .updates-text .upd-cyan { color: #447194 !important; }
+:root.theme-classic .updates-text .upd-green { color: #4cffb0 !important; }
+:root.theme-classic .updates-text .upd-muted { color: rgba(138,164,180,0.35) !important; }
+:root.theme-classic .upd-nav-btn {
+  color: rgba(138,164,180,0.45);
+  border-color: #253a4e;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-classic .upd-nav-btn:hover {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.12);
+}
+
+/* ── Item list panel ── */
+:root.theme-classic .item-list-panel {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .item-list-header {
+  background: #1e2d3e;
+  border-color: #253a4e;
+  color: rgba(138,164,180,0.50);
+}
+
+/* ── Cat tabs ── */
+:root.theme-classic .cat-tab {
+  color: rgba(138,164,180,0.50);
+  border-color: #253a4e;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-classic .cat-tab.active,
+:root.theme-classic .cat-tab:hover {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.18);
+  border-color: #447194;
+  box-shadow: none;
+}
+
+/* ── Item buttons ── */
+:root.theme-classic .item-btn {
+  color: rgba(138,164,180,0.55);
+  border-color: transparent;
+  background: transparent;
+}
+:root.theme-classic .item-btn:hover {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.12);
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .item-btn.active {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.20);
+  border-color: #447194;
+  box-shadow: none;
+}
+:root.theme-classic .item-category-header {
+  color: rgba(138,164,180,0.35) !important;
+  border-color: #253a4e;
+}
+:root.theme-classic .item-category-header::before,
+:root.theme-classic .item-category-header::after { background: #253a4e; }
+
+/* ── Search ── */
+:root.theme-classic .item-search-wrap,
+:root.theme-classic #page-rolls .item-search-wrap,
+:root.theme-classic #page-analyze .item-search-wrap,
+:root.theme-classic #page-stuff .item-search-wrap,
+:root.theme-classic #page-compare .item-search-wrap {
+  background: #1e2d3e;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .item-search-input {
+  color: #8aa4b4;
+  background: transparent;
+}
+:root.theme-classic .item-search-input::placeholder { color: rgba(138,164,180,0.28); }
+
+/* ── Mod panel ── */
+:root.theme-classic .mod-panel {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .mod-panel-header {
+  background: #1e2d3e;
+  border-color: #253a4e;
+}
+:root.theme-classic .mod-panel-title { color: rgba(138,164,180,0.50) !important; }
+:root.theme-classic .mod-panel-value { color: #447194 !important; }
+:root.theme-classic .mod-panel-arrow { color: #447194 !important; }
+:root.theme-classic .mod-panel-body { background: #172232; }
+:root.theme-classic .mod-btn {
+  color: rgba(138,164,180,0.55);
+  border-color: #253a4e;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-classic .mod-btn:hover,
+:root.theme-classic .mod-btn.active {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.18);
+  border-color: #447194;
+  box-shadow: none;
+}
+
+/* ── Roll table ── */
+:root.theme-classic .roll-table-wrap {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .roll-table-wrap thead th,
+:root.theme-classic .az-tbl thead th {
+  background: #1e2d3e;
+  color: rgba(138,164,180,0.55) !important;
+  border-color: #253a4e;
+}
+:root.theme-classic .roll-table-wrap tbody tr { border-color: #253a4e; }
+:root.theme-classic .td-base { color: rgba(138,164,180,0.80); }
+:root.theme-classic .td-roll { color: #447194; }
+:root.theme-classic .td-ref { color: rgba(138,164,180,0.40); }
+
+/* ── Console panel ── */
+:root.theme-classic .console-panel {
+  background: #131e29;
+  border-color: #253a4e;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+:root.theme-classic .console-panel,
+:root.theme-classic .console-panel .console-title,
+:root.theme-classic .console-panel .empty-title,
+:root.theme-classic .console-panel .empty-desc,
+:root.theme-classic .console-panel .history-header,
+:root.theme-classic .console-panel .hint-desc { color: rgba(138,164,180,0.65); }
+:root.theme-classic .console-panel .hint-page { color: #447194; }
+:root.theme-classic .console-panel .hint-row {
+  border-color: #253a4e;
+  color: rgba(138,164,180,0.55);
+}
+:root.theme-classic .console-header {
+  background: #1e2d3e;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .console-header * { color: rgba(138,164,180,0.65) !important; }
+:root.theme-classic .online-dot { background: #4cffb0; box-shadow: none; }
+:root.theme-classic .online-icon { color: #4cffb0; }
+:root.theme-classic .online-count { color: rgba(138,164,180,0.55) !important; }
+:root.theme-classic .console-live-badge,
+:root.theme-classic .console-status { color: rgba(138,164,180,0.45) !important; }
+:root.theme-classic .console-tabs {
+  border-color: #253a4e;
+  background: #1e2d3e;
+}
+:root.theme-classic .console-tab-btn {
+  color: rgba(138,164,180,0.45);
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-classic .console-tab-btn:hover {
+  color: #8aa4b4;
+  background: rgba(68,113,148,0.12);
+}
+:root.theme-classic .console-tab-btn.active {
+  color: #447194;
+  border-color: #447194;
+  background: rgba(68,113,148,0.14);
+  box-shadow: none;
+}
+
+/* ── Page title block — NO background ── */
+:root.theme-classic .page-title-block {
+  background: none;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .page-title-text { color: #447194 !important; text-shadow: none !important; }
+:root.theme-classic .page-title-icon { color: #447194 !important; }
+:root.theme-classic .page-title-sub { color: rgba(138,164,180,0.45) !important; }
+
+/* ── Process / Tablet modal ── */
+:root.theme-classic .az-modal-box {
+  background: linear-gradient(180deg, #172232 0%, #111c28 100%);
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .az-modal-head {
+  background: rgba(0,0,0,.15);
+  border-bottom-color: #253a4e;
+}
+
+/* ── Process / Tablet desktop panel (AZ, SP, CMP) ── */
+:root.theme-classic .az-third-panel,
+:root.theme-classic #page-stuff .sp-third-panel,
+:root.theme-classic .cmp-third-panel {
+  background: linear-gradient(180deg, #172232 0%, #111c28 100%);
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .az-third-panel::before,
+:root.theme-classic #page-stuff .sp-third-panel::before,
+:root.theme-classic .cmp-third-panel::before { opacity: 0.1; }
+:root.theme-classic .az-third-panel-tabs {
+  background: rgba(0,0,0,.15);
+  border-bottom-color: #253a4e;
+}
+:root.theme-classic .az-third-tab {
+  color: rgba(138,164,180,0.5) !important;
+}
+:root.theme-classic .az-third-tab:hover,
+:root.theme-classic .az-third-tab.active {
+  color: #8aa4b4 !important;
+  background: rgba(68,113,148,0.1) !important;
+  border-bottom-color: #447194 !important;
+}
+:root.theme-classic .sp-third-half-title {
+  color: #8aa4b4 !important;
+  background: rgba(0,0,0,.15) !important;
+  border-bottom-color: #253a4e !important;
+}
+:root.theme-classic .sp-third-divider-h {
+  background: linear-gradient(90deg, transparent, #253a4e, transparent) !important;
+}
+:root.theme-classic .az-modal-ttl { color: #8aa4b4 !important; }
+
+/* ── Quote / Comment panels ── */
+:root.theme-classic .az-quote-panel,
+:root.theme-classic .az-quote-mobile {
+  background: linear-gradient(135deg, #172232 0%, #111c28 100%);
+  border-color: #253a4e;
+}
+:root.theme-classic .az-quote-panel::before,
+:root.theme-classic .az-quote-mobile::before { opacity: 0.15; }
+
+/* ── Discord panels (page-level wrappers only, NOT az-card internals) ── */
+:root.theme-classic .az-discord-panel,
+:root.theme-classic .sp-discord-panel,
+:root.theme-classic .cmp-discord-panel {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+
+/* ── Table empty states ── */
+:root.theme-classic .table-empty,
+:root.theme-classic .analyze-area .table-empty,
+:root.theme-classic .stuff-area .table-empty,
+:root.theme-classic .cmp-table-area .table-empty,
+:root.theme-classic .dt-result-panel-body .table-empty,
+:root.theme-classic #table-container .table-empty,
+:root.theme-classic #az-empty,
+:root.theme-classic #sp-empty,
+:root.theme-classic #cmp-empty,
+:root.theme-classic #table-empty-state {
+  background: rgba(23,34,50,0.50);
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .table-empty-title,
+:root.theme-classic .table-empty-desc { color: rgba(138,164,180,0.38) !important; }
+
+/* ── Settings panel ── */
+:root.theme-classic .settings-panel {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .settings-title { color: #447194 !important; border-color: #253a4e; text-shadow: none !important; }
+:root.theme-classic .sett-section-title { color: rgba(138,164,180,0.38) !important; border-color: #253a4e; }
+:root.theme-classic .settings-content {
+  background: #172232;
+  border-color: #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .settings-header {
+  border-color: #253a4e;
+}
+:root.theme-classic .sett-entry-label { color: rgba(138,164,180,0.65) !important; }
+:root.theme-classic .sett-entry-btn {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: rgba(138,164,180,0.45) !important;
+}
+:root.theme-classic .sett-lang-btn {
+  background: none !important;
+  border-color: #253a4e !important;
+  color: rgba(138,164,180,0.55) !important;
+  box-shadow: none !important;
+}
+:root.theme-classic .sett-lang-btn:hover,
+:root.theme-classic .sett-entry-btn:hover {
+  border-color: #447194 !important;
+  color: #8aa4b4 !important;
+  background: none !important;
+}
+:root.theme-classic .sett-lang-btn.active {
+  background: none !important;
+  border-color: #447194 !important;
+  color: #447194 !important;
+  box-shadow: none !important;
+}
+:root.theme-classic .sett-entry-btn.active {
+  background: none !important;
+  color: #447194 !important;
+}
+:root.theme-classic .sett-entry-btn.dim {
+  color: rgba(138,164,180,0.30) !important;
+}
+:root.theme-classic .sett-entry-sep {
+  color: rgba(138,164,180,0.30) !important;
+}
+:root.theme-classic .settings-gear-btn { color: rgba(138,164,180,0.45); }
+:root.theme-classic .settings-gear-btn:hover {
+  color: #447194;
+  background: rgba(68,113,148,0.12);
+  box-shadow: none;
+}
+
+/* ── Palette popup ── */
+:root.theme-classic .palette-popup-inner {
+  background: #131e29;
+  border: 1px solid #253a4e;
+  box-shadow: none;
+}
+:root.theme-classic .palette-item { border-color: rgba(37,58,78,0.70); }
+:root.theme-classic .palette-item img { border-color: rgba(37,58,78,0.80); }
+:root.theme-classic .palette-item:hover { background: rgba(68,113,148,0.10); box-shadow: none; }
+:root.theme-classic .palette-future-icon {
+  border-color: rgba(37,58,78,0.60);
+  color: rgba(138,164,180,0.28);
+}
+:root.theme-classic .palette-backdrop { background: rgba(10,16,22,0.55); }
+
+/* ── Avatar ring ── */
+:root.theme-classic .avatar-ring-inner {
+  border-color: #447194;
+  box-shadow: none;
+}
+:root.theme-classic .avatar-ring-outer {
+  border-color: rgba(68,113,148,0.20);
+}
+
+/* ── Focus ── */
+:root.theme-classic button:focus-visible { outline-color: #447194; }
+
+/* ── Discord input: введённый текст белый, placeholder — как var(--text-dim) ── */
+:root.theme-classic .az-discord-input {
+  color: #ffffff;
+}
+:root.theme-classic .az-discord-input::placeholder {
+  color: var(--text-dim);
+  opacity: .65;
+}
+
+/* ── Mobile sticky search — переопределить хардкод чёрный ── */
+:root.theme-classic #page-rolls .item-search-wrap,
+:root.theme-classic #page-analyze .item-search-wrap,
+:root.theme-classic #page-stuff .item-search-wrap,
+:root.theme-classic #page-compare .item-search-wrap {
+  background: #1e2d3e !important;
+  border-color: #253a4e !important;
+}
+:root.theme-classic .item-search-input {
+  background: transparent !important;
+  color: #8aa4b4 !important;
+}
+:root.theme-classic .item-search-input::placeholder {
+  color: rgba(138,164,180,0.30) !important;
+}
+
+
+/* SVG иконки nav-бара — лёгкий тонкий стиль */
+:root.theme-easter .nav-btn svg path,
+:root.theme-easter .nav-btn svg circle,
+:root.theme-easter .nav-btn svg line,
+:root.theme-easter .nav-btn svg polyline,
+:root.theme-easter .nav-btn svg rect {
+  stroke: rgba(30, 80, 110, 0.55) !important;
+  stroke-width: 0.5px !important;
+  fill: rgba(30, 80, 110, 0.15) !important;
+}
+:root.theme-easter .nav-btn.active svg path,
+:root.theme-easter .nav-btn.active svg circle,
+:root.theme-easter .nav-btn.active svg line,
+:root.theme-easter .nav-btn.active svg polyline,
+:root.theme-easter .nav-btn.active svg rect {
+  fill: #C84E78 !important;
+  stroke: #C84E78 !important;
+  stroke-width: 0 !important;
+}
+:root.theme-easter .online-icon path {
+  stroke: #3E7A4A !important;
+  fill: rgb(86, 185, 109,.75) !important;
+  stroke-width: 1.2px !important;
+}
+
+/* ── ЗАДНИЙ ФОН: голубоватое подсвечивание ── */
+:root.theme-easter .page-bg::after {
+  background:
+    linear-gradient(to right,  rgba(130,190,210,.52) 0%, rgba(130,190,210,.14) 50%, rgba(130,190,210,.48) 100%),
+    linear-gradient(to bottom, rgba(130,190,210,.38) 0%, rgba(130,190,210,.08) 35%, rgba(130,190,210,.32) 100%) !important;
+}
+
+/* ── NAV ── */
+:root.theme-easter nav {
+  background: rgba(160,210,228,0.96) !important;
+  border-bottom-color: #90BBCC !important;
+}
+:root.theme-easter nav::after {
+  background: linear-gradient(90deg, transparent, #90BBCC, transparent) !important;
+}
+:root.theme-easter .nav-btn {
+  color: #1E5468 !important;
+}
+:root.theme-easter .nav-btn:hover {
+  color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 12%, transparent) !important;
+}
+:root.theme-easter .nav-btn.active {
+  color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 15%, transparent) !important;
+}
+:root.theme-easter .lang-other {
+  background: rgba(220, 232, 216, 0.98) !important;
+  border-color: #AACCA0 !important;
+  color: #2E5A1E !important;
+}
+:root.theme-easter .nav-btn .tooltip {
+  background: rgba(220, 232, 216, 0.99) !important;
+  border-color: #AACCA0 !important;
+  color: #2E5A1E !important;
+}
+
+/* ── БАННЕР OVERLAY → голубой ── */
+:root.theme-easter .banner-overlay {
+  background:
+    linear-gradient(to right,  rgba(130,190,210,.60) 0%, rgba(130,190,210,.12) 40%, rgba(130,190,210,.12) 60%, rgba(130,190,210,.56) 100%),
+    linear-gradient(to bottom, rgba(130,190,210,.36) 0%, transparent 25%, transparent 75%, rgba(130,190,210,.36) 100%) !important;
+}
+
+/* ══ ВСЕ ОСНОВНЫЕ ПАНЕЛИ → кремовый фон, тёмный текст ══ */
+:root.theme-easter .bot-panel,
+:root.theme-easter .updates-panel {
+  background: #EDE4DC !important;
+  border-color: #D4B8A4 !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .bot-panel *,
+:root.theme-easter .updates-panel * {
+  color: inherit;
+}
+/* Имя бота */
+:root.theme-easter .bot-name {
+  color: #C84E78 !important;
+}
+:root.theme-easter .bot-tagline {
+  color: #7A5A42 !important;
+}
+:root.theme-easter .bot-desc {
+  color: #7A5A42 !important;
+}
+/* Кредиты */
+:root.theme-easter .credit-card-role {
+  color: #A08060 !important;
+}
+:root.theme-easter .credit-card-name {
+  color: #C84E78 !important;
+}
+:root.theme-easter .credit-card-name.cyan {
+  color: #2E8AA5 !important;
+}
+:root.theme-easter .credit-card-name.green {
+  color: #3E7A4A !important;
+}
+/* stat-chip */
+:root.theme-easter .stat-chip {
+  background: rgba(160, 210, 228, 0.65) !important;
+  border-color: #80B0C4 !important;
+}
+:root.theme-easter .stat-num {
+  color: #C84E78 !important;
+}
+:root.theme-easter .stat-lbl {
+  color: #3E6070 !important;
+}
+:root.theme-easter .stat-chip--total {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 10px rgba(200,78,120, 0.15), inset 0 0 12px rgba(200,78,120, 0.05) !important;
+}
+:root.theme-easter .stat-chip--total .stat-lbl {
+  color: #C84E78 !important;
+  opacity: .8 !important;
+}
+:root.theme-easter .total-proc-count {
+  color: #C84E78 !important;
+}
+:root.theme-easter .total-proc-arrow {
+  color: #C84E78 !important;
+}
+/* Updates текст */
+:root.theme-easter .updates-title {
+  color: #C84E78 !important;
+}
+:root.theme-easter .updates-subtitle {
+  color: #7A5A42 !important;
+}
+:root.theme-easter .updates-text {
+  color: #5A3A22 !important;
+}
+:root.theme-easter .updates-text .upd-accent {
+  color: #C84E78 !important;
+}
+:root.theme-easter .updates-text .upd-cyan {
+  color: #2E8AA5 !important;
+}
+:root.theme-easter .updates-text .upd-green {
+  color: #3E7A4A !important;
+}
+:root.theme-easter .updates-text .upd-muted {
+  color: #A08060 !important;
+}
+:root.theme-easter .upd-nav-btn {
+  color: #C84E78 !important;
+  border-color: #D4B8A4 !important;
+}
+/* item-list (левая колонка списков) */
+:root.theme-easter .item-list-panel {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+}
+/* cat-tab кнопки (Weapon / Armor / Relics) */
+:root.theme-easter .cat-tab {
+  background: rgba(220, 232, 216, 0.95) !important;
+  border-color: #AACCA0 !important;
+  color: #2E5A1E !important;
+}
+/* mod-panel (выпадающие панели модификаторов) */
+:root.theme-easter .mod-panel {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .mod-panel-header {
+  background: rgba(140, 190, 210, 0.40) !important;
+}
+:root.theme-easter .mod-panel-title {
+  color: #256878 !important;
+}
+:root.theme-easter .mod-panel-value {
+  color: #5A3A22 !important;
+}
+:root.theme-easter .mod-panel-arrow {
+  color: #7A5A42 !important;
+}
+:root.theme-easter .mod-panel-body {
+  border-top-color: #AACCA0 !important;
+}
+:root.theme-easter .mod-btn {
+  color: #2E5A1E !important;
+  border-color: #AACCA0 !important;
+  background: rgba(160, 210, 160, 0.25) !important;
+}
+:root.theme-easter .mod-btn:hover,
+:root.theme-easter .mod-btn.active {
+  color: #C84E78 !important;
+  border-color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 10%, transparent) !important;
+}
+/* roll-table-wrap */
+:root.theme-easter .roll-table-wrap {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .roll-table-wrap tbody tr {
+  border-bottom-color: rgba(150, 196, 140, 0.4) !important;
+}
+/* console-panel (правая панель) */
+:root.theme-easter .console-panel {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .console-panel,
+:root.theme-easter .console-panel .console-title,
+:root.theme-easter .console-panel .empty-title,
+:root.theme-easter .console-panel .empty-desc,
+:root.theme-easter .console-panel .history-header,
+:root.theme-easter .console-panel .hint-desc {
+  color: #2E4A28 !important;
+}
+:root.theme-easter .console-panel .hint-page {
+  color: #C84E78 !important;
+}
+:root.theme-easter .console-panel .hint-row {
+  background: color-mix(in srgb, #E0607E 6%, rgba(220,232,216,.8)) !important;
+  border-color: color-mix(in srgb, #E0607E 15%, transparent) !important;
+}
+
+/* ── ЛИНИИ ПОВЕРХ ПАНЕЛЕЙ (::before градиент) ── */
+:root.theme-easter .bot-panel::before,
+:root.theme-easter .updates-panel::before {
+  background: linear-gradient(90deg, transparent, #D4B8A4, transparent) !important;
+  opacity: .5 !important;
+}
+
+/* ── КАРТОЧКИ КРЕДИТОВ ── */
+:root.theme-easter .credit-card {
+  background: rgba(237, 228, 220, 0.6) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .console-header {
+  background: rgba(140, 190, 210, 0.60) !important;
+  border-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+:root.theme-easter .console-header * {
+  color: #1E5468 !important;
+}
+:root.theme-easter .online-dot {
+  background: rgb(86, 185, 109,.75) !important;
+  box-shadow: 0 0 6px #3E7A4A !important;
+}
+:root.theme-easter .online-icon {
+  fill: #3E7A4A !important;
+}
+:root.theme-easter .online-count {
+  color: #3E7A4A !important;
+}
+:root.theme-easter .console-live-badge,
+:root.theme-easter .console-status {
+  color: rgb(86, 185, 109) !important;
+  background: rgb(86, 185, 109,.15) !important;
+}
+:root.theme-easter .console-tabs {
+  background: rgba(140, 190, 210, 0.35) !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .page-title-block {
+  border-bottom-color: #AACCA0 !important;
+}
+:root.theme-easter .page-title-text {
+  color: #C84E78 !important;
+}
+:root.theme-easter .page-title-icon {
+  fill: #C84E78 !important;
+}
+:root.theme-easter .page-title-sub {
+  color: #7A5A42 !important;
+}
+:root.theme-easter .item-category-header {
+  background: rgba(140, 190, 210, 0.48) !important;
+  border-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+/* item-search sticky */
+:root.theme-easter .item-search-wrap,
+:root.theme-easter #page-rolls .item-search-wrap,
+:root.theme-easter #page-analyze .item-search-wrap,
+:root.theme-easter #page-stuff .item-search-wrap,
+:root.theme-easter #page-compare .item-search-wrap {
+  background: rgba(220, 232, 216, 0.95) !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .item-search-input {
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-color: #AACCA0 !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .item-search-input::placeholder {
+  color: #A08060 !important;
+}
+:root.theme-easter .az-discord-input {
+  color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+/* item-list header row */
+:root.theme-easter .item-list-header {
+  background: rgba(140, 190, 210, 0.40) !important;
+  border-color: #AACCA0 !important;
+  color: #256878 !important;
+}
+/* item-btn normal state */
+:root.theme-easter .item-btn {
+  border-left-color: transparent !important;
+  color: #2E4A28 !important;
+}
+:root.theme-easter .item-btn:hover {
+  background: rgba(200, 80, 120, 0.08) !important;
+  border-left-color: rgba(200,78,120,.35) !important;
+  color: #C84E78 !important;
+}
+
+/* ── КЛИКИ, АКТИВНЫЕ КНОПКИ → розовый ── */
+:root.theme-easter .cat-tab.active,
+:root.theme-easter .cat-tab:hover {
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 10%, transparent) !important;
+}
+:root.theme-easter .item-btn.active {
+  color: #C84E78 !important;
+  border-left-color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 10%, transparent) !important;
+}
+:root.theme-easter .console-tab-btn {
+  color: #2E4A28 !important;
+}
+:root.theme-easter .console-tab-btn:hover {
+  color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 8%, transparent) !important;
+}
+:root.theme-easter .console-tab-btn.active {
+  color: #C84E78 !important;
+  border-bottom-color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 10%, transparent) !important;
+}
+
+/* ── ПРАВЫЙ КРУЖОК (Easter) — ВСЕГДА розовый hover, независимо от темы ── */
+.theme-switch-btn-easter {
+  flex-shrink: 0;
+}
+/* ── TABLE-EMPTY → голубой прозрачный в Easter ── */
+:root.theme-easter .table-empty,
+:root.theme-easter .analyze-area .table-empty,
+:root.theme-easter .stuff-area .table-empty,
+:root.theme-easter .cmp-table-area .table-empty,
+:root.theme-easter .dt-result-panel-body .table-empty,
+:root.theme-easter #table-container .table-empty,
+:root.theme-easter #az-empty,
+:root.theme-easter #sp-empty,
+:root.theme-easter #cmp-empty,
+:root.theme-easter #table-empty-state {
+  background: rgba(140, 190, 210, 0.50) !important;
+  border-color: #80B0C4 !important;
+}
+:root.theme-easter .table-empty-title,
+:root.theme-easter .table-empty-desc {
+  color: #256878 !important;
+}
+
+/* ── Заголовки таблиц → голубой ── */
+:root.theme-easter .roll-table-wrap thead th,
+:root.theme-easter .az-tbl thead th {
+  background: rgba(140, 190, 210, 0.48) !important;
+  border-bottom-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+/* Данные таблиц */
+:root.theme-easter .td-base {
+  color: #3D2A18 !important;
+}
+:root.theme-easter .td-roll {
+  color: #C84E78 !important;
+}
+:root.theme-easter .td-ref {
+  color: #2E8AA5 !important;
+}
+/* DT highlight — Easter theme */
+:root.theme-easter .row-near-int td { background: color-mix(in srgb,#3E7A4A 10%,transparent) !important; }
+:root.theme-easter .row-near-int .td-roll { color: #3E7A4A !important; text-shadow: 0 0 6px rgba(62,122,74,.35) !important; }
+:root.theme-easter .row-near-int .td-base { color: #3E7A4A !important; text-shadow: 0 0 4px rgba(62,122,74,.3) !important; }
+:root.theme-easter .row-match td { background: color-mix(in srgb,#2E8AA5 10%,transparent) !important; }
+:root.theme-easter .row-match .td-roll { color: #2E8AA5 !important; text-shadow: 0 0 6px rgba(46,138,165,.35) !important; }
+:root.theme-easter .row-match .td-base { color: #2E8AA5 !important; text-shadow: 0 0 4px rgba(46,138,165,.3) !important; }
+:root.theme-easter td.cell-match { background: color-mix(in srgb,#2E8AA5 10%,transparent) !important; color: #2E8AA5 !important; text-shadow: 0 0 4px rgba(46,138,165,.25) !important; }
+:root.theme-easter td.cell-best { background: color-mix(in srgb,#3E7A4A 20%,transparent) !important; color: #3E7A4A !important; text-shadow: 0 0 6px rgba(62,122,74,.5) !important; font-weight: 600 !important; }
+:root.theme-easter .td-both {
+  color: #3E7A4A !important;
+}
+:root.theme-easter .td-corr {
+  color: #B84020 !important;
+}
+
+/* ── PROCESS/TABLET панель → мятный в Easter (все страницы) ── */
+:root.theme-easter .az-third-panel,
+:root.theme-easter #page-stuff .sp-third-panel,
+:root.theme-easter .cmp-third-panel {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+  box-shadow: none !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .az-timer-icon { color: #ffffff !important; }
+
+/* Restore rarity colors inside easter panels */
+:root.theme-easter .rarity-legendary { color: #e8b84b !important; text-shadow: none !important; }
+:root.theme-easter .rarity-secret    { color: #a8d8f0 !important; text-shadow: none !important; }
+:root.theme-easter .rarity-common    { color: var(--text-muted) !important; text-shadow: none !important; }
+:root.theme-easter .rarity-uncommon  { color: #69c169 !important; text-shadow: none !important; }
+:root.theme-easter .rarity-rare      { color: #70a1ff !important; text-shadow: none !important; }
+:root.theme-easter .rarity-epic      { color: #c56cf0 !important; text-shadow: none !important; }
+
+:root.theme-easter .az-third-panel::before,
+:root.theme-easter #page-stuff .sp-third-panel::before,
+:root.theme-easter .cmp-third-panel::before {
+  background: linear-gradient(90deg, transparent, #AACCA0, transparent) !important;
+}
+:root.theme-easter .az-third-panel-tabs {
+  background: rgba(140, 190, 210, 0.42) !important;
+  border-bottom-color: #AACCA0 !important;
+}
+:root.theme-easter .az-third-tab {
+  color: #2E4A28 !important;
+}
+:root.theme-easter .az-third-tab:hover,
+:root.theme-easter .az-third-tab.active {
+  color: #C84E78 !important;
+  background: color-mix(in srgb, #E0607E 10%, transparent) !important;
+  border-bottom-color: #C84E78 !important;
+}
+
+:root.theme-easter .sp-third-half-title {
+  background: rgba(140, 190, 210, 0.42) !important;
+  color: #2E4A28 !important;
+  border-bottom-color: #AACCA0 !important;
+}
+:root.theme-easter .sp-third-divider-h {
+  background: linear-gradient(90deg, transparent, #AACCA0, transparent) !important;
+}
+
+/* ── QUOTE/COMMENT панель → мятный в Easter ── */
+:root.theme-easter .az-quote-panel {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .az-quote-panel::before {
+  background: linear-gradient(90deg, transparent, #AACCA0, transparent) !important;
+}
+
+/* ── Строки формул внутри Process/Tablet ── */
+:root.theme-easter .az-step-formula {
+  background: rgba(155, 200, 155, 0.30) !important;
+}
+:root.theme-easter .az-step-formula--base {
+  background: color-mix(in srgb, #E0607E 6%, rgba(220,232,216,.5)) !important;
+  border-color: color-mix(in srgb, #E0607E 22%, transparent) !important;
+}
+:root.theme-easter .az-proc-divider {
+  background: linear-gradient(180deg, transparent, #AACCA0 12%, #AACCA0 88%, transparent) !important;
+}
+:root.theme-easter .az-proc-col-hdr {
+  color: #2E5A1E !important;
+  border-bottom-color: #AACCA0 !important;
+}
+:root.theme-easter .az-sep {
+  border-color: #AACCA0 !important;
+  opacity: 0.6 !important;
+}
+
+/* ── SETTINGS (меню настроек) → мятный ── */
+:root.theme-easter .settings-content {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+  box-shadow: 0 12px 40px rgba(60,120,50,.2), 0 0 0 1px rgba(200,78,120,.15) !important;
+}
+:root.theme-easter .sett-section-label {
+  color: #2E5A1E !important;
+  border-bottom-color: #AACCA0 !important;
+}
+:root.theme-easter .sett-lang-btn {
+  background: rgba(220, 232, 216, 0.1) !important;
+  border-color: #AACCA0 !important;
+  color: #2E4A28 !important;
+}
+:root.theme-easter .sett-entry-btn {
+  background: none !important;
+  color: #2E4A28 !important;
+}
+:root.theme-easter .sett-lang-btn:hover,
+:root.theme-easter .sett-entry-btn:hover {
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .sett-lang-btn.active {
+  background: color-mix(in srgb, #E0607E 15%, rgba(220,232,216,0.9)) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .sett-entry-btn.active {
+  background: none !important;
+  color: #C84E78 !important;
+}
+
+/* ── DEV TOOL — правые результирующие панели → голубой ── */
+:root.theme-easter .dt-result-panel {
+  background: rgba(140, 190, 210, 0.60) !important;
+  border-color: #80B0C4 !important;
+}
+:root.theme-easter .dt-result-panel-header {
+  background: rgba(140, 190, 210, 0.80) !important;
+  border-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+:root.theme-easter .dt-mob-panel {
+  background: rgba(140, 190, 210, 0.60) !important;
+  border-color: #80B0C4 !important;
+}
+
+/* ── DEV TOOL — кнопки слотов → розовый ── */
+:root.theme-easter .dt-slot-btn {
+  background: color-mix(in srgb, #E0607E 10%, rgba(237,228,220,.6)) !important;
+  border-color: rgba(200, 78, 120, 0.35) !important;
+  color: #A83C60 !important;
+}
+:root.theme-easter .dt-slot-btn:hover {
+  background: color-mix(in srgb, #E0607E 20%, rgba(237,228,220,.6)) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .dt-slot-btn.active {
+  background: color-mix(in srgb, #E0607E 26%, rgba(237,228,220,.6)) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+  box-shadow: 0 0 10px rgba(200,78,120,.22) !important;
+}
+:root.theme-easter .dt-slot-add-btn {
+  background: rgba(200, 78, 120, 0.07) !important;
+  border-color: rgba(200, 78, 120, 0.28) !important;
+  color: #A83C60 !important;
+}
+:root.theme-easter .dt-slot-add-btn:hover {
+  background: rgba(200, 78, 120, 0.16) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .dt-mob-tab-btn {
+  background: color-mix(in srgb, #E0607E 10%, rgba(237,228,220,.4)) !important;
+  border-color: rgba(200,78,120,.32) !important;
+  color: #A83C60 !important;
+}
+:root.theme-easter .dt-mob-tab-btn.active,
+:root.theme-easter .dt-mob-tab-btn:hover {
+  background: color-mix(in srgb, #E0607E 20%, transparent) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+  box-shadow: 0 0 12px rgba(200,78,120,.20) !important;
+}
+/* ── EASTER: body background — мягкий пастельный вместо чёрного ── */
+:root.theme-easter {
+  --bg-void: #A8C8D8;
+}
+
+/* ── EASTER: analysis-card в правой консоли ── */
+:root.theme-easter .analysis-card {
+  border-bottom-color: rgba(150, 196, 150, 0.5) !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .analysis-card:hover {
+  background: color-mix(in srgb, #E0607E 5%, transparent) !important;
+}
+
+/* ── EASTER: баннерный заголовок — оставить text-shadow для читаемости поверх картинки ── */
+:root.theme-easter .banner-eyebrow {
+  color: #fff !important;
+}
+:root.theme-easter .banner-game-title {
+  color: #F0C0D0 !important;
+  text-shadow:
+    -2px -2px 0 rgba(60,10,30,.6),
+     2px -2px 0 rgba(60,10,30,.6),
+    -2px  2px 0 rgba(60,10,30,.6),
+     2px  2px 0 rgba(60,10,30,.6),
+    0 0 30px rgba(200,78,120,.45),
+    0 0 60px rgba(200,78,120,.20) !important;
+}
+:root.theme-easter .banner-glow-line {
+  background: linear-gradient(90deg, transparent, #C84E78, #E0A0B0, #C84E78, transparent) !important;
+}
+
+/* ── EASTER: scrollbars → розоватые ── */
+:root.theme-easter .updates-body::-webkit-scrollbar-thumb,
+:root.theme-easter .console-body::-webkit-scrollbar-thumb,
+:root.theme-easter .item-list-panel::-webkit-scrollbar-thumb {
+  background: #D4B8A4 !important;
+}
+
+/* ══════════════════════════════════════════════════
+   EASTER: MOBILE FIXES — всё что не доставало
+═══════════════════════════════════════════════════ */
+
+/* 1. Credits-block на мобиле — убрать тёмный фон, добавить пасхальный */
+@media(max-width:960px) {
+  :root.theme-easter .credits-block {
+    background: rgba(237, 228, 220, 0.55) !important;
+    border-color: #D4B8A4 !important;
+  }
+}
+
+/* 2. Комментарии (az-quote-mobile, sp-quote-mobile) — пасхальный фон */
+:root.theme-easter .az-quote-mobile {
+  background: linear-gradient(135deg, #DCE8D8 0%, #E8EFE4 100%) !important;
+  border-color: #AACCA0 !important;
+}
+:root.theme-easter .az-quote-mobile::before {
+  background: linear-gradient(90deg, transparent, #AACCA0, transparent) !important;
+}
+:root.theme-easter .az-quote-mobile .az-quote-text {
+  color: #3D2A18 !important;
+}
+:root.theme-easter .az-quote-mobile .az-quote-roll-badge {
+  color: #7A5A42 !important;
+}
+:root.theme-easter .az-quote-mobile .az-quote-roll-dot {
+  background: #C84E78 !important;
+  box-shadow: 0 0 6px #C84E78 !important;
+}
+:root.theme-easter .az-quote-mobile .az-quote-mark {
+  color: #C84E78 !important;
+}
+
+/* 3. Process / Tablet кнопки (az-panel-btn) — НЕ трогаем, оставляем оригинальный тёмно-синий стиль */
+
+/* 4. Мобильные модальные панели Process/Tablet (az-third-panel показывается внутри модала) */
+:root.theme-easter .az-modal-box {
+  background: #DCE8D8 !important;
+  border-color: #AACCA0 !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .az-modal-box * {
+  color: inherit;
+}
+/* Оверрайды для элементов внутри модала — сохраняем специфичные цвета */
+:root.theme-easter .az-modal-box .az-proc-step-num { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-step-n { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-step-lbl { color: #3D2A18 !important; }
+:root.theme-easter .az-modal-box .az-step-lhs { color: #7A5A42 !important; }
+:root.theme-easter .az-modal-box .az-step-rhs { color: #3D2A18 !important; }
+:root.theme-easter .az-modal-box .az-step-rhs.c-teal { color: #2E8AA5 !important; }
+:root.theme-easter .az-modal-box .az-step-rhs.c-purple { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-step-rhs.c-gold { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-step-note { color: #A08060 !important; }
+:root.theme-easter .az-modal-box .az-step-skip { color: #A08060 !important; }
+:root.theme-easter .az-modal-box .az-step-skip .az-step-n { color: #A08060 !important; }
+:root.theme-easter .az-modal-box .az-base-val { color: #C84E78 !important; text-shadow: none !important; }
+:root.theme-easter .az-modal-box .az-step-lhs--base { color: #3D2A18 !important; }
+:root.theme-easter .az-modal-box .az-tbl thead th {
+  background: rgba(140, 190, 210, 0.48) !important;
+  border-bottom-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+:root.theme-easter .az-modal-box .az-roll-tbl-hdr { color: #7A5A42 !important; border-bottom-color: #AACCA0 !important; }
+:root.theme-easter .az-modal-box .az-roll-row:hover { background: color-mix(in srgb, #E0607E 6%, transparent) !important; }
+:root.theme-easter .az-modal-box .az-roll-row.best { background: color-mix(in srgb, #E0607E 10%, rgba(220,232,216,.5)) !important; }
+:root.theme-easter .az-modal-box .az-roll-name { color: #7A5A42 !important; }
+:root.theme-easter .az-modal-box .az-roll-name.best { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-roll-value { color: #5A3A22 !important; }
+:root.theme-easter .az-modal-box .az-roll-value.best { color: #2E8AA5 !important; }
+:root.theme-easter .az-modal-box .az-roll-diff { color: #A08060 !important; }
+:root.theme-easter .az-modal-box .az-roll-diff.best { color: #3E7A4A !important; }
+:root.theme-easter .az-modal-box .az-roll-badge {
+  background: color-mix(in srgb, #E0607E 8%, rgba(237,228,220,.6)) !important;
+  border-color: color-mix(in srgb, #E0607E 22%, transparent) !important;
+}
+:root.theme-easter .az-modal-box .az-roll-badge-lbl { color: #7A5A42 !important; }
+:root.theme-easter .az-modal-box .az-roll-badge-num { color: #C84E78 !important; }
+:root.theme-easter .az-modal-box .az-roll-badge-base { color: #A08060 !important; }
+:root.theme-easter .az-modal-box .az-roll-badge-pct.ok   { color: #4caf83 !important; }
+:root.theme-easter .az-modal-box .az-roll-badge-pct.over { color: #e05555 !important; }
+:root.theme-easter .az-modal-box .az-proc-col-hdr { color: #2E5A1E !important; border-bottom-color: #AACCA0 !important; }
+:root.theme-easter .az-modal-box .az-sep { background: #AACCA0 !important; }
+:root.theme-easter .az-modal-content::-webkit-scrollbar-thumb { background: #AACCA0 !important; }
+:root.theme-easter .az-modal-box .az-tbl-wrap::-webkit-scrollbar-thumb { background: #AACCA0 !important; }
+:root.theme-easter .az-modal-box .az-step-formula {
+  background: rgba(155, 200, 155, 0.30) !important;
+}
+:root.theme-easter .az-modal-box .az-step-formula--base {
+  background: color-mix(in srgb, #E0607E 6%, rgba(220,232,216,.5)) !important;
+  border-color: color-mix(in srgb, #E0607E 22%, transparent) !important;
+}
+:root.theme-easter .az-modal-head {
+  background: rgba(140, 190, 210, 0.55) !important;
+  border-bottom-color: #80B0C4 !important;
+  color: #1E5468 !important;
+}
+:root.theme-easter .az-modal-head * { color: #1E5468 !important; }
+:root.theme-easter .az-modal-ttl { color: #1E5468 !important; }
+:root.theme-easter .az-modal-x {
+  color: #7A5A42 !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .az-modal-x:hover {
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .az-tbl-foot {
+  background: rgba(140, 190, 210, 0.30) !important;
+  color: #5A3A22 !important;
+  border-top-color: #AACCA0 !important;
+}
+
+/* 5. Три кружка на мобиле — flex ряд вместо абсолютного позиционирования */
+@media(max-width:960px) {
+  .bot-panel { overflow: visible !important; }
+
+  /* Превращаем trio в flex-ряд: [левый кружок] [центральная аватарка] [правый кружок] */
+  .avatar-trio {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+    position: static !important;
+  }
+  /* bot-avatar-wrap идёт по центру — убираем margin-bottom (он теперь на trio) */
+  .avatar-trio .bot-avatar-wrap {
+    margin-bottom: 0 !important;
+    order: 2;
+  }
+
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',sans-serif;min-height:var(--real-vh);overflow-x:hidden;}
 body.scale-active{overflow:hidden;height:var(--real-vh);}
@@ -481,77 +1806,183 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   transition: background-image 0.6s ease;
 }
 
-/* ── THEME SWITCHER ── */
-.theme-switch-wrap {
-  position: absolute;
-  left: -52px;
-  top: 50%;
-  transform: translateY(-50%);
+/* ── PALETTE TRIGGER (main avatar clickable) ── */
+.palette-trigger {
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.palette-trigger:hover {
+  transform: scale(1.10);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--gold) 55%, transparent);
+}
+.palette-trigger:active {
+  transform: scale(0.97);
+}
+
+/* ── PALETTE POPUP ── */
+.palette-popup {
+  position: fixed;
+  z-index: 9999;
+  display: none;
+}
+
+.palette-popup-inner {
+  background: rgba(10, 10, 18, 0.97);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 10px 12px 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35), 0 0 10px color-mix(in srgb, var(--gold) 10%, transparent);
+  backdrop-filter: blur(18px);
+  animation: palette-appear 0.18s ease;
+}
+@keyframes palette-appear {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+/* Easter theme popup */
+:root.theme-easter .palette-popup-inner {
+  background: rgba(237, 228, 220, 0.98);
+  border-color: #D4B8A4;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 0 10px color-mix(in srgb, #E0607E 10%, transparent);
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+/* No centering hack needed — 2 rows of 3 */
+.palette-grid::after {
+  display: none;
+}
+.palette-item:nth-child(4) {
+  grid-column: auto;
+}
+
+.palette-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 6px 8px 5px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.18s, background 0.2s;
+  width: 58px;
+}
+:root.theme-easter .palette-item {
+  border-color: rgba(60,30,10,0.12);
+}
+.palette-item img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  border: 2px solid rgba(255,255,255,0.12);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+:root.theme-easter .palette-item img {
+  border-color: rgba(60,30,10,0.15);
+}
+
+/* Per-theme glow on hover */
+.palette-item[data-theme="gold"]:hover img {
+  border-color: #c8932a;
+  box-shadow: 0 0 14px #c8932a, 0 0 5px #c8932a;
+}
+.palette-item[data-theme="galaxy"]:hover img {
+  border-color: #9b30ff;
+  box-shadow: 0 0 14px #9b30ff, 0 0 5px #9b30ff;
+}
+.palette-item[data-theme="easter"]:hover img {
+  border-color: #E0607E;
+  box-shadow: 0 0 14px #E0607E, 0 0 5px #E0607E;
+}
+.palette-item[data-theme="classic"]:hover img {
+  border-color: #447194;
+  box-shadow: 0 0 14px #447194, 0 0 5px #447194;
+}
+.palette-item:hover {
+  transform: scale(1.07);
+  background: rgba(255,255,255,0.04);
+}
+:root.theme-easter .palette-item:hover {
+  background: rgba(60,30,10,0.06);
+}
+.palette-item:active {
+  transform: scale(0.95);
+}
+
+/* Active (current) palette indicator */
+.palette-item.palette-active img {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 70%, transparent);
+}
+.palette-item.palette-active {
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+}
+
+.palette-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.palette-item:hover .palette-label {
+  color: var(--text-primary);
+}
+.palette-item.palette-active .palette-label {
+  color: var(--gold-bright);
+}
+
+/* Future placeholder */
+.palette-item-future {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+.palette-future-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.theme-switch-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.15);
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
-  background: var(--bg-void);
-  flex-shrink: 0;
-}
-.theme-switch-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
-  pointer-events: none;
-}
-.theme-switch-btn:hover {
-  border-color: var(--theme-switch-glow);
-  box-shadow: 0 0 18px var(--theme-switch-glow), 0 0 6px var(--theme-switch-glow);
-  transform: scale(1.08);
-}
-.theme-switch-btn:active {
-  transform: scale(0.95);
-}
-/* Tooltip */
-.theme-switch-btn::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(10,10,16,0.95);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-bright);
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
 }
-.theme-switch-btn:hover::after {
-  opacity: 1;
+:root.theme-easter .palette-future-icon {
+  border-color: rgba(60,30,10,0.30);
+  color: rgba(60,30,10,0.35);
 }
-/* Responsive sizing */
-@media(max-width:640px) {
-  .theme-switch-wrap { left: -42px; }
-  .theme-switch-btn { width: 38px; height: 38px; }
+
+/* Mobile center overlay backdrop */
+.palette-backdrop {
+  display: none;
 }
-@media(max-width:420px) {
-  .theme-switch-wrap { left: -36px; }
-  .theme-switch-btn { width: 32px; height: 32px; }
+@media(max-width: 640px) {
+  .palette-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0,0,0,0.38);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  :root.theme-easter .palette-backdrop {
+    background: rgba(61,42,24,0.28);
+  }
 }
 .page-bg::after{content:'';position:absolute;inset:0;
   background:
@@ -621,8 +2052,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .lang-other{position:fixed;bottom:56px;left:16px;top:auto;transform:none;padding:6px 12px;}
   main{padding-top:0!important;padding-bottom:var(--nav-h)!important;}
   .game-banner{aspect-ratio:16/7!important;max-height:180px!important;}
-  .banner-game-title{font-size:clamp(30px,4.75vw,68px)!important;letter-spacing:2px!important;}
-  .banner-eyebrow{font-size:clamp(11px,3.2vw,18px)!important;letter-spacing:3px!important;}
+  .banner-game-title{font-size:clamp(30px,6.5vw,44px)!important;letter-spacing:2px!important;}
+  .banner-eyebrow{font-size:clamp(11px,2.2vw,16px)!important;letter-spacing:3px!important;}
   .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
   .banner-title-block{padding:6px 12px!important;}
 }
@@ -1001,6 +2432,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     align-items:start!important;
   }
   #page-rolls .item-list-header{display:none!important;}
+  #page-rolls .item-search-wrap{grid-column:1 / -1 !important;width:100% !important;box-sizing:border-box !important;position:sticky !important;top:0 !important;z-index:3 !important;background:rgba(8,8,14,.99) !important;}
+  #page-rolls .item-search-no-results{grid-column:1 / -1 !important;width:100% !important;}
   #page-rolls .item-btn{
     display:block!important;
     width:100%!important;
@@ -1038,6 +2471,47 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .item-list-panel::-webkit-scrollbar-thumb{background:var(--border-gold);border-radius:2px;}
 .item-list-header{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;
   text-transform:uppercase;color:var(--text-dim);padding:12px 14px 10px;border-bottom:1px solid var(--border-rune);flex-shrink:0;}
+/* ── ITEM SEARCH ── */
+.item-search-wrap{
+  position:sticky;top:0;z-index:2;
+  background:rgba(8,8,14,.97);
+  flex-shrink:0;
+  padding:8px 10px 7px;
+  border-bottom:1px solid var(--border-rune);
+}
+.item-search-icon{
+  position:absolute;left:18px;top:50%;transform:translateY(-50%);
+  width:13px;height:13px;pointer-events:none;
+  color:var(--text-dim);opacity:.7;
+  transition:color .18s;
+}
+.item-search-wrap:focus-within .item-search-icon{color:var(--gold);opacity:1;}
+.item-search-input{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--border-rune);border-radius:7px;
+  padding:6px 8px 6px 28px;
+  font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:500;
+  color:var(--text-primary);letter-spacing:.4px;
+  outline:none;transition:border-color .18s,background .18s,box-shadow .18s;
+  -webkit-appearance:none;
+}
+.item-search-input::placeholder{color:var(--text-dim);font-size:11px;letter-spacing:1px;}
+.item-search-input:focus{
+  border-color:color-mix(in srgb, var(--gold) 55%, transparent);
+  background:rgba(255,255,255,.07);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.item-search-no-results{
+  padding:14px 14px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;
+  color:var(--text-dim);text-align:center;
+  display:none;
+}
+@media(max-width:640px){
+  .item-search-wrap{padding:6px 8px 5px;}
+  .item-search-input{font-size:14px;padding:7px 8px 7px 28px;}
+  .item-search-icon{left:16px;}
+}
 .item-btn{
   background:none;border:none;cursor:pointer;
   text-align:left;padding:9px 14px;
@@ -1108,11 +2582,27 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .td-both{color:var(--green-stat);}
 .row-best .td-roll{color:var(--gold-glow);text-shadow:0 0 8px color-mix(in srgb, var(--gold-bright) 60%, transparent);}
 .row-best td{background:color-mix(in srgb, var(--gold) 5%, transparent);}
+/* DT highlight: single-window near-integer rows */
+.row-near-int td{background:color-mix(in srgb,#00c878 7%,transparent)!important;}
+.row-near-int .td-roll{color:#00c878!important;text-shadow:0 0 8px rgba(0,200,120,.5)!important;}
+.row-near-int .td-base{color:#00c878!important;text-shadow:0 0 6px rgba(0,200,120,.4)!important;}
+/* DT highlight: multi-window matching rows */
+.row-match td{background:color-mix(in srgb,#00aaff 7%,transparent)!important;}
+.row-match .td-roll{color:#00aaff!important;text-shadow:0 0 8px rgba(0,170,255,.5)!important;}
+.row-match .td-base{color:#00aaff!important;text-shadow:0 0 6px rgba(0,170,255,.4)!important;}
+/* DT highlight: individual cell match (multi-window, cell-level only) */
+td.cell-match{background:color-mix(in srgb,#00aaff 10%,transparent)!important;color:#00aaff!important;text-shadow:0 0 6px rgba(0,170,255,.3)!important;}
+td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;color:#00c878!important;text-shadow:0 0 8px rgba(0,200,120,.6)!important;font-weight:600!important;}
 
 /* Rarity styles */
+/* Rarity colors — explicit !important so they always win over panel color inheritance */
+.rarity-legendary { color: #e8b84b !important; }
+.rarity-secret    { color: #a8d8f0 !important; }
+.rarity-epic      { color: #c56cf0 !important; }
+.rarity-rare      { color: #70a1ff !important; }
+.rarity-uncommon  { color: #69c169 !important; }
 .rarity-legendary {
   color: #e8b84b;
-  text-shadow: 0 0 8px rgba(232,184,75,.35);
 }
 .rarity-mythic {
   background: linear-gradient(90deg,
@@ -1141,10 +2631,6 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 .rarity-secret {
   color: #a8d8f0;
-  text-shadow:
-    0 0 6px rgba(120,210,255,.6),
-    0 1px 0 rgba(255,255,255,.25),
-    0 0 18px rgba(80,190,240,.25);
 }
 
 /* ── НОВЫЕ СТИЛИ ДЛЯ РАМОК MYTHIC / ASCENDED ── */
@@ -1182,7 +2668,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .table-empty{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:14px;padding:60px 32px;text-align:center;
-  background:rgba(8,8,14,.6);border:1px solid var(--border-rune);border-radius:12px;
+  background:var(--table-empty-bg, rgba(8,8,14,.6));border:1px solid var(--border-rune);border-radius:12px;
 }
 .table-empty-icon{font-size:48px;opacity:.15;animation:float-icon 4s ease-in-out infinite;}
 @keyframes float-icon{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
@@ -1942,10 +3428,12 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   cursor: not-allowed;
   pointer-events: none;
   background:
-    linear-gradient(180deg,#22cc00 0%,#18a000 100%) left / var(--cd-fill, 0%) 100% no-repeat,
+    linear-gradient(180deg,#22cc00 0%,#18a000 100%) left no-repeat,
     linear-gradient(180deg,#0d4400 0%,#082e00 100%);
+  background-size: 0% 100%, 100% 100%;
   box-shadow: 0 4px 16px rgba(34,204,0,.1), 0 2px 0 #051800 !important;
   transform: none !important;
+  transition: none !important;
   animation: cdFill var(--cd-duration, 2s) linear forwards;
 }
 @keyframes cdFill {
@@ -2184,6 +3672,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   #page-analyze .item-list-panel::-webkit-scrollbar{width:3px;}
   #page-analyze .item-list-panel::-webkit-scrollbar-thumb{background:var(--border-gold);border-radius:2px;}
   #page-analyze .item-list-header{display:none!important;}
+  #page-analyze .item-search-wrap{grid-column:1 / -1 !important;width:100% !important;box-sizing:border-box !important;position:sticky !important;top:0 !important;z-index:3 !important;background:rgba(8,8,14,.99) !important;}
+  #page-analyze .item-search-no-results{grid-column:1 / -1 !important;width:100% !important;}
   #page-analyze .item-btn{
     display:block!important;
     width:100%!important;
@@ -2524,6 +4014,12 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   color: var(--text-muted);
   margin-top: 3px;
 }
+.az-roll-badge-pct.ok  { color: #4caf83; }
+.az-roll-badge-pct.over { color: #e05555; }
+.az-roll-badge-cond {
+  font-size: 10px;
+  opacity: 0.75;
+}
 
 .az-tbl-wrap { 
   overflow-y: auto; 
@@ -2728,33 +4224,39 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 
 @media(max-width:760px){
-  .az-modal { align-items: flex-start; padding: 0; padding-top: 52px; }
+  /* Модал — прижат к низу, выезжает снизу вверх поверх nav-панели */
+  .az-modal {
+    align-items: flex-end !important;
+    justify-content: stretch !important;
+    padding: 0 !important;
+  }
   .az-modal-box, .az-modal-box.narrow {
-    max-width: 100%;
-    border-radius: 20px 20px 0 0;
-    max-height: calc(var(--real-vh) - 52px);
-    animation: azSheetUp .28s cubic-bezier(.34,1.3,.64,1);
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc(var(--real-vh) - 48px) !important;
+    border-radius: 20px 20px 0 0 !important;
+    border-bottom: none !important;
+    animation: azSheetUp .32s cubic-bezier(.34,1.3,.64,1) !important;
   }
   @keyframes azSheetUp {
-    0%{transform:translateY(100%);opacity:0}
-    100%{transform:translateY(0);opacity:1}
+    0%  { transform: translateY(100%); opacity: 0; }
+    100%{ transform: translateY(0);    opacity: 1; }
   }
   .az-proc-grid { grid-template-columns: 1fr; }
   .az-proc-divider { display: none; }
   .az-proc-col { padding: 0 4px; }
 
-  /* Tablet table smaller on mobile */
   .az-tbl thead th { font-size: 8px; letter-spacing: 0.5px; padding: 6px 4px; }
   .az-tbl tbody td { font-size: 10px; padding: 4px 4px; }
   .az-tbl td.c-upg { font-size: 11px; }
 
-  /* Fix modal content scrolling and tablet visibility */
   .az-modal-content {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     flex: 1;
     min-height: 0;
-    max-height: calc(var(--real-vh) - 52px - 56px);
+    max-height: calc(var(--real-vh) - 48px - 53px) !important;
   }
   .az-tbl-wrap {
     overflow-x: auto !important;
@@ -2764,7 +4266,6 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .az-tbl { min-width: 260px; }
   .az-tbl-foot { font-size: 10px; padding: 6px 8px; }
 
-  /* Thick horizontal scrollbar for the tablet table on mobile */
   .az-tbl-wrap::-webkit-scrollbar { width: 6px; height: 10px; }
   .az-tbl-wrap::-webkit-scrollbar-track { background: rgba(0,0,0,.3); border-radius: 5px; }
   .az-tbl-wrap::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 5px; min-height: 40px; }
@@ -2797,6 +4298,19 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   }
   #az-result-card {
     margin-top: 20px;
+  }
+}
+
+/* На <=600px нав-бар переезжает вниз — модал должен подняться над ним */
+@media(max-width:600px) {
+  .az-modal {
+    padding-bottom: var(--nav-h) !important;
+  }
+  .az-modal-box, .az-modal-box.narrow {
+    max-height: calc(var(--real-vh) - var(--nav-h) - 8px) !important;
+  }
+  .az-modal-content {
+    max-height: calc(var(--real-vh) - var(--nav-h) - 8px - 53px) !important;
   }
 }
 
@@ -3020,6 +4534,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     max-height: none; overflow: visible; flex-direction: row; flex-wrap: wrap;
   }
   #page-stuff .item-list-header { display: none; }
+  #page-stuff .item-search-wrap { width: 100%; }
   .stuff-area { flex-direction: column; }
   .stuff-area .table-empty { width: 100%; box-sizing: border-box; }
   #page-stuff .sp-left-col,
@@ -3056,6 +4571,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   #page-stuff .item-list-panel::-webkit-scrollbar { width: 3px; }
   #page-stuff .item-list-panel::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
   #page-stuff .item-list-header { display: none !important; }
+  #page-stuff .item-search-wrap { grid-column: 1 / -1; width: 100%; position: sticky !important; top: 0 !important; z-index: 3 !important; background: rgba(8,8,14,.99) !important; }
+  #page-stuff .item-search-no-results { grid-column: 1 / -1; width: 100%; }
   #page-stuff .item-btn {
     display: block !important;
     width: 100% !important;
@@ -3756,6 +5273,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     align-self:auto!important;align-items:start!important;
   }
   #page-compare .item-list-header{display:none!important;}
+  #page-compare .item-search-wrap{grid-column:1 / -1 !important;width:100% !important;box-sizing:border-box !important;position:sticky !important;top:0 !important;z-index:3 !important;background:rgba(8,8,14,.99) !important;}
+  #page-compare .item-search-no-results{grid-column:1 / -1 !important;width:100% !important;}
   #page-compare .item-btn{
     display:block!important;width:100%!important;margin:0!important;padding:7px 10px!important;
     font-size:12px!important;text-align:center!important;white-space:nowrap!important;
@@ -4031,6 +5550,19 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 .sett-entry-sep.dim { font-size: 12px; opacity: .4; }
 
+/* ── Palette hint ── */
+.sett-section--palette { margin-top: 2px; }
+.sett-palette-hint {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gold-glow);
+  opacity: 0.6;
+  line-height: 1.5;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
 /* ── MOBILE: fullscreen center modal ── */
 @media (max-width: 600px) {
   .settings-panel {
@@ -4099,6 +5631,446 @@ body.scale-active .console-panel {
   top: 0;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   EASTER THEME — INPUT PANEL OVERRIDES
+   Рамка (.az-img-box) и фон внутри неё — не трогаем.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ══ РЕЗУЛЬТИРУЮЩАЯ КАРТОЧКА (az-result-card) — все страницы ══ */
+:root.theme-easter .az-result-card {
+  background: linear-gradient(180deg, #F5EDE4 0%, #EDE4D8 100%) !important;
+  box-shadow: 0 8px 32px rgba(180,100,120,.18), inset 0 1px 0 rgba(255,255,255,.6) !important;
+}
+
+/* Бокс статистики внутри результата (Damage, Rarity, Name) */
+:root.theme-easter .az-res-stats-box {
+  background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,240,232,.45) 100%) !important;
+  border-color: #D4B8A4 !important;
+}
+/* Лейбл Damage/Health — цвет управляется JS, не перебиваем */
+
+/* Upgrades / Corrupted строка */
+:root.theme-easter .az-res-upg-lbl  { color: #4E9466 !important; }
+:root.theme-easter .az-res-upg-val  { color: #4E9466 !important; }
+:root.theme-easter .az-res-corr-lbl { color: #9B5E85 !important; }
+:root.theme-easter .az-res-corr-val.yes { color: #4E9466 !important; }
+:root.theme-easter .az-res-corr-val.no  { color: #C84E78 !important; }
+
+/* Reforge строка */
+:root.theme-easter .az-res-reforge { color: #2E8AA5 !important; }
+
+/* Part separator (Helmet / Chest / Legs) */
+:root.theme-easter .az-res-part-sep { color: #C4A898 !important; }
+
+/* Total HP */
+:root.theme-easter .az-total-hp-row {
+  background: linear-gradient(90deg, rgba(255,255,255,.4), rgba(255,240,232,.4)) !important;
+  border-color: rgba(78,148,102,.3) !important;
+}
+:root.theme-easter .az-total-hp-lbl { color: #4E9466 !important; }
+:root.theme-easter .az-total-hp-val { color: #4E9466 !important; text-shadow: 0 0 10px rgba(78,148,102,.3) !important; }
+
+/* Gold rows */
+:root.theme-easter .az-gold-row {
+  background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,240,232,.38)) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .az-gold-lbl { color: #A08060 !important; }
+:root.theme-easter .az-gold-sub { color: #A08060 !important; }
+
+/* Кнопка UPGRADE (аналог ANALYZE) */
+:root.theme-easter .az-upgrade-btn {
+  background: linear-gradient(180deg, #D4607E 0%, #B83A60 100%) !important;
+  box-shadow: 0 4px 16px rgba(200,78,120,.4), 0 2px 0 #8A1A3A !important;
+  color: #fff !important;
+}
+:root.theme-easter .az-upgrade-btn:hover {
+  background: linear-gradient(180deg, #E0708E 0%, #C84E78 100%) !important;
+  box-shadow: 0 6px 24px rgba(200,78,120,.55), 0 2px 0 #8A1A3A !important;
+}
+
+/* sp-roll-btn (кнопки выбора ролла в Stuff Preview) */
+:root.theme-easter .sp-roll-btn {
+  background: rgba(200,78,120,.05) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .sp-roll-btn:hover {
+  background: rgba(200,78,120,.12) !important;
+  border-color: currentColor !important;
+}
+:root.theme-easter .sp-roll-btn.active {
+  border-color: #D4B8A4 !important;
+  background: rgba(200,78,120,.05) !important;
+}
+
+/* Карточка целиком */
+:root.theme-easter .az-card {
+  background: linear-gradient(180deg, #F5EDE4 0%, #EDE4D8 100%) !important;
+  box-shadow: 0 8px 32px rgba(180,100,120,.18), inset 0 1px 0 rgba(255,255,255,.6) !important;
+}
+
+/* Название и редкость — не трогаем */
+
+/* ── Compare: карточка с картинкой ── */
+:root.theme-easter .cmp-result-card {
+  background: linear-gradient(180deg, #F5EDE4 0%, #EDE4D8 100%) !important;
+  box-shadow: 0 8px 32px rgba(180,100,120,.18), inset 0 1px 0 rgba(255,255,255,.6) !important;
+}
+
+/* ── Compare: слоты A / B ── */
+:root.theme-easter .cmp-slot {
+  background: rgba(200,78,120,.06) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .cmp-slot:hover:not(.cmp-locked):not(.cmp-disc-no-hover) {
+  background: rgba(200,78,120,.12) !important;
+}
+:root.theme-easter .cmp-slot.cmp-slot-open { background: rgba(200,78,120,.08) !important; }
+:root.theme-easter .cmp-slot-sign { color: #C84E78 !important; }
+:root.theme-easter .cmp-slot-sep  { color: rgba(200,78,120,.35) !important; }
+:root.theme-easter .cmp-cat-sep   { color: rgba(200,78,120,.35) !important; }
+
+/* ── Compare: заголовки категорий Upgrades / Reforge ── */
+:root.theme-easter .cmp-cat-title[style*="7fff00"] { color: #4E9466 !important; }
+:root.theme-easter .cmp-cat-title[style*="8aacee"] { color: #2E8AA5 !important; }
+
+/* ── Compare: Corrupted slash ── */
+:root.theme-easter .cmp-corr-slash { color: rgba(200,78,120,.25) !important; }
+
+/* ── Compare: discord roll box ── */
+:root.theme-easter .cmp-disc-roll-box {
+  background: rgba(200,78,120,.07) !important;
+  border-color: rgba(200,78,120,.2) !important;
+}
+:root.theme-easter .cmp-disc-inline-val { color: #3D2A18 !important; }
+:root.theme-easter #cmp-disc-upg-a,
+:root.theme-easter #cmp-disc-upg-b     { color: #4E9466 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-y { color: #4E9466 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-n { color: #C84E78 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-u { color: #9B5E85 !important; }
+:root.theme-easter .cmp-disc-ref-val { color: #2E8AA5 !important; }
+
+/* ── Compare: view кнопки ── */
+:root.theme-easter .cmp-view-btn {
+  background: rgba(200,78,120,.06) !important;
+  border-color: rgba(200,78,120,.28) !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .cmp-view-btn:hover,
+:root.theme-easter .cmp-view-btn.active {
+  background: rgba(200,78,120,.14) !important;
+  border-color: #C84E78 !important;
+}
+
+/* ── DevTool: OR-разделитель ── */
+:root.theme-easter .dt-or-line { background: #C84E78 !important; }
+:root.theme-easter .dt-or-text { color: #C84E78 !important; }
+
+/* DevTool: золотой лейбл Value → розовый (inline style) */
+:root.theme-easter .az-discord-preview-lbl[style*="gold-bright"],
+:root.theme-easter .az-discord-preview-val[style*="gold-bright"] { color: #C84E78 !important; }
+:root.theme-easter .az-stat-lbl[style*="gold-bright"] { color: #C84E78 !important; }
+
+/* DevTool: золотой инпут focus */
+:root.theme-easter .az-discord-input.gold-input:focus {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+  caret-color: #C84E78 !important;
+}
+:root.theme-easter .az-stats-box.gold-mode .az-stat-input:focus {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+}
+
+/* DevTool: слоты-кнопки вверху */
+:root.theme-easter .dt-slot-btn {
+  background: rgba(200,78,120,.06) !important;
+  border-color: #D4B8A4 !important;
+  color: #7A5A42 !important;
+}
+:root.theme-easter .dt-slot-btn:hover {
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .dt-slot-btn.active {
+  background: rgba(200,78,120,.12) !important;
+  border-color: #C84E78 !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .dt-slot-add-btn {
+  background: rgba(78,148,102,.07) !important;
+  border-color: rgba(78,148,102,.35) !important;
+  color: #4E9466 !important;
+}
+:root.theme-easter .dt-slot-add-btn:hover {
+  background: rgba(78,148,102,.16) !important;
+  border-color: #4E9466 !important;
+}
+
+/* DevTool: кнопка удалить слот */
+:root.theme-easter .dt-slot-del-btn {
+  background: rgba(200,78,120,.07) !important;
+  border-color: rgba(200,78,120,.25) !important;
+  color: rgba(200,78,120,.7) !important;
+}
+:root.theme-easter .dt-slot-del-btn:hover {
+  background: rgba(200,78,120,.2) !important;
+  border-color: rgba(200,78,120,.6) !important;
+  color: #C84E78 !important;
+}
+
+/* Бокс Damage */
+:root.theme-easter .az-stats-box {
+  background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,240,232,.45) 100%) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .az-stat-lbl { color: #C84E78 !important; }
+:root.theme-easter .az-stat-lbl.health-mode { color: #4E9466 !important; }
+:root.theme-easter .az-stat-input {
+  background: rgba(255,255,255,.7) !important;
+  border-color: #D4B8A4 !important;
+  color: #3D2A18 !important;
+}
+:root.theme-easter .az-stat-input::placeholder { color: #C4A898 !important; }
+:root.theme-easter .az-stat-input:focus {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+}
+:root.theme-easter .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: #4E9466 !important;
+  box-shadow: 0 0 0 2px rgba(78,148,102,.15) !important;
+}
+
+/* Разделитель */
+:root.theme-easter .az-divider {
+  background: linear-gradient(90deg, transparent, #D4B8A4, transparent) !important;
+}
+
+/* Лейбл Upgrades */
+:root.theme-easter .az-upg-lbl { color: #4E9466 !important; }
+
+/* Кнопка-селектор Upgrades */
+:root.theme-easter .az-sel-btn {
+  background: rgba(78,148,102,.08) !important;
+  border-color: rgba(78,148,102,.4) !important;
+  color: #3A7A50 !important;
+}
+:root.theme-easter .az-sel-btn:hover {
+  background: rgba(78,148,102,.16) !important;
+  border-color: #4E9466 !important;
+}
+
+/* Дропдаун Upgrades */
+:root.theme-easter .az-dropdown {
+  background: #F5EDE4 !important;
+  border-color: #D4B8A4 !important;
+  box-shadow: 0 8px 24px rgba(180,100,120,.2) !important;
+}
+:root.theme-easter .az-dropdown::-webkit-scrollbar-thumb { background: #D4B8A4 !important; }
+
+/* Ячейки Upgrades */
+:root.theme-easter .az-opt {
+  background: rgba(78,148,102,.05) !important;
+  border-color: #D4B8A4 !important;
+  color: #3A7A50 !important;
+}
+:root.theme-easter .az-opt:hover {
+  background: rgba(78,148,102,.14) !important;
+  border-color: #4E9466 !important;
+}
+:root.theme-easter .az-opt.sel {
+  color: #2A6A40 !important;
+  background: rgba(78,148,102,.15) !important;
+  border-color: #4E9466 !important;
+  box-shadow: 0 0 6px rgba(78,148,102,.25) !important;
+}
+:root.theme-easter .az-opt .az-opt-sub { color: #A0C0A0 !important; }
+
+/* Кнопка-селектор Reforge */
+:root.theme-easter .az-ref-btn {
+  background: rgba(46,138,165,.07) !important;
+  border-color: rgba(46,138,165,.35) !important;
+  color: #2E6A85 !important;
+}
+:root.theme-easter .az-ref-btn:hover {
+  background: rgba(46,138,165,.14) !important;
+  border-color: #2E8AA5 !important;
+}
+
+/* Дропдаун Reforge */
+:root.theme-easter .az-ref-dropdown {
+  background: #F5EDE4 !important;
+  border-color: #D4B8A4 !important;
+  box-shadow: 0 8px 24px rgba(180,100,120,.2) !important;
+}
+:root.theme-easter .az-ref-dropdown::-webkit-scrollbar-thumb { background: #D4B8A4 !important; }
+:root.theme-easter .az-ref-opt { color: #2E6A85 !important; }
+:root.theme-easter .az-ref-opt:hover { background: rgba(46,138,165,.09) !important; }
+:root.theme-easter .az-ref-opt.sel {
+  color: #1E5A75 !important;
+  background: rgba(46,138,165,.08) !important;
+}
+:root.theme-easter .az-ref-opt .az-ref-dmg { color: #90B8A0 !important; }
+
+/* Лейбл Corrupted */
+:root.theme-easter .az-corr-lbl { color: #C84E78 !important; }
+
+/* Кнопки Yes / No */
+:root.theme-easter .az-corr-btn.yes { color: #4E9466 !important; }
+:root.theme-easter .az-corr-btn.no  { color: #C84E78 !important; }
+:root.theme-easter .az-corr-sep     { color: #C4A898 !important; }
+
+/* Кнопка ANALYZE ROLL */
+:root.theme-easter .az-analyze-btn {
+  background: linear-gradient(180deg, #D4607E 0%, #B83A60 100%);
+  box-shadow: 0 4px 16px rgba(200,78,120,.4), 0 2px 0 #8A1A3A !important;
+  color: #fff !important;
+}
+:root.theme-easter .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, #E0708E 0%, #C84E78 100%);
+  box-shadow: 0 6px 24px rgba(200,78,120,.55), 0 2px 0 #8A1A3A !important;
+}
+:root.theme-easter .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, #C4A898 0%, #B09880 100%) !important;
+  box-shadow: none !important;
+}
+/* Discord input */
+:root.theme-easter .az-discord-input {
+  background: rgba(255,255,255,.65) !important;
+  border-color: #D4B8A4 !important;
+  color: #3D2A18 !important;
+  caret-color: #C84E78 !important;
+}
+:root.theme-easter .az-discord-input::placeholder { color: #C4A898 !important; opacity: 1 !important; }
+:root.theme-easter .az-discord-input:focus {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+}
+:root.theme-easter .az-discord-input.weapon-input:focus {
+  border-color: #C84E78 !important;
+  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+  caret-color: #C84E78 !important;
+}
+:root.theme-easter .az-discord-input.armor-input:focus {
+  border-color: #4E9466 !important;
+  box-shadow: 0 0 0 2px rgba(78,148,102,.15) !important;
+  caret-color: #4E9466 !important;
+}
+
+/* Discord preview box */
+:root.theme-easter .az-discord-dmg-box {
+  background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,240,232,.45) 100%) !important;
+  border-color: #D4B8A4 !important;
+}
+:root.theme-easter .az-discord-preview-lbl.lbl-dmg  { color: #C84E78 !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-upg  { color: #4E9466 !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-corr { color: #9B5E85 !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-hp   { color: #4E9466 !important; }
+:root.theme-easter .az-discord-preview-val.dmg    { color: #C84E78 !important; }
+:root.theme-easter .az-discord-preview-val.upg    { color: #4E9466 !important; }
+:root.theme-easter .az-discord-preview-val.corr-y { color: #4E9466 !important; }
+:root.theme-easter .az-discord-preview-val.corr-n { color: #C84E78 !important; }
+:root.theme-easter .az-discord-preview-val.corr-u { color: #9B5E85 !important; }
+
+/* Reforge line (discord mode) */
+:root.theme-easter .az-disc-reforge-line { color: #7A5A42 !important; }
+
+/* Кнопки PROCESS / TABLET */
+:root.theme-easter .az-panel-btn {
+  background: rgba(200,78,120,.07) !important;
+  border-color: rgba(200,78,120,.3) !important;
+  color: #C84E78 !important;
+}
+:root.theme-easter .az-panel-btn:hover {
+  background: rgba(200,78,120,.15) !important;
+  border-color: #C84E78 !important;
+  box-shadow: 0 4px 12px rgba(200,78,120,.2) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ИСПРАВЛЕНИЯ
+   ══════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   ИСПРАВЛЕНИЯ
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1. Reforge в панели ввода — такой же голубой как в результатах */
+:root.theme-easter .az-disc-reforge-line { color: #2E8AA5 !important; }
+:root.theme-easter .az-res-reforge { color: #2E8AA5 !important; }
+
+/* 2. sp-disc-roll-header — убираем фон, оставляем только layout */
+:root.theme-easter .sp-disc-roll-header {
+  background: none !important;
+  border: none !important;
+}
+
+/* 3. CMP discord: формула нечитаема (inline color white) */
+:root.theme-easter #cmp-disc-formula-box { color: rgba(100,60,40,0.55) !important; }
+
+/* CMP discord: значения Upgrades/Corrupted/Reforge — были чёрными из-за наследования */
+:root.theme-easter .cmp-disc-inline-val { color: #3D2A18 !important; }
+:root.theme-easter #cmp-disc-upg-a,
+:root.theme-easter #cmp-disc-upg-b     { color: #4E9466 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-y { color: #4E9466 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-n { color: #C84E78 !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-u { color: #9B5E85 !important; }
+:root.theme-easter .cmp-disc-ref-val           { color: #2E8AA5 !important; }
+
+/* 4. Cooldown-анимация Easter.
+      !important на background блокирует @keyframes от анимации background-size,
+      поэтому используем двойной :root для повышения специфичности вместо !important */
+:root:root.theme-easter .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, #D4607E 0%, #B83A60 100%) left no-repeat,
+    linear-gradient(180deg, #6A1030 0%, #4A0820 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 16px rgba(200,78,120,.12), 0 2px 0 #4A0820 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
+  animation: cdFillEaster var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillEaster {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+
+/* 1. Строка задержки (delay / 0.5s) — была белой/серой, нечитаема на кремовом */
+:root.theme-easter .az-roll-lbl { color: #A08060 !important; text-shadow: none !important; }
+:root.theme-easter .az-res-val.delay { color: #7A5A42 !important; }
+:root.theme-easter .az-timer-icon { color: #A08060 !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-delay { color: #A08060 !important; }
+:root.theme-easter .az-discord-preview-val.delay { color: #7A5A42 !important; }
+
+/* Damage/Health лейбл — цвет управляется JS (#7fff00 для брони, #ff4444 для оружия) */
+
+/* CMP заголовки website mode (через [style*]) */
+:root.theme-easter .cmp-cat-title[style*="7fff00"],
+:root.theme-easter .cmp-cat-title[style*="7FFF00"] { color: #4E9466 !important; }
+:root.theme-easter .cmp-cat-title[style*="8aacee"],
+:root.theme-easter .cmp-cat-title[style*="8AACEE"] { color: #2E8AA5 !important; }
+:root.theme-easter .cmp-cat-title[style*="c875ff"],
+:root.theme-easter .cmp-cat-title[style*="C875FF"] { color: #9B5E85 !important; }
+
+/* ROLL: в результатах (inline span без класса) */
+:root.theme-easter #sp-res-roll-row span:first-child  { color: #A08060 !important; }
+:root.theme-easter #cmp-res-roll-row span:first-child { color: #A08060 !important; }
+
+/* ══ CLASSIC: MOBILE FIXES ══ */
+@media(max-width:960px) {
+  :root.theme-classic .credits-block {
+    background: #1e2d3e !important;
+    border: #253a4e !important;
+    box-shadow: none !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+  }
+  :root.theme-classic .credit-card {
+    background: none !important;
+  }
+}
 </style>
 <base target="_blank">
 </head>
@@ -4221,6 +6193,12 @@ body.scale-active .console-panel {
         <button class="sett-entry-btn sett-entry-old" id="sett-entry-old" onclick="setEntryType('old')">Discord</button>
       </div>
     </div>
+    <!-- Color Palette hint -->
+    <div class="sett-section sett-section--palette">
+      <div class="sett-section-label" id="sett-palette-label">Color palette:</div>
+      <div class="sett-palette-hint" id="sett-palette-hint">To change the color palette
+— click on the site avatar on the home page</div>
+    </div>
   </div>
 </div><!-- /.settings-panel -->
 
@@ -4282,19 +6260,42 @@ body.scale-active .console-panel {
     <!-- BOT + STATS + UPDATES ROW -->
     <div class="bot-updates-row">
       <div class="bot-panel">
-        <div style="position:relative; display:inline-block;">
-          <div class="bot-avatar-wrap">
+        <div class="avatar-trio" style="position:relative; display:inline-block;">
+          <div class="bot-avatar-wrap palette-trigger" id="palette-trigger" onclick="togglePalettePopup(event)" title="">
             <div class="avatar-ring-outer"></div>
             <img class="bot-avatar-img" id="main-avatar" src="images/Home Page/avatar2.png" alt="Calculate Roll Bot">
             <div class="avatar-ring-inner"></div>
           </div>
-          <div class="theme-switch-wrap">
-            <button class="theme-switch-btn" id="theme-switch-btn"
-              data-tooltip="GOLD THEME"
-              onclick="toggleTheme()"
-              aria-label="Switch theme">
-              <img id="switch-avatar" src="images/Home Page/avatar1.png" alt="Switch theme">
-            </button>
+        </div>
+        <!-- PALETTE POPUP -->
+        <div class="palette-popup" id="palette-popup" style="display:none;">
+          <div class="palette-popup-inner">
+            <div class="palette-grid">
+              <button class="palette-item" data-theme="gold" data-glow="#c8932a" onclick="selectPalette('gold')" aria-label="Gold theme">
+                <img src="images/Home Page/avatar1.png" alt="Gold">
+                <span class="palette-label">Time</span>
+              </button>
+              <button class="palette-item" data-theme="galaxy" data-glow="#9b30ff" onclick="selectPalette('galaxy')" aria-label="Galaxy theme">
+                <img src="images/Home Page/avatar2.png" alt="Galaxy">
+                <span class="palette-label">Galaxy</span>
+              </button>
+              <button class="palette-item" data-theme="easter" data-glow="#E0607E" onclick="selectPalette('easter')" aria-label="Easter theme">
+                <img src="images/Home Page/avatar3.png" alt="Easter">
+                <span class="palette-label">Bunny</span>
+              </button>
+              <button class="palette-item" data-theme="classic" data-glow="#447194" onclick="selectPalette('classic')" aria-label="Classic theme">
+                <img src="images/Home Page/avatar4.png" alt="Classic">
+                <span class="palette-label">Classic</span>
+              </button>
+              <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
+                <span class="palette-future-icon">?</span>
+                <span class="palette-label">Soon</span>
+              </button>
+              <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
+                <span class="palette-future-icon">?</span>
+                <span class="palette-label">Soon</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="bot-name">Calculate Roll Bot</div>
@@ -4325,7 +6326,7 @@ body.scale-active .console-panel {
         </div>
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.5.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.0.6</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -4341,7 +6342,7 @@ body.scale-active .console-panel {
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.5.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.6</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -4446,15 +6447,15 @@ body.scale-active .console-panel {
 
     <div class="category-tabs">
       <button class="cat-tab active" id="tab-weapon" onclick="switchCategory('weapon')">
-        <svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-14 14H1v-6.5l13.5-14.5zm-2 4.5L4 15.5V19h3.5L14 12l-1.5-5z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><g transform="translate(12,12) rotate(40) translate(-12,-12)"><polygon points="12,1 10.5,8 13.5,8" fill="currentColor" opacity="0.9"/><polygon points="10.5,8 13.5,8 13,12.5 11,12.5" fill="currentColor" opacity="0.75"/><rect x="7" y="12.5" width="10" height="2.5" rx="1" fill="currentColor"/><rect x="11" y="15" width="2" height="5.5" rx="1" fill="currentColor" opacity="0.8"/><ellipse cx="12" cy="21.5" rx="2" ry="1.5" fill="currentColor"/></g></svg>
         <span data-i18n="tab_weapon">Weapon</span>
       </button>
       <button class="cat-tab" id="tab-armor" onclick="switchCategory('armor')">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4,8 Q4,5 7,5 L9,5 L9,8 Q6,8 5,10 Z" fill="currentColor"/><path d="M20,8 Q20,5 17,5 L15,5 L15,8 Q18,8 19,10 Z" fill="currentColor"/><rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor"/><path d="M5,10 L4,19 Q7,22 12,22 Q17,22 20,19 L19,10 Q16,8 12,8 Q8,8 5,10 Z" fill="currentColor"/><line x1="12" y1="8" x2="12" y2="22" stroke="white" stroke-width="0.8" opacity="0.3"/><path d="M6,13 Q12,11 18,13" fill="none" stroke="white" stroke-width="0.7" opacity="0.3"/><path d="M4,19 Q12,21 20,19 L20,21 Q12,23 4,21 Z" fill="currentColor" opacity="0.7"/></svg>
         <span data-i18n="tab_armor">Armor</span>
       </button>
       <button class="cat-tab" id="tab-accessories" onclick="switchCategory('accessories')">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 2.5 C7 2.5 4 6 4 10 C4 14 8 17 12 17 C16 17 20 14 20 10 C20 6 17 2.5 12 2.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2,2"/><line x1="12" y1="17" x2="12" y2="19" stroke="currentColor" stroke-width="1.5"/><polygon points="12,19 9,22 12,24 15,22" fill="currentColor"/><polygon points="12,19 9,22 12,21" fill="currentColor" opacity="0.4"/><circle cx="12" cy="2.5" r="1.5" fill="currentColor"/></svg>
         <span data-i18n="tab_accessories">Relics</span>
       </button>
     </div>
@@ -4468,7 +6469,11 @@ body.scale-active .console-panel {
 
     <div class="content-area">
       <div class="item-list-panel" id="item-list">
-        <div class="item-list-header" data-i18n="list_header">// SELECT ITEM</div>
+        <div class="item-search-wrap">
+          <svg class="item-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input class="item-search-input" id="search-item-list" type="text" autocomplete="off" spellcheck="false" placeholder="SEARCH..." oninput="filterItemList('item-list',this.value)" onfocus="this.select()">
+        </div>
+        <div class="item-search-no-results" id="search-nores-item-list">NO RESULTS</div>
       </div>
 
       <div class="table-area">
@@ -4568,18 +6573,22 @@ body.scale-active .console-panel {
 
     <div class="category-tabs">
       <button class="cat-tab active" id="az-tab-weapon" onclick="azSwitchCat('weapon')">
-        <svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-14 14H1v-6.5l13.5-14.5zm-2 4.5L4 15.5V19h3.5L14 12l-1.5-5z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><g transform="translate(12,12) rotate(40) translate(-12,-12)"><polygon points="12,1 10.5,8 13.5,8" fill="currentColor" opacity="0.9"/><polygon points="10.5,8 13.5,8 13,12.5 11,12.5" fill="currentColor" opacity="0.75"/><rect x="7" y="12.5" width="10" height="2.5" rx="1" fill="currentColor"/><rect x="11" y="15" width="2" height="5.5" rx="1" fill="currentColor" opacity="0.8"/><ellipse cx="12" cy="21.5" rx="2" ry="1.5" fill="currentColor"/></g></svg>
         <span data-i18n="tab_weapon">Weapon</span>
       </button>
       <button class="cat-tab" id="az-tab-armor" onclick="azSwitchCat('armor')">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4,8 Q4,5 7,5 L9,5 L9,8 Q6,8 5,10 Z" fill="currentColor"/><path d="M20,8 Q20,5 17,5 L15,5 L15,8 Q18,8 19,10 Z" fill="currentColor"/><rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor"/><path d="M5,10 L4,19 Q7,22 12,22 Q17,22 20,19 L19,10 Q16,8 12,8 Q8,8 5,10 Z" fill="currentColor"/><line x1="12" y1="8" x2="12" y2="22" stroke="white" stroke-width="0.8" opacity="0.3"/><path d="M6,13 Q12,11 18,13" fill="none" stroke="white" stroke-width="0.7" opacity="0.3"/><path d="M4,19 Q12,21 20,19 L20,21 Q12,23 4,21 Z" fill="currentColor" opacity="0.7"/></svg>
         <span data-i18n="tab_armor">Armor</span>
       </button>
     </div>
 
     <div class="content-area">
       <div class="item-list-panel" id="az-item-list-panel">
-        <div class="item-list-header" data-i18n="list_header">// SELECT ITEM</div>
+        <div class="item-search-wrap">
+          <svg class="item-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input class="item-search-input" id="search-az-item-list-panel" type="text" autocomplete="off" spellcheck="false" placeholder="SEARCH..." oninput="filterItemList('az-item-list-panel',this.value)" onfocus="this.select()">
+        </div>
+        <div class="item-search-no-results" id="search-nores-az-item-list-panel">NO RESULTS</div>
       </div>
 
       <div class="table-area analyze-area">
@@ -4840,7 +6849,7 @@ body.scale-active .console-panel {
 
           <div class="az-res-stats-box">
             <div class="az-res-row">
-              <span id="az-res-name" style="font-size:16px;font-weight:700;">—</span>
+              <span id="az-res-name" style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;">—</span>
             </div>
             <div class="az-res-row">
               <span id="az-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">—</span>
@@ -4850,7 +6859,7 @@ body.scale-active .console-panel {
               <span class="az-res-val dmg" id="az-res-dmg">—</span>
             </div>
             <div class="az-res-row">
-              <span style="font-size:16px;">⏱</span>
+              <span class="az-timer-icon" style="font-size:16px;">⏱</span>
               <span class="az-res-val delay" id="az-res-delay">—</span>
             </div>
           </div>
@@ -5071,18 +7080,22 @@ body.scale-active .console-panel {
 
     <div class="category-tabs">
       <button class="cat-tab active" id="sp-tab-weapon" onclick="spSwitchCat('weapon')">
-        <svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-14 14H1v-6.5l13.5-14.5zm-2 4.5L4 15.5V19h3.5L14 12l-1.5-5z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><g transform="translate(12,12) rotate(40) translate(-12,-12)"><polygon points="12,1 10.5,8 13.5,8" fill="currentColor" opacity="0.9"/><polygon points="10.5,8 13.5,8 13,12.5 11,12.5" fill="currentColor" opacity="0.75"/><rect x="7" y="12.5" width="10" height="2.5" rx="1" fill="currentColor"/><rect x="11" y="15" width="2" height="5.5" rx="1" fill="currentColor" opacity="0.8"/><ellipse cx="12" cy="21.5" rx="2" ry="1.5" fill="currentColor"/></g></svg>
         <span data-i18n="tab_weapon">Weapon</span>
       </button>
       <button class="cat-tab" id="sp-tab-armor" onclick="spSwitchCat('armor')">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4,8 Q4,5 7,5 L9,5 L9,8 Q6,8 5,10 Z" fill="currentColor"/><path d="M20,8 Q20,5 17,5 L15,5 L15,8 Q18,8 19,10 Z" fill="currentColor"/><rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor"/><path d="M5,10 L4,19 Q7,22 12,22 Q17,22 20,19 L19,10 Q16,8 12,8 Q8,8 5,10 Z" fill="currentColor"/><line x1="12" y1="8" x2="12" y2="22" stroke="white" stroke-width="0.8" opacity="0.3"/><path d="M6,13 Q12,11 18,13" fill="none" stroke="white" stroke-width="0.7" opacity="0.3"/><path d="M4,19 Q12,21 20,19 L20,21 Q12,23 4,21 Z" fill="currentColor" opacity="0.7"/></svg>
         <span data-i18n="tab_armor">Armor</span>
       </button>
     </div>
 
     <div class="content-area">
       <div class="item-list-panel" id="sp-item-list-panel">
-        <div class="item-list-header" data-i18n="list_header">// SELECT ITEM</div>
+        <div class="item-search-wrap">
+          <svg class="item-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input class="item-search-input" id="search-sp-item-list-panel" type="text" autocomplete="off" spellcheck="false" placeholder="SEARCH..." oninput="filterItemList('sp-item-list-panel',this.value)" onfocus="this.select()">
+        </div>
+        <div class="item-search-no-results" id="search-nores-sp-item-list-panel">NO RESULTS</div>
       </div>
 
       <div class="table-area stuff-area">
@@ -5310,7 +7323,7 @@ body.scale-active .console-panel {
 
           <div class="az-res-stats-box">
             <div class="az-res-row">
-              <span id="sp-res-name" style="font-size:16px;font-weight:700;">—</span>
+              <span id="sp-res-name" style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;">—</span>
             </div>
             <div class="az-res-row">
               <span id="sp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">—</span>
@@ -5320,7 +7333,7 @@ body.scale-active .console-panel {
               <span class="az-res-val dmg" id="sp-res-dmg">—</span>
             </div>
             <div class="az-res-row" id="sp-res-delay-row">
-              <span style="font-size:16px;">⏱</span>
+              <span class="az-timer-icon" style="font-size:16px;">⏱</span>
               <span class="az-res-val delay" id="sp-res-delay">—</span>
             </div>
           </div>
@@ -5525,11 +7538,11 @@ body.scale-active .console-panel {
     <!-- Category tabs -->
     <div class="category-tabs">
       <button class="cat-tab active" id="cmp-tab-weapon" onclick="cmpSwitchCategory('weapon')">
-        <svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-14 14H1v-6.5l13.5-14.5zm-2 4.5L4 15.5V19h3.5L14 12l-1.5-5z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><g transform="translate(12,12) rotate(40) translate(-12,-12)"><polygon points="12,1 10.5,8 13.5,8" fill="currentColor" opacity="0.9"/><polygon points="10.5,8 13.5,8 13,12.5 11,12.5" fill="currentColor" opacity="0.75"/><rect x="7" y="12.5" width="10" height="2.5" rx="1" fill="currentColor"/><rect x="11" y="15" width="2" height="5.5" rx="1" fill="currentColor" opacity="0.8"/><ellipse cx="12" cy="21.5" rx="2" ry="1.5" fill="currentColor"/></g></svg>
         <span data-i18n="tab_weapon">Weapon</span>
       </button>
       <button class="cat-tab" id="cmp-tab-armor" onclick="cmpSwitchCategory('armor')">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12V11c0 4.54-3.13 8.76-7 9.93-3.87-1.17-7-5.39-7-9.93V6.3l7-3.12z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4,8 Q4,5 7,5 L9,5 L9,8 Q6,8 5,10 Z" fill="currentColor"/><path d="M20,8 Q20,5 17,5 L15,5 L15,8 Q18,8 19,10 Z" fill="currentColor"/><rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor"/><path d="M5,10 L4,19 Q7,22 12,22 Q17,22 20,19 L19,10 Q16,8 12,8 Q8,8 5,10 Z" fill="currentColor"/><line x1="12" y1="8" x2="12" y2="22" stroke="white" stroke-width="0.8" opacity="0.3"/><path d="M6,13 Q12,11 18,13" fill="none" stroke="white" stroke-width="0.7" opacity="0.3"/><path d="M4,19 Q12,21 20,19 L20,21 Q12,23 4,21 Z" fill="currentColor" opacity="0.7"/></svg>
         <span data-i18n="tab_armor">Armor</span>
       </button>
     </div>
@@ -5537,7 +7550,11 @@ body.scale-active .console-panel {
     <div class="content-area">
       <!-- LEFT: single item list (one weapon chosen for both sides) -->
       <div class="item-list-panel" id="cmp-item-list">
-        <div class="item-list-header" data-i18n="list_header">// SELECT ITEM</div>
+        <div class="item-search-wrap">
+          <svg class="item-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input class="item-search-input" id="search-cmp-item-list" type="text" autocomplete="off" spellcheck="false" placeholder="SEARCH..." oninput="filterItemList('cmp-item-list',this.value)" onfocus="this.select()">
+        </div>
+        <div class="item-search-no-results" id="search-nores-cmp-item-list">NO RESULTS</div>
       </div>
 
       <!-- RIGHT: compare area -->
@@ -5563,7 +7580,7 @@ body.scale-active .console-panel {
               </svg>
               <img id="cmp-item-img" src="" alt="" style="display:none;">
             </div>
-            <div class="az-weapon-name" id="cmp-item-name">—</div>
+            <div class="az-weapon-name" id="cmp-item-name" style="font-family:'Cinzel',serif;">—</div>
             <div class="az-weapon-rarity" id="cmp-item-rarity">—</div>
 
             <!-- Armor part toggle — shared between Website and Discord modes -->
@@ -5870,8 +7887,8 @@ body.scale-active .console-panel {
           </div>
 
           <div class="az-res-stats-box">
-            <div class="az-res-row"><span class="az-weapon-name" id="cmp-res-name">—</span></div>
-            <div class="az-res-row"><span id="cmp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;">—</span></div>
+            <div class="az-res-row" style="margin-bottom:1px;"><span id="cmp-res-name" style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;">—</span></div>
+            <div class="az-res-row" style="margin-bottom:6px;"><span id="cmp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;font-family:'Rajdhani',sans-serif;text-transform:uppercase;">—</span></div>
             <div class="az-res-row">
               <span id="cmp-res-dmg-lbl" style="font-size:14px;font-weight:600;color:#ff4444;" data-i18n="lbl_damage">Damage:</span>
               <span class="az-res-val dmg" id="cmp-res-dmg">—</span>
@@ -5882,7 +7899,7 @@ body.scale-active .console-panel {
               <span class="cmp-diff-badge cmp-diff-pct" id="cmp-diff-pct"></span>
             </div>
             <div class="az-res-row" id="sp-res-delay-row-cmp" style="display:none;">
-              <span style="font-size:16px;">⏱</span>
+              <span class="az-timer-icon" style="font-size:16px;">⏱</span>
               <span class="az-res-val delay" id="cmp-res-delay">—</span>
             </div>
           </div>
@@ -6111,8 +8128,8 @@ body.scale-active .console-panel {
               <div class="az-stats-box gold-mode">
                 <div class="az-stat-row">
                   <span class="az-stat-lbl" style="color:var(--gold-bright);" data-i18n="devtool_value_lbl">Value:</span>
-                  <input class="az-stat-input" type="number" id="dt-value-check" placeholder="0" min="0"
-                    oninput="dtUpdateBtn();const _s=_dtSlots[_dtActiveSlot];if(_s){_s.check.val=parseFloat(this.value)||null;}">
+                  <input class="az-stat-input" type="text" inputmode="decimal" id="dt-value-check" placeholder="0"
+                    oninput="this.value=this.value.replace(/[^0-9.,]/g,'');dtUpdateBtn();const _s=_dtSlots[_dtActiveSlot];if(_s){_s.check.val=parseFloat(this.value.replace(',','.'))||null;}">
                 </div>
               </div>
               <div class="az-upgrades-row">
@@ -6202,8 +8219,8 @@ body.scale-active .console-panel {
               <div class="az-stats-box gold-mode">
                 <div class="az-stat-row">
                   <span class="az-stat-lbl" style="color:var(--gold-bright);" data-i18n="devtool_value_lbl">Value:</span>
-                  <input class="az-stat-input" type="number" id="dt-value-confirm" placeholder="0" min="0"
-                    oninput="dtUpdateBtn();const _s=_dtSlots[_dtActiveSlot];if(_s){_s.confirm.val=parseFloat(this.value)||null;}">
+                  <input class="az-stat-input" type="text" inputmode="decimal" id="dt-value-confirm" placeholder="0"
+                    oninput="this.value=this.value.replace(/[^0-9.,]/g,'');dtUpdateBtn();const _s=_dtSlots[_dtActiveSlot];if(_s){_s.confirm.val=parseFloat(this.value.replace(',','.'))||null;}">
                 </div>
               </div>
               <div class="az-upgrades-row">
@@ -6703,6 +8720,7 @@ function switchCategory(cat) {
   currentItem = null;
   currentArmorPart = 'Helmet';
   currentAccItem = null;
+  clearItemSearch('item-list');
   document.getElementById('tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('tab-armor').classList.toggle('active',  cat === 'armor');
   document.getElementById('tab-accessories').classList.toggle('active', cat === 'accessories');
@@ -6721,6 +8739,7 @@ function switchCategory(cat) {
 function selectAccSubcat(subcat) {
   currentAccSubcat = subcat;
   currentAccItem = null;
+  clearItemSearch('item-list');
   ['underworld','angel','extra'].forEach(s => {
     const btn = document.getElementById('acc-btn-' + s);
     if (btn) btn.classList.toggle('active', s === subcat);
@@ -6731,7 +8750,8 @@ function selectAccSubcat(subcat) {
 
 function renderAccItemList() {
   const list = document.getElementById('item-list');
-  list.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  // Remove old item buttons only (preserve search wrap and no-results)
+  list.querySelectorAll('.item-btn').forEach(b => b.remove());
   const items = ACC_DATA[currentAccSubcat] || [];
   items.forEach(item => {
     const btn = document.createElement('button');
@@ -6741,6 +8761,9 @@ function renderAccItemList() {
     btn.onclick = () => selectAccItem(item, btn);
     list.appendChild(btn);
   });
+  // Re-apply current search query
+  const inp = document.getElementById('search-item-list');
+  filterItemList('item-list', inp ? inp.value : '');
 }
 
 function selectAccItem(item, btn) {
@@ -6778,7 +8801,7 @@ function renderAccTable() {
 
 function renderItemList() {
   const list = document.getElementById('item-list');
-  list.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  list.querySelectorAll('.item-btn').forEach(b => b.remove());
   (ITEMS[currentCategory] || []).forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'item-btn';
@@ -6787,6 +8810,8 @@ function renderItemList() {
     btn.onclick = () => selectItem(item, btn);
     list.appendChild(btn);
   });
+  const inp = document.getElementById('search-item-list');
+  filterItemList('item-list', inp ? inp.value : '');
 }
 
 function selectItem(item, btn) {
@@ -7191,7 +9216,7 @@ const T = {
     tab_weapon:'Weapon', tab_armor:'Armor', tab_accessories:'Relics',
     acc_underworld:'Underworld Relics', acc_angel:"Angel's Sanctuary Relics", acc_extra:'Extra Relics (Crafting & Bounty)',
     th_roll_acc:'Roll', th_coef_acc:'Coefficient',
-    list_header:'// SELECT ITEM', lbl_max_level:'MAX LEVEL',
+    list_header:'// SELECT ITEM', search_placeholder:'SEARCH...', lbl_max_level:'MAX LEVEL',
     mod_upgrade:'Upgrade', mod_reforge:'Reforge', ref_none:'None',
     part_helm:'Helmet', part_chest:'Chestplate', part_legs:'Leggings',
     th_roll:'Roll', th_base:'Base Value', th_corrupted:'Corrupted', th_reforge:'Reforge', th_both:'Corr + Ref',
@@ -7321,6 +9346,9 @@ const T = {
     upd6_title: 'UPDATES OF v1.0.5 VERSION!',
     upd6_sub: 'Developer Notes 04.04.2026',
     upd6_body: `This update was finished a while ago and tested firsthand.\nAdmittedly, this one was tough for me — the code integrations were no joke. But I pulled through.\nIn quite a short span of time we've seen some solid updates. New weapons kept coming out along the way, and more are still on the horizon.\n\nSpecifics around all these items — how they look, their stats, and so on — are being worked out in the process. Thanks to new site features, finding the base values for each item has become much easier. There's a set formula, and we follow it. We've also adapted that formula where needed. For any math enthusiasts out there — it might actually be fun to poke around one of the site's features and try to figure out the values on your own.\n\nAt this point, I've achieved everything I set out to do. The pages have been polished up properly, along with the settings. The only things likely left to add to the site are possible mini-games... maybe even some kind of story lore, like a creepypasta? Just for fun :D.\n\nEither way, you know where to find me on Discord — <span class="upd-cyan">@yarreyt</span>.\nI'm no longer a tester, but I'm on good terms with many of them and they're happy to help. Even with all the interesting drama that's suddenly popped up along the way. Apparently, according to one particular tester... I'm quite the "harasser." Honestly, hearing that again is just funny at this point.\n\nI also want to express my gratitude for the support this project has received in the Elemental Dungeons Discord server. And more specifically: the <span class="upd-accent">#suggestions</span> channel, in the <span class="upd-green">CALCULATOR ROLL BOT</span> topic — as of writing this, it's gathered <span class="upd-accent">93 STARS!</span>\n\nAs for the game's developer, Moose — this is actually a fun story to tell.\nSo here's how it went: I submitted an appeal to have the site recognized as an official source for the game. However, Swuh told me this wasn't possible since the site was made by a regular player (even though I was a tester at the time), and that the only real option would be to transfer ownership to them. Still, Swuh offered a compromise — creating a separate Discord channel, something like "ED Community Projects", where verified fan resources for the game could be listed and made publicly accessible.\nMore than a month has passed since then, but Swuh and his admin team still haven't created the topic. I get it — they've got personal lives, work, and all of that. But in some ways I'm frustrated, because they clearly find time to develop the game and push out updates, while creating a topic takes less than a minute. An odd situation, all in all.\nI decided I couldn't just keep waiting and reached out to Moose directly. Told him I wanted the site to be made public.\nAfter some time he responded and asked for the link, saying he'd take a look later. A few days went by, and he replied with something like:\n<span class="upd-muted">"This site is genuinely good. It would of course be even better if it were integrated into a wiki or contained a wiki itself — but I wouldn't mind sharing the link somewhere in the Discord server."</span>\nAfter that message, me and the testers spammed him with GIFs saying ABSOLUTE MOOSE and settled in to wait. Then I got fired... for reasons you already know from the v1.0.3 notes. Time passed, and in the end, nothing they said actually happened. Which is also kind of strange.\n\nAnyway, enough talk — let's get to the actual update.\n\n<span class="upd-accent">What's new in v1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Discord Mode</span> — users who previously used the Discord bot can now enter commands using the familiar formulas. For newcomers, the input formats are listed below:\n         For Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. If your item has no reforge, leave the {reforge} argument blank.\n         For Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Same rule applies for the reforge.\n         For Stuff Compare: there are two formulas. Symbols in the formula are required!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  The input rules will become clear as you make mistakes. The validation here is strict — and the error messages are clear.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">New SECRET PAGE — Developer Tool.</span> A utility page that developers will use freely, and curious users can too — <span class="upd-muted">if you can find where it's hidden.</span>\n\nNew items that appeared in the previous update but weren't announced:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — a new Secret Weapon in the game.\n\n<span class="upd-cyan">›</span> A <span class="upd-accent">TOTAL PROCESSES counter</span> has been added to the home page. The user who suggested this fun idea — <span class="upd-cyan">@jejecrafter</span>. He's also a Tester, by the way.\n\n<span class="upd-accent">What might come in v1.0.6?</span>\nExpecting new game updates and new item releases. Some very interesting relics and armor are on the way — and from what developers and testers are saying, they're seriously powerful.\nAnd I, as always, am waiting for your ideas and bug reports. I've put good work into the desktop version, but the mobile side hasn't been tested as thoroughly yet.\nWith the new data entry system, there's also a chance you might find bugs related to saving data on pages and so on. So bug reports are very much welcome!\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to you all!</span>`,
+    upd8_title: 'UPDATES OF v1.0.6 VERSION!',
+    upd8_sub: 'Developer Notes 08.04.2026',
+    upd8_body: `<span class="upd-accent">What's new in v1.0.6?</span>\nBesides mini-fixes and improvements to scaling and adaptation (achieving perfection for everyone is either difficult or impossible — more on that later),\nthe following has also been added:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Search system in item lists!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Two new color palettes</span> — <span class="upd-accent">Easter</span> and <span class="upd-accent">Classic</span>.\nThe Classic palette matches the inventory color from the game Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> has become even more informative. It now highlights suspicious values in results, and when multiple windows are open — highlights those that are numerically close to each other.\n\n<span class="upd-accent">What's next in v1.0.7?</span>\nAs always, send your ideas to my Discord DMs — <span class="upd-cyan">@yarreyt</span>.\nOne possible addition: a randomizer feature on the pages for a better understanding of how everything works. This could especially help newcomers when using the <span class="upd-accent">Discord</span> data entry mode.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd7_title: 'UPDATES OF v1.0.5.5 VERSION!',
     upd7_sub: 'Developer Notes 06.04.2026',
     upd7_body: `<span class="upd-accent">Happy Easter to all of you!</span>\n\n<span class="upd-accent">What\'s new in v1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Scaling fix!</span> The interface is now even more comfortable for many users due to different monitor resolutions or zoom levels!\n\n<span class="upd-accent">NEW STUFF!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — a new secret weapon!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — a new secret relic!\n\n<span class="upd-accent">What\'s expected in v1.0.6</span>\n<span class="upd-cyan">›</span> Adding an item search across all pages!\n<span class="upd-cyan">›</span> Maybe a new color palette!\n\nOther than that... I\'m out of ideas. Suggest them on Discord — <span class="upd-cyan">@yarreyt</span>!\nAlso don\'t forget to support the site with stars in the Elemental Dungeons Discord server!\nIn <span class="upd-accent">#suggestions</span> → topic <span class="upd-green">CALCULATOR ROLL BOT</span>. As of this entry — already <span class="upd-accent">116 stars!</span> We have the highest star count among all top suggestions!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -7376,7 +9404,7 @@ const T = {
     tab_weapon:'Оружие', tab_armor:'Броня', tab_accessories:'Релики',
     acc_underworld:'Адские релики', acc_angel:'Ангельские релики', acc_extra:'Доп. релики (Крафты и Баунти)',
     th_roll_acc:'Ролл', th_coef_acc:'Коэффициент',
-    list_header:'// ВЫБЕРИТЕ ПРЕДМЕТ', lbl_max_level:'МАКС. УРОВЕНЬ',
+    list_header:'// ВЫБЕРИТЕ ПРЕДМЕТ', search_placeholder:'ПОИСК...', lbl_max_level:'МАКС. УРОВЕНЬ',
     mod_upgrade:'Улучшение', mod_reforge:'Зачарование', ref_none:'Нет',
     part_helm:'Шлем', part_chest:'Нагрудник', part_legs:'Штаны',
     th_roll:'Ролл', th_base:'Базовое значение', th_corrupted:'Corrupted', th_reforge:'Зачарование', th_both:'Corr + Зач',
@@ -7507,6 +9535,9 @@ const T = {
     upd6_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.5v!',
     upd6_sub: 'Записи разработчика 04.04.2026',
     upd6_body: `Обновление было закончено давно и протестировано собственными руками.\nКонечно это обновление мне давалось тяжким из-за тяжёлых внедрений кода. Но, я справился.\nВполне за короткое время мы повидали хорошие обновления, в процессе этих же обновлений выходили новые оружия, и они ещё будут выходить позже.\n\nКонкретно в процессе уточняется вопрос по всем этим предметам, как они выглядят и так далее. Так-же с учётом новых нововведений на сайте, находить базовые значения каждого предмета стало гораздо проще. Есть определённая формула и мы её соблюдаем. Эту формулу так-же мы адаптировали. Для математиков-энтузиастов будет интересно наверное протестировать одну из внедрений сайта и попробовать даже самостоятельно выявить значения.\n\nВ данный момент я добился всего чего хотел. Страницы были доработаны до ума, настройки. Вероятно всё что остаётся по внедрениям в сайт это возможные мини-игры.. может даже добавить какой-то сюжетный лор по типу крипипасты? В качестве развлечения :D.\n\nВ любом случае вам будет известен мой контакт в дискорде — <span class="upd-cyan">@yarreyt</span>.\nНа данный момент я не являюсь тестером, но тепло дружу с многими из них и они не против помогать. Пускай и на фоне всяких интересных конфликтов, произошедших внезапно. Я, оказывается по мнению одного человека-тестера.. ещё тот "домогатель". Ей богу, слышать это повторно даже смешно.\n\nТак-же, хочу выразить благодарность за поддержку проекту, в дискорд-сервере игры — <span class="upd-green">Elemental Dungeons</span>. И даже конкретнее: на канале <span class="upd-accent">#suggestions</span> в топике <span class="upd-green">CALCULATOR ROLL BOT</span> на момент записи этого сообщения собрало аж <span class="upd-accent">93 ЗВЕЗДЫ!</span>\n\nКасаемо сайта и разработчика игры Moose. Даже интересно рассказать.\nТема была такая. Я подал апелляцию на рассмотрение сайта чтобы он стал официальным источником игры. Однако Swuh мне сказал что это невозможно, так как сайт сделан пользователем игры (пускай даже на тот момент я был тестером) и единственный вариант: передать права на сайт им. Однако Swuh предложил такой компромисс как создать отдельный дискорд-канал под названием по типу: "ED Communities Projects", в котором могли бы быть проверенные фанатские источники по игре, и они могли бы быть общедоступными.\nПрошло с того момента больше месяца, но Swuh и его админ. состав так и не создали топик. И мне понятно, личная жизнь там у них тяжёлая, работа и так далее. Однако в какой-то степени я испытываю к ним недовольство, так как они в любом случае находят время для разработки игры и их обновлений, а для создания топика — времени занимает меньше минуты. В общем — спорная ситуация.\nЯ решил что терпеть это не могу и решил ЛИЧНО обратиться к Moose. Сказал ему чтобы сайт стал общедоступным.\nСпустя какое-то время он откликнулся и попросил ссылку на сайт и сказал что рассмотрит его позже. Спустя несколько дней он ответил по типу:\n<span class="upd-muted">"Этот сайт действительно хорош. Было бы конечно ещё лучше если бы сайт был внедрён там в википедию или сайт содержал википедию, но я не был бы против разместить ссылку где-нибудь в дискорд-сервере."</span>\nПосле этого сообщения мы с тестерами накидали ему гифок с содержанием текста ABSOLUTE MOOSE и принялись ждать. Меня уволили.. по известным вам причинам из обновления 1.0.3, прошло какое-то время и в общем ни одно из сказанного ими не было выполнено. Что на самом деле тоже странно.\n\nЧто-то слишком много разговора, переходим непосредственно к обновлениям.\n\n<span class="upd-accent">Что нового в версии 1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Настройка Discord</span> — теперь пользователи, которые ранее пользовались дискордом и здешним ботом, смогут повторно писать команды с известными вам формулами. Для новичков так-же указаны формулы введения команд:\n         Для Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. Если у вашего предмета нет заклинания, то не пишите ничего в аргументе {reforge}.\n         Для Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Аналогичная ситуация с заклинанием.\n         Для Stuff Compare: есть всего две формулы. Знаки в формуле обязательны!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  Все правила ввода команд вы поймёте с совершением ошибок. Здесь жёсткие валидации ошибок, и вполне понятные.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Новая СЕКРЕТНАЯ СТРАНИЦА — Developer Tool.</span> Спасательная страница и ею будут спокойно пользоваться как разработчики, так и с интересом и <span class="upd-muted">ЕСЛИ НАЙДЁТЕ ЕЁ РАСПОЛОЖЕНИЕ — пользователи.</span>\n\nНовые предметы которые появились в прошлом обновлении, но не были об этом сообщены:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — новое секретное оружие игры.\n\n<span class="upd-cyan">›</span> Так-же был добавлен <span class="upd-accent">счётчик ЗАПИСЕЙ ЗА ВСЁ ВРЕМЯ</span> на домашней странице. Пользователь, который подкинул такую интересную идею — <span class="upd-cyan">@jejecrafter</span>. Кстати он тоже Тестер.\n\n<span class="upd-accent">Что может быть в обновлении 1.0.6?</span>\nОжидаем новые обновления игры и выходы новых предметов. Ожидаются в данный момент очень интересные релики и броня, которые как заверяют разработчики и тестеры — очень сильные.\nНу и я, ожидаю ваши возможные идеи, и сообщения о багах. Я постарался над десктопной версией, а вот телефон пока слабо проверил.\nИ из-за новой системы ввода данных, есть так-же вероятность найти баг связанный с сохранением данных на страницах и так далее. Так что, ожидаю и сообщения про них тоже!\n\n<span class="upd-muted">На этом всё!\nВсем добрейшего утра/дня/вечера/ночи!</span>`,
+    upd8_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.6v!',
+    upd8_sub: 'Запись разработчика 08.04.2026',
+    upd8_body: `<span class="upd-accent">Что нового в версии 1.0.6?</span>\nПо-мимо мини-фиксов и улучшений по масштабированию и адаптации (идеально для всех это либо сложно, либо невозможно. Об этом позже)\nТак-же добавлено:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Поисковая система в списках!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Две новые цветовые палитры</span> — <span class="upd-accent">Пасхальный</span> и <span class="upd-accent">Классическая</span>.\nКлассическая цветовая палитра повторяет цвет инвентаря из игры Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> стал ещё более понятным. Теперь при результатах он подсвечивает подозрительные значения, а при множественных окнах — подсвечивает те, которые близки друг к другу по цифрам.\n\n<span class="upd-accent">Что следующее в версии 1.0.7?</span>\nОпять же, пишите новые идеи мне в личку дискорда — <span class="upd-cyan">@yarreyt</span>.\nВ принципе можно добавить функцию рандомайзера на страницах для наибольшего понимания функций. Особенно это может помочь новичкам при использовании режима ввода данных <span class="upd-accent">«Discord»</span>.\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd7_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.5.5v!',
     upd7_sub: 'Записи разработчика 06.04.2026',
     upd7_body: `<span class="upd-accent">С пасхой вас всех!</span>\n\n<span class="upd-accent">Что нового в обновлении 1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Исправлено масштабирование!</span> Теперь интерфейс у многих из-за разрешения монитора или масштабов стал ещё более удобным!\n\n<span class="upd-accent">НОВЫЕ ВЕЩИЧКИ!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — новое секретное оружие!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — новый секретный релик!\n\n<span class="upd-accent">Что ожидается в обновлении 1.0.6</span>\n<span class="upd-cyan">›</span> Добавлю поисковик предметов во всех страницах!\n<span class="upd-cyan">›</span> И может, добавлю новую цветовую палитру!\n\nВ остальном.. идей больше нет. Предлагайте их в дискорде — <span class="upd-cyan">@yarreyt</span>!\nТак-же не забываем поддерживать сайт звёздочками в дискорд-сервере Elemental Dungeons!\nНа канале <span class="upd-accent">#suggestions</span> → топик <span class="upd-green">CALCULATOR ROLL BOT</span>. На момент этой записи звёзд уже <span class="upd-accent">116!</span> У нас самое большое количество звёзд из лучших предложений!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -7555,7 +9586,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 6;
+let updPage = 7;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -7564,6 +9595,7 @@ const UPD_PAGES = [
   { title:'upd5_title', sub:'upd5_sub', body:'upd5_body' },
   { title:'upd6_title', sub:'upd6_sub', body:'upd6_body' },
   { title:'upd7_title', sub:'upd7_sub', body:'upd7_body' },
+  { title:'upd8_title', sub:'upd8_sub', body:'upd8_body' },
 ];
 
 function updRender() {
@@ -7596,6 +9628,9 @@ function applyLang() {
   updRender();
   document.querySelectorAll('.console-input').forEach(inp => {
     inp.placeholder = t('input_placeholder');
+  });
+  document.querySelectorAll('.item-search-input').forEach(inp => {
+    inp.placeholder = t('search_placeholder');
   });
   renderAllConsoles();
   renderReforgeTable();
@@ -7948,6 +9983,7 @@ function azSwitchCat(cat) {
   };
 
   azCurrentCat = cat;
+  clearItemSearch('az-item-list-panel');
   document.getElementById('az-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('az-tab-armor').classList.toggle('active',  cat === 'armor');
 
@@ -8124,9 +10160,7 @@ function azSwitchCat(cat) {
 
 function azRenderList() {
   const list = document.getElementById('az-item-list-panel');
-  const header = list.querySelector('.item-list-header');
-  list.innerHTML = '';
-  list.appendChild(header);
+  list.querySelectorAll('.item-btn').forEach(b => b.remove());
   ITEMS[azCurrentCat].forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'item-btn';
@@ -8134,6 +10168,8 @@ function azRenderList() {
     btn.onclick = () => azSelectItem(item, btn);
     list.appendChild(btn);
   });
+  const inp = document.getElementById('search-az-item-list-panel');
+  filterItemList('az-item-list-panel', inp ? inp.value : '');
 }
 
 function azSelectItem(item, btn) {
@@ -9280,13 +11316,14 @@ function azRenderProcessTablet(dmg) {
     inferred = v;
   }
 
-  const roll = (function(dict, inf) {
-    const keys = Object.keys(dict).map(Number);
+  const roll = (function(dict, inf, minR) {
+    let keys = Object.keys(dict).map(Number).filter(k => k >= minR);
+    if (keys.length === 0) keys = Object.keys(dict).map(Number);
     if (keys.length === 1) return keys[0];
     let best = keys[0], bestDiff = Math.abs(inf - dict[best]);
     keys.forEach(k => { const d = Math.abs(inf - dict[k]); if (d < bestDiff) { bestDiff = d; best = k; } });
     return best;
-  })(statsDict, inferred);
+  })(statsDict, inferred, azCurrentItem.minRoll || 1);
 
   const baseRollVal = statsDict[roll];
 
@@ -9385,11 +11422,18 @@ function azRenderProcessTablet(dmg) {
     </div>`;
   });
 
+  const badgeDiff    = inferred - baseRollVal;
+  const badgeDiffAbs = Math.abs(badgeDiff);
+  const badgePct     = (badgeDiffAbs / baseRollVal) * 100;
+  const badgeDiffStr = (badgeDiff >= 0 ? '+' : '\u2212') + fmt(badgeDiffAbs);
+  const badgePctStr  = badgePct.toFixed(4) + '%';
+  const badgeOk      = badgePct <= 4.7619;
   rightHTML += `<div class="az-sep" style="margin-top:10px;"></div>
   <div class="az-roll-badge">
     <span class="az-roll-badge-lbl">ROLL</span>
     <span class="az-roll-badge-num">${roll}</span>
-    <span class="az-roll-badge-base">base: ${fmt(baseRollVal)}</span>
+    <span class="az-roll-badge-base">dif: ${badgeDiffStr}</span>
+    <span class="az-roll-badge-base az-roll-badge-pct ${badgeOk ? 'ok' : 'over'}">${badgePctStr} <span class="az-roll-badge-cond">(≤ 4.7619% ${badgeOk ? '\u2713' : '\u2717'})</span></span>
   </div>`;
 
   document.getElementById('az-proc-left').innerHTML  = leftHTML;
@@ -9517,6 +11561,7 @@ function spSwitchCat(cat) {
   if (spCurrentItem) spSaveCategorySnapshot(prevCat);
 
   spCurrentCat = cat;
+  clearItemSearch('sp-item-list-panel');
   document.getElementById('sp-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('sp-tab-armor').classList.toggle('active',  cat === 'armor');
 
@@ -9624,7 +11669,7 @@ function spRestoreUI(item, resultVisible) {
 
 function spRenderList() {
   const panel = document.getElementById('sp-item-list-panel');
-  panel.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  panel.querySelectorAll('.item-btn').forEach(b => b.remove());
   ITEMS[spCurrentCat].forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'item-btn';
@@ -9633,6 +11678,8 @@ function spRenderList() {
     btn.onclick = () => spSelectItem(item, btn);
     panel.appendChild(btn);
   });
+  const inp = document.getElementById('search-sp-item-list-panel');
+  filterItemList('sp-item-list-panel', inp ? inp.value : '');
 }
 
 function spShowEmpty() {
@@ -10916,6 +12963,7 @@ function cmpSwitchCategory(cat) {
                ref1: null, ref2: null };
 
   cmpCategory = cat;
+  clearItemSearch('cmp-item-list');
   document.getElementById('cmp-tab-weapon').classList.toggle('active', cat === 'weapon');
   document.getElementById('cmp-tab-armor').classList.toggle('active',  cat === 'armor');
 
@@ -11018,6 +13066,7 @@ function cmpSwitchCategory(cat) {
         else { resImg.style.display = 'none'; resPh.style.display = 'block'; }
         document.getElementById('cmp-res-name').textContent = restoredItem.name;
         document.getElementById('cmp-res-name').className = 'az-weapon-name ' + resRi.css;
+        document.getElementById('cmp-res-name').style.fontFamily = "'Rajdhani', sans-serif";
         document.getElementById('cmp-res-rarity').textContent = resRi.label.toUpperCase();
         document.getElementById('cmp-res-rarity').className = 'az-res-val ' + resRi.css;
         const delayRow = document.getElementById('sp-res-delay-row-cmp');
@@ -11097,7 +13146,7 @@ function cmpShowEmpty() {
 function cmpRenderLists() {
   const listEl = document.getElementById('cmp-item-list');
   if (!listEl) return;
-  listEl.innerHTML = `<div class="item-list-header">${t('list_header')}</div>`;
+  listEl.querySelectorAll('.item-btn').forEach(b => b.remove());
   (ITEMS[cmpCategory] || []).forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'item-btn' + (cmpCurrentItem && cmpCurrentItem.id === item.id ? ' active' : '');
@@ -11105,6 +13154,8 @@ function cmpRenderLists() {
     btn.onclick = () => cmpSelectItem(item, btn);
     listEl.appendChild(btn);
   });
+  const inp = document.getElementById('search-cmp-item-list');
+  filterItemList('cmp-item-list', inp ? inp.value : '');
 }
 
 // ── Item select ──
@@ -12027,6 +14078,7 @@ function cmpCheckSpecifics() {
 
   document.getElementById('cmp-res-name').textContent = item.name;
   document.getElementById('cmp-res-name').className = 'az-weapon-name ' + ri.css;
+  document.getElementById('cmp-res-name').style.fontFamily = "'Rajdhani', sans-serif";
   document.getElementById('cmp-res-rarity').textContent = ri.label.toUpperCase();
   document.getElementById('cmp-res-rarity').className = 'az-res-val ' + ri.css;
 
@@ -12213,6 +14265,7 @@ function cmpRenderArmorResultView() {
   const nameEl = document.getElementById('cmp-res-name');
   nameEl.textContent = item.name.replace(' Set','') + ' ' + azPartLabel(cmpResCurrentPart);
   nameEl.className = 'az-weapon-name ' + ri.css;
+  nameEl.style.fontFamily = "'Rajdhani', sans-serif";
   document.getElementById('cmp-res-rarity').textContent = ri.label.toUpperCase();
   document.getElementById('cmp-res-rarity').className = 'az-res-val ' + ri.css;
 
@@ -13027,11 +15080,10 @@ function _cmpDiscRenderPreview() {
   function renderCorr(el, yn) {
     if (!el) return;
     el.className = 'cmp-disc-inline-val';
-    el.style.color = '';
-    if (!yn) { el.textContent = '?'; el.style.color = '#c875ff'; }
-    else if (yn === 'y' || yn === 'yes') { el.textContent = 'Yes'; el.classList.add('corr-yes-green'); el.style.color = '#22cc44'; }
-    else if (yn === 'n' || yn === 'no')  { el.textContent = 'No';  el.classList.add('corr-no-red'); el.style.color = '#cc3333'; }
-    else { el.textContent = yn.slice(0, 3); el.style.color = '#c875ff'; }
+    if (!yn) { el.textContent = '?'; el.classList.add('corr-u'); }
+    else if (yn === 'y' || yn === 'yes') { el.textContent = 'Yes'; el.classList.add('corr-y'); }
+    else if (yn === 'n' || yn === 'no')  { el.textContent = 'No';  el.classList.add('corr-n'); }
+    else { el.textContent = yn.slice(0, 3); el.classList.add('corr-u'); }
   }
   renderCorr(corrAEl, yn1);
   renderCorr(corrBEl, yn2);
@@ -13558,6 +15610,12 @@ function _applySettingsLangUI() {
   if (langLbl) langLbl.textContent = lang === 'en' ? 'Language' : 'Язык';
   const entryLbl = document.getElementById('sett-entry-label');
   if (entryLbl) entryLbl.textContent = lang === 'en' ? 'Data entry type:' : 'Тип ввода данных:';
+  const paletteLbl = document.getElementById('sett-palette-label');
+  if (paletteLbl) paletteLbl.textContent = lang === 'en' ? 'Color palette:' : 'Цветовая палитра:';
+  const paletteHint = document.getElementById('sett-palette-hint');
+  if (paletteHint) paletteHint.textContent = lang === 'en'
+    ? 'To change the color palette\n— click on the site avatar on the home page'
+    : 'Чтобы поменять цветовую палитру\n— нажмите на аватарку сайта, на домашней странице';
   _applyEntryTypeUI();
 }
 
@@ -13595,13 +15653,13 @@ function _applyEntryTypeUI() {
 
   if (_entryType === 'new') {
     // New is selected — big and bright
-    newBtn.className = 'sett-entry-btn sett-entry-new';
+    newBtn.className = 'sett-entry-btn sett-entry-new active';
     oldBtn.className = 'sett-entry-btn sett-entry-old dim';
     if (sep) sep.textContent = '/';
   } else {
     // Old is selected — big and bright
     newBtn.className = 'sett-entry-btn sett-entry-new dim';
-    oldBtn.className = 'sett-entry-btn sett-entry-old';
+    oldBtn.className = 'sett-entry-btn sett-entry-old active';
     if (sep) sep.textContent = '\\';
   }
 }
@@ -13633,6 +15691,32 @@ const _THEMES = {
     switchAvatar: 'images/Home Page/avatar2.png',
     tooltip: 'GALAXY THEME',
     switchGlow: '#9b30ff',
+  },
+  easter: {
+    banners: [
+      'images/Home Page/banner3_1.png',
+      'images/Home Page/banner3_2.png',
+      'images/Home Page/banner3_3.png',
+      'images/Home Page/banner3_4.png',
+    ],
+    bgImage: 'images/Home Page/banner3_4.png',
+    mainAvatar: 'images/Home Page/avatar3.png',
+    switchAvatar: 'images/Home Page/avatar2.png',
+    tooltip: 'GALAXY THEME',
+    switchGlow: '#FF9EAD',
+  },
+  classic: {
+    banners: [
+      'images/Home Page/banner1_1.png',
+      'images/Home Page/banner1_2.png',
+      'images/Home Page/banner1_3.png',
+      'images/Home Page/banner1_4.png',
+    ],
+    bgImage: 'images/Home Page/banner4_1.png',
+    mainAvatar: 'images/Home Page/avatar4.png',
+    switchAvatar: 'images/Home Page/avatar2.png',
+    tooltip: 'GALAXY THEME',
+    switchGlow: '#447194',
   }
 };
 
@@ -13641,7 +15725,9 @@ window._applyTheme = function(name) {
   if (!theme) return;
   localStorage.setItem('_ed_theme', name);
 
-  document.documentElement.classList.toggle('theme-gold', name === 'gold');
+  document.documentElement.classList.toggle('theme-gold',    name === 'gold');
+  document.documentElement.classList.toggle('theme-easter',  name === 'easter');
+  document.documentElement.classList.toggle('theme-classic', name === 'classic');
 
   const pageBg = document.querySelector('.page-bg');
   if (pageBg) pageBg.style.backgroundImage = `url('${theme.bgImage}')`;
@@ -13654,21 +15740,136 @@ window._applyTheme = function(name) {
     if (window._startSlideshow) window._startSlideshow();
   }
 
+  // ── ГЛАВНАЯ АВАТАРКА ──
   const mainAv = document.getElementById('main-avatar');
-  const switchAv = document.getElementById('switch-avatar');
-  const switchBtn = document.getElementById('theme-switch-btn');
-  if (mainAv) mainAv.src = theme.mainAvatar;
-  if (switchAv) switchAv.src = theme.switchAvatar;
-  if (switchBtn) {
-    switchBtn.setAttribute('data-tooltip', theme.tooltip);
-  }
-  document.documentElement.style.setProperty('--theme-switch-glow', theme.switchGlow);
+  const AV = {
+    gold:    'images/Home Page/avatar1.png',
+    galaxy:  'images/Home Page/avatar2.png',
+    easter:  'images/Home Page/avatar3.png',
+    classic: 'images/Home Page/avatar4.png',
+  };
+  if (mainAv) mainAv.src = AV[name] || AV.galaxy;
+
+  // ── ПАЛИТРА: обновить активный кружок ──
+  _paletteUpdateActive();
 };
 
+/* ══════════════════════════
+   PALETTE POPUP
+══════════════════════════ */
+let _paletteOpen = false;
+
+function togglePalettePopup(e) {
+  if (e) e.stopPropagation();
+  if (_paletteOpen) {
+    closePalettePopup();
+  } else {
+    openPalettePopup(e);
+  }
+}
+
+function openPalettePopup(e) {
+  const trigger = document.getElementById('palette-trigger');
+  const popup   = document.getElementById('palette-popup');
+  if (!popup || !trigger) return;
+
+  // Ensure popup lives inside scale-wrap (same as settings-panel) so fixed coords work with scale
+  const scaleWrap = document.getElementById('scale-wrap');
+  if (scaleWrap && popup.parentElement !== scaleWrap) {
+    scaleWrap.appendChild(popup);
+  }
+
+  _paletteUpdateActive();
+  popup.style.display = 'block';
+  _paletteOpen = true;
+
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  if (isMobile) {
+    // Mobile: fixed centered
+    popup.style.top       = '50%';
+    popup.style.left      = '50%';
+    popup.style.transform = 'translate(-50%, -50%)';
+    popup.style.right     = 'auto';
+    popup.style.bottom    = 'auto';
+    // Backdrop
+    let bd = document.getElementById('palette-backdrop');
+    if (!bd) {
+      bd = document.createElement('div');
+      bd.id        = 'palette-backdrop';
+      bd.className = 'palette-backdrop';
+      bd.onclick   = closePalettePopup;
+      if (scaleWrap) scaleWrap.appendChild(bd);
+      else document.body.appendChild(bd);
+    }
+    bd.style.display = 'block';
+  } else {
+    // Desktop: right of the trigger circle, vertically centered on avatar.
+    // getBoundingClientRect → visual CSS px (after zoom).
+    // position:fixed inside zoom-ancestor → layout px (before zoom).
+    // Formula: layout = visual / scale. offsetWidth/Height already layout px.
+    requestAnimationFrame(() => {
+      const rect  = trigger.getBoundingClientRect();
+      const scale = window._pageScale || 1;
+      const gap   = 22;
+
+      const top  = (rect.top + rect.height / 2) / scale - popup.offsetHeight / 2;
+      const left = rect.right / scale + gap;
+
+      popup.style.transform = 'none';
+      popup.style.top    = top  + 'px';
+      popup.style.left   = left + 'px';
+      popup.style.right  = 'auto';
+      popup.style.bottom = 'auto';
+    });
+  }
+
+  setTimeout(() => {
+    document.addEventListener('click', _paletteOutsideClick);
+  }, 0);
+}
+
+function closePalettePopup() {
+  const popup = document.getElementById('palette-popup');
+  if (popup) popup.style.display = 'none';
+  _paletteOpen = false;
+  const bd = document.getElementById('palette-backdrop');
+  if (bd) bd.style.display = 'none';
+  document.removeEventListener('click', _paletteOutsideClick);
+}
+
+function _paletteOutsideClick(e) {
+  const popup   = document.getElementById('palette-popup');
+  const trigger = document.getElementById('palette-trigger');
+  if (!popup) return;
+  if (!popup.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+    closePalettePopup();
+  }
+}
+
+function _paletteUpdateActive() {
+  const cur = localStorage.getItem('_ed_theme') || 'galaxy';
+  document.querySelectorAll('.palette-item[data-theme]').forEach(btn => {
+    btn.classList.toggle('palette-active', btn.dataset.theme === cur);
+  });
+}
+
+function selectPalette(name) {
+  window._applyTheme(name);
+  closePalettePopup();
+}
+
+/* Legacy wrappers — kept for safety */
 function toggleTheme() {
   const cur = localStorage.getItem('_ed_theme') || 'galaxy';
-  const next = cur === 'galaxy' ? 'gold' : 'galaxy';
-  window._applyTheme(next);
+  if (cur === 'galaxy') window._applyTheme('gold');
+  else if (cur === 'gold') window._applyTheme('galaxy');
+  else window._applyTheme('galaxy');
+}
+function toggleEasterTheme() {
+  const cur = localStorage.getItem('_ed_theme') || 'galaxy';
+  if (cur === 'easter') window._applyTheme('gold');
+  else window._applyTheme('easter');
 }
 
 /* ══════════════════════════════
@@ -15114,7 +17315,7 @@ function dtDiscordParse(mode) {
   const ynRaw  = parts[2] || '';
   const refRaw = parts.slice(3).join(' ').trim();
 
-  const valNum = parseFloat(valRaw);
+  const valNum = parseFloat(valRaw.replace(",", "."));
   const upgNum = parseInt(upgRaw, 10);
 
   const disc = _dtState[mode].disc;
@@ -15237,7 +17438,7 @@ function dtUpdateBtn() {
     if (btn) btn.disabled = !canGo;
 
     if (_entryType !== 'old') {
-      const val = parseFloat(document.getElementById('dt-value-' + mode)?.value || '');
+      const val = parseFloat((document.getElementById('dt-value-' + mode)?.value || '').replace(',','.'));
       const hasVal = !isNaN(val) && val > 0;
       const upgWrap = document.getElementById('dt-upg-btn-' + mode)?.closest('.az-selector');
       const refWrap = document.getElementById('dt-ref-btn-' + mode)?.closest('.az-selector');
@@ -15293,12 +17494,106 @@ function dtHasAnyValidSlot(mode) {
 }
 
 // ── Render multi-column table ──
-function dtRenderMultiTable(panelBodyId, allResults, calcFn) {
+function dtRenderMultiTable(panelBodyId, allResults, mode) {
   const wrap = document.getElementById(panelBodyId);
   if (!wrap) return;
 
   // allResults: [{slotIndex, rows, base}] — only filled slots
   if (allResults.length === 0) return;
+
+  // ── Highlight logic (Check True Values only) ──
+  // rowClass[slotIndex][roll] = '' | 'row-near-int' | 'row-match'
+  const rowClass = allResults.map(() => new Array(11).fill(''));
+
+  if (mode === 'check') {
+    if (allResults.length === 1) {
+      // Single window: highlight up to 3 rows closest to an integer (.00000)
+      const deviations = [];
+      for (let roll = 0; roll < 11; roll++) {
+        const v = parseFloat(allResults[0].rows[roll].value);
+        const dev = Math.abs(v - Math.round(v));
+        deviations.push({ roll, dev });
+      }
+      deviations.sort((a, b) => a.dev - b.dev);
+      // Mark top 3 rows closest to an integer (no threshold — always show 3)
+      deviations.slice(0, 3).forEach(d => {
+        rowClass[0][d.roll] = 'row-near-int';
+      });
+    } else {
+      // Multiple windows: highlight cells with diff <= 0.5 across different columns
+      // Best cluster = group of cells (one per column max) all within 0.5 of each other
+      const cellMatch = allResults.map(() => new Array(11).fill(false));
+      const cellBest  = allResults.map(() => new Array(11).fill(false));
+      const allVals = allResults.map(r => r.rows.map(row => parseFloat(row.value)));
+      const nSlots = allVals.length;
+
+      // Step 1: mark all cells that have at least one match within 0.5 in another column
+      for (let si1 = 0; si1 < nSlots; si1++) {
+        for (let r1 = 0; r1 < 11; r1++) {
+          for (let si2 = 0; si2 < nSlots; si2++) {
+            if (si2 === si1) continue;
+            for (let r2 = 0; r2 < 11; r2++) {
+              if (Math.abs(allVals[si1][r1] - allVals[si2][r2]) <= 0.5) {
+                cellMatch[si1][r1] = true;
+                cellMatch[si2][r2] = true;
+              }
+            }
+          }
+        }
+      }
+
+      // Step 2: find the best cluster — collect all (si, roll) candidates from cellMatch,
+      // then find the subset (one per slot) where all pairwise diffs are <= 0.5
+      // and the max pairwise diff is minimized (tightest group)
+      const candidates = [];
+      for (let si = 0; si < nSlots; si++)
+        for (let r = 0; r < 11; r++)
+          if (cellMatch[si][r]) candidates.push({ si, r, v: allVals[si][r] });
+
+      // Group candidates by slot, pick one per slot greedily:
+      // try all combinations of one candidate per slot, find tightest group
+      const bySlot = [];
+      for (let si = 0; si < nSlots; si++)
+        bySlot.push(candidates.filter(c => c.si === si));
+
+      // Only consider slots that have candidates
+      const activeSlots = bySlot.filter(s => s.length > 0);
+
+      let bestCluster = null;
+      let bestMaxDiff = Infinity;
+
+      function search(slotIdx, chosen, curMaxDiff) {
+        if (slotIdx === activeSlots.length) {
+          if (chosen.length < 2) return;
+          const better = chosen.length > (bestCluster ? bestCluster.length : 0) ||
+            (chosen.length === (bestCluster ? bestCluster.length : 0) && curMaxDiff < bestMaxDiff);
+          if (better) { bestMaxDiff = curMaxDiff; bestCluster = chosen.slice(); }
+          return;
+        }
+        // Try each candidate in this slot — prune early if incompatible
+        outer: for (const c of activeSlots[slotIdx]) {
+          let newMax = curMaxDiff;
+          for (const prev of chosen) {
+            const d = Math.abs(c.v - prev.v);
+            if (d > 0.5) continue outer;
+            if (d > newMax) newMax = d;
+          }
+          search(slotIdx + 1, [...chosen, c], newMax);
+        }
+        search(slotIdx + 1, chosen, curMaxDiff); // skip this slot
+      }
+
+      // Pruned search: prune branch early if new candidate breaks 0.5 with any chosen
+      search(0, [], 0);
+
+      if (bestCluster) {
+        bestCluster.forEach(c => { cellBest[c.si][c.r] = true; });
+      }
+
+      rowClass._cellMatch = cellMatch;
+      rowClass._cellBest  = cellBest;
+    }
+  }
 
   // Build header
   let headerCells = `<th data-i18n="lbl_roll">ROLL</th>`;
@@ -15307,11 +17602,23 @@ function dtRenderMultiTable(panelBodyId, allResults, calcFn) {
   });
 
   // Build rows (11 rolls)
+  const cellMatch = rowClass._cellMatch || null;
+  const cellBest  = rowClass._cellBest  || null;
   let bodyRows = '';
   for (let roll = 0; roll < 11; roll++) {
-    bodyRows += `<tr><td class="td-roll">${roll + 1}</td>`;
-    allResults.forEach(r => {
-      bodyRows += `<td class="td-base">${r.rows[roll].value}</td>`;
+    // Single-window: row-level highlight via rowClass
+    let rowCls = '';
+    if (!cellMatch) {
+      for (let si = 0; si < allResults.length; si++) {
+        if (rowClass[si][roll]) { rowCls = ` ${rowClass[si][roll]}`; break; }
+      }
+    }
+    bodyRows += `<tr class="${rowCls.trim()}"><td class="td-roll">${roll + 1}</td>`;
+    allResults.forEach((r, idx) => {
+      let cellCls = '';
+      if (cellBest && cellBest[idx][roll])       cellCls = ' cell-best';
+      else if (cellMatch && cellMatch[idx][roll]) cellCls = ' cell-match';
+      bodyRows += `<td class="td-base${cellCls}">${r.rows[roll].value}</td>`;
     });
     bodyRows += `</tr>`;
   }
@@ -15441,11 +17748,11 @@ function dtRunCalc(mode) {
 
   // Render desktop panels
   const deskBodyId = mode === 'check' ? 'dt-check-panel-body' : 'dt-confirm-panel-body';
-  dtRenderMultiTable(deskBodyId, allResults);
+  dtRenderMultiTable(deskBodyId, allResults, mode);
 
   // Render mobile panels
   const mobBodyId = mode === 'check' ? 'dt-mob-check-panel-body' : 'dt-mob-confirm-panel-body';
-  dtRenderMultiTable(mobBodyId, allResults);
+  dtRenderMultiTable(mobBodyId, allResults, mode);
 
   if (mode === 'check') { _dtMobHasCheck = true; }
   else                  { _dtMobHasConfirm = true; }
@@ -15507,6 +17814,29 @@ function dtRestoreCooldowns() {
   });
 }
 
+/* ── ITEM LIST SEARCH ── */
+function filterItemList(panelId, query) {
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  const q = (query || '').trim().toLowerCase();
+  const btns = panel.querySelectorAll('.item-btn');
+  const nores = document.getElementById('search-nores-' + panelId);
+  let visible = 0;
+  btns.forEach(btn => {
+    const name = btn.textContent.toLowerCase();
+    const show = !q || name.includes(q);
+    btn.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  if (nores) nores.style.display = (btns.length > 0 && visible === 0) ? 'block' : 'none';
+}
+
+function clearItemSearch(panelId) {
+  const inp = document.getElementById('search-' + panelId);
+  if (inp) inp.value = '';
+  filterItemList(panelId, '');
+}
+
 /* ── INIT ── */
 (function init() {
   renderItemList();
@@ -15546,13 +17876,22 @@ function dtRestoreCooldowns() {
   };
   window._startSlideshow();
 
-  // Apply saved theme on load (galaxy is default so only re-apply if gold)
-  const _savedTheme = localStorage.getItem('_ed_theme') || 'galaxy';
-  if (_savedTheme === 'gold') window._applyTheme('gold');
+  // Apply saved theme on load — early script already set the CSS class,
+  // here we finish the rest: avatars, bg image, slideshow banners, tooltips.
+  const _savedTheme = localStorage.getItem('_ed_theme') || 'easter';
+  if (_savedTheme === 'gold') {
+    window._applyTheme('gold');
+  } else if (_savedTheme === 'easter') {
+    window._applyTheme('easter');
+  } else if (_savedTheme === 'classic') {
+    window._applyTheme('classic');
+  }
+  // galaxy — no re-apply needed, defaults are already correct
 
   // Apply saved entry type and sync settings UI
   _applyEntryTypeUI();
   _applySettingsLangUI();
+  if (typeof _paletteUpdateActive === 'function') _paletteUpdateActive();
 
   const isTouch = window.matchMedia('(pointer: coarse)').matches;
   if (isTouch) {
@@ -15581,9 +17920,113 @@ function dtRestoreCooldowns() {
   }, {passive:true});
 
   // Realign compare and analyze arrows on resize
+  let _palettePrevMobile = window.matchMedia('(max-width: 640px)').matches;
   window.addEventListener('resize', () => {
-    requestAnimationFrame(() => { cmpAlignArrow(); azAlignArrow(); spAlignArrow(); dtMobUpdateVisibility(); dtResizeSlotBtns(); });
+    requestAnimationFrame(() => {
+      cmpAlignArrow(); azAlignArrow(); spAlignArrow(); dtMobUpdateVisibility(); dtResizeSlotBtns();
+      azSpAdaptLayout();
+      // Palette popup: если открыто и режим (мобайл/десктоп) сменился — переоткрыть в нужном виде
+      if (_paletteOpen) {
+        const nowMobile = window.matchMedia('(max-width: 640px)').matches;
+        if (nowMobile !== _palettePrevMobile) {
+          closePalettePopup();
+          setTimeout(() => openPalettePopup(), 0);
+        } else {
+          // Тот же режим — просто пересчитать позицию (десктоп при ресайзе)
+          if (!nowMobile) {
+            const trigger = document.getElementById('palette-trigger');
+            const popup   = document.getElementById('palette-popup');
+            if (trigger && popup) {
+              const rect  = trigger.getBoundingClientRect();
+              const scale = window._pageScale || 1;
+              const top   = (rect.top + rect.height / 2) / scale - popup.offsetHeight / 2;
+              const left  = rect.right / scale + 22;
+              popup.style.top  = top  + 'px';
+              popup.style.left = left + 'px';
+            }
+          }
+        }
+        _palettePrevMobile = nowMobile;
+      } else {
+        _palettePrevMobile = window.matchMedia('(max-width: 640px)').matches;
+      }
+    });
   });
+
+  // ── AZ / SP: адаптация layout при ресайзе ──
+  // При переходе desktop↔mobile пересчитываем видимость панелей, стрелок и кнопок
+  window.azSpAdaptLayout = function() {
+    // ── ANALYZE ROLL ──
+    const azResultCard = document.getElementById('az-result-card');
+    const azResultVisible = azResultCard && azResultCard.style.display !== 'none';
+    if (azResultVisible) {
+      const mobile = isTrulyMobile();
+      const trueMobile = isTrulyMobile(760);
+      // Mobile action buttons
+      const azMab = document.getElementById('az-mobile-action-btns');
+      if (azMab) azMab.style.display = mobile ? 'flex' : 'none';
+      // Mobile quote visibility
+      const azQuoteMob = document.getElementById('az-quote-mobile');
+      if (azQuoteMob && azQuoteMob.innerHTML.trim()) {
+        if (mobile) azQuoteMob.classList.add('visible');
+        else azQuoteMob.classList.remove('visible');
+      }
+      // Desktop quote visibility
+      const azQuotePanel = document.getElementById('az-quote-panel');
+      if (azQuotePanel && azQuotePanel.innerHTML.trim()) {
+        if (!mobile) azQuotePanel.classList.add('visible');
+        else azQuotePanel.classList.remove('visible');
+      }
+      // Arrow zone, h-arrow, third panel — desktop only
+      const azArrowZone = document.getElementById('az-arrow-zone');
+      const azHArrow    = document.getElementById('az-h-arrow');
+      const azThird     = document.getElementById('az-third-panel');
+      if (!mobile) {
+        if (azArrowZone) azArrowZone.classList.add('visible');
+        if (azHArrow)    azHArrow.classList.add('visible');
+        if (azThird)     azThird.classList.add('visible');
+        requestAnimationFrame(() => azAlignArrow());
+      } else {
+        if (azArrowZone) azArrowZone.classList.remove('visible');
+        if (azHArrow)    azHArrow.classList.remove('visible');
+        if (azThird)     azThird.classList.remove('visible');
+      }
+    }
+
+    // ── STUFF PREVIEW ──
+    const spResultCard = document.getElementById('sp-result-card');
+    const spResultVisible = spResultCard && spResultCard.style.display !== 'none';
+    if (spResultVisible) {
+      const mobile = isTrulyMobile();
+      const trueMobile = isTrulyMobile(760);
+      const spMab = document.getElementById('sp-mobile-action-btns');
+      if (spMab) spMab.style.display = mobile ? 'flex' : 'none';
+      // Mobile quote
+      const spQuoteMob = document.querySelector('#sp-result-card .az-quote-mobile');
+      if (spQuoteMob && spQuoteMob.innerHTML.trim()) {
+        if (trueMobile) spQuoteMob.classList.add('visible');
+        else spQuoteMob.classList.remove('visible');
+      }
+      const spHArrow  = document.getElementById('sp-h-arrow');
+      const spThird   = document.getElementById('sp-third-panel');
+      const spVArrow  = document.getElementById('sp-v-arrow');
+      if (!mobile) {
+        // Desktop (>960px): h-arrow + third panel
+        if (spHArrow) spHArrow.classList.add('visible');
+        if (spThird)  spThird.classList.add('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => { spAlignArrow(); spSyncPanelHeight(); }));
+      } else if (!trueMobile) {
+        // Tablet (761-960px): h-arrow, no third panel
+        if (spHArrow) spHArrow.classList.add('visible');
+        if (spThird)  spThird.classList.remove('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
+      } else {
+        // Mobile (<=760px): no h-arrow, no third panel
+        if (spHArrow) spHArrow.classList.remove('visible');
+        if (spThird)  spThird.classList.remove('visible');
+      }
+    }
+  };
 
   // After full layout is painted — set correct slot button widths on mobile
   window.addEventListener('load', () => { dtResizeSlotBtns(); });

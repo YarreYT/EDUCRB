@@ -13,6 +13,7 @@
   if (t === 'gold')    document.documentElement.classList.add('theme-gold');
   if (t === 'easter')  document.documentElement.classList.add('theme-easter');
   if (t === 'classic') document.documentElement.classList.add('theme-classic');
+  if (t === 'baldi')   document.documentElement.classList.add('theme-baldi');
   // galaxy — классов нет, просто дефолт
 })();
 </script>
@@ -470,6 +471,12 @@
   --section-pad-l: 44px;
   /* Real viewport height — JS updates this to compensate for scale-wrap transform */
   --real-vh: 100vh;
+  /* ── Semantic UI colors (Damage / Health / Upgrades / Corrupted / Reforge) ── */
+  --color-dmg:    #ff4444;
+  --color-hp:     #7fff00;
+  --color-upg:    #7fff00;
+  --color-corr:   #c875ff;
+  --color-reforge:#8aacee;
 }
 
 /* ── GOLD THEME ── */
@@ -515,6 +522,12 @@
   --e-mint:         #DCE8D8;
   --e-blue:         #D5EAF0;
   --e-pink:         #E0607E;
+  /* Semantic UI colors */
+  --color-dmg:    #C84E78;
+  --color-hp:     #4E9466;
+  --color-upg:    #4E9466;
+  --color-corr:   #9B5E85;
+  --color-reforge:#2E8AA5;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -544,6 +557,1107 @@
   --theme-name:     classic;
   --theme-switch-glow: #447194;
   --gold-rgb:       68, 113, 148;
+  /* Semantic UI colors — classic uses standard game colors */
+  --color-dmg:    #ff4444;
+  --color-hp:     #7fff00;
+  --color-upg:    #7fff00;
+  --color-corr:   #c875ff;
+  --color-reforge:#8aacee;
+}
+
+/* ══════════════════════════════════════════════════════
+   BALDI'S BASICS THEME
+   Стены:      #D6EDCF  — грязновато-белый кирпич (основной фон панелей)
+   Фон страницы: #C8C4A8 — более тёмный бежевый (пол/кирпич снаружи)
+   Акцент:     #D42B2B  — красный (опасность, Балди злится)
+   Жёлтый:     #E8C832  — нотбуки, предметы
+   Текст:      #1A1208  — почти чёрный, как печатный шрифт
+   Рамки:      #A09878  — потрёпанный серо-бежевый
+   Тени/secondary: #6A6050
+══════════════════════════════════════════════════════ */
+:root.theme-baldi {
+  --gold:           #2EB81E;
+  --gold-bright:    #44D430;
+  --gold-glow:      #80FF70;
+  --amber:          #E8C832;
+  --cyan-rune:      #2B6BD4;
+  --green-stat:     #2B9632;
+  --text-primary:   #1A1208;
+  --text-muted:     #5A5040;
+  --text-dim:       #8A7A68;
+  --border-rune:    #A09878;
+  --border-gold:    #8A7A60;
+  --bg-void:        #C8C4A8;
+  --theme-bg-image: url('images/Home Page/banner5_5.png');
+  --theme-name:     baldi;
+  --theme-switch-glow: #2EB81E;
+  --gold-rgb:       46, 184, 30;
+  --b-wall:         #D6EDCF;
+  --b-floor:        #C8C4A8;
+  --b-red:          #D42B2B;
+  --b-yellow:       #E8C832;
+  --b-dark:         #2A2416;
+  --b-border:       #7AAB6A;
+  --b-border2:      #A0C890;
+  /* Semantic UI colors */
+  --color-dmg:    #C02020;
+  --color-hp:     #1A6A1A;
+  --color-upg:    #1A6A1A;
+  --color-corr:   #7A3A7A;
+  --color-reforge:#2A5A8A;
+}
+
+/* ── BALDI: Page background ── */
+:root.theme-baldi .page-bg {
+  background-color: #C8C4A8;
+}
+:root.theme-baldi .page-bg::after {
+  background:
+    linear-gradient(to right, rgba(200,196,168,.12) 0%, rgba(200,196,168,.04) 50%, rgba(200,196,168,.10) 100%),
+    linear-gradient(to bottom, rgba(200,196,168,.10) 0%, rgba(200,196,168,.02) 35%, rgba(200,196,168,.14) 100%);
+}
+
+/* ── BALDI: Nav — яркий зелёный монитор из игры ── */
+:root.theme-baldi nav {
+  background: #1E7A1E;
+  border-color: #155A15;
+  box-shadow: 0 3px 0 #155A15, inset 0 1px 0 rgba(160,255,120,0.18);
+}
+:root.theme-baldi nav::after { background: linear-gradient(90deg, transparent, rgba(160,255,120,0.15), transparent); }
+:root.theme-baldi .nav-btn { color: rgba(255,255,200,0.65); }
+:root.theme-baldi .nav-btn:hover {
+  color: #FFFFC8;
+  background: rgba(0,0,0,0.15);
+  box-shadow: none;
+}
+:root.theme-baldi .nav-btn.active {
+  color: #FFFFC8;
+  background: rgba(0,0,0,0.22);
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.25);
+}
+/* Baldi: цветные двери */
+:root.theme-baldi #navbtn-home.active {
+  background: #8B4513;
+  box-shadow: inset 0 2px 0 rgba(255,200,120,0.25), inset 0 -2px 0 rgba(0,0,0,0.35);
+  color: #FFE4B0;
+}
+:root.theme-baldi #navbtn-rolls.active {
+  background: #1A4DB5;
+  box-shadow: inset 0 2px 0 rgba(150,200,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.35);
+  color: #C0DCFF;
+}
+:root.theme-baldi #navbtn-analyze.active {
+  background: #B51A1A;
+  box-shadow: inset 0 2px 0 rgba(255,150,150,0.25), inset 0 -2px 0 rgba(0,0,0,0.35);
+  color: #FFB8B8;
+}
+:root.theme-baldi #navbtn-stuff.active {
+  background: #C8A800;
+  box-shadow: inset 0 2px 0 rgba(255,240,100,0.30), inset 0 -2px 0 rgba(0,0,0,0.35);
+  color: #FFF0A0;
+}
+:root.theme-baldi #navbtn-compare.active {
+  background: #C85A00;
+  box-shadow: inset 0 2px 0 rgba(255,180,80,0.25), inset 0 -2px 0 rgba(0,0,0,0.35);
+  color: #FFD090;
+}
+:root.theme-baldi #navbtn-home.active svg path,
+:root.theme-baldi #navbtn-home.active svg circle,
+:root.theme-baldi #navbtn-home.active svg line,
+:root.theme-baldi #navbtn-home.active svg polyline,
+:root.theme-baldi #navbtn-home.active svg rect { fill: #FFE4B0 !important; }
+:root.theme-baldi #navbtn-rolls.active svg path,
+:root.theme-baldi #navbtn-rolls.active svg circle,
+:root.theme-baldi #navbtn-rolls.active svg line,
+:root.theme-baldi #navbtn-rolls.active svg polyline,
+:root.theme-baldi #navbtn-rolls.active svg rect { fill: #C0DCFF !important; }
+:root.theme-baldi #navbtn-analyze.active svg path,
+:root.theme-baldi #navbtn-analyze.active svg circle,
+:root.theme-baldi #navbtn-analyze.active svg line,
+:root.theme-baldi #navbtn-analyze.active svg polyline,
+:root.theme-baldi #navbtn-analyze.active svg rect { fill: #FFB8B8 !important; }
+:root.theme-baldi #navbtn-stuff.active svg path,
+:root.theme-baldi #navbtn-stuff.active svg circle,
+:root.theme-baldi #navbtn-stuff.active svg line,
+:root.theme-baldi #navbtn-stuff.active svg polyline,
+:root.theme-baldi #navbtn-stuff.active svg rect { fill: #FFF0A0 !important; }
+:root.theme-baldi #navbtn-compare.active svg path,
+:root.theme-baldi #navbtn-compare.active svg circle,
+:root.theme-baldi #navbtn-compare.active svg line,
+:root.theme-baldi #navbtn-compare.active svg polyline,
+:root.theme-baldi #navbtn-compare.active svg rect { fill: #FFD090 !important; }
+:root.theme-baldi .lang-other { color: rgba(255,255,200,0.55); }
+:root.theme-baldi .nav-btn .tooltip {
+  background: #155A15;
+  border: 1px solid #0E400E;
+  color: #FFFFC8;
+  box-shadow: 1px 1px 0 #0E400E;
+}
+:root.theme-baldi .nav-btn svg path,
+:root.theme-baldi .nav-btn svg circle,
+:root.theme-baldi .nav-btn svg line,
+:root.theme-baldi .nav-btn svg polyline,
+:root.theme-baldi .nav-btn svg rect {
+  stroke: none !important;
+  fill: rgba(255,255,200,0.65) !important;
+}
+:root.theme-baldi .nav-btn.active svg path,
+:root.theme-baldi .nav-btn.active svg circle,
+:root.theme-baldi .nav-btn.active svg line,
+:root.theme-baldi .nav-btn.active svg polyline,
+:root.theme-baldi .nav-btn.active svg rect {
+  stroke: none !important;
+  fill: #FFFFC8 !important;
+}
+:root.theme-baldi .online-icon path { stroke: #C8FFAA !important; }
+:root.theme-baldi .settings-gear-btn { color: rgba(255,255,200,0.65); }
+:root.theme-baldi .settings-gear-btn:hover {
+  color: #FFFFC8;
+  background: rgba(0,0,0,0.15);
+  box-shadow: none;
+}
+
+/* ── BALDI: Banner ── */
+:root.theme-baldi .banner-overlay {
+  background: none;
+}
+:root.theme-baldi .banner-eyebrow {
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,.5);
+}
+:root.theme-baldi .banner-game-title {
+  color: #2EB81E;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #2EB81E;
+  background-clip: unset;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+}
+:root.theme-baldi .banner-glow-line {
+  background: #7AAB6A;
+  box-shadow: none;
+  height: 2px;
+  opacity: 0.8;
+}
+
+/* ── BALDI: Основные панели ── */
+:root.theme-baldi .bot-panel,
+:root.theme-baldi .updates-panel {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: 2px 2px 0 #7AAB6A;
+  backdrop-filter: none;
+}
+:root.theme-baldi .bot-panel::before,
+:root.theme-baldi .updates-panel::before { background: none; }
+:root.theme-baldi .bot-panel *:not(.value-list-block):not(.value-list-block *),
+:root.theme-baldi .updates-panel * { color: #1A1208; }
+/* value-list-block is transparent — inherits bot-panel bg naturally */
+:root.theme-baldi .bot-name { color: #2EB81E !important; text-shadow: none !important; }
+:root.theme-baldi .bot-tagline { color: rgba(26,18,8,0.60) !important; }
+:root.theme-baldi .bot-desc { color: rgba(26,18,8,0.70) !important; }
+
+/* ── BALDI: Credit card ── */
+:root.theme-baldi .credit-card {
+  background: #E0F2D8;
+  border-color: #7AAB6A;
+  box-shadow: 1px 1px 0 #7AAB6A;
+}
+:root.theme-baldi .credit-card-role { color: rgba(26,18,8,0.45) !important; }
+:root.theme-baldi .credit-card-name { color: #2A2416 !important; }
+:root.theme-baldi .credit-card-name.cyan { color: #2B6BD4 !important; }
+:root.theme-baldi .credit-card-name.green { color: #2B9632 !important; }
+
+/* ── BALDI: Stat chips ── */
+:root.theme-baldi .stat-chip {
+  background: #E0F2D8;
+  border: 1px solid #7AAB6A;
+  box-shadow: 1px 1px 0 #7AAB6A;
+}
+:root.theme-baldi .stat-num { color: #2EB81E !important; }
+:root.theme-baldi .stat-lbl { color: rgba(26,18,8,0.55) !important; }
+:root.theme-baldi .stat-chip--total {
+  background: #1E7A1E;
+  border: 2px solid #155A15 !important;
+  box-shadow: 2px 2px 0 #155A15, inset 0 1px 0 rgba(160,255,120,0.18) !important;
+}
+:root.theme-baldi .stat-chip--total .stat-lbl { color: rgba(255,255,200,0.75) !important; }
+:root.theme-baldi .total-proc-count { color: #C8FFAA !important; }
+:root.theme-baldi .total-proc-arrow { color: #C8FFAA !important; }
+
+/* ── BALDI: Updates panel ── */
+:root.theme-baldi .updates-title { color: #2EB81E !important; text-shadow: none !important; }
+:root.theme-baldi .updates-subtitle { color: rgba(26,18,8,0.50) !important; }
+:root.theme-baldi .updates-text { color: rgba(26,18,8,0.75) !important; }
+:root.theme-baldi .updates-text .upd-accent { color: #2EB81E !important; }
+:root.theme-baldi .updates-text .upd-cyan { color: #2B6BD4 !important; }
+:root.theme-baldi .updates-text .upd-green { color: #2B9632 !important; }
+:root.theme-baldi .updates-text .upd-muted { color: rgba(26,18,8,0.38) !important; }
+:root.theme-baldi .upd-nav-btn {
+  color: rgba(26,18,8,0.50);
+  border-color: #7AAB6A;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-baldi .upd-nav-btn:hover {
+  color: #1A1208;
+  background: rgba(46,184,30,0.08);
+}
+
+/* ── BALDI: Item list panel ── */
+:root.theme-baldi .item-list-panel {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: 2px 2px 0 #7AAB6A;
+}
+:root.theme-baldi .item-list-header {
+  background: #B8D8B0;
+  border-color: #7AAB6A;
+  color: rgba(26,18,8,0.60);
+}
+
+/* ── BALDI: Cat tabs ── */
+:root.theme-baldi .cat-tab {
+  color: rgba(26,18,8,0.55);
+  border-color: #7AAB6A;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-baldi .cat-tab.active,
+:root.theme-baldi .cat-tab:hover {
+  color: #1A1208;
+  background: rgba(46,184,30,0.12);
+  border-color: #2EB81E;
+  box-shadow: none;
+}
+
+/* ── BALDI: Item buttons ── */
+:root.theme-baldi .item-btn {
+  color: rgba(26,18,8,0.55);
+  border-color: transparent;
+  background: transparent;
+}
+:root.theme-baldi .item-btn:hover {
+  color: #1A1208;
+  background: rgba(46,184,30,0.08);
+  border-color: #7AAB6A;
+  box-shadow: none;
+}
+:root.theme-baldi .item-btn.active {
+  color: #1A1208;
+  background: rgba(46,184,30,0.15);
+  border-color: #2EB81E;
+  box-shadow: none;
+}
+:root.theme-baldi .item-category-header {
+  color: rgba(26,18,8,0.40) !important;
+  border-color: #7AAB6A;
+}
+:root.theme-baldi .item-category-header::before,
+:root.theme-baldi .item-category-header::after { background: #7AAB6A; }
+
+/* ── BALDI: Search ── */
+:root.theme-baldi .item-search-wrap,
+:root.theme-baldi #page-rolls .item-search-wrap,
+:root.theme-baldi #page-analyze .item-search-wrap,
+:root.theme-baldi #page-stuff .item-search-wrap,
+:root.theme-baldi #page-compare .item-search-wrap {
+  background: #E0F2D8;
+  border-color: #7AAB6A;
+  box-shadow: none;
+}
+:root.theme-baldi .item-search-input {
+  color: #1A1208;
+  background: transparent;
+}
+:root.theme-baldi .item-search-input::placeholder { color: rgba(26,18,8,0.32); }
+
+/* ── BALDI: Mod panel ── */
+:root.theme-baldi .mod-panel {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: 2px 2px 0 #7AAB6A;
+}
+:root.theme-baldi .mod-panel-header {
+  background: #B8D8B0;
+  border-color: #7AAB6A;
+}
+:root.theme-baldi .mod-panel-title { color: rgba(26,18,8,0.55) !important; }
+:root.theme-baldi .mod-panel-value { color: #2EB81E !important; }
+:root.theme-baldi .mod-panel-arrow { color: #2EB81E !important; }
+:root.theme-baldi .mod-panel-body { background: #E8EBE6; }
+:root.theme-baldi .mod-btn {
+  color: rgba(26,18,8,0.55);
+  border-color: #7AAB6A;
+  background: transparent;
+  box-shadow: none;
+}
+:root.theme-baldi .mod-btn:hover,
+:root.theme-baldi .mod-btn.active {
+  color: #1A1208;
+  background: rgba(46,184,30,0.12);
+  border-color: #2EB81E;
+  box-shadow: none;
+}
+
+/* ── BALDI: Roll table ── */
+:root.theme-baldi .roll-table-wrap {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: 2px 2px 0 #7AAB6A;
+}
+:root.theme-baldi .roll-table-wrap thead th,
+:root.theme-baldi .az-tbl thead th {
+  background: #B8D8B0;
+  color: rgba(26,18,8,0.70) !important;
+  border-color: #7AAB6A;
+}
+:root.theme-baldi .roll-table-wrap tbody tr { border-color: #C0B898; }
+:root.theme-baldi .td-base { color: rgba(26,18,8,0.85); }
+:root.theme-baldi .td-roll { color: #2EB81E; }
+:root.theme-baldi .td-ref { color: rgba(26,18,8,0.42); }
+
+/* ── BALDI: Console panel — CRT экран монитора ── */
+:root.theme-baldi .console-panel {
+  background: #0A1F0A !important;
+  border: 2px solid #1E7A1E !important;
+  box-shadow: 2px 2px 0 #155A15, inset 0 0 18px rgba(30,122,30,0.18) !important;
+}
+/* Основной текст консоли — белый */
+:root.theme-baldi .console-panel .console-header { background: #155A15 !important; border-bottom-color: #1E7A1E !important; }
+:root.theme-baldi .console-panel .console-title { color: #FFFFFF !important; }
+:root.theme-baldi .console-panel .console-live-badge,
+:root.theme-baldi .console-panel .console-live-badge span { color: #A8FF80 !important; }
+:root.theme-baldi .console-panel .online-count { color: #FFFFFF !important; }
+/* Онлайн иконка */
+:root.theme-baldi .console-panel .online-dot { background: #A8FF80 !important; }
+
+/* Табы */
+:root.theme-baldi .console-panel .console-tab-btn { color: rgba(255,255,255,0.50) !important; border-bottom-color: transparent !important; background: none !important; }
+:root.theme-baldi .console-panel .console-tab-btn:hover { color: #FFFFFF !important; background: rgba(255,255,255,0.06) !important; }
+:root.theme-baldi .console-panel .console-tab-btn.active { color: #FFFFFF !important; border-bottom-color: #FFFFFF !important; background: rgba(255,255,255,0.08) !important; }
+
+/* Пустое состояние */
+:root.theme-baldi .console-panel .console-empty { color: rgba(255,255,255,0.40) !important; }
+:root.theme-baldi .console-panel .console-empty * { color: rgba(255,255,255,0.40) !important; }
+
+/* Карточки в консоли */
+:root.theme-baldi .console-panel .card-time { color: rgba(255,255,255,0.40) !important; }
+:root.theme-baldi .console-panel .card-main { color: #FFFFFF !important; }
+:root.theme-baldi .console-panel .card-detail { color: rgba(255,255,255,0.60) !important; }
+:root.theme-baldi .console-panel .card-result { color: #FF6060 !important; }
+:root.theme-baldi .console-panel .card-roll { border-top-color: rgba(255,255,255,0.15) !important; }
+:root.theme-baldi .console-panel .card-roll-lbl { color: rgba(255,255,255,0.50) !important; }
+/* Analyze — красный дефолт; Preview — inline style cyan победит (нет !important); Compare — зелёный */
+:root.theme-baldi .console-panel .card-roll-val { color: #FF6060; }
+:root.theme-baldi .console-panel .analysis-card:has(.card-type.compare) .card-roll-val { color: #4CFFB0 !important; }
+
+/* Badge типов — Analyze красный, Preview/Weapon голубой, Compare зелёный */
+:root.theme-baldi .console-panel .card-type { background: rgba(192,32,32,0.15) !important; color: #C02020 !important; }
+:root.theme-baldi .console-panel .card-type.analyze { background: rgba(192,32,32,0.15) !important; color: #C02020 !important; }
+:root.theme-baldi .console-panel .card-type.preview,
+:root.theme-baldi .console-panel .card-type.weapon { background: rgba(0,212,255,0.15) !important; color: #00D4FF !important; }
+:root.theme-baldi .console-panel .card-type.compare { background: rgba(76,255,176,0.12) !important; color: #4CFFB0 !important; }
+
+/* Скроллбар */
+:root.theme-baldi .console-panel .console-body::-webkit-scrollbar-thumb { background: rgba(30,122,30,0.60) !important; }
+
+/* Discord input внутри консоли */
+:root.theme-baldi .console-panel .az-discord-input {
+  color: #FFFFFF !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.25) !important;
+  caret-color: #FFFFFF;
+}
+:root.theme-baldi .console-panel .az-discord-input::placeholder { color: rgba(255,255,255,0.30) !important; }
+
+/* Discord preview labels/values внутри консоли */
+:root.theme-baldi .console-panel .az-discord-preview-lbl { color: rgba(255,255,255,0.60) !important; }
+:root.theme-baldi .console-panel .az-discord-preview-lbl.lbl-dmg   { color: #FF6060 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-lbl.lbl-hp    { color: #7FFF00 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-lbl.lbl-delay { color: rgba(255,255,255,0.50) !important; }
+:root.theme-baldi .console-panel .az-discord-preview-lbl.lbl-upg   { color: #7FFF00 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-lbl.lbl-corr  { color: #C875FF !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val { color: rgba(255,255,255,0.80) !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.dmg       { color: #FF6060 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.delay     { color: rgba(255,255,255,0.65) !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.upg       { color: #7FFF00 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.corr-y    { color: #22CC44 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.corr-n    { color: #FF4444 !important; }
+:root.theme-baldi .console-panel .az-discord-preview-val.corr-u    { color: #C875FF !important; }
+:root.theme-baldi .console-panel .az-discord-dmg-box { background: rgba(0,0,0,0.40) !important; border-color: rgba(255,255,255,0.15) !important; }
+:root.theme-baldi .console-panel .az-discord-divider { background: rgba(255,255,255,0.15) !important; }
+:root.theme-baldi .console-panel .az-discord-armor-lbl { color: rgba(255,255,255,0.50) !important; }
+:root.theme-baldi .console-panel .sp-disc-roll-val-el { color: #E8B84B !important; }
+:root.theme-baldi .console-panel .cmp-disc-inline-val { color: #FFFFFF !important; }
+:root.theme-baldi .console-panel .cmp-disc-inline-val.corr-y { color: #22CC44 !important; }
+:root.theme-baldi .console-panel .cmp-disc-inline-val.corr-n { color: #FF4444 !important; }
+:root.theme-baldi .console-panel .cmp-disc-ref-val { color: #00D4FF !important; }
+
+/* ── BALDI: Page title block ── */
+:root.theme-baldi .page-title-block {
+  background: none;
+  border-color: #7AAB6A;
+  box-shadow: none;
+}
+:root.theme-baldi .page-title-text { color: #2EB81E !important; text-shadow: none !important; }
+:root.theme-baldi .page-title-icon { color: #2EB81E !important; }
+:root.theme-baldi .page-title-sub { color: rgba(26,18,8,0.50) !important; }
+
+/* (старые дубликаты modal/third/quote удалены — используются зелёные блоки ниже) */
+
+/* ── BALDI: Discord panels ── */
+:root.theme-baldi .az-discord-panel,
+:root.theme-baldi .sp-discord-panel,
+:root.theme-baldi .cmp-discord-panel {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: 2px 2px 0 #7AAB6A;
+}
+
+/* ── BALDI: Table empty states ── */
+:root.theme-baldi .table-empty,
+:root.theme-baldi .analyze-area .table-empty,
+:root.theme-baldi .stuff-area .table-empty,
+:root.theme-baldi .cmp-table-area .table-empty,
+:root.theme-baldi .dt-result-panel-body .table-empty,
+:root.theme-baldi #table-container .table-empty,
+:root.theme-baldi #az-empty,
+:root.theme-baldi #sp-empty,
+:root.theme-baldi #cmp-empty,
+:root.theme-baldi #table-empty-state {
+  background: rgba(232,228,216,0.55);
+  border-color: #7AAB6A;
+  box-shadow: none;
+}
+:root.theme-baldi .table-empty-title,
+:root.theme-baldi .table-empty-desc { color: rgba(26,18,8,0.42) !important; }
+
+/* ── BALDI: Settings panel ── */
+:root.theme-baldi .settings-panel {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+:root.theme-baldi .settings-title { color: #2EB81E !important; border-color: #7AAB6A; text-shadow: none !important; }
+:root.theme-baldi .sett-section-title { color: rgba(26,18,8,0.42) !important; border-color: #7AAB6A; }
+:root.theme-baldi .settings-content {
+  background: #E8EBE6;
+  border-color: #7AAB6A;
+  box-shadow: none;
+}
+:root.theme-baldi .settings-header { border-color: #7AAB6A; }
+:root.theme-baldi .sett-entry-label { color: rgba(26,18,8,0.70) !important; }
+:root.theme-baldi .sett-entry-btn {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: rgba(26,18,8,0.50) !important;
+}
+:root.theme-baldi .sett-lang-btn {
+  background: none !important;
+  border-color: #A09878 !important;
+  color: rgba(26,18,8,0.60) !important;
+  box-shadow: none !important;
+}
+:root.theme-baldi .sett-lang-btn:hover,
+:root.theme-baldi .sett-entry-btn:hover {
+  border-color: #2EB81E !important;
+  color: #1A1208 !important;
+  background: none !important;
+}
+:root.theme-baldi .sett-lang-btn.active {
+  background: none !important;
+  border-color: #2EB81E !important;
+  color: #2EB81E !important;
+  box-shadow: none !important;
+}
+:root.theme-baldi .sett-entry-btn.active {
+  background: none !important;
+  color: #2EB81E !important;
+}
+:root.theme-baldi .sett-entry-btn.dim { color: rgba(26,18,8,0.32) !important; }
+:root.theme-baldi .sett-entry-sep { color: rgba(26,18,8,0.32) !important; }
+:root.theme-baldi .sett-palette-hint { color: rgba(26,18,8,0.60) !important; opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   BALDI: Зелёный CRT-монитор — карточки и панели результатов
+   Фон:    #C8ECC8  — светлый зеленоватый (как бумага тетради)
+   Заголовки панелей: #A0D0A0  — чуть темнее
+   Рамки:  #5A9A5A  — насыщенный зелёный
+   Акцент/числа: #1A6A1A — тёмный зелёный (как Балди пишет маркером)
+══════════════════════════════════════════════════════ */
+
+/* az-card (input карточки) */
+:root.theme-baldi .az-card {
+  background: linear-gradient(180deg, #D0EDD0 0%, #C0E0C0 100%) !important;
+  border: 2px solid #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+
+/* az-result-card, sp-result-card, cmp-result-card */
+:root.theme-baldi .az-result-card,
+:root.theme-baldi .cmp-result-card {
+  background: linear-gradient(180deg, #D0EDD0 0%, #C0E0C0 100%) !important;
+  border: 2px solid #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+
+/* Внутренний stats-box внутри result карточки */
+:root.theme-baldi .az-res-stats-box {
+  background: linear-gradient(180deg, #B8DDB8 0%, #A8D0A8 100%) !important;
+  border-color: #5A9A5A !important;
+}
+
+/* az-roll-val — НЕ переопределяем, rc-1..rc-11 и rc-*s сами дают цвет от красного до голубого */
+:root.theme-baldi .az-roll-lbl { color: #2A2416 !important; }
+
+/* Text-stroke для названий и редкостей предметов в карточках (кроме mythic/ascended — у них градиент) */
+:root.theme-baldi .az-weapon-name,
+:root.theme-baldi .az-weapon-rarity:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 2px rgba(0,0,0,0.45) !important;
+  paint-order: stroke fill !important;
+}
+/* Названия предметов в результатах (az/sp/cmp) */
+:root.theme-baldi #az-res-name,
+:root.theme-baldi #sp-res-name,
+:root.theme-baldi #cmp-res-name {
+  -webkit-text-stroke: 2px rgba(0,0,0,0.45) !important;
+  paint-order: stroke fill !important;
+}
+/* Редкости в результатах (az/sp/cmp) — кроме mythic/ascended */
+:root.theme-baldi #az-res-rarity:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-baldi #sp-res-rarity:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-baldi #cmp-res-rarity:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 2px rgba(0,0,0,0.45) !important;
+  paint-order: stroke fill !important;
+}
+/* az-res-part-btn (Helmet/Chestplate/Leggings) и az-part-btn (input-карточка) — кроме mythic/ascended */
+:root.theme-baldi .az-res-part-btn:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-baldi .az-part-btn:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 1.5px rgba(0,0,0,0.40) !important;
+  paint-order: stroke fill !important;
+}
+/* Mythic и Ascended — тонкая обводка, не перекрывает градиент */
+:root.theme-baldi .az-weapon-rarity.rarity-mythic,
+:root.theme-baldi .az-weapon-rarity.rarity-ascended,
+:root.theme-baldi #az-res-rarity.rarity-mythic,
+:root.theme-baldi #az-res-rarity.rarity-ascended,
+:root.theme-baldi #sp-res-rarity.rarity-mythic,
+:root.theme-baldi #sp-res-rarity.rarity-ascended,
+:root.theme-baldi #cmp-res-rarity.rarity-mythic,
+:root.theme-baldi #cmp-res-rarity.rarity-ascended,
+:root.theme-baldi .az-res-part-btn.rarity-mythic,
+:root.theme-baldi .az-res-part-btn.rarity-ascended,
+:root.theme-baldi .az-part-btn.rarity-mythic,
+:root.theme-baldi .az-part-btn.rarity-ascended,
+/* Названия предметов — Mythic/Ascended тоже получают тень */
+:root.theme-baldi .az-weapon-name.rarity-mythic,
+:root.theme-baldi .az-weapon-name.rarity-ascended,
+:root.theme-baldi #az-res-name.rarity-mythic,
+:root.theme-baldi #az-res-name.rarity-ascended,
+:root.theme-baldi #sp-res-name.rarity-mythic,
+:root.theme-baldi #sp-res-name.rarity-ascended,
+:root.theme-baldi #cmp-res-name.rarity-mythic,
+:root.theme-baldi #cmp-res-name.rarity-ascended {
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.55)) drop-shadow(0 1px 1px rgba(0,0,0,0.40)) !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+/* az-third-panel, sp-third-panel, cmp-third-panel (десктоп) */
+:root.theme-baldi .az-third-panel,
+:root.theme-baldi #page-stuff .sp-third-panel,
+:root.theme-baldi .cmp-third-panel {
+  background: linear-gradient(180deg, #D0EDD0 0%, #C0E0C0 100%) !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+:root.theme-baldi .az-third-panel::before,
+:root.theme-baldi #page-stuff .sp-third-panel::before,
+:root.theme-baldi .cmp-third-panel::before { opacity: 0.05; }
+:root.theme-baldi .az-third-panel-tabs {
+  background: rgba(0,0,0,.05) !important;
+  border-bottom-color: #5A9A5A !important;
+}
+:root.theme-baldi .az-third-tab {
+  color: rgba(26,18,8,0.50) !important;
+}
+:root.theme-baldi .az-third-tab:hover,
+:root.theme-baldi .az-third-tab.active {
+  color: #1A6A1A !important;
+  background: rgba(26,106,26,0.12) !important;
+  border-bottom-color: #1A6A1A !important;
+}
+:root.theme-baldi .sp-third-half-title {
+  color: #2A2416 !important;
+  background: rgba(0,0,0,.05) !important;
+  border-bottom-color: #5A9A5A !important;
+}
+:root.theme-baldi .sp-third-divider-h {
+  background: linear-gradient(90deg, transparent, #5A9A5A, transparent) !important;
+}
+:root.theme-baldi .az-modal-ttl { color: #1A6A1A !important; }
+
+/* az-modal-box (Process / Tablet модалки) */
+:root.theme-baldi .az-modal-box {
+  background: linear-gradient(180deg, #D0EDD0 0%, #C0E0C0 100%) !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 3px 3px 0 #5A9A5A !important;
+}
+:root.theme-baldi .az-modal-head {
+  background: rgba(0,0,0,.06) !important;
+  border-bottom-color: #5A9A5A !important;
+}
+
+/* dt-result-panel (Tablet страница, десктоп и мобайл) */
+:root.theme-baldi .dt-result-panel {
+  background: #C8ECC8 !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+:root.theme-baldi .dt-result-panel-header {
+  background: #A8D0A8 !important;
+  border-bottom-color: #5A9A5A !important;
+  color: #2A2416 !important;
+}
+
+/* az-quote-panel и az-quote-mobile */
+:root.theme-baldi .az-quote-panel,
+:root.theme-baldi .az-quote-mobile {
+  background: linear-gradient(135deg, #D0EDD0 0%, #C0E0C0 100%) !important;
+  border-color: #5A9A5A !important;
+}
+
+/* Discord panels внутри страниц результатов */
+:root.theme-baldi .az-discord-panel,
+:root.theme-baldi .sp-discord-panel,
+:root.theme-baldi .cmp-discord-panel {
+  background: #C8ECC8 !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+
+/* CMP: формула сверху — тёмный текст вместо белого */
+:root.theme-baldi #cmp-disc-formula-box {
+  color: rgba(26,18,8,0.65) !important;
+}
+
+/* CMP: Discord input поля */
+:root.theme-baldi .cmp-discord-panel .az-discord-input,
+:root.theme-baldi #cmp-discord-weapon-input,
+:root.theme-baldi #cmp-discord-armor-input {
+  color: #1A1208 !important;
+  background: rgba(255,255,255,0.60) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi #cmp-discord-weapon-input::placeholder,
+:root.theme-baldi #cmp-discord-armor-input::placeholder { color: rgba(26,18,8,0.38) !important; opacity: 1 !important; }
+
+/* CMP: cmp-disc-inline-val (? > ?) — цвет совпадает с заголовком секции */
+:root.theme-baldi #cmp-disc-upg-a,
+:root.theme-baldi #cmp-disc-upg-b { color: var(--color-upg) !important; }
+:root.theme-baldi #cmp-disc-corr-a.corr-u,
+:root.theme-baldi #cmp-disc-corr-b.corr-u { color: var(--color-corr) !important; }
+:root.theme-baldi #cmp-disc-corr-a.corr-y,
+:root.theme-baldi #cmp-disc-corr-b.corr-y { color: var(--color-hp) !important; }
+:root.theme-baldi #cmp-disc-corr-a.corr-n,
+:root.theme-baldi #cmp-disc-corr-b.corr-n { color: var(--color-dmg) !important; }
+:root.theme-baldi .cmp-discord-panel .cmp-disc-inline-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-baldi .cmp-discord-panel .cmp-disc-inline-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-baldi #cmp-disc-ref-a,
+:root.theme-baldi #cmp-disc-ref-b,
+:root.theme-baldi .cmp-discord-panel .cmp-disc-ref-val { color: var(--color-reforge) !important; }
+
+/* CMP: cmp-disc-val-row разделители */
+:root.theme-baldi .cmp-discord-panel .cmp-disc-val-row { color: #5A5040 !important; }
+
+/* Discord preview внутри результатов (az/sp/cmp) — читаемые цвета на светлом зелёном */
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl { color: #5A5040 !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl.lbl-dmg,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl.lbl-dmg,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl.lbl-dmg  { color: var(--color-dmg) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl.lbl-hp,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl.lbl-hp,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl.lbl-hp   { color: var(--color-hp) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl.lbl-upg,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl.lbl-upg,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl.lbl-upg  { color: var(--color-upg) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl.lbl-delay,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl.lbl-delay,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl.lbl-delay { color: #5A4030 !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-lbl.lbl-corr,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-lbl.lbl-corr,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-lbl.lbl-corr  { color: var(--color-corr) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.dmg,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.dmg,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.dmg       { color: var(--color-dmg) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.delay,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.delay,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.delay     { color: #5A4030 !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.upg,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.upg,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.upg       { color: var(--color-upg) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.corr-y,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.corr-y,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.corr-y    { color: var(--color-hp) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.corr-n,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.corr-n,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.corr-n    { color: var(--color-dmg) !important; }
+
+:root.theme-baldi .az-discord-panel .az-discord-preview-val.corr-u,
+:root.theme-baldi .sp-discord-panel .az-discord-preview-val.corr-u,
+:root.theme-baldi .cmp-discord-panel .az-discord-preview-val.corr-u    { color: var(--color-corr) !important; }
+
+/* Discord input в результатах — тёмный текст на светлом фоне */
+:root.theme-baldi .az-discord-panel .az-discord-input,
+:root.theme-baldi .sp-discord-panel .az-discord-input,
+:root.theme-baldi .cmp-discord-panel .az-discord-input {
+  color: #1A1208 !important;
+  background: rgba(255,255,255,0.50) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi .az-discord-panel .az-discord-input::placeholder,
+:root.theme-baldi .sp-discord-panel .az-discord-input::placeholder,
+:root.theme-baldi .cmp-discord-panel .az-discord-input::placeholder { color: rgba(26,18,8,0.38) !important; }
+
+/* sp-disc-roll-val-el и cmp-disc-inline-val в discord-панелях результатов */
+:root.theme-baldi .az-discord-panel .sp-disc-roll-val-el,
+:root.theme-baldi .sp-discord-panel .sp-disc-roll-val-el { color: #2A2416 !important; }
+
+:root.theme-baldi .cmp-discord-panel .cmp-disc-inline-val { color: #2A2416 !important; }
+:root.theme-baldi .cmp-discord-panel .cmp-disc-inline-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-baldi .cmp-discord-panel .cmp-disc-inline-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-baldi .cmp-discord-panel .cmp-disc-ref-val { color: var(--color-reforge) !important; }
+
+/* az-discord-armor-lbl и divider в result discord */
+:root.theme-baldi .az-discord-panel .az-discord-armor-lbl,
+:root.theme-baldi .sp-discord-panel .az-discord-armor-lbl { color: #5A5040 !important; }
+:root.theme-baldi .az-discord-panel .az-discord-divider,
+:root.theme-baldi .sp-discord-panel .az-discord-divider,
+:root.theme-baldi .cmp-discord-panel .az-discord-divider { border-color: rgba(90,154,90,0.40) !important; }
+
+/* ══════════════════════════════════════════════════════
+   BALDI: Result-карточка — цвета через --color-* переменные (заданы в :root.theme-baldi)
+   Delay — единственный цвет без переменной, задаём напрямую
+══════════════════════════════════════════════════════ */
+
+/* Delay — читаемый тёмный (нет семантической переменной) */
+:root.theme-baldi .az-res-val.delay { color: #5A4030 !important; }
+
+/* Total HP строка (броня) */
+:root.theme-baldi .az-total-hp-row {
+  background: linear-gradient(90deg, rgba(160,210,160,0.60), rgba(140,200,140,0.60)) !important;
+  border-color: #5A9A5A !important;
+}
+:root.theme-baldi .az-total-hp-lbl { color: var(--color-hp) !important; }
+:root.theme-baldi .az-total-hp-val { color: var(--color-hp) !important; text-shadow: none !important; }
+
+/* Gold строки — на светлом фоне */
+:root.theme-baldi .az-gold-row {
+  background: linear-gradient(90deg, rgba(160,210,160,0.55), rgba(140,200,140,0.55)) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi .az-gold-lbl { color: #5A5040 !important; }
+:root.theme-baldi .az-gold-val.next  { color: #8A6A00 !important; }
+:root.theme-baldi .az-gold-val.spent { color: #5A5040 !important; }
+:root.theme-baldi .az-gold-val.total { color: #7A5A20 !important; }
+:root.theme-baldi .az-gold-sub { color: #5A5040 !important; }
+
+/* ── BALDI: Palette popup ── */
+:root.theme-baldi .palette-popup-inner {
+  background: #E8EBE6;
+  border: 2px solid #A09878;
+  box-shadow: 3px 3px 0 #A09878;
+}
+:root.theme-baldi .palette-item { border-color: rgba(160,152,120,0.70); }
+:root.theme-baldi .palette-item img { border-color: rgba(160,152,120,0.80); }
+:root.theme-baldi .palette-item:hover { background: rgba(46,184,30,0.10); box-shadow: none; }
+:root.theme-baldi .palette-future-icon {
+  border-color: rgba(160,152,120,0.60);
+  color: rgba(26,18,8,0.30);
+}
+:root.theme-baldi .palette-backdrop { background: rgba(200,196,168,0.55); }
+
+/* ── BALDI: Avatar ring ── */
+:root.theme-baldi .avatar-ring-inner {
+  border-color: #2EB81E;
+  box-shadow: none;
+}
+:root.theme-baldi .avatar-ring-outer {
+  border-color: rgba(46,184,30,0.25);
+}
+
+/* ── BALDI: Focus ── */
+:root.theme-baldi button:focus-visible { outline-color: #2EB81E; }
+
+/* ── BALDI: Discord input в az-card (не в консоли) ── */
+:root.theme-baldi .az-card .az-discord-input,
+:root.theme-baldi .az-card .az-discord-input.weapon-input,
+:root.theme-baldi .az-card .az-discord-input.armor-input {
+  color: #1A1208 !important;
+  background: rgba(255,255,255,0.60) !important;
+  border-color: #7ABB7A !important;
+  caret-color: #1A6A1A;
+}
+:root.theme-baldi .az-card .az-discord-input::placeholder { color: rgba(26,18,8,0.38) !important; opacity: 1 !important; }
+:root.theme-baldi .az-card .az-discord-input:focus { border-color: #1A6A1A !important; box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important; }
+:root.theme-baldi .az-card .az-discord-input.weapon-input:focus { border-color: #C02020 !important; box-shadow: 0 0 0 2px rgba(192,32,32,0.18) !important; }
+:root.theme-baldi .az-card .az-discord-input.armor-input:focus  { border-color: #1A6A1A !important; box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important; }
+
+/* Бокс Damage+Delay в az-card — светлый зеленоватый */
+:root.theme-baldi .az-card .az-discord-dmg-box {
+  background: linear-gradient(180deg, #B8DDB8 0%, #A8D0A8 100%) !important;
+  border-color: #5A9A5A !important;
+}
+
+/* Discord preview лейблы и значения в az-card */
+:root.theme-baldi .az-card .az-discord-preview-lbl { color: #5A5040 !important; }
+:root.theme-baldi .az-card .az-discord-preview-lbl.lbl-dmg   { color: #C02020 !important; }
+:root.theme-baldi .az-card .az-discord-preview-lbl.lbl-hp    { color: #1A6A1A !important; }
+:root.theme-baldi .az-card .az-discord-preview-lbl.lbl-upg   { color: #1A6A1A !important; }
+:root.theme-baldi .az-card .az-discord-preview-lbl.lbl-delay { color: #5A4030 !important; }
+:root.theme-baldi .az-card .az-discord-preview-lbl.lbl-corr  { color: #7A3A7A !important; }
+:root.theme-baldi .az-card .az-discord-preview-val { color: #2A2416 !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.dmg    { color: #C02020 !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.delay  { color: #5A4030 !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.upg    { color: #1A6A1A !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.corr-y { color: #1A6A1A !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.corr-n { color: #2EB81E !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.corr-u { color: #7A3A7A !important; }
+:root.theme-baldi .az-card .az-discord-divider { background: rgba(90,154,90,0.40) !important; }
+:root.theme-baldi .az-card .az-discord-armor-lbl { color: #5A5040 !important; }
+
+/* ── BALDI: Mobile sticky search ── */
+:root.theme-baldi #page-rolls .item-search-wrap,
+:root.theme-baldi #page-analyze .item-search-wrap,
+:root.theme-baldi #page-stuff .item-search-wrap,
+:root.theme-baldi #page-compare .item-search-wrap {
+  background: #E0F2D8 !important;
+  border-color: #7AAB6A !important;
+}
+:root.theme-baldi .item-search-input {
+  background: transparent !important;
+  color: #1A1208 !important;
+}
+:root.theme-baldi .item-search-input::placeholder {
+  color: rgba(26,18,8,0.32) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   BALDI: Input-карточки (az-card) — исправление тёмных элементов
+   Все поля, дропдауны, лейблы приводим к читаемому виду
+   на светлом зеленоватом фоне карточки
+══════════════════════════════════════════════════════ */
+
+/* Damage/Health/Stats блок */
+:root.theme-baldi .az-stats-box {
+  background: linear-gradient(180deg, #B8DDB8 0%, #A8D0A8 100%) !important;
+  border-color: #5A9A5A !important;
+}
+:root.theme-baldi .az-stat-lbl { color: #C02020 !important; }
+:root.theme-baldi .az-stat-lbl.health-mode { color: #1A6A1A !important; }
+:root.theme-baldi .az-stat-input {
+  background: rgba(255,255,255,0.55) !important;
+  border-color: #7ABB7A !important;
+  color: #1A1208 !important;
+}
+:root.theme-baldi .az-stat-input::placeholder { color: rgba(26,18,8,0.35) !important; }
+:root.theme-baldi .az-stat-input:focus {
+  border-color: #1A6A1A !important;
+  background: rgba(255,255,255,0.75) !important;
+  box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important;
+}
+:root.theme-baldi .az-divider {
+  background: linear-gradient(90deg, transparent, #7ABB7A, transparent) !important;
+}
+
+/* Upgrades лейбл и кнопка выбора */
+:root.theme-baldi .az-upg-lbl { color: #1A6A1A !important; }
+:root.theme-baldi .az-sel-btn {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: #7ABB7A !important;
+  color: #1A1208 !important;
+}
+:root.theme-baldi .az-sel-btn:hover {
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+}
+
+/* Upgrade dropdown */
+:root.theme-baldi .az-dropdown {
+  background: #D0EDD0 !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25) !important;
+}
+:root.theme-baldi .az-dropdown::-webkit-scrollbar-thumb { background: #7ABB7A !important; }
+:root.theme-baldi .az-opt {
+  color: #1A6A1A !important;
+  background: rgba(255,255,255,0.30) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi .az-opt:hover {
+  background: rgba(255,255,255,0.60) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .az-opt.sel {
+  color: #0A4A0A !important;
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+  box-shadow: 0 0 6px rgba(26,106,26,0.20) !important;
+}
+:root.theme-baldi .az-opt .az-opt-sub { color: rgba(26,18,8,0.45) !important; }
+
+/* Reforge лейбл и кнопка */
+:root.theme-baldi .az-ref-btn {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: rgba(26,106,26,0.40) !important;
+  color: #1A4A1A !important;
+}
+:root.theme-baldi .az-ref-btn:hover {
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .az-ref-dropdown {
+  background: #D0EDD0 !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25) !important;
+}
+:root.theme-baldi .az-ref-dropdown::-webkit-scrollbar-thumb { background: #7ABB7A !important; }
+:root.theme-baldi .az-ref-opt {
+  color: #1A4A1A !important;
+}
+:root.theme-baldi .az-ref-opt:hover { background: rgba(255,255,255,0.40) !important; }
+:root.theme-baldi .az-ref-opt.sel {
+  color: #0A4A0A !important;
+  background: rgba(255,255,255,0.50) !important;
+}
+:root.theme-baldi .az-ref-opt .az-ref-dmg { color: #1A6A1A !important; }
+
+/* Corrupted row */
+:root.theme-baldi .az-corr-lbl { color: #8A3030 !important; }
+:root.theme-baldi .az-corr-btn.yes { color: #1A6A1A !important; }
+:root.theme-baldi .az-corr-btn.no  { color: #2EB81E !important; }
+:root.theme-baldi .az-corr-sep     { color: rgba(26,18,8,0.40) !important; }
+
+/* Weapon name / rarity — НЕ переопределяем, пусть работают оригинальные .rarity-* цвета */
+
+/* Analyze Roll / Preview кнопка */
+:root:root.theme-baldi .az-analyze-btn {
+  background: linear-gradient(180deg, #5A9A5A 0%, #3A7A3A 100%);
+  box-shadow: 0 4px 16px rgba(26,106,26,0.30), 0 2px 0 #2A5A2A !important;
+  color: #F0EDE0 !important;
+}
+:root:root.theme-baldi .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, #6AAA6A 0%, #4A8A4A 100%);
+  box-shadow: 0 6px 24px rgba(26,106,26,0.45), 0 2px 0 #2A5A2A !important;
+}
+:root:root.theme-baldi .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, #B0C8A8 0%, #A0B898 100%);
+  box-shadow: none !important;
+}
+:root:root.theme-baldi .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, #7ABB7A 0%, #5A9A5A 100%) left no-repeat,
+    linear-gradient(180deg, #2A5A2A 0%, #1A3A1A 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 16px rgba(26,106,26,0.15), 0 2px 0 #1A3A1A !important;
+  color: #F0EDE0 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
+  animation: cdFillBaldi var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillBaldi {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+
+/* az-img-box — НЕ переопределяем фон и border, пусть работают border-mythic/border-ascended/etc. */
+
+/* ── BALDI: Roll слоты (cmp-slot, sp-roll-btn, dt-slot-btn) ── */
+:root.theme-baldi .cmp-slot {
+  background: rgba(255,255,255,0.35) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi .cmp-slot:hover:not(.cmp-locked):not(.cmp-disc-no-hover) {
+  background: rgba(255,255,255,0.55) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .cmp-slot.cmp-slot-open {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: #5A9A5A !important;
+}
+:root.theme-baldi .sp-roll-btn {
+  background: rgba(255,255,255,0.35) !important;
+  border-color: #7ABB7A !important;
+}
+:root.theme-baldi .sp-roll-btn:hover {
+  background: rgba(255,255,255,0.55) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .sp-roll-btn.active {
+  background: rgba(26,106,26,0.20) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .dt-slot-btn {
+  background: rgba(255,255,255,0.35) !important;
+  border-color: #7ABB7A !important;
+  color: #2A2416 !important;
+  box-shadow: 1px 1px 0 #5A9A5A !important;
+}
+:root.theme-baldi .dt-slot-btn:hover {
+  background: rgba(255,255,255,0.55) !important;
+  border-color: #1A6A1A !important;
+}
+:root.theme-baldi .dt-slot-btn.active {
+  background: rgba(26,106,26,0.20) !important;
+  border-color: #1A6A1A !important;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15) !important;
+}
+
+/* ── BALDI: Actual / Wished кнопки (cmp-view-btn) — светлый зелёный стиль ── */
+:root.theme-baldi .cmp-view-btn {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: #7ABB7A !important;
+  color: #2A2416 !important;
+  box-shadow: 1px 1px 0 #5A9A5A !important;
+}
+:root.theme-baldi .cmp-view-btn:hover {
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #5A9A5A !important;
+}
+:root.theme-baldi .cmp-view-btn.active {
+  background: rgba(26,106,26,0.18) !important;
+  border-color: #1A6A1A !important;
+  box-shadow: 1px 1px 0 #3A7A3A !important;
+}
+
+/* ── BALDI: Process / Tablet кнопки (az-panel-btn) — светлый зелёный стиль ── */
+:root.theme-baldi .az-panel-btn {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: #7ABB7A !important;
+  color: #2A2416 !important;
+  box-shadow: 1px 1px 0 #5A9A5A !important;
+}
+:root.theme-baldi .az-panel-btn:hover {
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+  box-shadow: 0 3px 0 #5A9A5A !important;
 }
 
 /* ── Page background ── */
@@ -637,8 +1751,9 @@
 }
 :root.theme-classic .bot-panel::before,
 :root.theme-classic .updates-panel::before { background: none; }
-:root.theme-classic .bot-panel *,
+:root.theme-classic .bot-panel *:not(.value-list-block):not(.value-list-block *),
 :root.theme-classic .updates-panel * { color: #8aa4b4; }
+/* value-list-block is transparent — inherits bot-panel bg naturally */
 :root.theme-classic .bot-name { color: #447194 !important; text-shadow: none !important; }
 :root.theme-classic .bot-tagline { color: rgba(138,164,180,0.60) !important; }
 :root.theme-classic .bot-desc { color: rgba(138,164,180,0.65) !important; }
@@ -945,8 +2060,8 @@
 
 /* ── Settings panel ── */
 :root.theme-classic .settings-panel {
-  background: #172232;
-  border-color: #253a4e;
+  background: transparent;
+  border-color: transparent;
   box-shadow: none;
 }
 :root.theme-classic .settings-title { color: #447194 !important; border-color: #253a4e; text-shadow: none !important; }
@@ -1906,6 +3021,10 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   border-color: #447194;
   box-shadow: 0 0 14px #447194, 0 0 5px #447194;
 }
+.palette-item[data-theme="baldi"]:hover img {
+  border-color: #2EB81E;
+  box-shadow: 0 0 14px #2EB81E, 0 0 5px #2EB81E;
+}
 .palette-item:hover {
   transform: scale(1.07);
   background: rgba(255,255,255,0.04);
@@ -1969,6 +3088,53 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
 /* Mobile center overlay backdrop */
 .palette-backdrop {
   display: none;
+}
+/* Desktop: фиксируем высоту ровно на 2 ряда, третий и далее — скролл */
+@media(min-width: 641px) {
+  .bot-panel {
+    flex-direction: column;
+    align-items: center;
+  }
+  .bot-avatar-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .bot-avatar-row .value-list-block {
+    justify-self: end;
+    width: 130px;
+    margin-top: 0;
+    align-self: center;
+    position: static;
+  }
+  .bot-main-col {
+    margin-left: 0;
+  }
+}
+  .palette-popup {
+    /* Обёртка — нужна для fade-hint снизу */
+    position: fixed;
+  }
+  .palette-popup-inner {
+    box-sizing: border-box;
+    /* Высота ровно 2 ряда:
+       item = img(36) + gap(4) + label(~11) + pad-top(6) + pad-bottom(5) = 62px per row
+       grid row-gap = 2px
+       2 rows = 62*2 + 2 = 126px
+       inner padding top+bottom = 10+10 = 20px
+       total = 146px */
+    max-height: 146px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .palette-popup-inner::-webkit-scrollbar { width: 4px; }
+  .palette-popup-inner::-webkit-scrollbar-thumb {
+    background: var(--border-gold);
+    border-radius: 2px;
+  }
 }
 @media(max-width: 640px) {
   .palette-backdrop {
@@ -2129,6 +3295,89 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .credit-card-name.cyan{color:var(--cyan-rune);}
 .credit-card-name.green{color:var(--green-stat);}
 .credit-card-text{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;}
+
+/* ── VALUE LIST BLOCK ── */
+.bot-main-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+.value-list-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 12px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  width: 130px;
+  flex-shrink: 0;
+}
+.value-list-label {
+  font-size: 11px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.45;
+  letter-spacing: 0.5px;
+}
+.value-list-btn {
+  display: inline-block;
+  padding: 7px 10px;
+  background: var(--vl-accent);
+  border: 1px solid var(--vl-accent);
+  border-radius: 8px;
+  color: rgba(0,0,0,0.75);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  transition: transform .18s, box-shadow .18s, background .18s;
+  word-break: break-word;
+}
+.value-list-btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--vl-accent) 90%, transparent),
+              0 0 18px color-mix(in srgb, var(--vl-accent) 40%, transparent);
+}
+.value-list-author {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* accent color per theme */
+:root              { --vl-accent: var(--gold-bright); }
+:root.theme-baldi  { --vl-accent: #2EB81E; }
+:root.theme-classic{ --vl-accent: #447194; }
+:root.theme-easter { --vl-accent: #E0607E; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  .bot-avatar-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .value-list-block {
+    width: 100%;
+    margin-top: 14px;
+  }
+}
+
+
 /* stats-col — вертикальный столбик-разделитель между панелями */
 .stats-col {
   display: flex;
@@ -2734,9 +3983,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .hint-row{display:flex;align-items:center;gap:10px;background:color-mix(in srgb, var(--gold) 5%, transparent);border:1px solid color-mix(in srgb, var(--gold) 10%, transparent);border-radius:6px;padding:8px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;}
 .hint-page{color:var(--gold);font-weight:600;min-width:72px;}
 .hint-desc{color:var(--text-dim);}
-.console-body{flex:1;overflow-y:auto;padding:0;display:none;}
-.console-body.visible{display:block;}
+.console-body{flex:1;overflow-y:auto;padding:0;display:none;flex-direction:column;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border-gold) transparent;}
+.console-body.visible{display:flex;}
 .console-body::-webkit-scrollbar{width:3px;}
+.console-body::-webkit-scrollbar-track{background:transparent;}
 .console-body::-webkit-scrollbar-thumb{background:var(--border-gold);border-radius:2px;}
 .history-header{padding:12px 16px 8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);border-bottom:1px solid rgba(42,37,24,.5);}
 
@@ -2856,9 +4106,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     max-height:270px;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
-    display:block;
+    display:none;
+    flex-direction:column;
+    min-height:0;
   }
-  .console-body.visible{display:block;}
+  .console-body.visible{display:flex;}
   .console-tab-pane{overflow:hidden;}
 }
 @media(max-width:480px){
@@ -3058,6 +4310,54 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   min-height:16px;color:var(--text-dim);
 }
 
+/* ── RANDOMIZER BUTTON ── */
+.az-name-rarity-wrap {
+  position:relative;
+  min-height:42px;
+  margin-bottom:10px;
+}
+.az-name-rarity-wrap .az-weapon-name {
+  /* Симметричные отступы — название остаётся строго по центру,
+     правый отступ резервирует место под кнопку, левый зеркалит его */
+  padding-left:44px;
+  padding-right:44px;
+  margin-bottom:3px;
+}
+.az-name-rarity-wrap .az-weapon-rarity {
+  margin-bottom:0;
+}
+.az-rand-btn {
+  position:absolute;
+  right:4px;
+  top:50%;
+  transform:translateY(-44%);   /* чуть выше центра — между именем и редкостью */
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(180deg,#1ab8e0 0%,#0e90b8 100%);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(26,184,224,.45),0 1px 0 #075870;
+  transition:background .15s, box-shadow .15s, transform .15s;
+  /* z-index чтобы кнопка точно была поверх */
+  z-index:1;
+}
+.az-rand-btn:hover {
+  background:linear-gradient(180deg,#22ccf5 0%,#18a8d8 100%);
+  box-shadow:0 5px 16px rgba(26,184,224,.65),0 1px 0 #075870;
+  transform:translateY(calc(-44% - 1px));
+}
+.az-rand-btn:active { transform:translateY(calc(-44% + 1px)); }
+.az-rand-btn svg { display:block; }
+
+/* Easter theme override for randomizer */
+:root.theme-easter .az-rand-btn {
+  background: linear-gradient(180deg, #9B5E85 0%, #7A3A64 100%) !important;
+  box-shadow: 0 2px 10px rgba(155,94,133,.5), 0 1px 0 #5A1A44 !important;
+}
+:root.theme-easter .az-rand-btn:hover {
+  background: linear-gradient(180deg, #B06E98 0%, #904878 100%) !important;
+  box-shadow: 0 5px 16px rgba(155,94,133,.65), 0 1px 0 #5A1A44 !important;
+}
+
 .az-stats-box{
   background:linear-gradient(180deg,#0f1a27 0%,#0a1520 100%);
   border-radius:8px;padding:10px 12px;margin-bottom:10px;
@@ -3069,7 +4369,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;
   color:#ff6b35;min-width:80px;
 }
-.az-stat-lbl.health-mode{color:#7fff00;}
+.az-stat-lbl.health-mode{color:var(--color-hp);}
 .az-stat-input{
   flex:1;background:rgba(255,255,255,.06);border:1px solid #2a4060;
   border-radius:5px;padding:6px 10px;
@@ -3087,13 +4387,13 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .az-upgrades-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative;}
 .az-upg-lbl{
   font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;letter-spacing:.5px;
-  color:#7fff00;flex-shrink:0;
+  color:var(--color-upg);flex-shrink:0;
 }
 .az-selector{flex:1;position:relative;}
 .az-sel-btn{
   width:100%;background:rgba(127,255,0,.07);border:1.5px solid rgba(127,255,0,.35);
   border-radius:7px;padding:5px 10px;cursor:pointer;
-  font-family:'Share Tech Mono',monospace;font-size:12px;color:#7fff00;
+  font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--color-upg);
   display:flex;align-items:center;justify-content:space-between;gap:4px;
   transition:all .2s;text-align:left;
 }
@@ -3124,18 +4424,18 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   text-align:center;gap:1px;min-width:0;
 }
 .az-opt:hover{background:rgba(127,255,0,.13);border-color:#3a6030;}
-.az-opt.sel{color:#7fff00;background:rgba(127,255,0,.12);border-color:#5fcc00;box-shadow:0 0 6px rgba(127,255,0,.2);}
+.az-opt.sel{color:var(--color-upg);background:rgba(127,255,0,.12);border-color:#5fcc00;box-shadow:0 0 6px rgba(127,255,0,.2);}
 .az-opt .az-opt-sub{color:#3a6030;font-size:9px;line-height:1.2;}
 
 .az-reforge-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative;}
 .az-ref-btn{
   width:100%;background:rgba(100,130,200,.07);border:1.5px solid rgba(100,130,200,.3);
   border-radius:7px;padding:5px 10px;cursor:pointer;
-  font-family:'Share Tech Mono',monospace;font-size:11px;color:#8aacee;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--color-reforge);
   display:flex;align-items:center;justify-content:space-between;
   transition:all .2s;
 }
-.az-ref-btn:hover{background:rgba(100,130,200,.14);border-color:#8aacee;}
+.az-ref-btn:hover{background:rgba(100,130,200,.14);border-color:var(--color-reforge);}
 .az-ref-dropdown{
   position:absolute;top:calc(100% + 3px);left:0;right:0;
   background:#0a1520;border:1px solid #1a2d50;border-radius:7px;
@@ -3147,7 +4447,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .az-ref-dropdown::-webkit-scrollbar-thumb{background:#1a2d50;border-radius:2px;}
 .az-ref-opt{
   padding:6px 10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
-  color:#8aacee;transition:background .1s;display:flex;justify-content:space-between;align-items:center;
+  color:var(--color-reforge);transition:background .1s;display:flex;justify-content:space-between;align-items:center;
   background:none;border:none;width:100%;text-align:left;
 }
 .az-ref-opt:hover{background:rgba(100,130,200,.09);}
@@ -3160,7 +4460,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-size: 16px;
   font-weight: 700;
   letter-spacing: .5px;
-  color: #c875ff !important;
+  color: var(--color-corr);
 }
 
 .az-corr-toggle{display:flex;gap:6px;align-items:center;}
@@ -3169,8 +4469,8 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-family:'Cinzel',serif;font-weight:700;letter-spacing:.5px;
   transition:all .18s;line-height:1;font-size:22px;text-shadow:0 0 8px currentColor;
 }
-.az-corr-btn.yes{color:#22cc44;}
-.az-corr-btn.no{color:#cc3333;}
+.az-corr-btn.yes{color:var(--color-hp);}
+.az-corr-btn.no{color:var(--color-dmg);}
 .az-corr-btn.dim{font-size:13px;opacity:.4;text-shadow:none;}
 .az-corr-sep{
   font-family:'Cinzel',serif;font-weight:700;font-size:18px;
@@ -3264,25 +4564,25 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-weight: 700;
   letter-spacing: .3px;
 }
-.az-discord-preview-lbl.lbl-dmg   { color: #ff4444; }
+.az-discord-preview-lbl.lbl-dmg   { color: var(--color-dmg); }
 .az-discord-preview-lbl.lbl-delay { color: #999; font-family: 'Share Tech Mono', monospace; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-.az-discord-preview-lbl.lbl-upg   { color: #7fff00; }
-.az-discord-preview-lbl.lbl-corr  { color: #c875ff; }
+.az-discord-preview-lbl.lbl-upg   { color: var(--color-upg); }
+.az-discord-preview-lbl.lbl-corr  { color: var(--color-corr); }
 
 .az-discord-preview-val {
   font-family: 'Share Tech Mono', monospace;
   font-size: 13px;
   font-weight: 600;
 }
-.az-discord-preview-val.dmg   { color: #ff4444; }
+.az-discord-preview-val.dmg   { color: var(--color-dmg); }
 .az-discord-preview-val.delay { color: #ccc; }
-.az-discord-preview-val.upg   { color: #7fff00; }
-.az-discord-preview-val.corr-y { color: #22cc44; }
-.az-discord-preview-val.corr-n { color: #cc3333; }
-.az-discord-preview-val.corr-u { color: #c875ff; }
+.az-discord-preview-val.upg   { color: var(--color-upg); }
+.az-discord-preview-val.corr-y { color: var(--color-hp); }
+.az-discord-preview-val.corr-n { color: var(--color-dmg); }
+.az-discord-preview-val.corr-u { color: var(--color-corr); }
 
 /* Health label — зелёный как в результатах */
-.az-discord-preview-lbl.lbl-hp    { color: #7fff00; }
+.az-discord-preview-lbl.lbl-hp    { color: var(--color-hp); }
 
 /* Divider line — короткая как в результатах */
 .az-discord-divider {
@@ -3321,7 +4621,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8aacee;
+  color: var(--color-reforge);
   margin-bottom: 8px;
   text-align: center;
   min-height: 18px;
@@ -3462,6 +4762,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 @keyframes az-roll-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
 
+/* SELECT ROLL placeholder — no glow, no pop animation */
+#cmp-roll-display-val{text-shadow:none;animation:none;}
+
 .az-res-stats-box {
   background: linear-gradient(180deg,#0f1a27 0%,#0a1520 100%);
   border-radius: 8px;
@@ -3482,24 +4785,22 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 
 .az-res-val{font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:600;}
-.az-res-val.dmg{color:#ff4444;}
+.az-res-val.dmg{color:var(--color-dmg);}
 .az-res-val.delay{color:#ccc;}
 
 .az-res-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:0 4px;}
 .az-res-upg,.az-res-corr{display:flex;align-items:center;gap:5px;}
 .az-res-upg-lbl,.az-res-corr-lbl{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;}
-.az-res-upg-lbl{color:#7fff00;}
-.az-res-corr-lbl{
-  color: #c875ff !important;
-}
-.az-res-upg-val{font-family:'Share Tech Mono',monospace;font-size:16px;color:#7fff00;}
+.az-res-upg-lbl{color:var(--color-upg);}
+.az-res-corr-lbl{color:var(--color-corr);}
+.az-res-upg-val{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--color-upg);}
 .az-res-corr-val{font-family:'Share Tech Mono',monospace;font-size:16px;}
-.az-res-corr-val.yes{color:#22cc44;}
-.az-res-corr-val.no{color:#cc3333;}
+.az-res-corr-val.yes{color:var(--color-hp);}
+.az-res-corr-val.no{color:var(--color-dmg);}
 
 .az-res-reforge{
   font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
-  color:#8aacee;margin-bottom:12px;text-align:center;min-height:18px;
+  color:var(--color-reforge);margin-bottom:12px;text-align:center;min-height:18px;
 }
 
 /* Armor result part switcher */
@@ -4789,7 +6090,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   padding:1px 5px;border-radius:4px;margin-left:4px;
 }
 .cmp-diff-inline.pos{color:#00c878;}
-.cmp-diff-inline.neg{color:#ff4444;}
+.cmp-diff-inline.neg{color:var(--color-dmg);}
 .cmp-diff-inline.zero{color:var(--text-dim);}
 .cmp-ref-diff-row{text-align:center;margin-top:-4px;margin-bottom:4px;}
 .cmp-third-panel{
@@ -5331,10 +6632,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   min-width: 24px;
   text-align: center;
 }
-.cmp-disc-inline-val.corr-y { color: #c875ff; }
-.cmp-disc-inline-val.corr-n { color: #7fff00; }
-.cmp-disc-inline-val.corr-u { color: #c875ff; }
-.cmp-disc-ref-val { font-size: 12px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #8aacee; }
+.cmp-disc-inline-val.corr-y { color: var(--color-hp); }
+.cmp-disc-inline-val.corr-n { color: var(--color-dmg); }
+.cmp-disc-inline-val.corr-u { color: var(--color-corr); }
+.cmp-disc-ref-val { font-size: 12px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-reforge); }
 
 /* Theme-aware colors for Process steps */
 .az-step-rhs.c-purple { color: var(--gold-bright) !important; }
@@ -5403,8 +6704,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   position: fixed;
   inset: 0;
   z-index: 599;
-  background: rgba(0,0,0,.6);
+  background: rgba(0,0,0,0.38);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 /* Content card */
@@ -5431,11 +6733,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     display: none;
     align-items: center;
     justify-content: center;
+    background: transparent;
   }
   .settings-panel.open {
     display: flex;
   }
-  .settings-backdrop { display: block; }
   .settings-content {
     min-width: 250px;
     max-width: 300px;
@@ -5574,13 +6876,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     justify-content: center;
     z-index: 600;
     pointer-events: none;
+    background: transparent;
   }
   .settings-panel.open {
     display: flex;
     pointer-events: all;
-  }
-  .settings-backdrop {
-    display: block;
   }
   .settings-content {
     position: relative;
@@ -5649,17 +6949,7 @@ body.scale-active .console-panel {
 }
 /* Лейбл Damage/Health — цвет управляется JS, не перебиваем */
 
-/* Upgrades / Corrupted строка */
-:root.theme-easter .az-res-upg-lbl  { color: #4E9466 !important; }
-:root.theme-easter .az-res-upg-val  { color: #4E9466 !important; }
-:root.theme-easter .az-res-corr-lbl { color: #9B5E85 !important; }
-:root.theme-easter .az-res-corr-val.yes { color: #4E9466 !important; }
-:root.theme-easter .az-res-corr-val.no  { color: #C84E78 !important; }
-
-/* Reforge строка */
-:root.theme-easter .az-res-reforge { color: #2E8AA5 !important; }
-
-/* Part separator (Helmet / Chest / Legs) */
+/* Upgrades / Corrupted строка — через CSS-переменные */
 :root.theme-easter .az-res-part-sep { color: #C4A898 !important; }
 
 /* Total HP */
@@ -5667,8 +6957,8 @@ body.scale-active .console-panel {
   background: linear-gradient(90deg, rgba(255,255,255,.4), rgba(255,240,232,.4)) !important;
   border-color: rgba(78,148,102,.3) !important;
 }
-:root.theme-easter .az-total-hp-lbl { color: #4E9466 !important; }
-:root.theme-easter .az-total-hp-val { color: #4E9466 !important; text-shadow: 0 0 10px rgba(78,148,102,.3) !important; }
+:root.theme-easter .az-total-hp-lbl { color: var(--color-hp) !important; }
+:root.theme-easter .az-total-hp-val { color: var(--color-hp) !important; text-shadow: 0 0 10px rgba(78,148,102,.3) !important; }
 
 /* Gold rows */
 :root.theme-easter .az-gold-row {
@@ -5730,10 +7020,6 @@ body.scale-active .console-panel {
 :root.theme-easter .cmp-slot-sep  { color: rgba(200,78,120,.35) !important; }
 :root.theme-easter .cmp-cat-sep   { color: rgba(200,78,120,.35) !important; }
 
-/* ── Compare: заголовки категорий Upgrades / Reforge ── */
-:root.theme-easter .cmp-cat-title[style*="7fff00"] { color: #4E9466 !important; }
-:root.theme-easter .cmp-cat-title[style*="8aacee"] { color: #2E8AA5 !important; }
-
 /* ── Compare: Corrupted slash ── */
 :root.theme-easter .cmp-corr-slash { color: rgba(200,78,120,.25) !important; }
 
@@ -5744,11 +7030,11 @@ body.scale-active .console-panel {
 }
 :root.theme-easter .cmp-disc-inline-val { color: #3D2A18 !important; }
 :root.theme-easter #cmp-disc-upg-a,
-:root.theme-easter #cmp-disc-upg-b     { color: #4E9466 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-y { color: #4E9466 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-n { color: #C84E78 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-u { color: #9B5E85 !important; }
-:root.theme-easter .cmp-disc-ref-val { color: #2E8AA5 !important; }
+:root.theme-easter #cmp-disc-upg-b     { color: var(--color-upg) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-u { color: var(--color-corr) !important; }
+:root.theme-easter .cmp-disc-ref-val { color: var(--color-reforge) !important; }
 
 /* ── Compare: view кнопки ── */
 :root.theme-easter .cmp-view-btn {
@@ -5847,7 +7133,7 @@ body.scale-active .console-panel {
 }
 
 /* Лейбл Upgrades */
-:root.theme-easter .az-upg-lbl { color: #4E9466 !important; }
+:root.theme-easter .az-upg-lbl { color: var(--color-upg) !important; }
 
 /* Кнопка-селектор Upgrades */
 :root.theme-easter .az-sel-btn {
@@ -5913,11 +7199,11 @@ body.scale-active .console-panel {
 :root.theme-easter .az-ref-opt .az-ref-dmg { color: #90B8A0 !important; }
 
 /* Лейбл Corrupted */
-:root.theme-easter .az-corr-lbl { color: #C84E78 !important; }
+:root.theme-easter .az-corr-lbl { color: var(--color-corr) !important; }
 
 /* Кнопки Yes / No */
-:root.theme-easter .az-corr-btn.yes { color: #4E9466 !important; }
-:root.theme-easter .az-corr-btn.no  { color: #C84E78 !important; }
+:root.theme-easter .az-corr-btn.yes { color: var(--color-hp) !important; }
+:root.theme-easter .az-corr-btn.no  { color: var(--color-dmg) !important; }
 :root.theme-easter .az-corr-sep     { color: #C4A898 !important; }
 
 /* Кнопка ANALYZE ROLL */
@@ -5962,18 +7248,18 @@ body.scale-active .console-panel {
   background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,240,232,.45) 100%) !important;
   border-color: #D4B8A4 !important;
 }
-:root.theme-easter .az-discord-preview-lbl.lbl-dmg  { color: #C84E78 !important; }
-:root.theme-easter .az-discord-preview-lbl.lbl-upg  { color: #4E9466 !important; }
-:root.theme-easter .az-discord-preview-lbl.lbl-corr { color: #9B5E85 !important; }
-:root.theme-easter .az-discord-preview-lbl.lbl-hp   { color: #4E9466 !important; }
-:root.theme-easter .az-discord-preview-val.dmg    { color: #C84E78 !important; }
-:root.theme-easter .az-discord-preview-val.upg    { color: #4E9466 !important; }
-:root.theme-easter .az-discord-preview-val.corr-y { color: #4E9466 !important; }
-:root.theme-easter .az-discord-preview-val.corr-n { color: #C84E78 !important; }
-:root.theme-easter .az-discord-preview-val.corr-u { color: #9B5E85 !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-dmg  { color: var(--color-dmg) !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-upg  { color: var(--color-upg) !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-corr { color: var(--color-corr) !important; }
+:root.theme-easter .az-discord-preview-lbl.lbl-hp   { color: var(--color-hp) !important; }
+:root.theme-easter .az-discord-preview-val.dmg    { color: var(--color-dmg) !important; }
+:root.theme-easter .az-discord-preview-val.upg    { color: var(--color-upg) !important; }
+:root.theme-easter .az-discord-preview-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-easter .az-discord-preview-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-easter .az-discord-preview-val.corr-u { color: var(--color-corr) !important; }
 
 /* Reforge line (discord mode) */
-:root.theme-easter .az-disc-reforge-line { color: #7A5A42 !important; }
+:root.theme-easter .az-disc-reforge-line { color: var(--color-reforge) !important; }
 
 /* Кнопки PROCESS / TABLET */
 :root.theme-easter .az-panel-btn {
@@ -5995,9 +7281,8 @@ body.scale-active .console-panel {
    ИСПРАВЛЕНИЯ
    ══════════════════════════════════════════════════════════════ */
 
-/* 1. Reforge в панели ввода — такой же голубой как в результатах */
-:root.theme-easter .az-disc-reforge-line { color: #2E8AA5 !important; }
-:root.theme-easter .az-res-reforge { color: #2E8AA5 !important; }
+/* 1. Reforge в панели ввода — через CSS-переменную */
+:root.theme-easter .az-disc-reforge-line { color: var(--color-reforge) !important; }
 
 /* 2. sp-disc-roll-header — убираем фон, оставляем только layout */
 :root.theme-easter .sp-disc-roll-header {
@@ -6008,14 +7293,14 @@ body.scale-active .console-panel {
 /* 3. CMP discord: формула нечитаема (inline color white) */
 :root.theme-easter #cmp-disc-formula-box { color: rgba(100,60,40,0.55) !important; }
 
-/* CMP discord: значения Upgrades/Corrupted/Reforge — были чёрными из-за наследования */
+/* CMP discord: значения Upgrades/Corrupted/Reforge — через CSS-переменные */
 :root.theme-easter .cmp-disc-inline-val { color: #3D2A18 !important; }
 :root.theme-easter #cmp-disc-upg-a,
-:root.theme-easter #cmp-disc-upg-b     { color: #4E9466 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-y { color: #4E9466 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-n { color: #C84E78 !important; }
-:root.theme-easter .cmp-disc-inline-val.corr-u { color: #9B5E85 !important; }
-:root.theme-easter .cmp-disc-ref-val           { color: #2E8AA5 !important; }
+:root.theme-easter #cmp-disc-upg-b     { color: var(--color-upg) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-easter .cmp-disc-inline-val.corr-u { color: var(--color-corr) !important; }
+:root.theme-easter .cmp-disc-ref-val           { color: var(--color-reforge) !important; }
 
 /* 4. Cooldown-анимация Easter.
       !important на background блокирует @keyframes от анимации background-size,
@@ -6044,19 +7329,27 @@ body.scale-active .console-panel {
 :root.theme-easter .az-discord-preview-lbl.lbl-delay { color: #A08060 !important; }
 :root.theme-easter .az-discord-preview-val.delay { color: #7A5A42 !important; }
 
-/* Damage/Health лейбл — цвет управляется JS (#7fff00 для брони, #ff4444 для оружия) */
-
-/* CMP заголовки website mode (через [style*]) */
-:root.theme-easter .cmp-cat-title[style*="7fff00"],
-:root.theme-easter .cmp-cat-title[style*="7FFF00"] { color: #4E9466 !important; }
-:root.theme-easter .cmp-cat-title[style*="8aacee"],
-:root.theme-easter .cmp-cat-title[style*="8AACEE"] { color: #2E8AA5 !important; }
-:root.theme-easter .cmp-cat-title[style*="c875ff"],
-:root.theme-easter .cmp-cat-title[style*="C875FF"] { color: #9B5E85 !important; }
+/* Damage/Health лейбл — цвет управляется через CSS-переменные --color-dmg / --color-hp */
 
 /* ROLL: в результатах (inline span без класса) */
 :root.theme-easter #sp-res-roll-row span:first-child  { color: #A08060 !important; }
 :root.theme-easter #cmp-res-roll-row span:first-child { color: #A08060 !important; }
+
+/* ══ BALDI: MOBILE FIXES ══ */
+@media(max-width:960px) {
+  :root.theme-baldi .credits-block {
+    background: #D6EDCF !important;
+    border-color: #A09878 !important;
+    box-shadow: none !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+  }
+  :root.theme-baldi .credit-card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
 
 /* ══ CLASSIC: MOBILE FIXES ══ */
 @media(max-width:960px) {
@@ -6076,6 +7369,7 @@ body.scale-active .console-panel {
 </head>
 <body>
 <div class="page-bg"></div>
+<div class="settings-backdrop" id="settings-backdrop" onclick="closeSettings()"></div>
 
 <script>
 /* ── Zoom Compensator ──
@@ -6152,7 +7446,6 @@ body.scale-active .console-panel {
 <div id="scale-wrap">
 <!-- ── SETTINGS PANEL ── -->
 <div class="settings-panel" id="settings-panel">
-  <div class="settings-backdrop" id="settings-backdrop" onclick="closeSettings()"></div>
   <div class="settings-content" id="settings-content">
     <div class="settings-header">
       <div style="display:flex;align-items:center;gap:0;">
@@ -6260,13 +7553,23 @@ body.scale-active .console-panel {
     <!-- BOT + STATS + UPDATES ROW -->
     <div class="bot-updates-row">
       <div class="bot-panel">
-        <div class="avatar-trio" style="position:relative; display:inline-block;">
+        <div class="bot-main-col">
+        <div class="bot-avatar-row">
+          <div class="value-list-block">
+            <div class="value-list-label" data-i18n="vl_label">View values of your stuff here:</div>
+            <a class="value-list-btn" href="https://sites.google.com/view/ed-community-value-list/home?authuser=0" target="_blank" rel="noopener">
+              ED COMMUNITY VALUE LIST
+            </a>
+            <div class="value-list-author" data-i18n="vl_author">by SUSUheyb</div>
+          </div>
+          <div class="avatar-trio" style="position:relative; display:inline-block;">
           <div class="bot-avatar-wrap palette-trigger" id="palette-trigger" onclick="togglePalettePopup(event)" title="">
             <div class="avatar-ring-outer"></div>
             <img class="bot-avatar-img" id="main-avatar" src="images/Home Page/avatar2.png" alt="Calculate Roll Bot">
             <div class="avatar-ring-inner"></div>
           </div>
         </div>
+        </div><!-- /bot-avatar-row -->
         <!-- PALETTE POPUP -->
         <div class="palette-popup" id="palette-popup" style="display:none;">
           <div class="palette-popup-inner">
@@ -6286,6 +7589,10 @@ body.scale-active .console-panel {
               <button class="palette-item" data-theme="classic" data-glow="#447194" onclick="selectPalette('classic')" aria-label="Classic theme">
                 <img src="images/Home Page/avatar4.png" alt="Classic">
                 <span class="palette-label">Classic</span>
+              </button>
+              <button class="palette-item" data-theme="baldi" data-glow="#2EB81E" onclick="selectPalette('baldi')" aria-label="Baldi theme">
+                <img src="images/Home Page/avatar5.png" alt="Baldi">
+                <span class="palette-label">Baldi</span>
               </button>
               <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
                 <span class="palette-future-icon">?</span>
@@ -6324,9 +7631,11 @@ body.scale-active .console-panel {
             </div>
           </div>
         </div>
+        <!-- VALUE LIST LINK -->
+        </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.6</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.0.7</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -6342,7 +7651,7 @@ body.scale-active .console-panel {
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.6</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.7</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -6611,8 +7920,16 @@ body.scale-active .console-panel {
             <img id="az-weapon-img" src="" alt="">
           </div>
 
-          <div class="az-weapon-name" id="az-weapon-name">—</div>
-          <div class="az-weapon-rarity" id="az-weapon-rarity">—</div>
+          <div class="az-name-rarity-wrap">
+            <div class="az-weapon-name" id="az-weapon-name">—</div>
+            <div class="az-weapon-rarity" id="az-weapon-rarity">—</div>
+            <button class="az-rand-btn" id="az-rand-btn" onclick="azRandomize()" title="Randomize">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+              </svg>
+            </button>
+          </div>
 
           <!-- Armor part toggle (shown only for armor) -->
           <div class="az-armor-part-row" id="az-armor-part-row">
@@ -6855,7 +8172,7 @@ body.scale-active .console-panel {
               <span id="az-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">—</span>
             </div>
             <div class="az-res-row">
-              <span id="az-res-dmg-lbl" style="font-size:14px;font-weight:600;color:#ff4444;">Damage:</span>
+              <span id="az-res-dmg-lbl" style="font-size:14px;font-weight:600;">Damage:</span>
               <span class="az-res-val dmg" id="az-res-dmg">—</span>
             </div>
             <div class="az-res-row">
@@ -7118,8 +8435,16 @@ body.scale-active .console-panel {
               <img id="sp-weapon-img" src="" alt="">
             </div>
 
-            <div class="az-weapon-name" id="sp-weapon-name">—</div>
-            <div class="az-weapon-rarity" id="sp-weapon-rarity">—</div>
+            <div class="az-name-rarity-wrap">
+              <div class="az-weapon-name" id="sp-weapon-name">—</div>
+              <div class="az-weapon-rarity" id="sp-weapon-rarity">—</div>
+              <button class="az-rand-btn" id="sp-rand-btn" onclick="spRandomize()" title="Randomize">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                  <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                </svg>
+              </button>
+            </div>
 
             <!-- Armor part toggle (shown only for armor) -->
             <div class="az-armor-part-row" id="sp-armor-part-row">
@@ -7246,7 +8571,7 @@ body.scale-active .console-panel {
 
             <button class="az-analyze-btn" id="sp-analyze-btn" onclick="spDoAnalyze()">
               <span class="az-btn-chevrons">»</span>
-              <span>CHECK SPECIFICS</span>
+              <span data-i18n="sp_check_btn">CHECK SPECIFICS</span>
             </button>
           </div>
 
@@ -7329,7 +8654,7 @@ body.scale-active .console-panel {
               <span id="sp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">—</span>
             </div>
             <div class="az-res-row">
-              <span id="sp-res-dmg-lbl" style="font-size:14px;font-weight:600;color:#ff4444;">Damage:</span>
+              <span id="sp-res-dmg-lbl" style="font-size:14px;font-weight:600;">Damage:</span>
               <span class="az-res-val dmg" id="sp-res-dmg">—</span>
             </div>
             <div class="az-res-row" id="sp-res-delay-row">
@@ -7580,8 +8905,16 @@ body.scale-active .console-panel {
               </svg>
               <img id="cmp-item-img" src="" alt="" style="display:none;">
             </div>
-            <div class="az-weapon-name" id="cmp-item-name" style="font-family:'Cinzel',serif;">—</div>
-            <div class="az-weapon-rarity" id="cmp-item-rarity">—</div>
+            <div class="az-name-rarity-wrap">
+              <div class="az-weapon-name" id="cmp-item-name" style="font-family:'Cinzel',serif;">—</div>
+              <div class="az-weapon-rarity" id="cmp-item-rarity">—</div>
+              <button class="az-rand-btn" id="cmp-rand-btn" onclick="cmpRandomize()" title="Randomize">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                  <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                </svg>
+              </button>
+            </div>
 
             <!-- Armor part toggle — shared between Website and Discord modes -->
             <div class="az-armor-part-row" id="cmp-armor-part-row">
@@ -7639,7 +8972,7 @@ body.scale-active .console-panel {
             <div class="az-divider"></div>
 
             <!-- UPGRADES — centred heading, no colon -->
-            <div class="cmp-cat-title" style="color:#7fff00;">
+            <div class="cmp-cat-title" style="color:var(--color-upg);">
               <span data-i18n="mod_upgrade">Upgrades</span>
             </div>
             <div class="cmp-two-inputs" style="margin-bottom:8px;">
@@ -7663,7 +8996,7 @@ body.scale-active .console-panel {
             <!-- REFORGES (weapon only) — centred heading, no colon, short labels -->
             <div id="cmp-ref-block">
               <div class="az-divider"></div>
-              <div class="cmp-cat-title" style="color:#8aacee;">
+              <div class="cmp-cat-title" style="color:var(--color-reforge);">
                 <span data-i18n="mod_reforge">Reforge</span>
               </div>
               <div class="cmp-two-inputs" style="margin-bottom:8px;">
@@ -7687,7 +9020,7 @@ body.scale-active .console-panel {
 
             <!-- CORRUPTED — centred heading, no colon -->
             <div class="az-divider"></div>
-            <div class="cmp-cat-title" style="color:#c875ff;">
+            <div class="cmp-cat-title" style="color:var(--color-corr);">
               <span>Corrupted</span>
             </div>
             <div class="cmp-two-inputs" style="margin-bottom:10px;">
@@ -7795,7 +9128,7 @@ body.scale-active .console-panel {
               <div class="az-divider"></div>
 
               <!-- ══ Upgrade ══ -->
-              <div class="cmp-cat-title" style="color:#7fff00;" data-i18n="mod_upgrade">Upgrade</div>
+              <div class="cmp-cat-title" style="color:var(--color-upg);" data-i18n="mod_upgrade">Upgrade</div>
               <div class="cmp-disc-val-row" style="margin-bottom:4px;">
                 <span class="cmp-disc-inline-val" id="cmp-disc-upg-a">?</span>
                 <span class="cmp-cat-sep">›</span>
@@ -7803,7 +9136,7 @@ body.scale-active .console-panel {
               </div>
 
               <!-- ══ Corrupted ══ -->
-              <div class="cmp-cat-title" style="color:#c875ff;">Corrupted</div>
+              <div class="cmp-cat-title" style="color:var(--color-corr);">Corrupted</div>
               <div class="cmp-disc-val-row" style="margin-bottom:4px;">
                 <span class="cmp-disc-inline-val corr-u" id="cmp-disc-corr-a">?</span>
                 <span class="cmp-cat-sep">›</span>
@@ -7812,7 +9145,7 @@ body.scale-active .console-panel {
 
               <!-- ══ Reforge (weapon only) ══ -->
               <div id="cmp-disc-ref-row">
-                <div class="cmp-cat-title" style="color:#8aacee;" data-i18n="mod_reforge">Reforge</div>
+                <div class="cmp-cat-title" style="color:var(--color-reforge);" data-i18n="mod_reforge">Reforge</div>
                 <div class="cmp-disc-val-row">
                   <span class="cmp-disc-inline-val cmp-disc-ref-val" id="cmp-disc-ref-a">—</span>
                   <span class="cmp-cat-sep">›</span>
@@ -7890,7 +9223,7 @@ body.scale-active .console-panel {
             <div class="az-res-row" style="margin-bottom:1px;"><span id="cmp-res-name" style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;">—</span></div>
             <div class="az-res-row" style="margin-bottom:6px;"><span id="cmp-res-rarity" style="font-size:12px;font-weight:700;letter-spacing:2px;font-family:'Rajdhani',sans-serif;text-transform:uppercase;">—</span></div>
             <div class="az-res-row">
-              <span id="cmp-res-dmg-lbl" style="font-size:14px;font-weight:600;color:#ff4444;" data-i18n="lbl_damage">Damage:</span>
+              <span id="cmp-res-dmg-lbl" style="font-size:14px;font-weight:600;" data-i18n="lbl_damage">Damage:</span>
               <span class="az-res-val dmg" id="cmp-res-dmg">—</span>
             </div>
             <!-- Diff badges: shown only in single-roll Wished view -->
@@ -8779,7 +10112,7 @@ function renderAccTable() {
   const colorStyle = item.type === 'health' || item.type === 'luck'
     ? 'color:#4cff80;font-weight:700;'
     : item.type === 'sword'
-    ? 'color:#ff4444;font-weight:700;'
+    ? `color:${getComputedStyle(document.documentElement).getPropertyValue('--color-dmg').trim()};font-weight:700;`
     : item.type === 'easter'
     ? 'color:#ff69b4;font-weight:700;'
     : 'color:#cc66ff;font-weight:700;';
@@ -9057,8 +10390,8 @@ function addCompareArmor(item, parts) {
 
   // main: "Name Helmet" / "Name Helmet & Chestplate" / "Name Set — Total HP: X → Y (+Z) (+P%)"
   let mainSuffix;
-  if (n === 1)      mainSuffix = azPartLabel(parts[0].part);
-  else if (n === 2) mainSuffix = `${azPartLabel(parts[0].part)} & ${azPartLabel(parts[1].part)}`;
+  if (n === 1)      mainSuffix = azPartLabelEn(parts[0].part);
+  else if (n === 2) mainSuffix = `${azPartLabelEn(parts[0].part)} & ${azPartLabelEn(parts[1].part)}`;
   else {
     const tA = parts.reduce((s,p) => s + p.hpActual, 0);
     const tW = parts.reduce((s,p) => s + p.hpWished, 0);
@@ -9073,7 +10406,7 @@ function addCompareArmor(item, parts) {
     const corrAStr = p.corrA ? 'Yes' : 'No';
     const corrBStr = p.corrB ? 'Yes' : 'No';
     const line = `Roll: ${rollStr} | Upg: ${_cmpFmt(p.upgA, p.upgB)} | Corr: ${_cmpFmt(corrAStr, corrBStr)}`;
-    return n === 1 ? line : `${azPartLabel(p.part)}: ${line}`;
+    return n === 1 ? line : `${azPartLabelEn(p.part)}: ${line}`;
   });
 
   // rollLines: HP per part
@@ -9081,7 +10414,7 @@ function addCompareArmor(item, parts) {
   let totalActual = 0, totalWished = 0;
   parts.forEach(p => {
     rollLines.push({
-      label: n === 1 ? 'Health:' : `${azPartLabel(p.part)}'s Health:`,
+      label: n === 1 ? 'Health:' : `${azPartLabelEn(p.part)}'s Health:`,
       val: `${azFmtDmg(p.hpActual)} → ${azFmtDmg(p.hpWished)}  ${_cmpDiff(p.hpActual, p.hpWished)}`,
       green: true
     });
@@ -9128,7 +10461,7 @@ function addAnalysis(entry) {
   if (dmgLbl) {
     const _isArmor = azCurrentItem && azCurrentItem.isArmor;
     dmgLbl.textContent = _isArmor ? t('lbl_health') : t('lbl_damage_res');
-    dmgLbl.style.color = _isArmor ? '#7fff00' : '#ff4444';
+    dmgLbl.style.color = _isArmor ? 'var(--color-hp)' : 'var(--color-dmg)';
   }
   const goldSub = document.getElementById('az-gold-sub');
   if (goldSub && azCurrentItem && azLastDmg !== null) {
@@ -9141,6 +10474,7 @@ function addAnalysis(entry) {
   }
   renderAllConsoles();
 }
+
 
 function nowStr() {
   return Date.now();
@@ -9175,6 +10509,7 @@ const T = {
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.',
     credits_author:'Bot Author', credits_dev:'Successor / Dev', credits_data:'Database', credits_data_val:'Elemental Dungeons',
+    vl_label:'View values of your stuff here:', vl_author:'by SUSUheyb',
     stat_weapons:'Weapons', stat_sets:'Armor', stat_accessories:'Relics', stat_version:'Bot Version', stat_date:'Data Created', stat_total:'Total Processes',
     rolls_page_title:'Tables', rolls_page_sub:'Roll Tables · Reforge Reference', analyze_page_sub:'Roll Analyzing By Calculations',
     page_stuff_title:'Stuff Preview', page_stuff_sub:'Item Preview · Check Specifications',
@@ -9240,6 +10575,7 @@ const T = {
     corr_yes:'Yes', corr_no:'No',
     btn_analyze:'ANALYZE ROLL', btn_upgrade:'Upgrade',
     btn_process:'PROCESS', btn_tablet:'TABLET',
+    sp_check_btn:'CHECK SPECIFICS',
     proc_hdr_calc:'// calculation steps', proc_hdr_rolls:'// closest roll',
     proc_s1:'Divide by upgrade factor:',
     proc_s1_none:'No upgrades — factor ×1.0',
@@ -9349,6 +10685,9 @@ const T = {
     upd8_title: 'UPDATES OF v1.0.6 VERSION!',
     upd8_sub: 'Developer Notes 08.04.2026',
     upd8_body: `<span class="upd-accent">What's new in v1.0.6?</span>\nBesides mini-fixes and improvements to scaling and adaptation (achieving perfection for everyone is either difficult or impossible — more on that later),\nthe following has also been added:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Search system in item lists!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Two new color palettes</span> — <span class="upd-accent">Easter</span> and <span class="upd-accent">Classic</span>.\nThe Classic palette matches the inventory color from the game Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> has become even more informative. It now highlights suspicious values in results, and when multiple windows are open — highlights those that are numerically close to each other.\n\n<span class="upd-accent">What's next in v1.0.7?</span>\nAs always, send your ideas to my Discord DMs — <span class="upd-cyan">@yarreyt</span>.\nOne possible addition: a randomizer feature on the pages for a better understanding of how everything works. This could especially help newcomers when using the <span class="upd-accent">Discord</span> data entry mode.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
+    upd9_title: 'UPDATES OF v1.0.7 VERSION!',
+    upd9_sub: 'Developer Notes 11.04.2026',
+    upd9_body: `Recently, me and user <span class="upd-cyan">@koeftedestroyer</span> — developer of the <span class="upd-accent">ED Community Value List</span> website — have become, let\'s say, friends. So our sites now advertise each other!\n\nThe home page of this site will feature a link to his site.\nIf you want to know the current value of items, stay ahead in trades, and keep track of the market — visit his site. In my opinion (and not only mine) it\'s the best price-tracking site for this game.\n\n<span class="upd-accent">What\'s new in v1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Randomizer feature added!</span> Fills in completely random values in the input fields. In Discord input mode — it can also serve as an additional learning tool.\n\n<span class="upd-cyan">›</span> This site is about game math, right? It would be fun to add a palette that ties into that idea... probably... AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n<span class="upd-accent">NEW PALETTE:</span>\n<span class="upd-accent">BALDI</span>\n\nSorry for the outburst. It\'s just genuinely ironic that a palette from a game about an evil <span class="upd-accent">MATH</span> teacher now exists on a site whose entire purpose is also based on <span class="upd-accent">MATH</span>.\n\n<span class="upd-accent">What\'s coming in v1.0.8?</span>\nHonestly, no big ideas besides adding new palettes and items.\nSend your suggestions to my contact — <span class="upd-cyan">@yarreyt</span>\n\nAlso, I\'ve added a link to the site in my profile! So you, as site users, can direct interested people to my profile to follow the link to the site.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!\nHappy Easter to everyone! Christ is risen — truly, He is risen.</span>`,
     upd7_title: 'UPDATES OF v1.0.5.5 VERSION!',
     upd7_sub: 'Developer Notes 06.04.2026',
     upd7_body: `<span class="upd-accent">Happy Easter to all of you!</span>\n\n<span class="upd-accent">What\'s new in v1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Scaling fix!</span> The interface is now even more comfortable for many users due to different monitor resolutions or zoom levels!\n\n<span class="upd-accent">NEW STUFF!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — a new secret weapon!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — a new secret relic!\n\n<span class="upd-accent">What\'s expected in v1.0.6</span>\n<span class="upd-cyan">›</span> Adding an item search across all pages!\n<span class="upd-cyan">›</span> Maybe a new color palette!\n\nOther than that... I\'m out of ideas. Suggest them on Discord — <span class="upd-cyan">@yarreyt</span>!\nAlso don\'t forget to support the site with stars in the Elemental Dungeons Discord server!\nIn <span class="upd-accent">#suggestions</span> → topic <span class="upd-green">CALCULATOR ROLL BOT</span>. As of this entry — already <span class="upd-accent">116 stars!</span> We have the highest star count among all top suggestions!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -9363,6 +10702,7 @@ const T = {
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Веб-версия бота для анализа роллов, прогнозов оружия и брони. Определяй роллы по урону, сравнивай предметы и планируй апгрейды.',
     credits_author:'Автор бота', credits_dev:'Преемник / Dev', credits_data:'База данных', credits_data_val:'Elemental Dungeons',
+    vl_label:'Просмотреть цены на ваши предметы можно здесь:', vl_author:'от SUSUheyb',
     stat_weapons:'Оружие', stat_sets:'Броня', stat_accessories:'Релики', stat_version:'Версия бота', stat_date:'Дата создания', stat_total:'Записи за всё время',
     rolls_page_title:'Таблицы', rolls_page_sub:'Таблицы роллов · Справка по заклинаниям', analyze_page_sub:'Анализирование ролла путём калькуляции',
     page_stuff_title:'Прогноз лута', page_stuff_sub:'Проверка вещей · Узнай характеристики',
@@ -9428,6 +10768,7 @@ const T = {
     corr_yes:'Yes', corr_no:'No',
     btn_analyze:'АНАЛИЗИРОВАТЬ', btn_upgrade:'Улучшить',
     btn_process:'ПРОЦЕСС', btn_tablet:'ТАБЛИЦА',
+    sp_check_btn:'ПРЕДСТАВИТЬ',
     proc_hdr_calc:'// шаги вычисления', proc_hdr_rolls:'// ближайший ролл',
     proc_s1:'Делим на фактор улучшений:',
     proc_s1_none:'Улучшений нет — фактор ×1.0',
@@ -9538,6 +10879,9 @@ const T = {
     upd8_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.6v!',
     upd8_sub: 'Запись разработчика 08.04.2026',
     upd8_body: `<span class="upd-accent">Что нового в версии 1.0.6?</span>\nПо-мимо мини-фиксов и улучшений по масштабированию и адаптации (идеально для всех это либо сложно, либо невозможно. Об этом позже)\nТак-же добавлено:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Поисковая система в списках!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Две новые цветовые палитры</span> — <span class="upd-accent">Пасхальный</span> и <span class="upd-accent">Классическая</span>.\nКлассическая цветовая палитра повторяет цвет инвентаря из игры Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> стал ещё более понятным. Теперь при результатах он подсвечивает подозрительные значения, а при множественных окнах — подсвечивает те, которые близки друг к другу по цифрам.\n\n<span class="upd-accent">Что следующее в версии 1.0.7?</span>\nОпять же, пишите новые идеи мне в личку дискорда — <span class="upd-cyan">@yarreyt</span>.\nВ принципе можно добавить функцию рандомайзера на страницах для наибольшего понимания функций. Особенно это может помочь новичкам при использовании режима ввода данных <span class="upd-accent">«Discord»</span>.\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
+    upd9_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.7v!',
+    upd9_sub: 'Записи разработчика 11.04.2026',
+    upd9_body: `Недавно мы с пользователем <span class="upd-cyan">@koeftedestroyer</span> (разработчик сайта <span class="upd-accent">ED Community Value List</span>) скажем, сдружились, поэтому наши сайты рекламируют друг друга!\n\nНа домашней странице сайта будет расположена ссылка на его сайт.\nЕсли вы хотите узнать, сколько стоят актуальные предметы, быть в плюсах и следить за рынком — посещайте этот сайт. По-моему (и не только) это самый лучший сайт по ценам из игры.\n\n<span class="upd-accent">Что нового в обновлении 1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Добавлена функция рандомайзера!</span> Вводит абсолютно рандомные значения в полях, а в случае Discord режима ввода данных — может быть дополнительным обучающим элементом.\n\n<span class="upd-cyan">›</span> Сайт у нас про математику игры, верно? Было бы круто добавить палитру связывающую идею.. наверное.. АААААААААААААААААААААААААААААААААА\n\n<span class="upd-accent">НОВАЯ ПАЛИТРА:</span>\n<span class="upd-accent">BALDI</span>\n\nИзвините за такую резкость. Просто действительно иронично, что палитра по игре про злого учителя <span class="upd-accent">МАТЕМАТИКИ</span>, теперь есть на сайте, чьи функции основаны так-же на <span class="upd-accent">МАТЕМАТИКЕ</span>.\n\n<span class="upd-accent">Что будет нового в версии 1.0.8?</span>\nЧестно, особых идей кроме добавлений новых палитр и предметов нет.\nПредлагайте мне по контакту — <span class="upd-cyan">@yarreyt</span>\n\nТак-же, я разместил ссылку на свой сайт в профиле! Поэтому вы, как пользователи сайта, сможете желающих направить на мой профиль, чтобы перейти по ссылке на сайт!\n\n<span class="upd-muted">Всем добрейшего утречка/дня/вечера/ночи!\nВсех с пасхой! Христос воскрес, во истину — воскрес.</span>`,
     upd7_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.5.5v!',
     upd7_sub: 'Записи разработчика 06.04.2026',
     upd7_body: `<span class="upd-accent">С пасхой вас всех!</span>\n\n<span class="upd-accent">Что нового в обновлении 1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Исправлено масштабирование!</span> Теперь интерфейс у многих из-за разрешения монитора или масштабов стал ещё более удобным!\n\n<span class="upd-accent">НОВЫЕ ВЕЩИЧКИ!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — новое секретное оружие!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — новый секретный релик!\n\n<span class="upd-accent">Что ожидается в обновлении 1.0.6</span>\n<span class="upd-cyan">›</span> Добавлю поисковик предметов во всех страницах!\n<span class="upd-cyan">›</span> И может, добавлю новую цветовую палитру!\n\nВ остальном.. идей больше нет. Предлагайте их в дискорде — <span class="upd-cyan">@yarreyt</span>!\nТак-же не забываем поддерживать сайт звёздочками в дискорд-сервере Elemental Dungeons!\nНа канале <span class="upd-accent">#suggestions</span> → топик <span class="upd-green">CALCULATOR ROLL BOT</span>. На момент этой записи звёзд уже <span class="upd-accent">116!</span> У нас самое большое количество звёзд из лучших предложений!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -9586,7 +10930,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 7;
+let updPage = 8;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -9596,6 +10940,7 @@ const UPD_PAGES = [
   { title:'upd6_title', sub:'upd6_sub', body:'upd6_body' },
   { title:'upd7_title', sub:'upd7_sub', body:'upd7_body' },
   { title:'upd8_title', sub:'upd8_sub', body:'upd8_body' },
+  { title:'upd9_title', sub:'upd9_sub', body:'upd9_body' },
 ];
 
 function updRender() {
@@ -9623,6 +10968,8 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
   });
+  // Update randomizer button tooltips
+  _applyRandBtnTitles();
   _refreshSiteErrorLang();
   // Render updates panel (paginated)
   updRender();
@@ -9643,7 +10990,7 @@ function applyLang() {
   if (_resDmgLbl) {
     const _isArmorLang = azCurrentItem && azCurrentItem.isArmor;
     _resDmgLbl.textContent = _isArmorLang ? t('lbl_health') : t('lbl_damage_res');
-    _resDmgLbl.style.color = _isArmorLang ? '#7fff00' : '#ff4444';
+    _resDmgLbl.style.color = _isArmorLang ? 'var(--color-hp)' : 'var(--color-dmg)';
   }
 
   if (azCurrentItem) {
@@ -9676,6 +11023,19 @@ function applyLang() {
       const resultCard = document.getElementById('az-result-card');
       if (resultCard && resultCard.style.display !== 'none') {
         azRenderArmorResultCard(ri);
+      }
+    } else {
+      // Weapon: re-render result card if visible so all labels update to current language
+      const resultCard = document.getElementById('az-result-card');
+      if (resultCard && resultCard.style.display !== 'none' && azLastDmg !== null) {
+        const _wSnap = {
+          item: azCurrentItem, lastDmg: azLastDmg,
+          roll: parseInt(document.getElementById('az-roll-val')?.textContent) || null,
+          upg: azSelectedUpg, corrupted: azIsCorrupted, reforge: azSelectedReforge,
+          quotePanelVisible: document.getElementById('az-quote-panel')?.classList.contains('visible'),
+          quoteMobileVisible: document.getElementById('az-quote-mobile')?.classList.contains('visible'),
+        };
+        azRenderWeaponResultCard(_wSnap);
       }
     }
   }
@@ -9731,7 +11091,7 @@ function applyLang() {
     const spDmgLbl = document.getElementById('sp-res-dmg-lbl');
     if (spDmgLbl) {
       spDmgLbl.textContent = spIsArmor ? t('lbl_health') : t('lbl_damage_res');
-      spDmgLbl.style.color = spIsArmor ? '#7fff00' : '#ff4444';
+      spDmgLbl.style.color = spIsArmor ? 'var(--color-hp)' : 'var(--color-dmg)';
     }
     // Gold next label (only if not max)
     const spNextLbl = document.getElementById('sp-gold-next-lbl');
@@ -9842,6 +11202,14 @@ function applyLang() {
   }
 }
 
+function _applyRandBtnTitles() {
+  const label = lang === 'ru' ? 'Рандомайзер' : 'Randomize';
+  ['az-rand-btn', 'sp-rand-btn', 'cmp-rand-btn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.title = label;
+  });
+}
+
 function toggleLang() {
   lang = lang === 'en' ? 'ru' : 'en';
   localStorage.setItem('_ed_lang', lang);
@@ -9930,6 +11298,8 @@ function azSaveCategorySnapshot(cat) {
     // Save the rendered result card state for restoration
     const resCard = document.getElementById('az-result-card');
     const resVisible = resCard?.style.display !== 'none';
+    // Save data (not HTML) so restore always uses current language
+    const _snapRollVal = resVisible ? parseInt(document.getElementById('az-roll-val')?.textContent) || null : null;
     azCategorySnapshot.weapon = {
       item: azCurrentItem,
       upg: azSelectedUpg, intUpg: azIntendedUpg,
@@ -9938,18 +11308,12 @@ function azSaveCategorySnapshot(cat) {
       dmg: document.getElementById('az-damage')?.value || '',
       lastDmg: azLastDmg,
       resultVisible: resVisible,
-      // Snapshot the rendered result card HTML for instant restore
-      resultCardHTML: resVisible ? resCard?.innerHTML : null,
-      procBodyHTML: document.getElementById('az-proc-left')?.innerHTML || null,
-      procRightHTML: document.getElementById('az-proc-right')?.innerHTML || null,
-      tblBodyHTML:  document.getElementById('az-tablet-body')?.innerHTML  || null,
+      roll: _snapRollVal,
       arrowZoneVisible: document.getElementById('az-arrow-zone')?.classList.contains('visible'),
       thirdPanelVisible: document.getElementById('az-third-panel')?.classList.contains('visible'),
       hArrowVisible: document.getElementById('az-h-arrow')?.classList.contains('visible'),
       quotePanelVisible: document.getElementById('az-quote-panel')?.classList.contains('visible'),
-      quotePanelHTML: document.getElementById('az-quote-panel')?.innerHTML || null,
       quoteMobileVisible: document.getElementById('az-quote-mobile')?.classList.contains('visible'),
-      quoteMobileHTML: document.getElementById('az-quote-mobile')?.innerHTML || null,
     };
   } else {
     // Save live input values for current part before snapshotting
@@ -10114,26 +11478,19 @@ function azSwitchCat(cat) {
           requestAnimationFrame(() => azAlignArrow());
         }
       } else {
-        // Weapon: restore from saved HTML snapshot — no re-analysis
-        if (snap.resultCardHTML) {
+        // Weapon: restore by re-rendering from saved data (language-independent)
+        if (snap.resultVisible && snap.lastDmg !== null) {
           const azLc = document.getElementById('az-left-col');
           if (azLc) azLc.style.display = '';
-          document.getElementById('az-result-card').innerHTML = snap.resultCardHTML;
-          document.getElementById('az-result-card').style.display = 'block';
-          if (snap.procBodyHTML) document.getElementById('az-proc-left').innerHTML = snap.procBodyHTML;
-          if (snap.procRightHTML) document.getElementById('az-proc-right').innerHTML = snap.procRightHTML;
-          if (snap.tblBodyHTML)  document.getElementById('az-tablet-body').innerHTML  = snap.tblBodyHTML;
           azLastDmg = snap.lastDmg;
+          // Re-render result card using current language
+          azRenderWeaponResultCard(snap);
+          document.getElementById('az-result-card').style.display = 'block';
           if (snap.arrowZoneVisible)  document.getElementById('az-arrow-zone')?.classList.add('visible');
           if (snap.hArrowVisible)     document.getElementById('az-h-arrow')?.classList.add('visible');
-          if (snap.thirdPanelVisible) document.getElementById('az-third-panel')?.classList.add('visible');
-          if (snap.quotePanelVisible && snap.quotePanelHTML) {
-            const qp = document.getElementById('az-quote-panel');
-            if (qp) { qp.innerHTML = snap.quotePanelHTML; qp.classList.add('visible'); }
-          }
-          if (snap.quoteMobileVisible && snap.quoteMobileHTML) {
-            const qm = document.getElementById('az-quote-mobile');
-            if (qm) { qm.innerHTML = snap.quoteMobileHTML; qm.classList.add('visible'); }
+          if (snap.thirdPanelVisible) {
+            document.getElementById('az-third-panel')?.classList.add('visible');
+            azRenderProcessTablet(azLastDmg);
           }
           document.getElementById('az-v-arrow')?.classList.add('visible');
           if (isTrulyMobile()) {
@@ -10356,6 +11713,12 @@ function azSelectItem(item, btn) {
 
 function azPartLabel(part) {
   const map = {Helmet: t('part_helm'), Chestplate: t('part_chest'), Leggings: t('part_legs')};
+  return map[part] || part;
+}
+
+// Always returns English part name — used for Firebase writes so language doesn't affect stored data
+function azPartLabelEn(part) {
+  const map = {Helmet: 'Helmet', Chestplate: 'Chestplate', Leggings: 'Leggings'};
   return map[part] || part;
 }
 
@@ -10813,6 +12176,131 @@ function syncBtnCdForCat(btnId, catKey, onExpire) {
   }
 }
 
+// ── RANDOMIZER ──────────────────────────────────────────────────────────────
+function azRandomize() {
+  if (!azCurrentItem) return;
+  const isArmor = !!azCurrentItem.isArmor;
+  const isDiscord = (typeof _entryType !== 'undefined') && _entryType === 'old';
+
+  if (!isArmor) {
+    // ── WEAPON ──
+    // 1. Random upgrade (0 .. maxUpg)
+    const maxUpg = azCurrentItem.maxUpg;
+    const randUpg = Math.floor(Math.random() * (maxUpg + 1));
+
+    // 2. Random reforge (None + all REFORGES)
+    const reforgePool = ['None', ...REFORGES.map(r => r.name)];
+    const randRef = reforgePool[Math.floor(Math.random() * reforgePool.length)];
+
+    // 3. Random corrupted (true / false)
+    const randCorr = Math.random() < 0.5;
+
+    // 4. Compute damage from a random valid roll
+    const rolls = getRolls(azCurrentItem);
+    const randRoll = rolls[Math.floor(Math.random() * rolls.length)];
+    const statsDict = azCurrentItem.stats;
+    const base = statsDict[randRoll];
+    const gf = 1 + GROWTH_RATE * randUpg;
+    const refMult = REFORGE_MODS[randRef] || 1.0;
+    let dmg = base * gf * (randCorr ? 1.5 : 1.0) * refMult;
+    dmg = Math.floor(dmg);
+
+    if (!isDiscord) {
+      // Website mode: fill UI fields
+      azSelectedUpg = randUpg;
+      azIntendedUpg = randUpg;
+      azSelectedReforge = randRef;
+      azIsCorrupted = randCorr;
+
+      // Update upgrade dropdown label
+      const upgVal = document.getElementById('az-upg-val');
+      if (upgVal) upgVal.textContent = randUpg;
+      azBuildUpgDrop();
+
+      // Update reforge dropdown label
+      const refVal = document.getElementById('az-ref-val');
+      if (refVal) {
+        refVal.textContent = randRef === 'None'
+          ? (typeof t === 'function' ? t('ref_none_select') : 'None Reforge (select)')
+          : randRef + ' Reforge';
+      }
+      azBuildRefDrop();
+
+      // Update corrupted toggle
+      azUpdateCorrDisplay();
+
+      // Set damage input
+      const dmgEl = document.getElementById('az-damage');
+      if (dmgEl) {
+        dmgEl.value = dmg;
+        dmgEl.dispatchEvent(new Event('input'));
+      }
+    } else {
+      // Discord mode: build command string and inject into input
+      const ynStr = randCorr ? 'y' : 'n';
+      const refStr = randRef === 'None' ? '' : (' ' + randRef);
+      const cmd = dmg + ' ' + randUpg + ' ' + ynStr + refStr;
+      const weapInput = document.getElementById('az-discord-weapon-input');
+      if (weapInput) {
+        weapInput.value = cmd;
+        weapInput.dispatchEvent(new Event('input'));
+        azDiscordParse();
+      }
+    }
+
+    azUpdateAnalyzeBtn();
+    azUpdateControlLocks();
+
+  } else {
+    // ── ARMOR: only current active part ──
+    const part = azCurrentArmorPart || 'Helmet';
+    const maxUpg = azCurrentItem.maxUpg;
+    const randUpg = Math.floor(Math.random() * (maxUpg + 1));
+    const randCorr = Math.random() < 0.5;
+
+    // Get valid rolls for this part
+    const statsDict = azCurrentItem.stats[part];
+    const minR = azCurrentItem.minRoll || 1;
+    const rollKeys = Object.keys(statsDict).map(Number).filter(k => k >= minR).sort((a,b) => a-b);
+    const randRoll = rollKeys[Math.floor(Math.random() * rollKeys.length)];
+    const base = statsDict[randRoll];
+    const gf = 1 + GROWTH_RATE * randUpg;
+    let hp = base * gf * (randCorr ? 1.5 : 1.0);
+    hp = Math.floor(hp);
+
+    if (!isDiscord) {
+      azSelectedUpg = randUpg;
+      azIntendedUpg = randUpg;
+      azIsCorrupted = randCorr;
+
+      const upgVal = document.getElementById('az-upg-val');
+      if (upgVal) upgVal.textContent = randUpg;
+      azBuildUpgDrop();
+      azUpdateCorrDisplay();
+
+      const dmgEl = document.getElementById('az-damage');
+      if (dmgEl) {
+        dmgEl.value = hp;
+        dmgEl.dispatchEvent(new Event('input'));
+      }
+    } else {
+      const ynStr = randCorr ? 'y' : 'n';
+      const cmd = hp + ' ' + randUpg + ' ' + ynStr;
+      const armorInput = document.getElementById('az-discord-armor-input');
+      if (armorInput) {
+        armorInput.value = cmd;
+        armorInput.dispatchEvent(new Event('input'));
+        azDiscordArmorParse();
+      }
+    }
+
+    azUpdateAnalyzeBtn();
+    azUpdateControlLocks();
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 function azDoAnalyze() {
   if (!azCurrentItem) return;
 
@@ -10939,7 +12427,7 @@ function azDoAnalyze() {
       const res = azArmorResults[p];
       addAnalysis({
         cardType: 'analyze', typeLabel: 'ANALYZE/ARMOR', time: nowStr(),
-        main: `${setName} ${azPartLabel(p)}`,
+        main: `${setName} ${azPartLabelEn(p)}`,
         detail: `HP: ${azFmtDmg(res.hp)} | Upg: ${res.upg} | ${res.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
         rollLines: [{label:'Roll:', val: res.roll}]
       });
@@ -10948,9 +12436,9 @@ function azDoAnalyze() {
       const r1 = azArmorResults[p1], r2 = azArmorResults[p2];
       addAnalysis({
         cardType: 'analyze', typeLabel: 'ANALYZE/ARMOR', time: nowStr(),
-        main: `${setName} ${azPartLabel(p1)} & ${azPartLabel(p2)}`,
-        detail: `${azPartLabel(p1)}: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel(p2)}: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
-        rollLines: [{label:`${azPartLabel(p1)}'s Roll:`, val: r1.roll},{label:`${azPartLabel(p2)}'s Roll:`, val: r2.roll}]
+        main: `${setName} ${azPartLabelEn(p1)} & ${azPartLabelEn(p2)}`,
+        detail: `${azPartLabelEn(p1)}: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabelEn(p2)}: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
+        rollLines: [{label:`${azPartLabelEn(p1)}'s Roll:`, val: r1.roll},{label:`${azPartLabelEn(p2)}'s Roll:`, val: r2.roll}]
       });
     } else if (filledParts.length === 3) {
       const parts3 = ['Helmet','Chestplate','Leggings'];
@@ -10959,8 +12447,8 @@ function azDoAnalyze() {
       addAnalysis({
         cardType: 'analyze', typeLabel: 'ANALYZE/ARMOR', time: nowStr(),
         main: `${setName} Set — Total HP: ${azFmtDmg(Math.round(total3))}`,
-        detail: `${azPartLabel('Helmet')}: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel('Chestplate')}: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}\n${azPartLabel('Leggings')}: HP: ${azFmtDmg(r3.hp)} | Upg: ${r3.upg} | ${r3.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
-        rollLines: [{label:`${azPartLabel('Helmet')}'s Roll:`, val: r1.roll},{label:`${azPartLabel('Chestplate')}'s Roll:`, val: r2.roll},{label:`${azPartLabel('Leggings')}'s Roll:`, val: r3.roll}]
+        detail: `Helmet: HP: ${azFmtDmg(r1.hp)} | Upg: ${r1.upg} | ${r1.corrupted ? 'Corrupted' : 'Non-corrupted'}\nChestplate: HP: ${azFmtDmg(r2.hp)} | Upg: ${r2.upg} | ${r2.corrupted ? 'Corrupted' : 'Non-corrupted'}\nLeggings: HP: ${azFmtDmg(r3.hp)} | Upg: ${r3.upg} | ${r3.corrupted ? 'Corrupted' : 'Non-corrupted'}`,
+        rollLines: [{label:"Helmet's Roll:", val: r1.roll},{label:"Chestplate's Roll:", val: r2.roll},{label:"Leggings' Roll:", val: r3.roll}]
       });
     }
 
@@ -11059,7 +12547,7 @@ function azDoAnalyze() {
     document.getElementById('az-res-rarity').textContent = ri.label.toUpperCase();
     document.getElementById('az-res-rarity').className = 'az-res-val ' + ri.css;
     const resDmgLbl = document.getElementById('az-res-dmg-lbl');
-    if (resDmgLbl) { resDmgLbl.style.color = '#ff4444'; resDmgLbl.textContent = t('lbl_damage_res'); }
+    if (resDmgLbl) { resDmgLbl.style.color = 'var(--color-dmg)'; resDmgLbl.textContent = t('lbl_damage_res'); }
     const resDmgValW = document.getElementById('az-res-dmg');
     resDmgValW.className = 'az-res-val dmg';
     resDmgValW.style.color = '';
@@ -11105,6 +12593,94 @@ function azDoAnalyze() {
       rollLines:[{label:'Roll:', val: roll}]
     });
   }
+}
+
+// Render weapon result card from stored data — always uses current language
+function azRenderWeaponResultCard(snap) {
+  const item = snap.item;
+  const dmg  = snap.lastDmg;
+  const roll = snap.roll;
+  if (!item || dmg === null || roll === null) return;
+
+  const ri      = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  const maxUpg  = item.maxUpg;
+  const upg     = snap.upg ?? 0;
+  const corrupted = snap.corrupted || false;
+  const reforge   = snap.reforge || 'None';
+
+  const nextCost = upg < maxUpg ? (UPGRADE_COSTS[upg + 1] || 0) : 0;
+  let goldSpent = 0, goldTotalToMax = 0;
+  for (let i = 1; i <= upg; i++) goldSpent += (UPGRADE_COSTS[i] || 0);
+  for (let i = 1; i <= maxUpg; i++) goldTotalToMax += (UPGRADE_COSTS[i] || 0);
+  const goldRemaining = goldTotalToMax - goldSpent;
+
+  // Image
+  const resBox = document.getElementById('az-res-img-box');
+  azApplyRarityBorder(resBox, ri);
+  const resImg = document.getElementById('az-res-img');
+  const resPH  = document.getElementById('az-res-placeholder');
+  resImg.src = azGetArmorImageSrc(item, null);
+  resImg.onload  = () => { resImg.style.display='block'; resPH.style.display='none'; };
+  resImg.onerror = () => { resImg.style.display='none';  resPH.style.display='block'; };
+
+  // Roll value
+  const rollEl = document.getElementById('az-roll-val');
+  rollEl.textContent = roll;
+  rollEl.className = 'az-roll-val ' + getRollClass(item, roll);
+
+  // Quote panel
+  const minRoll = item.minRoll || 1;
+  let quoteKey = '';
+  if (item.id === 'asc_ws') quoteKey = 'q_ws';
+  else if (minRoll === 1) quoteKey = 'q11_' + roll;
+  else quoteKey = 'q6_' + roll;
+  const cls = rollEl.className.split(' ').find(c => c.startsWith('rc-'));
+  const dotColor = cls ? (ROLL_COLORS[cls] || 'var(--gold)') : 'var(--gold)';
+  if (snap.quotePanelVisible) {
+    const panel  = document.getElementById('az-quote-panel');
+    const textEl = document.getElementById('az-quote-text');
+    const lblEl  = document.getElementById('az-quote-roll-label');
+    const dotEl  = document.getElementById('az-quote-roll-dot');
+    if (textEl) textEl.textContent = t(quoteKey) || '';
+    if (lblEl)  lblEl.textContent  = 'ROLL ' + roll;
+    if (dotEl)  { dotEl.style.background = dotColor; dotEl.style.boxShadow = '0 0 6px ' + dotColor; }
+    if (panel)  panel.classList.add('visible');
+  }
+  if (snap.quoteMobileVisible) {
+    const mQuote = document.getElementById('az-quote-mobile');
+    const mText  = document.getElementById('az-quote-mobile-text');
+    const mLbl   = document.getElementById('az-quote-mobile-label');
+    const mDot   = document.getElementById('az-quote-mobile-dot');
+    if (mText) mText.textContent = t(quoteKey) || '';
+    if (mLbl)  mLbl.textContent  = 'ROLL ' + roll;
+    if (mDot)  { mDot.style.background = dotColor; mDot.style.boxShadow = '0 0 6px ' + dotColor; }
+    if (mQuote) mQuote.classList.add('visible');
+  }
+
+  // Stats
+  document.getElementById('az-res-name').textContent = item.name;
+  document.getElementById('az-res-name').className   = ri.css;
+  document.getElementById('az-res-rarity').textContent = ri.label.toUpperCase();
+  document.getElementById('az-res-rarity').className   = 'az-res-val ' + ri.css;
+  const resDmgLbl = document.getElementById('az-res-dmg-lbl');
+  if (resDmgLbl) { resDmgLbl.style.color = 'var(--color-dmg)'; resDmgLbl.textContent = t('lbl_damage_res'); }
+  const resDmgValW = document.getElementById('az-res-dmg');
+  resDmgValW.className = 'az-res-val dmg'; resDmgValW.style.color = '';
+  resDmgValW.textContent = azFmtDmg(dmg);
+  document.getElementById('az-res-delay').textContent = item.delay ? item.delay + 's' : '—';
+  document.getElementById('az-res-delay').parentElement.style.display = '';
+  document.getElementById('az-res-upg').textContent = upg;
+  const corrEl = document.getElementById('az-res-corr');
+  corrEl.textContent = corrupted ? 'Yes' : 'No';
+  corrEl.className = 'az-res-corr-val ' + (corrupted ? 'yes' : 'no');
+  document.getElementById('az-res-reforge').textContent = reforge === 'None' ? '—' : reforge + ' Reforge';
+  document.getElementById('az-res-reforge').style.display = '';
+  document.getElementById('az-res-part-row').classList.remove('visible');
+  document.getElementById('az-total-hp-row').classList.remove('visible');
+  document.getElementById('az-gold-next').textContent = nextCost > 0 ? azFmtNum(nextCost) + ' 🪙' : t('lbl_max_level');
+  document.getElementById('az-gold-spent').textContent = azFmtNum(goldSpent) + ' 🪙';
+  document.getElementById('az-gold-total').textContent = goldRemaining > 0 ? azFmtNum(goldRemaining) + ' 🪙' : '✓';
+  document.getElementById('az-gold-sub').textContent   = goldRemaining > 0 ? (t('until_level') + ' ' + maxUpg) : '';
 }
 
 // Render armor result card, showing azResCurrentPart data + part switcher + total HP
@@ -11182,10 +12758,10 @@ function azRenderArmorResultCard(ri) {
 
   // HP label — green like Upgrades
   const resDmgLbl = document.getElementById('az-res-dmg-lbl');
-  if (resDmgLbl) { resDmgLbl.style.color = '#7fff00'; resDmgLbl.textContent = t('lbl_health'); }
+  if (resDmgLbl) { resDmgLbl.style.color = 'var(--color-hp)'; resDmgLbl.textContent = t('lbl_health'); }
   const resDmgVal = document.getElementById('az-res-dmg');
   resDmgVal.className = 'az-res-val';
-  resDmgVal.style.color = '#7fff00';
+  resDmgVal.style.color = 'var(--color-hp)';
   resDmgVal.textContent = azFmtDmg(res.hp);
 
   // Hide delay row for armor
@@ -12356,8 +13932,8 @@ function spRenderArmorResultCard() {
   const dmgLbl = document.getElementById('sp-res-dmg-lbl');
   const dmgVal = document.getElementById('sp-res-dmg');
   dmgLbl.textContent = t('lbl_health');
-  dmgLbl.style.color = '#7fff00';
-  dmgVal.style.color = '#7fff00';
+  dmgLbl.style.color = 'var(--color-hp)';
+  dmgVal.style.color = 'var(--color-hp)';
   dmgVal.textContent = azFmtDmg(res.hp);
 
   // Hide delay
@@ -12431,6 +14007,118 @@ function spRenderArmorResultCard() {
 
 function spShowError(key) { showSiteError(key, true); }
 function spClearError() { /* auto-dismiss via timer */ }
+
+
+// ── SP RANDOMIZER ────────────────────────────────────────────────────────────
+function spRandomize() {
+  if (!spCurrentItem) return;
+  const isArmor   = !!spCurrentItem.isArmor;
+  const isDiscord = (typeof _entryType !== 'undefined') && _entryType === 'old';
+
+  if (!isArmor) {
+    // ── WEAPON ──
+    const maxUpg = spCurrentItem.maxUpg;
+    const randUpg = Math.floor(Math.random() * (maxUpg + 1));
+
+    // Random reforge (None included)
+    const reforgePool = ['None', ...REFORGES.map(r => r.name)];
+    const randRef = reforgePool[Math.floor(Math.random() * reforgePool.length)];
+
+    // Random corrupted
+    const randCorr = Math.random() < 0.5;
+
+    // Random roll from valid rolls for this item
+    const rolls = getRolls(spCurrentItem);
+    const randRoll = rolls[Math.floor(Math.random() * rolls.length)];
+
+    if (!isDiscord) {
+      // Website mode: set state and rebuild UI
+      spSelectedUpg      = randUpg;
+      spIntendedUpg      = randUpg;
+      spSelectedReforge  = randRef;
+      spIsCorrupted      = randCorr;
+
+      // Apply roll via the existing function (updates buttons + display)
+      spSelectRoll(randRoll);
+
+      // Upgrade dropdown label + rebuild
+      const upgVal = document.getElementById('sp-upg-val');
+      if (upgVal) upgVal.textContent = randUpg;
+      spBuildUpgDrop();
+
+      // Reforge dropdown label + rebuild
+      const refVal = document.getElementById('sp-ref-val');
+      if (refVal) {
+        refVal.textContent = randRef === 'None'
+          ? (typeof t === 'function' ? t('ref_none_select') : 'None Reforge (select)')
+          : randRef + ' Reforge';
+      }
+      spBuildRefDrop();
+
+      // Corrupted toggle
+      spUpdateCorrDisplay();
+
+      spUpdateControlLocks();
+      spUpdateAnalyzeBtnSP();
+    } else {
+      // Discord mode: build command string {roll} {upg} {y/n} {reforge}
+      const ynStr  = randCorr ? 'y' : 'n';
+      const refStr = randRef === 'None' ? '' : (' ' + randRef);
+      const cmd = randRoll + ' ' + randUpg + ' ' + ynStr + refStr;
+      const weapInput = document.getElementById('sp-discord-weapon-input');
+      if (weapInput) {
+        weapInput.value = cmd;
+        weapInput.dispatchEvent(new Event('input'));
+        spDiscordParse();
+      }
+    }
+
+  } else {
+    // ── ARMOR: only current active part ──
+    const part    = spCurrentArmorPart || 'Helmet';
+    const maxUpg  = spCurrentItem.maxUpg;
+    const randUpg = Math.floor(Math.random() * (maxUpg + 1));
+    const randCorr = Math.random() < 0.5;
+
+    // Random roll for this part
+    const statsDict = spCurrentItem.stats[part];
+    const minR  = spCurrentItem.minRoll || 1;
+    const rolls = Object.keys(statsDict).map(Number).filter(k => k >= minR).sort((a,b)=>a-b);
+    const randRoll = rolls[Math.floor(Math.random() * rolls.length)];
+
+    if (!isDiscord) {
+      spSelectedUpg  = randUpg;
+      spIntendedUpg  = randUpg;
+      spIsCorrupted  = randCorr;
+
+      spSelectRoll(randRoll);
+
+      const upgVal = document.getElementById('sp-upg-val');
+      if (upgVal) upgVal.textContent = randUpg;
+      spBuildUpgDrop();
+      spUpdateCorrDisplay();
+
+      // Sync into armor part data
+      spArmorPartData[part].roll      = randRoll;
+      spArmorPartData[part].upg       = randUpg;
+      spArmorPartData[part].corrupted = randCorr;
+
+      spUpdateControlLocks();
+      spUpdateAnalyzeBtnSP();
+    } else {
+      // Discord armor: {roll} {upg} {y/n}
+      const ynStr = randCorr ? 'y' : 'n';
+      const cmd   = randRoll + ' ' + randUpg + ' ' + ynStr;
+      const armorInput = document.getElementById('sp-discord-armor-input');
+      if (armorInput) {
+        armorInput.value = cmd;
+        armorInput.dispatchEvent(new Event('input'));
+        spDiscordArmorParse();
+      }
+    }
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 
 function spDoAnalyze(skipCd) {
@@ -12551,7 +14239,7 @@ function spDoAnalyze(skipCd) {
 
     const dmgLbl = document.getElementById('sp-res-dmg-lbl');
     const dmgVal = document.getElementById('sp-res-dmg');
-    dmgLbl.textContent = t('lbl_damage'); dmgLbl.style.color = '#ff4444';
+    dmgLbl.textContent = t('lbl_damage'); dmgLbl.style.color = 'var(--color-dmg)';
     dmgVal.style.color = '';
     dmgVal.textContent = azFmtDmg(stat);
 
@@ -13029,10 +14717,10 @@ function cmpSwitchCategory(cat) {
       const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
       if (dmgLbl) {
         dmgLbl.textContent = isResArmor ? t('lbl_health') : t('lbl_damage');
-        dmgLbl.style.color = isResArmor ? '#7fff00' : '#ff4444';
+        dmgLbl.style.color = isResArmor ? 'var(--color-hp)' : 'var(--color-dmg)';
       }
       const dmgVal = document.getElementById('cmp-res-dmg');
-      if (dmgVal) dmgVal.style.color = isResArmor ? '#7fff00' : '';
+      if (dmgVal) dmgVal.style.color = isResArmor ? 'var(--color-hp)' : '';
       // Reforge — hidden for armor, visible for weapon
       const refEl = document.getElementById('cmp-res-reforge');
       if (refEl) refEl.style.display = isResArmor ? 'none' : 'flex';
@@ -13963,6 +15651,229 @@ function cmpCalcHp(item, part, roll, upg, corr) {
   return { hp, base, gf, upg, roll, corr, part };
 }
 
+// ── CMP RANDOMIZER ───────────────────────────────────────────────────────────
+function cmpRandomize() {
+  if (!cmpCurrentItem) return;
+  const isArmor   = !!cmpCurrentItem.isArmor;
+  const isDiscord = (typeof _entryType !== 'undefined') && _entryType === 'old';
+  const isAutoRoll = cmpCurrentItem.id === 'asc_ws';
+  const maxUpg = cmpCurrentItem.maxUpg;
+
+  // Helper: pick two different values randomly from array
+  function pickTwo(arr) {
+    if (arr.length < 2) return [arr[0], arr[0]];
+    const a = Math.floor(Math.random() * arr.length);
+    let b;
+    do { b = Math.floor(Math.random() * arr.length); } while (b === a);
+    return [arr[Math.min(a,b)], arr[Math.max(a,b)]];
+  }
+
+  // Helper: build valid single-roll state (upg1<=upg2, at least one diff condition)
+  function makeValidSingle(maxU) {
+    // Decide randomly which "category" of difference to use:
+    // 0 = upgrades differ (upg1 < upg2)
+    // 1 = corrupted differs (corrA=No → corrB=Yes)
+    // 2 = both (upg1 < upg2 AND corrA=No corrB=Yes)
+    // For weapons: also 3 = reforges differ, 4 = upg equal + reforge differ
+    const cats = [0, 1, 2];
+    const cat = cats[Math.floor(Math.random() * cats.length)];
+
+    let upgA, upgB, corrA, corrB;
+    if (cat === 1) {
+      // corr only: upg can be equal
+      upgA = Math.floor(Math.random() * (maxU + 1));
+      upgB = upgA + Math.floor(Math.random() * (maxU - upgA + 1)); // upgB >= upgA
+      corrA = false; corrB = true;
+    } else {
+      // upgrades differ (cat 0 or 2)
+      if (maxU === 0) {
+        // can't differ upgrades; fallback to corr
+        upgA = 0; upgB = 0; corrA = false; corrB = true;
+      } else {
+        upgA = Math.floor(Math.random() * maxU);       // 0..maxU-1
+        upgB = upgA + 1 + Math.floor(Math.random() * (maxU - upgA)); // upgA+1..maxU
+        corrA = Math.random() < 0.5;
+        corrB = (cat === 2) ? true : (Math.random() < 0.5);
+        // Rule: corrA=Yes → corrB must also be Yes (can't de-corrupt)
+        if (corrA && !corrB) corrB = true;
+      }
+    }
+    return { upgA, upgB, corrA, corrB };
+  }
+
+  if (!isArmor) {
+    // ── WEAPON ──
+    const rolls = getRolls(cmpCurrentItem);
+    const reforgeNames = REFORGES.map(r => r.name);
+
+    // Decide: dual roll or single roll?
+    const doDual = (rolls.length >= 2) && (Math.random() < 0.5);
+
+    if (!isDiscord) {
+      // Website mode
+      if (isAutoRoll) {
+        // asc_ws: fixed roll 11, single only, just pick upg/corr
+        cmpRollA = 11; cmpIntendedRollA = 11;
+        cmpRollB = null; cmpIntendedRollB = null;
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        cmpUpgA = upgA; cmpIntendedUpgA = upgA;
+        cmpUpgB = upgB; cmpIntendedUpgB = upgB;
+        cmpCorrA = corrA; cmpCorrAChosen = true;
+        cmpCorrB = corrB;
+        cmpRefA = 'None'; cmpRefB = 'None'; cmpRefAChosen = false;
+      } else if (doDual) {
+        const [rA, rB] = pickTwo(rolls);
+        cmpRollA = rA; cmpIntendedRollA = rA;
+        cmpRollB = rB; cmpIntendedRollB = rB;
+        // Dual: any upg/corr/ref values are fine
+        cmpUpgA = Math.floor(Math.random() * (maxUpg + 1)); cmpIntendedUpgA = cmpUpgA;
+        cmpUpgB = Math.floor(Math.random() * (maxUpg + 1)); cmpIntendedUpgB = cmpUpgB;
+        cmpCorrA = Math.random() < 0.5; cmpCorrAChosen = true;
+        cmpCorrB = Math.random() < 0.5;
+        if (cmpCorrA && !cmpCorrB) cmpCorrB = true; // no de-corrupt rule in dual? still safe
+        // Reforges: random A and B (can be same in dual)
+        const refPoolAll = ['None', ...reforgeNames];
+        cmpRefA = refPoolAll[Math.floor(Math.random() * refPoolAll.length)];
+        cmpRefAChosen = true;
+        cmpRefB = refPoolAll[Math.floor(Math.random() * refPoolAll.length)];
+      } else {
+        // Single roll
+        const rA = rolls[Math.floor(Math.random() * rolls.length)];
+        cmpRollA = rA; cmpIntendedRollA = rA;
+        cmpRollB = null; cmpIntendedRollB = null;
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        cmpUpgA = upgA; cmpIntendedUpgA = upgA;
+        cmpUpgB = upgB; cmpIntendedUpgB = upgB;
+        cmpCorrA = corrA; cmpCorrAChosen = true;
+        cmpCorrB = corrB;
+        // Reforges: random A; B must be different from A in single mode (B ≠ None)
+        const refPoolA = ['None', ...reforgeNames];
+        cmpRefA = refPoolA[Math.floor(Math.random() * refPoolA.length)];
+        cmpRefAChosen = true;
+        // B: pick any reforge except same as A; B cannot be None in single mode
+        const refPoolB = reforgeNames.filter(r => r !== cmpRefA);
+        if (refPoolB.length > 0) {
+          cmpRefB = refPoolB[Math.floor(Math.random() * refPoolB.length)];
+        } else {
+          cmpRefB = reforgeNames[0];
+        }
+      }
+      // Refresh entire UI
+      cmpOpenPicker = null;
+      cmpRefreshAll();
+      cmpUpdateCheckBtn();
+    } else {
+      // Discord mode: build command string
+      let cmd;
+      if (isAutoRoll) {
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        const yn1 = corrA ? 'y' : 'n';
+        const yn2 = corrB ? 'y' : 'n';
+        cmd = '11 - ' + upgA + ' ' + yn1 + ' > ' + upgB + ' ' + yn2;
+      } else if (doDual && rolls.length >= 2) {
+        const [rA, rB] = pickTwo(rolls);
+        const upgA = Math.floor(Math.random() * (maxUpg + 1));
+        const upgB = Math.floor(Math.random() * (maxUpg + 1));
+        const corrA = Math.random() < 0.5;
+        let corrB = Math.random() < 0.5;
+        if (corrA && !corrB) corrB = true;
+        const yn1 = corrA ? 'y' : 'n';
+        const yn2 = corrB ? 'y' : 'n';
+        const refPoolAll = ['None', ...reforgeNames];
+        const refA = refPoolAll[Math.floor(Math.random() * refPoolAll.length)];
+        const refB = refPoolAll[Math.floor(Math.random() * refPoolAll.length)];
+        const refStr = (refA !== 'None' || refB !== 'None')
+          ? ' ' + (refA === 'None' ? '' : refA) + ' > ' + (refB === 'None' ? '' : refB)
+          : '';
+        // Dual format: roll1 > roll2 - upg1 yn1 [ref1] > upg2 yn2 [ref2]
+        const sideA = upgA + ' ' + yn1 + (refA !== 'None' ? ' ' + refA : '');
+        const sideB = upgB + ' ' + yn2 + (refB !== 'None' ? ' ' + refB : '');
+        cmd = rA + ' > ' + rB + ' - ' + sideA + ' > ' + sideB;
+      } else {
+        const rA = rolls[Math.floor(Math.random() * rolls.length)];
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        const yn1 = corrA ? 'y' : 'n';
+        const yn2 = corrB ? 'y' : 'n';
+        const refPoolA = ['None', ...reforgeNames];
+        const refA = refPoolA[Math.floor(Math.random() * refPoolA.length)];
+        const refPoolB = reforgeNames.filter(r => r !== refA);
+        const refB = refPoolB.length > 0 ? refPoolB[Math.floor(Math.random() * refPoolB.length)] : reforgeNames[0];
+        const sideA = upgA + ' ' + yn1 + (refA !== 'None' ? ' ' + refA : '');
+        const sideB = upgB + ' ' + yn2 + ' ' + refB;
+        cmd = rA + ' - ' + sideA + ' > ' + sideB;
+      }
+      const inp = document.getElementById('cmp-discord-weapon-input');
+      if (inp) { inp.value = cmd; inp.dispatchEvent(new Event('input')); cmpDiscordParse(); }
+    }
+
+  } else {
+    // ── ARMOR: only current active part ──
+    const part = cmpCurrentPart || 'Helmet';
+    const statsDict = cmpCurrentItem.stats[part];
+    const minR = cmpCurrentItem.minRoll || 1;
+    const rolls = Object.keys(statsDict).map(Number).filter(k => k >= minR).sort((a,b)=>a-b);
+    const doDual = (rolls.length >= 2) && (Math.random() < 0.5);
+
+    if (!isDiscord) {
+      let rA, rB = null;
+      if (doDual && rolls.length >= 2) {
+        [rA, rB] = pickTwo(rolls);
+      } else {
+        rA = rolls[Math.floor(Math.random() * rolls.length)];
+      }
+      cmpRollA = rA; cmpIntendedRollA = rA;
+      cmpRollB = rB; cmpIntendedRollB = rB;
+      if (rB !== null) {
+        // Dual: any upg/corr
+        cmpUpgA = Math.floor(Math.random() * (maxUpg + 1)); cmpIntendedUpgA = cmpUpgA;
+        cmpUpgB = Math.floor(Math.random() * (maxUpg + 1)); cmpIntendedUpgB = cmpUpgB;
+        cmpCorrA = Math.random() < 0.5; cmpCorrAChosen = true;
+        cmpCorrB = Math.random() < 0.5;
+        if (cmpCorrA && !cmpCorrB) cmpCorrB = true;
+      } else {
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        cmpUpgA = upgA; cmpIntendedUpgA = upgA;
+        cmpUpgB = upgB; cmpIntendedUpgB = upgB;
+        cmpCorrA = corrA; cmpCorrAChosen = true;
+        cmpCorrB = corrB;
+      }
+      // Save into armor part data
+      cmpSavePartData(part);
+      cmpOpenPicker = null;
+      cmpRefreshAll();
+      cmpUpdateCheckBtn();
+    } else {
+      let cmd;
+      if (doDual && rolls.length >= 2) {
+        const [rA, rB] = pickTwo(rolls);
+        const upgA = Math.floor(Math.random() * (maxUpg + 1));
+        const upgB = Math.floor(Math.random() * (maxUpg + 1));
+        const corrA = Math.random() < 0.5;
+        let corrB = Math.random() < 0.5;
+        if (corrA && !corrB) corrB = true;
+        const yn1 = corrA ? 'y' : 'n';
+        const yn2 = corrB ? 'y' : 'n';
+        cmd = rA + ' > ' + rB + ' - ' + upgA + ' ' + yn1 + ' > ' + upgB + ' ' + yn2;
+      } else {
+        const rA = rolls[Math.floor(Math.random() * rolls.length)];
+        const { upgA, upgB, corrA, corrB } = makeValidSingle(maxUpg);
+        const yn1 = corrA ? 'y' : 'n';
+        const yn2 = corrB ? 'y' : 'n';
+        cmd = rA + ' - ' + upgA + ' ' + yn1 + ' > ' + upgB + ' ' + yn2;
+      }
+      const inp = document.getElementById('cmp-discord-armor-input');
+      if (inp) {
+        inp.value = cmd;
+        _cmpDiscArmorRaw[part] = cmd;
+        inp.dispatchEvent(new Event('input'));
+        cmpDiscordParse();
+      }
+    }
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 function cmpCheckSpecifics() {
   const item = cmpCurrentItem;
   if (!item) return;
@@ -14121,7 +16032,7 @@ function cmpRenderResultView() {
 
   // Ensure label always shows Damage (not Health from armor)
   const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
-  if (dmgLbl) { dmgLbl.textContent = t('lbl_damage_res'); dmgLbl.style.color = '#ff4444'; }
+  if (dmgLbl) { dmgLbl.textContent = t('lbl_damage_res'); dmgLbl.style.color = 'var(--color-dmg)'; }
   const dmgVal = document.getElementById('cmp-res-dmg');
   if (dmgVal) dmgVal.style.color = '';
 
@@ -14285,8 +16196,8 @@ function cmpRenderArmorResultView() {
   // Health label green
   const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
   const dmgVal = document.getElementById('cmp-res-dmg');
-  dmgLbl.textContent = t('lbl_health'); dmgLbl.style.color = '#7fff00';
-  dmgVal.style.color = '#7fff00';
+  dmgLbl.textContent = t('lbl_health'); dmgLbl.style.color = 'var(--color-hp)';
+  dmgVal.style.color = 'var(--color-hp)';
   dmgVal.textContent = azFmtDmg(res.hp);
 
   // Diff badges (Wished view)
@@ -15071,8 +16982,8 @@ function _cmpDiscRenderPreview() {
   // ── Upgrades (? = green, numbers = green too) ──
   const upgAEl = document.getElementById('cmp-disc-upg-a');
   const upgBEl = document.getElementById('cmp-disc-upg-b');
-  if (upgAEl) { upgAEl.textContent = upg1 !== null ? String(upg1).slice(0, 3) : '?'; upgAEl.style.color = '#7fff00'; }
-  if (upgBEl) { upgBEl.textContent = upg2 !== null ? String(upg2).slice(0, 3) : '?'; upgBEl.style.color = '#7fff00'; }
+  if (upgAEl) { upgAEl.textContent = upg1 !== null ? String(upg1).slice(0, 3) : '?'; upgAEl.style.color = 'var(--color-hp)'; }
+  if (upgBEl) { upgBEl.textContent = upg2 !== null ? String(upg2).slice(0, 3) : '?'; upgBEl.style.color = 'var(--color-hp)'; }
 
   // ── Corrupted (? = purple, No = red, Yes = green) ──
   const corrAEl = document.getElementById('cmp-disc-corr-a');
@@ -15547,6 +17458,12 @@ function openSettings() {
   panel.classList.add('open');
   document.getElementById('settings-btn').classList.add('active');
 
+  // Show backdrop on mobile
+  if (isTrulyMobile(600)) {
+    const bd = document.getElementById('settings-backdrop');
+    if (bd) bd.style.display = 'block';
+  }
+
   // Desktop: position below the gear button, right edge aligned (opens to the left)
   if (!isTrulyMobile(600)) {
     const btn = document.getElementById('settings-btn');
@@ -15572,11 +17489,13 @@ function closeSettings() {
   _settingsOpen = false;
   document.getElementById('settings-panel').classList.remove('open');
   document.getElementById('settings-btn').classList.remove('active');
+  const bd = document.getElementById('settings-backdrop');
+  if (bd) bd.style.display = 'none';
 }
 
 // Close on outside click — but NOT if click was inside the panel content
 document.addEventListener('click', function(e) {
-  if (_settingsOpen && !e.target.closest('#settings-wrap') && !e.target.closest('#settings-panel')) {
+  if (_settingsOpen && !e.target.closest('#settings-wrap') && !e.target.closest('#settings-panel') && !e.target.closest('#settings-backdrop')) {
     closeSettings();
   }
 });
@@ -15717,6 +17636,19 @@ const _THEMES = {
     switchAvatar: 'images/Home Page/avatar2.png',
     tooltip: 'GALAXY THEME',
     switchGlow: '#447194',
+  },
+  baldi: {
+    banners: [
+      'images/Home Page/banner5_1.png',
+      'images/Home Page/banner5_2.png',
+      'images/Home Page/banner5_3.png',
+      'images/Home Page/banner5_4.png',
+    ],
+    bgImage: 'images/Home Page/banner5_5.png',
+    mainAvatar: 'images/Home Page/avatar5.png',
+    switchAvatar: 'images/Home Page/avatar2.png',
+    tooltip: 'GALAXY THEME',
+    switchGlow: '#D42B2B',
   }
 };
 
@@ -15728,6 +17660,7 @@ window._applyTheme = function(name) {
   document.documentElement.classList.toggle('theme-gold',    name === 'gold');
   document.documentElement.classList.toggle('theme-easter',  name === 'easter');
   document.documentElement.classList.toggle('theme-classic', name === 'classic');
+  document.documentElement.classList.toggle('theme-baldi',   name === 'baldi');
 
   const pageBg = document.querySelector('.page-bg');
   if (pageBg) pageBg.style.backgroundImage = `url('${theme.bgImage}')`;
@@ -15747,6 +17680,7 @@ window._applyTheme = function(name) {
     galaxy:  'images/Home Page/avatar2.png',
     easter:  'images/Home Page/avatar3.png',
     classic: 'images/Home Page/avatar4.png',
+    baldi:   'images/Home Page/avatar5.png',
   };
   if (mainAv) mainAv.src = AV[name] || AV.galaxy;
 
@@ -15857,6 +17791,8 @@ function _paletteUpdateActive() {
 function selectPalette(name) {
   window._applyTheme(name);
   closePalettePopup();
+  setTimeout(() => {
+  }, 120);
 }
 
 /* Legacy wrappers — kept for safety */
@@ -17885,12 +19821,15 @@ function clearItemSearch(panelId) {
     window._applyTheme('easter');
   } else if (_savedTheme === 'classic') {
     window._applyTheme('classic');
+  } else if (_savedTheme === 'baldi') {
+    window._applyTheme('baldi');
   }
   // galaxy — no re-apply needed, defaults are already correct
 
   // Apply saved entry type and sync settings UI
   _applyEntryTypeUI();
   _applySettingsLangUI();
+  _applyRandBtnTitles();
   if (typeof _paletteUpdateActive === 'function') _paletteUpdateActive();
 
   const isTouch = window.matchMedia('(pointer: coarse)').matches;
@@ -18035,5 +19974,6 @@ function clearItemSearch(panelId) {
 
 /* ── TOTAL PROCESSES scroll helpers уже объявлены через window.* в firebase-блоке ── */
 </script>
+
 </body>
 </html>

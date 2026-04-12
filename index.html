@@ -7645,17 +7645,17 @@ body.scale-active .console-panel {
             </div>
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
           </div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">18</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         </div>
       </div>
       <div class="stats-col">
         <div class="stat-chip"><span class="stat-num">1.0.7</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
-        <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+        <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
-        <div class="stat-chip"><span class="stat-num">18</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
+        <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         <div class="stat-chip stat-chip--total">
           <div class="total-proc-wrap">
             <button class="total-proc-arrow" id="total-desk-left" onclick="_totalProcScroll('desk',-1)">&#8592;</button>
@@ -9872,6 +9872,7 @@ const ITEMS = {
     {id:'asc_at',name:"Abyssal Trident",               stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
     {id:'asc_ad',name:"Ascended Daggers",              stats:DD2, maxUpg:74,  rarity:'ascended',  delay:0.25,  minRoll:6},
     {id:'asc_av',name:"Ascended Voidblade",            stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.75,  minRoll:6},
+    {id:'ct_ba', name:"Contest Battleaxe",             stats:DB,  maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
     {id:'cb',    name:"Conqueror's Blade",             stats:CB,  maxUpg:45,  rarity:'mythic',    delay:0.5,   minRoll:1},
     {id:'cup',   name:"Cupid's Fury",                  stats:CUF, maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
     {id:'cup_sw',name:"Cupid's Wrath",                 stats:CUW, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
@@ -9918,6 +9919,7 @@ const ACC_DATA = {
     { id:'vitalis_necklace',     name:'Vitalis Necklace',          type:'health', rolls:{1:25.30,2:25.55,3:25.81,4:26.06,5:26.31,6:26.57,7:26.82,8:27.07,9:27.32,10:27.58,11:27.83} },
   ],
   extra: [
+    { id:'contest_ring',         name:'Contest Ring',            type:'magic',  rolls:{1:38.50,2:38.89,3:39.27,4:39.66,5:40.04,6:40.42,7:40.81,8:41.20,9:41.58,10:41.97,11:42.35} },    
     { id:'easter_ring',          name:'Easter Ring',             type:'easter',  rolls:{1:11.00,2:11.11,3:11.22,4:11.33,5:11.44,6:11.55,7:11.66,8:11.77,9:11.88,10:11.99,11:12.10} },
     { id:'graviton_ring',        name:'Graviton Ring',             type:'magic',  rolls:{1:27.50,2:27.78,3:28.05,4:28.33,5:28.60,6:28.88,7:29.15,8:29.43,9:29.70,10:29.98,11:30.25} },
     { id:'lord_prismas',         name:'Lord Prisma\'s Ring',            type:'magic',  rolls:{1:38.50,2:38.89,3:39.27,4:39.66,5:40.04,6:40.42,7:40.81,8:41.20,9:41.58,10:41.97,11:42.35} },
@@ -9951,6 +9953,7 @@ const IMAGE_PATHS = {
     'vl_st':    'Weapons/glitchedstaff.png',
     'sr_st':    'Weapons/seriously.png',
     'ea_st':    'Weapons/easterstaff.png',
+    'ct_ba':    'Weapons/cupidwrath.png',
   },
   armors: {
     'fzh': { Helmet:'Armors/fzhelmet.png', Chestplate:'Armors/fzchest.png', Leggings:'Armors/fzleggings.png' },

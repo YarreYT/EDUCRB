@@ -14,6 +14,7 @@
   if (t === 'easter')  document.documentElement.classList.add('theme-easter');
   if (t === 'classic') document.documentElement.classList.add('theme-classic');
   if (t === 'baldi')   document.documentElement.classList.add('theme-baldi');
+  if (t === 'discord') document.documentElement.classList.add('theme-discord');
   // galaxy — классов нет, просто дефолт
 })();
 </script>
@@ -605,6 +606,565 @@
   --color-upg:    #1A6A1A;
   --color-corr:   #7A3A7A;
   --color-reforge:#2A5A8A;
+}
+
+/* ══════════════════════════════════════════════════════
+   DISCORD THEME
+   Фон страницы: #313338  — основной серый Discord
+   Панели:       #2b2d31  — sidebar / panel bg
+   Nav:          #1e1f22  — самый тёмный нижний бар
+   Акцент:       #5865F2  — Blurple (основной цвет Discord)
+   Текст:        #dbdee1  — основной светлый текст Discord
+   Вторичный:    #949ba4  — muted channel text
+   Затемнённый:  #4e5058  — channel separators
+   Рамки:        #3b3d44  — subtle dividers
+══════════════════════════════════════════════════════ */
+:root.theme-discord {
+  --gold:           #5865F2;
+  --gold-bright:    #7289DA;
+  --gold-glow:      #99AAF5;
+  --amber:          #EB459E;
+  --cyan-rune:      #00d4ff;
+  --green-stat:     #57F287;
+  --text-primary:   #dbdee1;
+  --text-muted:     #949ba4;
+  --text-dim:       #4e5058;
+  --border-rune:    #3b3d44;
+  --border-gold:    #3b3d44;
+  --bg-void:        #1e1f22;
+  --theme-bg-image: none;
+  --theme-name:     discord;
+  --theme-switch-glow: #5865F2;
+  --gold-rgb:       88, 101, 242;
+  --color-dmg:      #ED4245;
+  --color-hp:       #57F287;
+  --color-upg:      #57F287;
+  --color-corr:     #EB459E;
+  --color-reforge:  #7289DA;
+  /* Discord-specific vars */
+  --dc-bg:          #313338;
+  --dc-panel:       #2b2d31;
+  --dc-nav:         #1e1f22;
+  --dc-accent:      #5865F2;
+  --dc-border:      #3b3d44;
+  --dc-text:        #dbdee1;
+  --dc-muted:       #949ba4;
+  --dc-dim:         #4e5058;
+}
+
+/* ── DISCORD: Page background ── */
+:root.theme-discord .page-bg {
+  background-color: #1e1f22;
+  background-image: none !important;
+}
+:root.theme-discord .page-bg::after {
+  background: none;
+}
+
+/* ── DISCORD: Nav ── */
+:root.theme-discord nav {
+  background: #1e1f22;
+  border-color: #111214;
+  box-shadow: 0 1px 0 0 rgba(0,0,0,0.4);
+}
+:root.theme-discord nav::after { background: none; }
+:root.theme-discord .nav-btn { color: #949ba4; }
+:root.theme-discord .nav-btn:hover {
+  color: #dbdee1;
+  background: rgba(88,101,242,0.15);
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+:root.theme-discord .nav-btn.active {
+  color: #dbdee1;
+  background: rgba(88,101,242,0.20);
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+:root.theme-discord .lang-other {
+  background: #2b2d31 !important;
+  border-color: #3b3d44 !important;
+  color: #dbdee1 !important;
+}
+:root.theme-discord .nav-btn .tooltip {
+  background: #111214;
+  border: 1px solid #3b3d44;
+  color: #dbdee1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+:root.theme-discord .nav-btn svg path,
+:root.theme-discord .nav-btn svg circle,
+:root.theme-discord .nav-btn svg line,
+:root.theme-discord .nav-btn svg polyline,
+:root.theme-discord .nav-btn svg rect {
+  stroke: none !important;
+  fill: rgba(148,155,164,0.70) !important;
+}
+:root.theme-discord .nav-btn.active svg path,
+:root.theme-discord .nav-btn.active svg circle,
+:root.theme-discord .nav-btn.active svg line,
+:root.theme-discord .nav-btn.active svg polyline,
+:root.theme-discord .nav-btn.active svg rect {
+  stroke: none !important;
+  fill: #5865F2 !important;
+}
+:root.theme-discord .online-icon path { stroke: #57F287 !important; }
+
+/* ── DISCORD: Banner ── */
+:root.theme-discord .banner-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(30,31,34,0.70) 0%,
+    rgba(30,31,34,0.28) 45%,
+    rgba(30,31,34,0.85) 100%
+  );
+}
+:root.theme-discord .banner-eyebrow {
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 6px rgba(0,0,0,.9);
+}
+:root.theme-discord .banner-game-title {
+  color: #99AAF5;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #99AAF5;
+  background-clip: unset;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+:root.theme-discord .banner-glow-line {
+  background: #5865F2;
+  box-shadow: 0 0 8px rgba(88,101,242,0.5);
+  height: 1px;
+  opacity: 0.8;
+}
+
+/* ── DISCORD: Основные панели ── */
+:root.theme-discord .bot-panel,
+:root.theme-discord .updates-panel {
+  background: #313338;
+  border-color: #3b3d44;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  backdrop-filter: none;
+}
+:root.theme-discord .bot-panel::before,
+:root.theme-discord .updates-panel::before { background: none; }
+:root.theme-discord .bot-panel *:not(.value-list-block):not(.value-list-block *),
+:root.theme-discord .updates-panel * { color: #dbdee1; }
+:root.theme-discord .bot-name { color: #5865F2 !important; text-shadow: none !important; }
+:root.theme-discord .bot-tagline { color: rgba(219,222,225,0.55) !important; }
+:root.theme-discord .bot-desc { color: rgba(219,222,225,0.65) !important; }
+
+/* ── DISCORD: Credits ── */
+:root.theme-discord .credit-card {
+  background: rgba(88,101,242,0.08);
+  border-color: #3b3d44;
+}
+:root.theme-discord .credit-card-role { color: rgba(219,222,225,0.45) !important; }
+:root.theme-discord .credit-card-name { color: #dbdee1 !important; }
+:root.theme-discord .credit-card-name.cyan { color: #7289DA !important; }
+:root.theme-discord .credit-card-name.green { color: #57F287 !important; }
+
+/* ── DISCORD: Stat chips ── */
+:root.theme-discord .stat-chip {
+  background: rgba(88,101,242,0.10);
+  border-color: #3b3d44;
+}
+:root.theme-discord .stat-num { color: #5865F2 !important; }
+:root.theme-discord .stat-lbl { color: rgba(219,222,225,0.50) !important; }
+:root.theme-discord .stat-chip--total {
+  border-color: #5865F2 !important;
+  box-shadow: 0 0 10px rgba(88,101,242,0.20), inset 0 0 12px rgba(88,101,242,0.06) !important;
+}
+:root.theme-discord .stat-chip--total .stat-lbl { color: rgba(219,222,225,0.55) !important; }
+:root.theme-discord .total-proc-count { color: #5865F2 !important; }
+:root.theme-discord .total-proc-arrow { color: #5865F2 !important; }
+
+/* ── DISCORD: Updates ── */
+:root.theme-discord .updates-title { color: #5865F2 !important; text-shadow: none !important; }
+:root.theme-discord .updates-subtitle { color: rgba(219,222,225,0.50) !important; }
+:root.theme-discord .updates-text { color: rgba(219,222,225,0.75) !important; }
+:root.theme-discord .updates-text .upd-accent { color: #5865F2 !important; }
+:root.theme-discord .updates-text .upd-cyan { color: #7289DA !important; }
+:root.theme-discord .updates-text .upd-green { color: #57F287 !important; }
+:root.theme-discord .updates-text .upd-muted { color: rgba(219,222,225,0.35) !important; }
+:root.theme-discord .upd-nav-btn {
+  background: rgba(88,101,242,0.10);
+  border-color: #3b3d44;
+  color: #949ba4;
+}
+:root.theme-discord .upd-nav-btn:hover {
+  background: rgba(88,101,242,0.18);
+  border-color: #5865F2;
+  color: #dbdee1;
+}
+
+/* ── DISCORD: Item list panel ── */
+:root.theme-discord .item-list-panel {
+  background: #313338;
+  border-color: #3b3d44;
+  box-shadow: none;
+}
+:root.theme-discord .item-list-header {
+  background: #2b2d31;
+  border-color: #3b3d44;
+  color: #949ba4;
+}
+:root.theme-discord .cat-tab {
+  color: #949ba4;
+  border-color: transparent;
+  background: transparent;
+}
+:root.theme-discord .cat-tab.active,
+:root.theme-discord .cat-tab:hover {
+  color: #dbdee1;
+  background: rgba(88,101,242,0.18);
+  border-color: #5865F2;
+}
+:root.theme-discord .item-btn {
+  color: #949ba4;
+  background: transparent;
+  border-color: transparent;
+}
+:root.theme-discord .item-btn:hover {
+  color: #dbdee1;
+  background: rgba(88,101,242,0.12);
+  border-color: transparent;
+}
+:root.theme-discord .item-btn.active {
+  color: #dbdee1;
+  background: rgba(88,101,242,0.22);
+  border-color: #5865F2;
+}
+:root.theme-discord .item-category-header { color: #949ba4; }
+:root.theme-discord .item-category-header::before,
+:root.theme-discord .item-category-header::after { background: #3b3d44; }
+
+/* ── DISCORD: Search ── */
+:root.theme-discord .item-search-wrap,
+:root.theme-discord #page-rolls .item-search-wrap,
+:root.theme-discord #page-analyze .item-search-wrap,
+:root.theme-discord #page-stuff .item-search-wrap,
+:root.theme-discord #page-compare .item-search-wrap {
+  background: #1e1f22 !important;
+  border-color: #111214 !important;
+}
+:root.theme-discord .item-search-input {
+  background: transparent !important;
+  color: #dbdee1 !important;
+}
+:root.theme-discord .item-search-input::placeholder { color: rgba(219,222,225,0.28) !important; }
+
+/* ── DISCORD: Modifier panel ── */
+:root.theme-discord .mod-panel {
+  background: #313338;
+  border-color: #3b3d44;
+  box-shadow: none;
+}
+:root.theme-discord .mod-panel-header {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+:root.theme-discord .mod-panel-title { color: rgba(219,222,225,0.50) !important; }
+:root.theme-discord .mod-panel-value { color: #5865F2 !important; }
+:root.theme-discord .mod-panel-arrow { color: #5865F2 !important; }
+:root.theme-discord .mod-panel-body { background: #2b2d31; }
+:root.theme-discord .mod-btn {
+  background: #313338;
+  border-color: #3b3d44;
+  color: #949ba4;
+}
+:root.theme-discord .mod-btn:hover,
+:root.theme-discord .mod-btn.active {
+  background: rgba(88,101,242,0.18);
+  border-color: #5865F2;
+  color: #dbdee1;
+}
+
+/* ── DISCORD: Console / result panels ── */
+:root.theme-discord .console-panel {
+  background: #313338;
+  border-color: #3b3d44;
+  box-shadow: none;
+}
+:root.theme-discord .console-header {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+
+/* ── DISCORD: Settings panel ── */
+:root.theme-discord .settings-panel {
+  background: #2b2d31 !important;
+  border-color: #3b3d44 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+}
+:root.theme-discord .settings-section-title { color: #5865F2 !important; }
+:root.theme-discord .sett-entry-btn {
+  color: #949ba4 !important;
+  border-color: #3b3d44 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .sett-entry-btn:hover {
+  background: rgba(88,101,242,0.12) !important;
+  color: #dbdee1 !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .sett-entry-btn.active {
+  background: none !important;
+  color: #5865F2 !important;
+}
+:root.theme-discord .sett-entry-btn.dim { color: rgba(219,222,225,0.25) !important; }
+:root.theme-discord .sett-entry-sep { color: rgba(219,222,225,0.25) !important; }
+:root.theme-discord .settings-gear-btn { color: rgba(148,155,164,0.55); }
+:root.theme-discord .settings-gear-btn:hover {
+  color: #5865F2;
+  background: rgba(88,101,242,0.12);
+  box-shadow: none;
+}
+
+/* ── DISCORD: Palette popup ── */
+:root.theme-discord .palette-popup-inner {
+  background: #1e1f22;
+  border: 1px solid #3b3d44;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+:root.theme-discord .palette-item { border-color: rgba(59,61,68,0.80); }
+:root.theme-discord .palette-item img { border-color: rgba(59,61,68,0.90); }
+:root.theme-discord .palette-item:hover { background: rgba(88,101,242,0.12); box-shadow: none; }
+:root.theme-discord .palette-future-icon {
+  border-color: rgba(59,61,68,0.70);
+  color: rgba(219,222,225,0.22);
+}
+:root.theme-discord .palette-backdrop { background: rgba(10,11,13,0.65); }
+
+/* ── DISCORD: Avatar ring ── */
+:root.theme-discord .avatar-ring-inner {
+  border-color: #5865F2;
+  box-shadow: 0 0 12px rgba(88,101,242,0.35);
+}
+:root.theme-discord .avatar-ring-outer {
+  border-color: rgba(88,101,242,0.22);
+}
+
+/* ── DISCORD: Focus ── */
+:root.theme-discord button:focus-visible { outline-color: #5865F2; }
+
+/* ── DISCORD: Глобальное отключение glow/text-shadow ── */
+:root.theme-discord *:not(.banner-eyebrow):not(.banner-game-title) {
+  text-shadow: none !important;
+}
+:root.theme-discord .stat-chip--total {
+  box-shadow: 0 0 0 1px #5865F2 !important;
+}
+:root.theme-discord .avatar-ring-inner {
+  box-shadow: none !important;
+}
+
+/* ── DISCORD: Console full restyle ── */
+:root.theme-discord .console-panel {
+  background: #313338 !important;
+  border-color: #2b2d31 !important;
+  border-left: 1px solid #2b2d31 !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .console-header {
+  background: #2b2d31 !important;
+  border-color: #1e1f22 !important;
+}
+:root.theme-discord .console-title {
+  color: #949ba4 !important;
+}
+:root.theme-discord .console-live-badge,
+:root.theme-discord .console-live-badge span {
+  color: #57F287 !important;
+}
+:root.theme-discord .console-status {
+  background: #57F287 !important;
+  box-shadow: 0 0 5px rgba(87,242,135,0.5) !important;
+}
+:root.theme-discord .online-dot {
+  background: #57F287 !important;
+  box-shadow: 0 0 6px rgba(87,242,135,0.5) !important;
+}
+:root.theme-discord .online-count {
+  color: #57F287 !important;
+}
+:root.theme-discord .online-icon path {
+  stroke: #57F287 !important;
+}
+:root.theme-discord .console-tabs {
+  background: #2b2d31 !important;
+  border-color: #1e1f22 !important;
+}
+:root.theme-discord .console-tab-btn {
+  color: #949ba4 !important;
+  border-bottom-color: transparent !important;
+}
+:root.theme-discord .console-tab-btn:hover {
+  color: #dbdee1 !important;
+  background: rgba(88,101,242,0.10) !important;
+}
+:root.theme-discord .console-tab-btn.active {
+  color: #dbdee1 !important;
+  border-bottom-color: #5865F2 !important;
+  background: rgba(88,101,242,0.12) !important;
+}
+:root.theme-discord .analysis-card {
+  border-color: rgba(59,61,68,0.5) !important;
+}
+:root.theme-discord .analysis-card:hover {
+  background: rgba(88,101,242,0.07) !important;
+}
+:root.theme-discord .history-header {
+  color: #949ba4 !important;
+  border-color: #3b3d44 !important;
+}
+:root.theme-discord .console-body {
+  scrollbar-color: #3b3d44 transparent !important;
+}
+:root.theme-discord .console-body::-webkit-scrollbar-thumb {
+  background: #3b3d44 !important;
+}
+:root.theme-discord .empty-title {
+  color: #949ba4 !important;
+}
+:root.theme-discord .empty-desc {
+  color: rgba(148,155,164,0.6) !important;
+}
+:root.theme-discord .hint-row {
+  background: rgba(88,101,242,0.06) !important;
+  border-color: rgba(88,101,242,0.15) !important;
+}
+:root.theme-discord .hint-page {
+  color: #5865F2 !important;
+}
+:root.theme-discord .hint-desc {
+  color: #949ba4 !important;
+}
+
+/* ── DISCORD: Discord input (az-card) ── */
+:root.theme-discord .az-discord-input {
+  color: #dbdee1;
+}
+:root.theme-discord .az-discord-input::placeholder {
+  color: var(--text-dim);
+  opacity: .65;
+}
+
+/* ── DISCORD: Mobile sticky search ── */
+:root.theme-discord #page-rolls .item-search-wrap,
+:root.theme-discord #page-analyze .item-search-wrap,
+:root.theme-discord #page-stuff .item-search-wrap,
+:root.theme-discord #page-compare .item-search-wrap {
+  background: #1e1f22 !important;
+  border-color: #111214 !important;
+}
+
+/* ── DISCORD: Palette item hover colors ── */
+:root.theme-discord .palette-item[data-theme="discord"]:hover img {
+  box-shadow: 0 0 0 2px #5865F2, 0 0 14px rgba(88,101,242,0.5);
+}
+
+/* ══════════════════════════════════════════════════════
+   DISCORD: az/sp/cmp input & result cards
+   Карточки и панели подгоняем под Discord (тёмно-серые),
+   при этом НЕ трогаем: значения, переменные, рамки/фон
+   изображений, названия и редкости предметов, randomizer.
+   ══════════════════════════════════════════════════════ */
+
+/* Input + result cards */
+:root.theme-discord .az-card,
+:root.theme-discord .az-result-card,
+:root.theme-discord .cmp-result-card {
+  background: #2b2d31 !important;
+  border: 1px solid #1e1f22 !important;
+  box-shadow: 0 2px 0 #1e1f22, 0 4px 12px rgba(0,0,0,0.35) !important;
+}
+
+/* Внутренний stats-box (Damage/Delay в результате) */
+:root.theme-discord .az-res-stats-box {
+  background: #1e1f22 !important;
+  border-color: #111214 !important;
+  box-shadow: none !important;
+}
+
+/* Discord-input строка (24556 29 n Furious / Damage: 24556) */
+:root.theme-discord .az-card .az-discord-input,
+:root.theme-discord .az-card .az-discord-input.weapon-input,
+:root.theme-discord .az-card .az-discord-input.armor-input {
+  background: #1e1f22 !important;
+  border: 1px solid #111214 !important;
+  color: #dbdee1 !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .az-card .az-discord-input::placeholder {
+  color: rgba(219,222,225,0.32) !important;
+  opacity: 1 !important;
+}
+:root.theme-discord .az-card .az-discord-input:focus {
+  border-color: #5865F2 !important;
+  box-shadow: 0 0 0 2px rgba(88,101,242,0.25) !important;
+}
+:root.theme-discord .az-card .az-discord-input.weapon-input:focus,
+:root.theme-discord .az-card .az-discord-input.armor-input:focus {
+  border-color: #5865F2 !important;
+  box-shadow: 0 0 0 2px rgba(88,101,242,0.25) !important;
+}
+
+/* Бокс Damage + delay внутри input-карточки */
+:root.theme-discord .az-card .az-discord-dmg-box {
+  background: #1e1f22 !important;
+  border-color: #111214 !important;
+}
+
+/* Divider между блоками */
+:root.theme-discord .az-card .az-discord-divider {
+  background: rgba(88,101,242,0.20) !important;
+}
+
+/* Analyze / Preview / Compare кнопка — Discord blurple с анимацией перезарядки */
+:root:root.theme-discord .az-analyze-btn {
+  background: linear-gradient(180deg, #5865F2 0%, #4752C4 100%);
+  box-shadow: 0 4px 14px rgba(88,101,242,0.30), 0 2px 0 #3C45A5 !important;
+  color: #ffffff !important;
+}
+:root:root.theme-discord .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, #6874F5 0%, #525FD8 100%);
+  box-shadow: 0 6px 20px rgba(88,101,242,0.45), 0 2px 0 #3C45A5 !important;
+}
+:root:root.theme-discord .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, #3a3d6b 0%, #2e3057 100%);
+  box-shadow: none !important;
+  color: rgba(255,255,255,0.55) !important;
+}
+:root:root.theme-discord .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, #6874F5 0%, #4752C4 100%) left no-repeat,
+    linear-gradient(180deg, #2b2d55 0%, #1e1f3d 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 14px rgba(88,101,242,0.15), 0 2px 0 #1e1f3d !important;
+  color: #ffffff !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
+  animation: cdFillDiscord var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillDiscord {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+
+/* dt-split-card (DevTool) — тоже под Discord */
+:root.theme-discord .dt-split-card {
+  background: #2b2d31 !important;
+  border-color: #1e1f22 !important;
+}
+
+/* Gold-row панели (Next Upgrade / Gold Spent / Gold to Max) — Discord тёмно-серый */
+:root.theme-discord .az-gold-row {
+  background: #1e1f22 !important;
+  border: 1px solid #111214 !important;
 }
 
 /* ── BALDI: Page background ── */
@@ -3036,14 +3596,31 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   transform: scale(0.95);
 }
 
-/* Active (current) palette indicator */
-.palette-item.palette-active img {
-  border-color: var(--gold);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 70%, transparent);
+/* Active (current) palette indicator —
+   каждая палитра светится своим собственным цветом (data-glow),
+   независимо от текущей темы сайта.
+   !important нужен, потому что theme-baldi/classic/discord/easter
+   переопределяют border-color у .palette-item с большей специфичностью. */
+.palette-item.palette-active.palette-active img,
+:root .palette-item.palette-active img {
+  border-color: var(--pal-glow, #c8932a) !important;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--pal-glow, #c8932a) 70%, transparent) !important;
 }
-.palette-item.palette-active {
-  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+.palette-item.palette-active.palette-active,
+:root .palette-item.palette-active {
+  border-color: color-mix(in srgb, var(--pal-glow, #c8932a) 45%, transparent) !important;
 }
+.palette-item.palette-active.palette-active .palette-label,
+:root .palette-item.palette-active .palette-label {
+  color: var(--pal-glow, #c8932a) !important;
+}
+/* Per-palette glow colors (matches data-glow on each button) */
+.palette-item[data-theme="gold"]    { --pal-glow: #c8932a; }
+.palette-item[data-theme="galaxy"]  { --pal-glow: #9b30ff; }
+.palette-item[data-theme="easter"]  { --pal-glow: #E0607E; }
+.palette-item[data-theme="classic"] { --pal-glow: #447194; }
+.palette-item[data-theme="baldi"]   { --pal-glow: #2EB81E; }
+.palette-item[data-theme="discord"] { --pal-glow: #5865F2; }
 
 .palette-label {
   font-family: 'Rajdhani', sans-serif;
@@ -3058,7 +3635,7 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   color: var(--text-primary);
 }
 .palette-item.palette-active .palette-label {
-  color: var(--gold-bright);
+  color: var(--pal-glow, var(--gold-bright));
 }
 
 /* Future placeholder */
@@ -7364,6 +7941,575 @@ body.scale-active .console-panel {
     background: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   DISCORD THEME FIXES
+   ══════════════════════════════════════════════════════════════ */
+
+/* Fix semantic colors to match other themes (Time, Gold, Classic) */
+:root.theme-discord {
+  --color-upg:    #7fff00 !important;
+  --color-hp:     #7fff00 !important;
+  --color-corr:   #c875ff !important;
+}
+
+/* 1. Home: stat chips — dark gray instead of blue */
+:root.theme-discord .stat-chip {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+:root.theme-discord .stat-chip:hover {
+  border-color: #5865F2;
+}
+:root.theme-discord .stat-chip--total {
+  border-color: #5865F2;
+  box-shadow: 0 0 10px rgba(88,101,242,0.15), inset 0 0 12px rgba(88,101,242,0.05);
+}
+
+/* 2. Home: credits cards — dark background, remove blue tint */
+:root.theme-discord .credit-card {
+  background: #232428;
+  border-color: #3b3d44;
+}
+:root.theme-discord .credit-card:hover {
+  border-color: #5865F2;
+}
+
+/* 3. Home: banner title — add black stroke like other themes */
+:root.theme-discord .banner-game-title {
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 30px rgba(0,0,0,0.45);
+}
+
+/* 4. Tables: category tabs — more visible, distinct from background */
+:root.theme-discord .cat-tab {
+  background: #2b2d31;
+  border-color: #3b3d44;
+  color: #949ba4;
+}
+:root.theme-discord .cat-tab:hover {
+  background: rgba(88,101,242,0.12);
+  border-color: #5865F2;
+  color: #dbdee1;
+}
+:root.theme-discord .cat-tab.active {
+  background: rgba(88,101,242,0.18);
+  border-color: #5865F2;
+  color: #ffffff;
+}
+
+/* 5. Tables: roll tables — lighter background */
+:root.theme-discord .roll-table-wrap {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+:root.theme-discord .roll-table-wrap thead th {
+  background: #232428;
+  color: #949ba4;
+  border-color: #3b3d44;
+}
+:root.theme-discord .roll-table-wrap tbody tr:hover {
+  background: rgba(88,101,242,0.06);
+}
+
+/* 6. Tables & Pages: search box — same color as list */
+:root.theme-discord .item-search-wrap,
+:root.theme-discord #page-rolls .item-search-wrap,
+:root.theme-discord #page-analyze .item-search-wrap,
+:root.theme-discord #page-stuff .item-search-wrap,
+:root.theme-discord #page-compare .item-search-wrap {
+  background: #232428 !important;
+  border-color: #3b3d44 !important;
+}
+:root.theme-discord .item-search-input {
+  color: #dbdee1;
+}
+:root.theme-discord .item-search-input::placeholder {
+  color: #949ba4;
+}
+
+/* 7. Analyze/Preview/Compare: Process & Tablet panels — Discord dark gray */
+:root.theme-discord .az-third-panel,
+:root.theme-discord #page-stuff .sp-third-panel,
+:root.theme-discord .cmp-third-panel {
+  background: #2b2d31 !important;
+  border-color: #3b3d44 !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+}
+:root.theme-discord .az-third-panel::before,
+:root.theme-discord #page-stuff .sp-third-panel::before,
+:root.theme-discord .cmp-third-panel::before {
+  background: linear-gradient(90deg, transparent, #5865F2, transparent);
+  opacity: 0.3;
+}
+:root.theme-discord .az-third-panel-tabs {
+  background: #232428;
+  border-bottom-color: #3b3d44;
+}
+:root.theme-discord .az-third-tab {
+  color: #949ba4;
+}
+:root.theme-discord .az-third-tab:hover,
+:root.theme-discord .az-third-tab.active {
+  color: #ffffff;
+  background: rgba(88,101,242,0.12);
+  border-bottom-color: #5865F2;
+}
+
+/* Process panel content colors */
+:root.theme-discord .az-proc-grid {
+  color: #dbdee1;
+}
+:root.theme-discord .az-step-lbl {
+  color: #dbdee1;
+}
+:root.theme-discord .az-step-formula {
+  background: rgba(0,0,0,0.2);
+}
+:root.theme-discord .az-step-lhs {
+  color: #949ba4;
+}
+:root.theme-discord .az-step-rhs.c-teal {
+  color: #57F287;
+}
+:root.theme-discord .az-step-rhs.c-purple {
+  color: #EB459E;
+}
+:root.theme-discord .az-step-rhs.c-gold {
+  color: #5865F2;
+}
+
+/* Tablet panel */
+:root.theme-discord .az-tbl thead th {
+  background: #232428;
+  color: #949ba4;
+  border-bottom-color: #3b3d44;
+}
+:root.theme-discord .az-tbl tbody tr:hover {
+  background: rgba(88,101,242,0.06);
+}
+:root.theme-discord .az-roll-badge {
+  background: rgba(88,101,242,0.08);
+  border-color: rgba(88,101,242,0.3);
+}
+
+/* 8. Quote/Comment panels — same dark gray */
+:root.theme-discord .az-quote-panel,
+:root.theme-discord .az-quote-mobile {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+:root.theme-discord .az-quote-panel::before,
+:root.theme-discord .az-quote-mobile::before {
+  background: linear-gradient(90deg, transparent, #5865F2, transparent);
+}
+:root.theme-discord .az-quote-text {
+  color: #dbdee1;
+}
+:root.theme-discord .az-quote-roll-badge {
+  color: #949ba4;
+}
+
+/* 9. Mobile: credits block — dark bg with mask-image fade like desktop */
+@media(max-width:960px) {
+  :root.theme-discord .credits-block {
+    background: rgba(0,0,0,0.35) !important;
+    border-color: #3b3d44 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%) !important;
+  }
+  :root.theme-discord .credit-card {
+    background: transparent !important;
+    border: none !important;
+  }
+}
+
+/* Ensure Upgrades/Corrupted/Health use correct colors */
+:root.theme-discord .az-upg-lbl,
+:root.theme-discord .az-res-upg-lbl,
+:root.theme-discord .az-discord-preview-lbl.lbl-upg {
+  color: var(--color-upg) !important;
+}
+:root.theme-discord .az-res-upg-val,
+:root.theme-discord .az-discord-preview-val.upg {
+  color: var(--color-upg) !important;
+}
+:root.theme-discord .az-corr-lbl,
+:root.theme-discord .az-res-corr-lbl,
+:root.theme-discord .az-discord-preview-lbl.lbl-corr {
+  color: var(--color-corr) !important;
+}
+:root.theme-discord .az-res-corr-val.yes,
+:root.theme-discord .az-discord-preview-val.corr-y {
+  color: var(--color-hp) !important;
+}
+:root.theme-discord .az-res-corr-val.no,
+:root.theme-discord .az-discord-preview-val.corr-n {
+  color: var(--color-dmg) !important;
+}
+:root.theme-discord .az-stat-lbl.health-mode,
+:root.theme-discord .az-discord-preview-lbl.lbl-hp {
+  color: var(--color-hp) !important;
+}
+
+/* Empty states — Discord colors */
+:root.theme-discord .table-empty {
+  background: #2b2d31;
+  border-color: #3b3d44;
+}
+:root.theme-discord .table-empty-title,
+:root.theme-discord .table-empty-desc {
+  color: #949ba4;
+}
+
+/* Armor part buttons in result */
+:root.theme-discord .az-res-part-btn {
+  color: #949ba4;
+}
+:root.theme-discord .az-res-part-btn.active-part {
+  color: #ffffff;
+}
+
+/* ══════════════════════════════════════════════════════
+   DISCORD THEME — общие правила
+   ВНИМАНИЕ: НЕ ТРОГАЕМ az-card / az-result-card / cmp-card
+   и их внутренности (az-img-box, az-res-stats-box, az-upg-*,
+   az-discord-input-*, az-cost-chip, az-roll-val, az-tbl rows,
+   az-reforge-badge, az-weapon-name, az-quote-*).
+══════════════════════════════════════════════════════ */
+
+/* Кнопка Analyze — blurple акцент */
+:root.theme-discord .az-btn-analyze {
+  background: #5865F2 !important;
+  border-color: #5865F2 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .az-btn-analyze:hover {
+  background: #4752c4 !important;
+}
+
+/* Кнопка Check Specifics (Stuff Preview) */
+:root.theme-discord .sp-btn-check {
+  background: #5865F2 !important;
+  border-color: #5865F2 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+/* Секции-обёртки прозрачные */
+:root.theme-discord .rolls-section,
+:root.theme-discord .analyze-section,
+:root.theme-discord .stuff-section,
+:root.theme-discord .compare-section {
+  background: transparent !important;
+}
+
+/* Body — самый тёмный */
+:root.theme-discord body {
+  background: #1e1f22 !important;
+}
+
+/* Иконки без glow */
+:root.theme-discord .az-gold-icon,
+:root.theme-discord .az-upg-icon {
+  filter: none !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   DISCORD THEME v3 — UNIFIED DARK GRAY
+   nav — самый тёмный (как top-bar в Discord),
+   page-bg / panels / console — единый средне-тёмный.
+   Светлые акценты — только на активных/нажатых кнопках.
+   НЕ ТРОГАЕМ НИЧЕГО внутри карточек результатов:
+     .az-card, .az-result-card, .cmp-card,
+     .az-img-box, .az-res-stats-box, .az-upg-*, .az-gold-*,
+     .az-discord-input-*, .az-cost-chip, .az-roll-val,
+     .az-roll-lbl, .az-weapon-name, .az-item-name,
+     .az-item-rarity, .az-reforge-badge, .az-res-reforge-badge,
+     .az-tbl (rows/cells/badges), .az-quote-panel, .az-quote-mobile,
+     .az-third-panel, .sp-third-panel, .cmp-third-panel,
+     .az-third-panel-tabs, .az-third-tab,
+     .az-step-* (formula), .az-proc-grid.
+══════════════════════════════════════════════════════ */
+
+:root.theme-discord {
+  --dc-nav:       #0e0f10;
+  --dc-bg:        #1e1f22;
+  --dc-panel:     #232428;
+  --dc-border:    #2b2d31;
+  --dc-hover:     rgba(255,255,255,0.04);
+  --dc-active:    rgba(255,255,255,0.08);
+  --dc-active-st: rgba(255,255,255,0.12);
+  --dc-text:      #dbdee1;
+  --dc-muted:     #949ba4;
+}
+
+:root.theme-discord .page-bg,
+:root.theme-discord body {
+  background: var(--dc-bg) !important;
+  background-image: none !important;
+}
+
+/* Nav — самый тёмный */
+:root.theme-discord nav {
+  background: var(--dc-nav) !important;
+  border-color: #000 !important;
+  box-shadow: 0 1px 0 0 rgba(0,0,0,0.6) !important;
+}
+
+:root.theme-discord .nav-btn.active {
+  background: var(--dc-active-st) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .nav-btn:hover {
+  background: var(--dc-hover) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .nav-btn.active svg path,
+:root.theme-discord .nav-btn.active svg circle,
+:root.theme-discord .nav-btn.active svg line,
+:root.theme-discord .nav-btn.active svg polyline,
+:root.theme-discord .nav-btn.active svg rect {
+  fill: #ffffff !important;
+}
+
+/* Панели (без az/sp/cmp third panels — это карточки!) */
+:root.theme-discord .bot-panel,
+:root.theme-discord .updates-panel,
+:root.theme-discord .item-list-panel,
+:root.theme-discord .mod-panel,
+:root.theme-discord .console-panel,
+:root.theme-discord .roll-table-wrap,
+:root.theme-discord .table-empty,
+:root.theme-discord .settings-panel {
+  background: var(--dc-panel) !important;
+  border-color: var(--dc-border) !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25) !important;
+}
+
+:root.theme-discord .item-list-header,
+:root.theme-discord .mod-panel-header,
+:root.theme-discord .console-header,
+:root.theme-discord .console-tabs,
+:root.theme-discord .roll-table-wrap thead th {
+  background: var(--dc-bg) !important;
+  border-color: var(--dc-border) !important;
+}
+
+:root.theme-discord .stat-chip {
+  background: var(--dc-bg) !important;
+  border-color: var(--dc-border) !important;
+}
+:root.theme-discord .stat-chip:hover {
+  background: var(--dc-hover) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+:root.theme-discord .stat-chip--total {
+  background: var(--dc-active) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .stat-num,
+:root.theme-discord .total-proc-count,
+:root.theme-discord .total-proc-arrow {
+  color: #ffffff !important;
+}
+
+@media(min-width:961px) {
+  :root.theme-discord .credit-card {
+    background: var(--dc-bg) !important;
+    border-color: var(--dc-border) !important;
+  }
+  :root.theme-discord .credit-card:hover {
+    background: var(--dc-hover) !important;
+    border-color: rgba(255,255,255,0.18) !important;
+  }
+}
+
+:root.theme-discord .updates-title,
+:root.theme-discord .bot-name,
+:root.theme-discord .page-title-text {
+  color: #5865F2 !important;
+  text-shadow: none !important;
+}
+:root.theme-discord .page-title-icon {
+  color: #5865F2 !important;
+  fill: #5865F2 !important;
+}
+:root.theme-discord .updates-text .upd-accent {
+  color: #5865F2 !important;
+}
+
+:root.theme-discord .cat-tab {
+  background: transparent !important;
+  border-color: var(--dc-border) !important;
+  color: var(--dc-muted) !important;
+}
+:root.theme-discord .cat-tab:hover {
+  background: var(--dc-hover) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .cat-tab.active {
+  background: var(--dc-active-st) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  color: #ffffff !important;
+}
+
+:root.theme-discord .item-btn {
+  color: var(--dc-muted) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+:root.theme-discord .item-btn:hover {
+  background: var(--dc-hover) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+:root.theme-discord .item-btn.active {
+  background: var(--dc-active-st) !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+
+:root.theme-discord .console-tab-btn:hover {
+  background: var(--dc-hover) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .console-tab-btn.active {
+  background: var(--dc-active-st) !important;
+  color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+
+:root.theme-discord .mod-btn {
+  background: var(--dc-bg) !important;
+  border-color: var(--dc-border) !important;
+  color: var(--dc-muted) !important;
+}
+:root.theme-discord .mod-btn:hover,
+:root.theme-discord .mod-btn.active {
+  background: var(--dc-active-st) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .mod-panel-body {
+  background: var(--dc-panel) !important;
+}
+:root.theme-discord .mod-panel-value,
+:root.theme-discord .mod-panel-arrow {
+  color: #ffffff !important;
+}
+
+:root.theme-discord .item-search-wrap,
+:root.theme-discord #page-rolls .item-search-wrap,
+:root.theme-discord #page-analyze .item-search-wrap,
+:root.theme-discord #page-stuff .item-search-wrap,
+:root.theme-discord #page-compare .item-search-wrap {
+  background: var(--dc-bg) !important;
+  border-color: var(--dc-border) !important;
+}
+
+:root.theme-discord .settings-section-title {
+  color: #ffffff !important;
+}
+:root.theme-discord .sett-entry-btn:hover {
+  background: none !important;
+  border-color: transparent !important;
+  color: #5865F2 !important;
+  box-shadow: none !important;
+  text-shadow: 0 0 8px rgba(88,101,242,0.7) !important;
+}
+:root.theme-discord .sett-entry-btn.active {
+  background: none !important;
+  border-color: transparent !important;
+  color: #5865F2 !important;
+  box-shadow: none !important;
+  text-shadow: 0 0 10px rgba(88,101,242,0.85) !important;
+}
+:root.theme-discord .sett-lang-btn {
+  background: none !important;
+  border-color: #3b3d44 !important;
+  color: #949ba4 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+:root.theme-discord .sett-lang-btn:hover {
+  background: none !important;
+  border-color: #5865F2 !important;
+  color: #5865F2 !important;
+  box-shadow: none !important;
+  text-shadow: 0 0 8px rgba(88,101,242,0.7) !important;
+}
+:root.theme-discord .sett-lang-btn.active {
+  background: none !important;
+  border-color: #5865F2 !important;
+  color: #5865F2 !important;
+  box-shadow: none !important;
+  text-shadow: 0 0 10px rgba(88,101,242,0.85) !important;
+}
+
+:root.theme-discord .analysis-card:hover {
+  background: var(--dc-hover) !important;
+}
+:root.theme-discord .hint-row {
+  background: var(--dc-hover) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+}
+:root.theme-discord .hint-page {
+  color: #ffffff !important;
+}
+
+:root.theme-discord .roll-table-wrap tbody tr:hover {
+  background: var(--dc-hover) !important;
+}
+
+:root.theme-discord .banner-glow-line {
+  background: rgba(255,255,255,0.25) !important;
+  box-shadow: none !important;
+}
+
+:root.theme-discord .avatar-ring-inner {
+  border-color: #5865F2 !important;
+  box-shadow: 0 0 12px rgba(88,101,242,0.45) !important;
+}
+:root.theme-discord .avatar-ring-outer {
+  border-color: rgba(88,101,242,0.35) !important;
+}
+
+/* Mobile Process / Tablet modals — match desktop az-third-panel dark gray */
+:root.theme-discord .az-modal-box {
+  background: #2b2d31 !important;
+  border-color: #3b3d44 !important;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6) !important;
+}
+:root.theme-discord .az-modal-head {
+  background: #232428 !important;
+  border-bottom-color: #3b3d44 !important;
+}
+:root.theme-discord .az-modal-ttl {
+  color: #5865F2 !important;
+}
+:root.theme-discord .az-modal-x {
+  border-color: #3b3d44 !important;
+  color: #949ba4 !important;
+}
+:root.theme-discord .az-modal-x:hover {
+  border-color: #5865F2 !important;
+  color: #5865F2 !important;
+}
+
+:root.theme-discord .upd-nav-btn {
+  background: var(--dc-bg) !important;
+  border-color: var(--dc-border) !important;
+  color: var(--dc-muted) !important;
+}
+:root.theme-discord .upd-nav-btn:hover {
+  background: var(--dc-active-st) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  color: #ffffff !important;
+}
+
 </style>
 <base target="_blank">
 </head>
@@ -7594,9 +8740,9 @@ body.scale-active .console-panel {
                 <img src="images/Home Page/avatar5.png" alt="Baldi">
                 <span class="palette-label">Baldi</span>
               </button>
-              <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
-                <span class="palette-future-icon">?</span>
-                <span class="palette-label">Soon</span>
+              <button class="palette-item" data-theme="discord" data-glow="#5865F2" onclick="selectPalette('discord')" aria-label="Discord theme">
+                <img src="images/Home Page/avatar6.png" alt="Discord">
+                <span class="palette-label">Discord</span>
               </button>
               <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
                 <span class="palette-future-icon">?</span>
@@ -7635,7 +8781,7 @@ body.scale-active .console-panel {
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.7</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.0.8</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -7651,7 +8797,7 @@ body.scale-active .console-panel {
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.7</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.8</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -10691,6 +11837,9 @@ const T = {
     upd9_title: 'UPDATES OF v1.0.7 VERSION!',
     upd9_sub: 'Developer Notes 11.04.2026',
     upd9_body: `Recently, me and user <span class="upd-cyan">@koeftedestroyer</span> — developer of the <span class="upd-accent">ED Community Value List</span> website — have become, let\'s say, friends. So our sites now advertise each other!\n\nThe home page of this site will feature a link to his site.\nIf you want to know the current value of items, stay ahead in trades, and keep track of the market — visit his site. In my opinion (and not only mine) it\'s the best price-tracking site for this game.\n\n<span class="upd-accent">What\'s new in v1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Randomizer feature added!</span> Fills in completely random values in the input fields. In Discord input mode — it can also serve as an additional learning tool.\n\n<span class="upd-cyan">›</span> This site is about game math, right? It would be fun to add a palette that ties into that idea... probably... AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n<span class="upd-accent">NEW PALETTE:</span>\n<span class="upd-accent">BALDI</span>\n\nSorry for the outburst. It\'s just genuinely ironic that a palette from a game about an evil <span class="upd-accent">MATH</span> teacher now exists on a site whose entire purpose is also based on <span class="upd-accent">MATH</span>.\n\n<span class="upd-accent">What\'s coming in v1.0.8?</span>\nHonestly, no big ideas besides adding new palettes and items.\nSend your suggestions to my contact — <span class="upd-cyan">@yarreyt</span>\n\nAlso, I\'ve added a link to the site in my profile! So you, as site users, can direct interested people to my profile to follow the link to the site.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!\nHappy Easter to everyone! Christ is risen — truly, He is risen.</span>`,
+    upd10_title: 'UPDATES OF v1.0.8 VERSION!',
+    upd10_sub: 'Developer Notes 17.04.2026',
+    upd10_body: `Collaboration with <span class="upd-cyan">SUSUheyb</span> is still going strong, and I want to congratulate him on the release of his update on April 16th.\n\nWe have a great celebration! Admin <span class="upd-cyan">@rebel</span> placed a link to the site — <span class="upd-accent">at my request</span> — in a pretty important channel: <span class="upd-accent">#game-faqs</span>. That means the link is now publicly available! We made it! Hooray!\n\nHuge thanks to everyone for the support! Right now in the <span class="upd-accent">#best-suggestions</span> channel you can see <span class="upd-accent">134 stars</span> on our topic! And we've succeeded!\n\nHowever, please follow the server rules. Don't forget that this is still just a link, which can be forwarded by anyone, or even copied for scam purposes.\nIf you want to point to the source of the site, either point to the channel itself which contains the official site link, OR mention me and tell people to check my profile bio. The link is mentioned there too.\n\n<span class="upd-accent">What's new in v1.0.8?</span>\nNothing major, except a newly added palette — <span class="upd-accent">Discord</span>!\nIn honor of the official mention of the site and its recognition.\n\nAlso, we're tentatively expecting the following:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nAlso possibly new weapons and relics (a heavily discussed topic).\n\n<span class="upd-accent">What's coming in v1.0.9?</span>\nI haven't come up with shit yet, but for now I'll occasionally add new color palettes — tied to events, or to my crazy fantasies :D\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd7_title: 'UPDATES OF v1.0.5.5 VERSION!',
     upd7_sub: 'Developer Notes 06.04.2026',
     upd7_body: `<span class="upd-accent">Happy Easter to all of you!</span>\n\n<span class="upd-accent">What\'s new in v1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Scaling fix!</span> The interface is now even more comfortable for many users due to different monitor resolutions or zoom levels!\n\n<span class="upd-accent">NEW STUFF!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — a new secret weapon!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — a new secret relic!\n\n<span class="upd-accent">What\'s expected in v1.0.6</span>\n<span class="upd-cyan">›</span> Adding an item search across all pages!\n<span class="upd-cyan">›</span> Maybe a new color palette!\n\nOther than that... I\'m out of ideas. Suggest them on Discord — <span class="upd-cyan">@yarreyt</span>!\nAlso don\'t forget to support the site with stars in the Elemental Dungeons Discord server!\nIn <span class="upd-accent">#suggestions</span> → topic <span class="upd-green">CALCULATOR ROLL BOT</span>. As of this entry — already <span class="upd-accent">116 stars!</span> We have the highest star count among all top suggestions!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -10885,6 +12034,9 @@ const T = {
     upd9_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.7v!',
     upd9_sub: 'Записи разработчика 11.04.2026',
     upd9_body: `Недавно мы с пользователем <span class="upd-cyan">@koeftedestroyer</span> (разработчик сайта <span class="upd-accent">ED Community Value List</span>) скажем, сдружились, поэтому наши сайты рекламируют друг друга!\n\nНа домашней странице сайта будет расположена ссылка на его сайт.\nЕсли вы хотите узнать, сколько стоят актуальные предметы, быть в плюсах и следить за рынком — посещайте этот сайт. По-моему (и не только) это самый лучший сайт по ценам из игры.\n\n<span class="upd-accent">Что нового в обновлении 1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Добавлена функция рандомайзера!</span> Вводит абсолютно рандомные значения в полях, а в случае Discord режима ввода данных — может быть дополнительным обучающим элементом.\n\n<span class="upd-cyan">›</span> Сайт у нас про математику игры, верно? Было бы круто добавить палитру связывающую идею.. наверное.. АААААААААААААААААААААААААААААААААА\n\n<span class="upd-accent">НОВАЯ ПАЛИТРА:</span>\n<span class="upd-accent">BALDI</span>\n\nИзвините за такую резкость. Просто действительно иронично, что палитра по игре про злого учителя <span class="upd-accent">МАТЕМАТИКИ</span>, теперь есть на сайте, чьи функции основаны так-же на <span class="upd-accent">МАТЕМАТИКЕ</span>.\n\n<span class="upd-accent">Что будет нового в версии 1.0.8?</span>\nЧестно, особых идей кроме добавлений новых палитр и предметов нет.\nПредлагайте мне по контакту — <span class="upd-cyan">@yarreyt</span>\n\nТак-же, я разместил ссылку на свой сайт в профиле! Поэтому вы, как пользователи сайта, сможете желающих направить на мой профиль, чтобы перейти по ссылке на сайт!\n\n<span class="upd-muted">Всем добрейшего утречка/дня/вечера/ночи!\nВсех с пасхой! Христос воскрес, во истину — воскрес.</span>`,
+    upd10_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8v!',
+    upd10_sub: 'Записи разработчика 17.04.2026',
+    upd10_body: `Сотрудничество с <span class="upd-cyan">SUSUheyb</span> всё так-же продолжается и его поздравляю с выходом обновления 16 апреля.\n\nУ нас великий праздник! Администратор <span class="upd-cyan">@rebel</span> разместил ссылку на сайт <span class="upd-accent">ПО МОЕЙ ПРОСЬБЕ</span> на довольно таки важном канале <span class="upd-accent">#game-faqs</span>. Это значит что теперь ссылка стала общедоступной! Мы добились этого! Ура!\n\nВсем большое спасибо за поддержку! На данный момент на канале <span class="upd-accent">#best-suggestions</span> можно увидеть <span class="upd-accent">134 звезды</span> у нашего топика! И мы добились успеха!\n\nОднако, соблюдаем правила сервера. Не забываем что это всё ещё какая-то ссылка, которая может быть перекинута кем угодно, так-же и скопирована с целью мошенничества.\nЕсли вы хотите указать на источник сайта, то либо указываете на сам канал, в котором есть официальная ссылка сайта ИЛИ упоминаете меня и говорите чтобы посмотрели мою биографию в профиле. Там тоже упомянута ссылка.\n\n<span class="upd-accent">Что нового в версии 1.0.8?</span>\nОсобо ничего, кроме новой добавленной палитры — <span class="upd-accent">Discord</span>!\nВ честь официального упоминания сайта и его признания.\n\nА так-же, предварительно ожидаем такие вещи:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nА так-же может быть новые оружия и релики (очень обсуждаемая тема).\n\n<span class="upd-accent">Что будет в обновлении 1.0.9?</span>\nЯ ещё нихуя не придумал, но пока буду изредка добавлять новые цветовые палитры, связанные с событиями, или с моими ебанутыми фантазиями :D\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd7_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.5.5v!',
     upd7_sub: 'Записи разработчика 06.04.2026',
     upd7_body: `<span class="upd-accent">С пасхой вас всех!</span>\n\n<span class="upd-accent">Что нового в обновлении 1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Исправлено масштабирование!</span> Теперь интерфейс у многих из-за разрешения монитора или масштабов стал ещё более удобным!\n\n<span class="upd-accent">НОВЫЕ ВЕЩИЧКИ!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — новое секретное оружие!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — новый секретный релик!\n\n<span class="upd-accent">Что ожидается в обновлении 1.0.6</span>\n<span class="upd-cyan">›</span> Добавлю поисковик предметов во всех страницах!\n<span class="upd-cyan">›</span> И может, добавлю новую цветовую палитру!\n\nВ остальном.. идей больше нет. Предлагайте их в дискорде — <span class="upd-cyan">@yarreyt</span>!\nТак-же не забываем поддерживать сайт звёздочками в дискорд-сервере Elemental Dungeons!\nНа канале <span class="upd-accent">#suggestions</span> → топик <span class="upd-green">CALCULATOR ROLL BOT</span>. На момент этой записи звёзд уже <span class="upd-accent">116!</span> У нас самое большое количество звёзд из лучших предложений!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -10933,7 +12085,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 8;
+let updPage = 9;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -10944,6 +12096,7 @@ const UPD_PAGES = [
   { title:'upd7_title', sub:'upd7_sub', body:'upd7_body' },
   { title:'upd8_title', sub:'upd8_sub', body:'upd8_body' },
   { title:'upd9_title', sub:'upd9_sub', body:'upd9_body' },
+  { title:'upd10_title', sub:'upd10_sub', body:'upd10_body' },
 ];
 
 function updRender() {
@@ -17652,6 +18805,19 @@ const _THEMES = {
     switchAvatar: 'images/Home Page/avatar2.png',
     tooltip: 'GALAXY THEME',
     switchGlow: '#D42B2B',
+  },
+  discord: {
+    banners: [
+      'images/Home Page/banner1_1.png',
+      'images/Home Page/banner1_2.png',
+      'images/Home Page/banner1_3.png',
+      'images/Home Page/banner1_4.png',
+    ],
+    bgImage: '',
+    mainAvatar: 'images/Home Page/avatar6.png',
+    switchAvatar: 'images/Home Page/avatar2.png',
+    tooltip: 'GALAXY THEME',
+    switchGlow: '#5865F2',
   }
 };
 
@@ -17664,9 +18830,16 @@ window._applyTheme = function(name) {
   document.documentElement.classList.toggle('theme-easter',  name === 'easter');
   document.documentElement.classList.toggle('theme-classic', name === 'classic');
   document.documentElement.classList.toggle('theme-baldi',   name === 'baldi');
+  document.documentElement.classList.toggle('theme-discord', name === 'discord');
 
   const pageBg = document.querySelector('.page-bg');
-  if (pageBg) pageBg.style.backgroundImage = `url('${theme.bgImage}')`;
+  if (pageBg) {
+    if (theme.bgImage) {
+      pageBg.style.backgroundImage = `url('${theme.bgImage}')`;
+    } else {
+      pageBg.style.backgroundImage = 'none';
+    }
+  }
 
   const bannerBg = document.getElementById('banner-bg');
   if (bannerBg) {
@@ -17684,6 +18857,7 @@ window._applyTheme = function(name) {
     easter:  'images/Home Page/avatar3.png',
     classic: 'images/Home Page/avatar4.png',
     baldi:   'images/Home Page/avatar5.png',
+    discord: 'images/Home Page/avatar6.png',
   };
   if (mainAv) mainAv.src = AV[name] || AV.galaxy;
 
@@ -19826,6 +21000,8 @@ function clearItemSearch(panelId) {
     window._applyTheme('classic');
   } else if (_savedTheme === 'baldi') {
     window._applyTheme('baldi');
+  } else if (_savedTheme === 'discord') {
+    window._applyTheme('discord');
   }
   // galaxy — no re-apply needed, defaults are already correct
 

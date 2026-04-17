@@ -10943,6 +10943,7 @@ const GLS = {1:4777.5,2:4825.275,3:4873.05,4:4920.825,5:4968.6,6:5016.375,7:5064
 const VLS = {1:3727.5,2:3764.775,3:3802.05,4:3839.325,5:3876.6,6:3913.875,7:3951.15,8:3988.425,9:4025.7,10:4062.975,11:4100.25};
 const SRS = {1:5040,2:5090.4,3:5140.8,4:5191.2,5:5241.6,6:5292,7:5342.4,8:5392.8,9:5443.2,10:5493.6,11:5544};
 const EAS = {1:8190,2:8271.9,3:8353.8,4:8435.7,5:8517.6,6:8599.5,7:8681.4,8:8763.3,9:8845.2,10:8927.1,11:9009};
+const CBA = {1:2100,2:2121,3:2142,4:2163,5:2184,6:2205,7:2226,8:2247,9:2268,10:2289,11:2310};
 
 const FZH = {
   Helmet:     {1:787.5,2:795.375,3:803.25,4:811.125,5:819,6:826.875,7:834.75,8:842.625,9:850.5,10:858.375,11:866.25},
@@ -11018,7 +11019,7 @@ const ITEMS = {
     {id:'asc_at',name:"Abyssal Trident",               stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
     {id:'asc_ad',name:"Ascended Daggers",              stats:DD2, maxUpg:74,  rarity:'ascended',  delay:0.25,  minRoll:6},
     {id:'asc_av',name:"Ascended Voidblade",            stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.75,  minRoll:6},
-    {id:'ct_ba', name:"Contest Battleaxe",             stats:DB,  maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
+    {id:'ct_ba', name:"Contest Battleaxe",             stats:CBA,  maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
     {id:'cb',    name:"Conqueror's Blade",             stats:CB,  maxUpg:45,  rarity:'mythic',    delay:0.5,   minRoll:1},
     {id:'cup',   name:"Cupid's Fury",                  stats:CUF, maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
     {id:'cup_sw',name:"Cupid's Wrath",                 stats:CUW, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
@@ -20739,6 +20740,34 @@ function dtRenderMultiTable(panelBodyId, allResults, mode) {
   wrap.innerHTML = `<div class="roll-table-wrap" style="width:100%;box-sizing:border-box;">
     <table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`;
 
+  // Build Print buttons row — inject after table render so we can attach data via JS (no JSON-in-onclick)
+  const table = wrap.querySelector('table');
+  if (table) {
+    const tfoot = document.createElement('tfoot');
+    const tr = document.createElement('tr');
+    // Empty cell under ROLL column
+    const tdEmpty = document.createElement('td');
+    tr.appendChild(tdEmpty);
+    allResults.forEach((r) => {
+      const td = document.createElement('td');
+      td.style.cssText = 'padding:6px 4px 2px;';
+      const btn = document.createElement('button');
+      btn.textContent = 'Print';
+      btn.style.cssText = 'width:100%;padding:4px 0;font-size:10px;letter-spacing:1.5px;' +
+        'background:transparent;border:1px solid var(--gold-dim,#7a6030);' +
+        'color:var(--gold-bright,#e8c84a);border-radius:4px;cursor:pointer;' +
+        'font-family:inherit;text-transform:uppercase;opacity:0.75;' +
+        'transition:opacity .15s,border-color .15s;';
+      btn.addEventListener('mouseenter', () => { btn.style.opacity='1'; btn.style.borderColor='var(--gold-bright,#e8c84a)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.opacity='0.75'; btn.style.borderColor='var(--gold-dim,#7a6030)'; });
+      btn.addEventListener('click', () => dtPrintColumn(r.rows, btn));
+      td.appendChild(btn);
+      tr.appendChild(td);
+    });
+    tfoot.appendChild(tr);
+    table.appendChild(tfoot);
+  }
+
   // Badge: list of base values
   const badgeId    = panelBodyId.replace('-panel-body', '-badge');
   const badgeNumId = panelBodyId.replace('-panel-body', '-badge-num');
@@ -20881,6 +20910,34 @@ function dtRunCalc(mode) {
 
 function dtCheckValue()   { dtRunCalc('check'); }
 function dtConfirmValue() { dtRunCalc('confirm'); }
+
+// ── DT: Print column — copies TV column data to clipboard in const format ──
+function dtPrintColumn(rows, btn) {
+  // Build: const {name_id} = {1:val,2:val,...,11:val};
+  const inner = rows.map((row, i) => {
+    const num = parseFloat(row.value);
+    const formatted = parseFloat(num.toFixed(5));
+    return (i + 1) + ':' + formatted;
+  }).join(',');
+  const text = 'const {name_id} = {' + inner + '};';
+
+  function showFeedback() {
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.borderColor = 'var(--gold-bright,#e8c84a)';
+    btn.style.opacity = '1';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.borderColor = 'var(--gold-dim,#7a6030)';
+      btn.style.opacity = '0.75';
+    }, 1200);
+  }
+
+  navigator.clipboard.writeText(text).then(showFeedback).catch(() => {
+    prompt('Copy this:', text);
+  });
+}
 
 // ── DT: cooldown helper ──
 function dtButtonCooldown(btnId, lsKey) {

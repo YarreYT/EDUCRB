@@ -10,12 +10,13 @@
   var t = localStorage.getItem('_ed_theme');
   // Первый визит — пасхальная тема по умолчанию
   if (!t) { t = 'easter'; localStorage.setItem('_ed_theme', 'easter'); }
-  if (t === 'gold')    document.documentElement.classList.add('theme-gold');
+  if (t === 'gold') { t = 'time'; localStorage.setItem('_ed_theme', 'time'); }
+  if (t === 'gold' || t === 'time') document.documentElement.classList.add('theme-time');
   if (t === 'easter')  document.documentElement.classList.add('theme-easter');
   if (t === 'classic') document.documentElement.classList.add('theme-classic');
   if (t === 'baldi')   document.documentElement.classList.add('theme-baldi');
   if (t === 'discord') document.documentElement.classList.add('theme-discord');
-  // galaxy — классов нет, просто дефолт
+  if (t === 'galaxy')  document.documentElement.classList.add('theme-galaxy');
 })();
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="images/Stuff/Weapons/ascvoidblade.png">
@@ -446,18 +447,18 @@
 <style>
 /* ── GALAXY THEME (default) ── */
 :root {
-  --bg-void:#050508; 
+  --bg-void:#07060f; 
   --gold:#9b30ff; 
   --gold-bright:#c875ff; 
   --gold-glow:#e0aaff; 
   --amber:#7b2fff;
   --cyan-rune:#00d4ff; 
   --green-stat:#4cffb0;
-  --text-primary:#e8dcc8; 
-  --text-muted:#7a7060; 
-  --text-dim:#4a4438;
-  --border-rune:#2a2518; 
-  --border-gold:#3a1a5a; 
+  --text-primary:#e8e0f0; 
+  --text-muted:#6a607a; 
+  --text-dim:#3e364e;
+  --border-rune:#1c1530; 
+  --border-gold:#2e1855; 
   --nav-h:56px;
   --theme-bg-image: url('images/Home Page/banner2_1.png');
   --theme-name: galaxy;
@@ -481,17 +482,539 @@
 }
 
 /* ── GOLD THEME ── */
-:root.theme-gold {
-  --gold:#c8932a; 
-  --gold-bright:#e8b84b; 
-  --gold-glow:#f5d070; 
-  --amber:#ff8c00;
-  --border-gold:#3a2a10;
+:root.theme-time {
+  --gold:         #f5c842;
+  --gold-bright:  #ffe880;
+  --gold-glow:    #fff4a0;
+  --amber:        #b8860b;
+  --bg-void:      #030302;
+  --border-rune:  #1a1608;
+  --border-gold:  #2a2008;
+  --text-primary: #e8e2d0;
+  --text-muted:   #6a6458;
+  --text-dim:     #3a3428;
   --theme-bg-image: url('images/Home Page/banner1_1.png');
-  --theme-name: gold;
+  --theme-name:   time;
   --theme-switch-glow: #9b30ff;
-  --gold-rgb: 200, 147, 42;        /* Золотой для Gold темы */
+  --gold-rgb:     245, 200, 66;
 }
+
+/* ── TIME: Page background — бездна портала ── */
+:root.theme-time .page-bg {
+  background-color: #030302;
+}
+:root.theme-time .page-bg::after {
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(245,200,66,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 25% at 20% 30%, rgba(245,205,90,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 25% 35% at 80% 70%, rgba(220,180,60,0.03) 0%, transparent 50%),
+    linear-gradient(to right,  rgba(3,3,2,.99) 0%, rgba(3,3,2,.65) 50%, rgba(3,3,2,.99) 100%),
+    linear-gradient(to bottom, rgba(3,3,2,.70) 0%, rgba(3,3,2,.15) 35%, rgba(3,3,2,.92) 100%);
+}
+
+/* ── TIME: Nav ── */
+:root.theme-time nav {
+  background: rgba(3,3,2,.97);
+  border-color: rgba(245,200,66,0.14);
+  box-shadow: 0 1px 0 0 rgba(245,200,66,0.04);
+  backdrop-filter: blur(28px);
+}
+:root.theme-time nav::after {
+  background: linear-gradient(90deg, transparent, rgba(245,200,66,0.55), rgba(255,232,128,0.25), rgba(245,200,66,0.55), transparent);
+  opacity: 0.35;
+}
+:root.theme-time .nav-btn:hover {
+  color: #fff4a0;
+  background: rgba(245,200,66,0.08);
+  box-shadow: 0 0 16px rgba(245,200,66,0.16) !important;
+  text-shadow: 0 0 12px rgba(245,200,66,0.55) !important;
+}
+:root.theme-time .nav-btn.active {
+  color: #f5c842;
+  background: rgba(245,200,66,0.10);
+  box-shadow: 0 0 12px rgba(245,200,66,0.18) !important;
+}
+
+/* ── TIME: Banner ── */
+:root.theme-time .banner-overlay {
+  background:
+    radial-gradient(ellipse 55% 65% at 50% 50%, rgba(245,200,66,0.10) 0%, transparent 65%),
+    linear-gradient(to right, rgba(3,3,2,0.90) 0%, rgba(3,3,2,0.12) 38%, rgba(3,3,2,0.12) 62%, rgba(3,3,2,0.90) 100%),
+    linear-gradient(to bottom, rgba(3,3,2,0.60) 0%, transparent 28%, transparent 65%, rgba(3,3,2,0.75) 100%);
+}
+:root.theme-time .banner-eyebrow {
+  color: #e8e2d0;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 28px rgba(245,200,66,0.60), 0 2px 8px rgba(0,0,0,.95);
+}
+:root.theme-time .banner-game-title {
+  color: #f5c842;
+  background: linear-gradient(135deg, #fff4a0 0%, #f5c842 30%, #b8860b 65%, #f5c842 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 28px rgba(245,200,66,0.65)) drop-shadow(0 0 55px rgba(245,200,66,0.10));
+}
+:root.theme-time .banner-glow-line {
+  background: linear-gradient(90deg, transparent, #b8860b, #f5c842, #fff4a0, #f5c842, #b8860b, transparent);
+  box-shadow: 0 0 14px rgba(245,200,66,0.80), 0 0 30px rgba(245,200,66,0.30), 0 0 60px rgba(245,200,66,0.12);
+  height: 2px;
+  opacity: 0.90;
+}
+
+/* ── TIME: Основные панели ── */
+:root.theme-time .bot-panel,
+:root.theme-time .updates-panel {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%);
+  border-color: rgba(245,200,66,0.16);
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.80),
+    0 0 50px rgba(245,200,66,0.04),
+    inset 0 0 30px rgba(220,180,60,0.02);
+  backdrop-filter: blur(18px);
+}
+:root.theme-time .bot-panel::before,
+:root.theme-time .updates-panel::before {
+  background: linear-gradient(90deg, transparent, rgba(245,200,66,0.38), rgba(255,232,128,0.18), transparent);
+  opacity: 0.25;
+}
+:root.theme-time .bot-name {
+  color: #f5c842 !important;
+  text-shadow: 0 0 20px rgba(245,200,66,0.70) !important;
+}
+:root.theme-time .bot-tagline { color: rgba(245,210,120,0.42) !important; }
+:root.theme-time .bot-desc    { color: rgba(232,220,190,0.55) !important; }
+
+/* ── TIME: Credit cards ── */
+:root.theme-time .credit-card {
+  background: rgba(245,200,66,0.04);
+  border-color: rgba(245,200,66,0.12);
+}
+:root.theme-time .credit-card:hover { border-color: rgba(245,200,66,0.35); }
+:root.theme-time .credit-card-role  { color: rgba(245,210,120,0.32) !important; }
+:root.theme-time .credit-card-name  { color: #e8e2d0 !important; }
+:root.theme-time .credit-card-name.cyan  { color: #ffe880 !important; }
+:root.theme-time .credit-card-name.green { color: #aadd55 !important; }
+
+/* ── TIME: Stat chips ── */
+:root.theme-time .stat-chip {
+  background: rgba(245,200,66,0.05);
+  border: 1px solid rgba(245,200,66,0.16);
+  box-shadow: 0 0 14px rgba(245,200,66,0.03);
+}
+:root.theme-time .stat-num { color: #f5c842 !important; text-shadow: 0 0 14px rgba(245,200,66,0.70) !important; }
+:root.theme-time .stat-lbl { color: rgba(245,210,120,0.40) !important; }
+:root.theme-time .stat-chip--total {
+  border-color: rgba(245,200,66,0.45) !important;
+  box-shadow: 0 0 22px rgba(245,200,66,0.18), inset 0 0 20px rgba(220,180,60,0.05) !important;
+}
+:root.theme-time .stat-chip--total .stat-lbl { color: rgba(245,210,120,0.48) !important; }
+:root.theme-time .total-proc-count { color: #fff4a0 !important; text-shadow: 0 0 14px rgba(245,200,66,0.65) !important; }
+:root.theme-time .total-proc-arrow { color: #f5c842 !important; }
+
+/* ── TIME: Updates ── */
+:root.theme-time .updates-title    { color: #fff4a0 !important; text-shadow: 0 0 20px rgba(245,200,66,0.65) !important; }
+:root.theme-time .updates-subtitle { color: rgba(245,210,120,0.40) !important; }
+:root.theme-time .updates-text     { color: rgba(232,220,190,0.78) !important; }
+:root.theme-time .updates-text .upd-accent { color: #f5c842 !important; }
+:root.theme-time .updates-text .upd-cyan   { color: #ffe880 !important; }
+:root.theme-time .updates-text .upd-green  { color: #aadd55 !important; }
+:root.theme-time .updates-text .upd-muted  { color: rgba(200,180,100,0.28) !important; }
+:root.theme-time .upd-nav-btn {
+  background: rgba(245,200,66,0.04);
+  border-color: rgba(245,200,66,0.16);
+  color: rgba(245,210,120,0.42);
+}
+:root.theme-time .upd-nav-btn:hover {
+  background: rgba(245,200,66,0.10);
+  border-color: rgba(245,200,66,0.45);
+  color: #e8e2d0;
+}
+
+/* ── TIME: Item list panel ── */
+:root.theme-time .item-list-panel {
+  background: linear-gradient(180deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%);
+  border-color: rgba(245,200,66,0.14);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.70), 0 0 24px rgba(245,200,66,0.02);
+}
+:root.theme-time .item-list-header {
+  background: rgba(245,200,66,0.08);
+  border-color: rgba(245,200,66,0.14);
+  color: rgba(245,210,120,0.46);
+}
+:root.theme-time .cat-tab {
+  color: rgba(245,210,120,0.42);
+  border-color: rgba(245,200,66,0.12);
+  background: transparent;
+}
+:root.theme-time .cat-tab.active,
+:root.theme-time .cat-tab:hover {
+  color: #e8e2d0;
+  background: rgba(245,200,66,0.09);
+  border-color: rgba(245,200,66,0.45);
+  box-shadow: 0 0 12px rgba(245,200,66,0.10);
+}
+:root.theme-time .item-btn {
+  color: rgba(245,210,120,0.44);
+  border-color: transparent;
+  background: transparent;
+}
+:root.theme-time .item-btn:hover {
+  color: #e8e2d0;
+  background: rgba(245,200,66,0.07);
+  border-color: rgba(245,200,66,0.22);
+}
+:root.theme-time .item-btn.active {
+  color: #e8e2d0;
+  background: rgba(245,200,66,0.12);
+  border-color: rgba(245,200,66,0.40);
+  box-shadow: 0 0 10px rgba(245,200,66,0.10);
+}
+:root.theme-time .item-category-header {
+  color: rgba(245,210,120,0.28) !important;
+}
+:root.theme-time .item-category-header::before,
+:root.theme-time .item-category-header::after { background: rgba(245,200,66,0.12); }
+:root.theme-time .item-search-wrap,
+:root.theme-time #page-rolls .item-search-wrap,
+:root.theme-time #page-analyze .item-search-wrap,
+:root.theme-time #page-stuff .item-search-wrap,
+:root.theme-time #page-compare .item-search-wrap {
+  background: rgba(12,10,2,0.65);
+  border-color: rgba(245,200,66,0.14);
+}
+:root.theme-time .item-search-input { color: #e8e2d0 !important; background: transparent !important; }
+:root.theme-time .item-search-input::placeholder { color: rgba(245,210,120,0.22) !important; }
+
+/* ── TIME: Mod panel ── */
+:root.theme-time .mod-panel {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%);
+  border-color: rgba(245,200,66,0.14);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.65), 0 0 20px rgba(245,200,66,0.02);
+}
+:root.theme-time .mod-panel-header {
+  background: rgba(245,200,66,0.08);
+  border-color: rgba(245,200,66,0.14);
+}
+:root.theme-time .mod-panel-title { color: rgba(245,210,120,0.42) !important; }
+:root.theme-time .mod-panel-value { color: #f5c842 !important; text-shadow: 0 0 10px rgba(245,200,66,0.55) !important; }
+:root.theme-time .mod-panel-arrow { color: #f5c842 !important; }
+:root.theme-time .mod-panel-body  { background: rgba(8,6,1,0.55); }
+:root.theme-time .mod-btn {
+  color: rgba(245,210,120,0.46);
+  background: rgba(245,200,66,0.04);
+  border-color: rgba(245,200,66,0.12);
+}
+:root.theme-time .mod-btn:hover,
+:root.theme-time .mod-btn.active {
+  color: #e8e2d0;
+  background: rgba(245,200,66,0.14);
+  border-color: rgba(245,200,66,0.44);
+  box-shadow: 0 0 12px rgba(245,200,66,0.12);
+}
+
+/* ── TIME: Console panel ── */
+:root.theme-time .console-panel {
+  background: linear-gradient(180deg, rgba(7,6,1,0.98) 0%, rgba(4,3,1,0.96) 100%);
+  border-color: rgba(245,200,66,0.14);
+  box-shadow: 0 4px 28px rgba(0,0,0,0.70), 0 0 24px rgba(245,200,66,0.02);
+}
+:root.theme-time .console-header {
+  background: rgba(245,200,66,0.08);
+  border-color: rgba(245,200,66,0.14);
+}
+:root.theme-time .console-title     { color: rgba(245,210,120,0.58) !important; }
+:root.theme-time .console-live-badge,
+:root.theme-time .console-live-badge span { color: #aadd55 !important; }
+:root.theme-time .console-status    { background: #aadd55 !important; box-shadow: 0 0 8px rgba(170,221,85,0.75) !important; }
+:root.theme-time .online-dot        { background: #aadd55 !important; box-shadow: 0 0 8px rgba(170,221,85,0.75) !important; }
+:root.theme-time .online-count      { color: #aadd55 !important; }
+:root.theme-time .console-tabs      { background: rgba(8,7,1,0.72) !important; border-color: rgba(245,200,66,0.12) !important; }
+:root.theme-time .console-tab-btn   { color: rgba(245,210,120,0.40) !important; border-bottom-color: transparent !important; }
+:root.theme-time .console-tab-btn:hover  { color: #e8e2d0 !important; background: rgba(245,200,66,0.07) !important; }
+:root.theme-time .console-tab-btn.active { color: #fff4a0 !important; border-bottom-color: #f5c842 !important; background: rgba(245,200,66,0.09) !important; }
+:root.theme-time .analysis-card     { border-color: rgba(245,200,66,0.12) !important; }
+:root.theme-time .analysis-card:hover { background: rgba(245,200,66,0.04) !important; }
+:root.theme-time .analysis-type-badge { background: rgba(245,200,66,0.08) !important; color: #f5c842 !important; border-color: rgba(245,200,66,0.26) !important; }
+:root.theme-time .analysis-roll     { color: #f5c842 !important; }
+:root.theme-time .analysis-item     { color: #e8e2d0 !important; }
+:root.theme-time .analysis-meta     { color: rgba(245,210,120,0.44) !important; }
+
+/* ── TIME: Tables ── */
+:root.theme-time .roll-table-wrap thead th,
+:root.theme-time .az-tbl thead th {
+  background: rgba(245,200,66,0.08);
+  border-color: rgba(245,200,66,0.14);
+  color: rgba(245,210,120,0.58);
+}
+:root.theme-time .roll-table-wrap tbody tr { border-color: rgba(245,200,66,0.08); }
+:root.theme-time .td-base { color: rgba(232,220,190,0.78); }
+:root.theme-time .td-roll { color: #f5c842; }
+:root.theme-time .td-ref  { color: rgba(245,210,120,0.32); }
+
+/* ── TIME: Settings panel ── */
+:root.theme-time .settings-panel {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:root.theme-time .settings-content {
+  background: linear-gradient(155deg, rgba(7,6,1,0.98) 0%, rgba(4,3,1,0.96) 100%) !important;
+  border-color: rgba(245,200,66,0.16) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.80), 0 0 32px rgba(245,200,66,0.03) !important;
+}
+:root.theme-time .settings-section-title { color: #f5c842 !important; text-shadow: 0 0 12px rgba(245,200,66,0.50) !important; }
+:root.theme-time .sett-entry-btn {
+  color: rgba(245,210,120,0.48);
+  background: transparent;
+  border-color: transparent;
+}
+:root.theme-time .sett-entry-btn:hover {
+  color: #e8e2d0;
+  background: rgba(245,200,66,0.07);
+  border-color: rgba(245,200,66,0.22);
+}
+:root.theme-time .sett-entry-btn.active { color: #fff4a0 !important; background: none !important; }
+:root.theme-time .sett-entry-btn.dim    { color: rgba(245,210,120,0.20) !important; }
+:root.theme-time .sett-entry-sep        { color: rgba(245,210,120,0.20) !important; }
+:root.theme-time .settings-gear-btn     { color: rgba(220,190,90,0.46); }
+:root.theme-time .settings-gear-btn:hover { color: #f5c842; background: rgba(245,200,66,0.07); }
+:root.theme-time .sett-lang-btn {
+  background: rgba(245,200,66,0.07);
+  border-color: rgba(245,200,66,0.22);
+  color: rgba(245,210,120,0.65);
+}
+:root.theme-time .sett-lang-btn:hover  { border-color: rgba(245,200,66,0.50) !important; color: #e8e2d0 !important; }
+:root.theme-time .sett-lang-btn.active { border-color: #f5c842 !important; color: #fff4a0 !important; }
+
+/* ── TIME: Palette popup ── */
+:root.theme-time .palette-popup-inner {
+  background: linear-gradient(155deg, rgba(7,6,1,0.98) 0%, rgba(4,3,1,0.96) 100%);
+  border-color: rgba(245,200,66,0.18);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.80), 0 0 35px rgba(245,200,66,0.04);
+}
+:root.theme-time .palette-item          { border-color: rgba(245,200,66,0.16); }
+:root.theme-time .palette-item img      { border-color: rgba(245,200,66,0.20); }
+:root.theme-time .palette-item:hover    { background: rgba(245,200,66,0.07); box-shadow: 0 0 16px rgba(245,200,66,0.14); }
+:root.theme-time .palette-future-icon   { border-color: rgba(245,200,66,0.18); color: rgba(245,210,120,0.20); }
+:root.theme-time .palette-backdrop      { background: rgba(2,2,1,0.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+/* ── TIME: Avatar ring — портальный пульсар ── */
+:root.theme-time .avatar-ring-inner {
+  border-color: #f5c842;
+  box-shadow: 0 0 28px rgba(245,200,66,0.75), 0 0 60px rgba(245,200,66,0.30), 0 0 100px rgba(245,200,66,0.07), inset 0 0 20px rgba(245,200,66,0.06) !important;
+}
+:root.theme-time .avatar-ring-outer { border-color: rgba(245,200,66,0.20); }
+
+/* ── TIME: az/cmp карточки ── */
+:root.theme-time .az-card,
+:root.theme-time .az-result-card,
+:root.theme-time .cmp-result-card {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%) !important;
+  border: 1px solid rgba(245,200,66,0.16) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.72), 0 0 18px rgba(245,200,66,0.02) !important;
+}
+:root.theme-time .az-res-stats-box {
+  background: rgba(245,200,66,0.07) !important;
+  border-color: rgba(245,200,66,0.16) !important;
+}
+:root.theme-time .az-card .az-discord-input,
+:root.theme-time .az-card .az-discord-input.weapon-input,
+:root.theme-time .az-card .az-discord-input.armor-input {
+  background: rgba(12,10,2,0.60) !important;
+  border-color: rgba(245,200,66,0.18) !important;
+  color: #e8e2d0 !important;
+}
+:root.theme-time .az-card .az-discord-input::placeholder { color: rgba(245,210,120,0.22) !important; opacity: 1 !important; }
+:root.theme-time .az-card .az-discord-input:focus {
+  border-color: rgba(245,200,66,0.50) !important;
+  box-shadow: 0 0 12px rgba(245,200,66,0.18) !important;
+}
+:root.theme-time .az-card .az-discord-dmg-box    { background: rgba(14,11,2,0.72) !important; border-color: rgba(245,200,66,0.14) !important; }
+:root.theme-time .az-card .az-discord-divider    { background: rgba(245,200,66,0.18) !important; }
+:root.theme-time .az-card .az-discord-armor-lbl  { color: rgba(245,210,120,0.42) !important; }
+
+:root.theme-time .az-discord-panel,
+:root.theme-time .sp-discord-panel,
+:root.theme-time .cmp-discord-panel {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%) !important;
+  border-color: rgba(245,200,66,0.18) !important;
+}
+:root.theme-time .az-third-panel,
+:root.theme-time #page-stuff .sp-third-panel,
+:root.theme-time .cmp-third-panel {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%) !important;
+  border-color: rgba(245,200,66,0.16) !important;
+}
+:root.theme-time .az-third-panel-tabs        { background: rgba(10,8,1,0.55) !important; border-bottom-color: rgba(245,200,66,0.14) !important; }
+:root.theme-time .az-third-tab               { color: rgba(245,210,120,0.40) !important; }
+:root.theme-time .az-third-tab:hover,
+:root.theme-time .az-third-tab.active        { color: #fff4a0 !important; background: rgba(245,200,66,0.09) !important; border-bottom-color: #f5c842 !important; }
+
+:root.theme-time .az-modal-box {
+  background: linear-gradient(155deg, rgba(7,6,1,0.98) 0%, rgba(4,3,1,0.97) 100%) !important;
+  border-color: rgba(245,200,66,0.20) !important;
+}
+:root.theme-time .az-modal-head   { background: rgba(245,200,66,0.10) !important; border-bottom-color: rgba(245,200,66,0.16) !important; }
+:root.theme-time .az-modal-ttl    { color: #fff4a0 !important; text-shadow: 0 0 16px rgba(245,200,66,0.60) !important; }
+:root.theme-time .az-modal-x      { color: rgba(245,210,120,0.42) !important; }
+:root.theme-time .az-modal-x:hover { color: #fff4a0 !important; background: rgba(245,200,66,0.09) !important; }
+
+:root.theme-time .table-empty,
+:root.theme-time #az-empty, :root.theme-time #sp-empty, :root.theme-time #cmp-empty, :root.theme-time #table-empty-state {
+  background: rgba(245,200,66,0.03) !important;
+  border-color: rgba(245,200,66,0.12) !important;
+}
+:root.theme-time .table-empty-title,
+:root.theme-time .table-empty-desc { color: rgba(245,210,120,0.32) !important; }
+
+/* ── TIME: Analyze button — портальный пульсар ── */
+:root.theme-time .az-analyze-btn {
+  background: linear-gradient(180deg, #e0a91a 0%, #8a6508 100%);
+  box-shadow: 0 4px 24px rgba(245,200,66,0.50), 0 2px 0 rgba(20,18,8,0.95), 0 0 40px rgba(245,200,66,0.20) !important;
+  color: #fff8d0 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.60) !important;
+}
+:root.theme-time .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, #f5c842 0%, #b8860b 100%);
+  box-shadow: 0 6px 32px rgba(245,200,66,0.70), 0 2px 0 rgba(20,18,8,0.95), 0 0 55px rgba(245,200,66,0.32) !important;
+}
+:root.theme-time .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, rgba(60,50,15,0.65) 0%, rgba(30,25,8,0.65) 100%);
+  box-shadow: none !important; color: rgba(245,210,120,0.28) !important;
+  text-shadow: none !important;
+}
+:root.theme-time .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, #f5c842 0%, #b8860b 100%) left no-repeat,
+    linear-gradient(180deg, rgba(20,18,8,0.95) 0%, rgba(10,9,4,0.95) 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 20px rgba(245,200,66,0.28), 0 2px 0 rgba(20,18,8,0.95) !important;
+  color: #fff8d0 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.60) !important;
+  cursor: not-allowed !important; pointer-events: none !important;
+  transform: none !important; transition: none !important;
+  animation: cdFillTime var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillTime {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+
+/* ── TIME: Gold/HP rows ── */
+:root.theme-time .az-gold-row {
+  background: linear-gradient(90deg, rgba(245,200,66,0.08), rgba(245,200,66,0.08)) !important;
+  border: 1px solid rgba(245,200,66,0.16) !important;
+}
+:root.theme-time .az-total-hp-row {
+  background: linear-gradient(90deg, rgba(100,180,60,0.14), rgba(70,140,40,0.12)) !important;
+  border-color: rgba(170,220,80,0.26) !important;
+}
+:root.theme-time .az-total-hp-lbl { color: #aadd55 !important; }
+:root.theme-time .az-total-hp-val { color: #aadd55 !important; text-shadow: 0 0 10px rgba(170,220,80,0.45) !important; }
+
+/* ── TIME: Stats input box ── */
+:root.theme-time .az-stats-box       { background: rgba(245,200,66,0.10) !important; border-color: rgba(245,200,66,0.14) !important; }
+:root.theme-time .az-stat-input {
+  background: rgba(12,10,2,0.60) !important;
+  border-color: rgba(245,200,66,0.18) !important;
+  color: #e8e2d0 !important;
+}
+:root.theme-time .az-stat-input::placeholder { color: rgba(245,210,120,0.22) !important; }
+:root.theme-time .az-stat-input:focus {
+  border-color: rgba(245,200,66,0.50) !important;
+  box-shadow: 0 0 12px rgba(245,200,66,0.18) !important;
+}
+:root.theme-time .az-divider { background: linear-gradient(90deg, transparent, rgba(245,200,66,0.28), transparent) !important; }
+:root.theme-time .az-sel-btn {
+  background: rgba(245,200,66,0.08) !important;
+  border-color: rgba(245,200,66,0.24) !important;
+  color: rgba(245,210,120,0.70) !important;
+}
+:root.theme-time .az-sel-btn:hover { background: rgba(245,200,66,0.16) !important; border-color: rgba(245,200,66,0.48) !important; }
+:root.theme-time .az-dropdown, :root.theme-time .az-ref-dropdown {
+  background: linear-gradient(155deg, rgba(7,6,1,0.99) 0%, rgba(4,3,1,0.98) 100%) !important;
+  border-color: rgba(245,200,66,0.20) !important;
+}
+:root.theme-time .az-dropdown::-webkit-scrollbar-thumb,
+:root.theme-time .az-ref-dropdown::-webkit-scrollbar-thumb { background: rgba(245,200,66,0.28) !important; }
+:root.theme-time .az-opt       { color: rgba(245,210,120,0.72) !important; background: rgba(7,6,1,0.40) !important; border-color: rgba(245,200,66,0.10) !important; }
+:root.theme-time .az-opt:hover { background: rgba(245,200,66,0.10) !important; border-color: rgba(245,200,66,0.32) !important; color: #e8e2d0 !important; }
+:root.theme-time .az-opt.sel   { color: #fff4a0 !important; background: rgba(245,200,66,0.12) !important; border-color: rgba(245,200,66,0.48) !important; box-shadow: 0 0 12px rgba(245,200,66,0.14) !important; }
+
+:root.theme-time .az-quote-panel, :root.theme-time .az-quote-mobile {
+  background: rgba(245,200,66,0.05) !important;
+  border-color: rgba(245,200,66,0.14) !important;
+}
+:root.theme-time .dt-result-panel {
+  background: linear-gradient(155deg, rgba(7,6,1,0.97) 0%, rgba(4,3,1,0.95) 100%) !important;
+  border-color: rgba(245,200,66,0.18) !important;
+}
+:root.theme-time .dt-result-panel-header {
+  background: rgba(245,200,66,0.09) !important;
+  border-bottom-color: rgba(245,200,66,0.14) !important;
+  color: rgba(245,210,120,0.55) !important;
+}
+
+:root.theme-time .cmp-slot       { background: rgba(245,200,66,0.06) !important; border-color: rgba(245,200,66,0.16) !important; }
+:root.theme-time .cmp-slot:hover:not(.cmp-locked):not(.cmp-disc-no-hover) { background: rgba(245,200,66,0.14) !important; border-color: rgba(245,200,66,0.48) !important; }
+:root.theme-time .sp-roll-btn        { background: rgba(245,200,66,0.06) !important; border-color: rgba(245,200,66,0.16) !important; }
+:root.theme-time .sp-roll-btn:hover  { background: rgba(245,200,66,0.14) !important; border-color: rgba(245,200,66,0.48) !important; }
+:root.theme-time .sp-roll-btn.active { background: rgba(245,200,66,0.18) !important; border-color: rgba(245,200,66,0.50) !important; }
+:root.theme-time .cmp-view-btn       { background: rgba(245,200,66,0.06) !important; border-color: rgba(245,200,66,0.16) !important; color: rgba(245,210,120,0.65) !important; }
+:root.theme-time .cmp-view-btn:hover { background: rgba(245,200,66,0.14) !important; border-color: rgba(245,200,66,0.48) !important; color: #e8e2d0 !important; }
+:root.theme-time .cmp-view-btn.active { background: rgba(245,200,66,0.15) !important; border-color: rgba(245,200,66,0.48) !important; }
+
+/* ── TIME: Banner title — мобильный override ── */
+:root.theme-time .banner-game-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: #fff4a0 !important;
+  color: #fff4a0 !important;
+  filter: none !important;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0 0 26px rgba(245,200,66,0.80),
+     0 0 55px rgba(245,200,66,0.14) !important;
+}
+
+/* ── TIME: Randomizer button ── */
+:root.theme-time .az-rand-btn {
+  background: linear-gradient(180deg, #f5c842 0%, #8a6508 100%) !important;
+  box-shadow: 0 2px 12px rgba(245,200,66,.65), 0 1px 0 #3a2800 !important;
+}
+:root.theme-time .az-rand-btn:hover {
+  background: linear-gradient(180deg, #ffe880 0%, #e0a91a 100%) !important;
+  box-shadow: 0 5px 20px rgba(245,200,66,.85), 0 1px 0 #3a2800 !important;
+}
+
+/* ── TIME: Mobile credit cards ── */
+@media(max-width:960px){
+  :root.theme-time .credit-card {
+    background: none !important;
+    border-color: transparent !important;
+  }
+  :root.theme-time .credit-card:hover {
+    border-color: transparent !important;
+  }
+}
+
+/* ── TIME: Mobile Process / Tablet (.az-panel-btn) ── */
+:root.theme-time .az-panel-btn {
+  background: linear-gradient(180deg, rgba(220,180,60,0.45) 0%, rgba(60,50,15,0.65) 100%) !important;
+  border-color: rgba(245,200,66,0.42) !important;
+  color: #fff4a0 !important;
+}
+:root.theme-time .az-panel-btn:hover {
+  border-color: rgba(245,200,66,0.82) !important;
+  background: linear-gradient(180deg, rgba(220,180,60,0.55) 0%, rgba(220,180,60,0.60) 100%) !important;
+  box-shadow: 0 4px 20px rgba(245,200,66,0.30) !important;
+}
+:root.theme-time .az-panel-btn-icon { color: #fff4a0 !important; }
 
 /* ══════════════════════════════════════════════════════
    EASTER THEME
@@ -619,6 +1142,528 @@
    Затемнённый:  #4e5058  — channel separators
    Рамки:        #3b3d44  — subtle dividers
 ══════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════
+   GALAXY THEME — FULL STYLE OVERRIDE
+   Оригинальные цвета сохранены. Переделан стиль:
+   туманности, глубина, свечение панелей.
+   Фон:    #07060f  — синяя галактическая бездна
+   Панели: rgba(16,9,32,0.92) — слой туманности
+   Акцент: #9b30ff / #c875ff — оригинал
+══════════════════════════════════════════════════════ */
+
+/* ── GALAXY: Page background — туманность ── */
+:root.theme-galaxy .page-bg {
+  background-color: #07060f;
+}
+:root.theme-galaxy .page-bg::after {
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 28%, rgba(100,20,200,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 72%, rgba(40,20,180,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 65% at 58% 8%,  rgba(140,40,220,0.09) 0%, transparent 50%),
+    linear-gradient(to right,  rgba(7,6,15,.97) 0%, rgba(7,6,15,.62) 50%, rgba(7,6,15,.93) 100%),
+    linear-gradient(to bottom, rgba(7,6,15,.55) 0%, rgba(7,6,15,.10) 35%, rgba(7,6,15,.88) 100%);
+}
+
+/* ── GALAXY: Nav ── */
+:root.theme-galaxy nav {
+  background: rgba(7,6,15,.96);
+  border-color: rgba(155,48,255,0.20);
+  box-shadow: 0 1px 0 0 rgba(100,20,200,0.08);
+  backdrop-filter: blur(28px);
+}
+:root.theme-galaxy nav::after {
+  background: linear-gradient(90deg, transparent, rgba(155,48,255,0.45), rgba(0,212,255,0.25), rgba(155,48,255,0.45), transparent);
+  opacity: 0.4;
+}
+:root.theme-galaxy .nav-btn:hover {
+  color: #e0aaff;
+  background: rgba(155,48,255,0.10);
+  box-shadow: 0 0 14px rgba(155,48,255,0.18) !important;
+  text-shadow: 0 0 10px rgba(155,48,255,0.5) !important;
+}
+:root.theme-galaxy .nav-btn.active {
+  color: #c875ff;
+  background: rgba(155,48,255,0.13);
+  box-shadow: 0 0 10px rgba(155,48,255,0.20) !important;
+}
+
+/* ── GALAXY: Banner ── */
+:root.theme-galaxy .banner-overlay {
+  background:
+    radial-gradient(ellipse 65% 80% at 50% 50%, rgba(100,20,200,0.22) 0%, transparent 68%),
+    linear-gradient(to right, rgba(7,6,15,0.82) 0%, rgba(7,6,15,0.18) 40%, rgba(7,6,15,0.18) 60%, rgba(7,6,15,0.82) 100%),
+    linear-gradient(to bottom, rgba(7,6,15,0.52) 0%, transparent 30%, transparent 68%, rgba(7,6,15,0.65) 100%);
+}
+:root.theme-galaxy .banner-eyebrow {
+  color: #f0e8ff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 24px rgba(155,48,255,0.55), 0 2px 8px rgba(0,0,0,.9);
+}
+:root.theme-galaxy .banner-game-title {
+  color: #e0aaff;
+  background: linear-gradient(135deg, #e0aaff 0%, #c875ff 40%, #9b30ff 75%, #e0aaff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 22px rgba(155,48,255,0.55)) drop-shadow(0 0 45px rgba(100,20,200,0.30));
+}
+:root.theme-galaxy .banner-glow-line {
+  background: linear-gradient(90deg, transparent, #9b30ff, #00d4ff, #9b30ff, transparent);
+  box-shadow: 0 0 12px rgba(155,48,255,0.65), 0 0 24px rgba(0,212,255,0.25);
+  height: 2px;
+  opacity: 0.85;
+}
+
+/* ── GALAXY: Основные панели ── */
+:root.theme-galaxy .bot-panel,
+:root.theme-galaxy .updates-panel {
+  background: linear-gradient(155deg, rgba(18,9,36,0.92) 0%, rgba(10,6,22,0.89) 100%);
+  border-color: rgba(155,48,255,0.22);
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.65),
+    0 0 40px rgba(80,10,160,0.08),
+    inset 0 0 30px rgba(80,20,180,0.04);
+  backdrop-filter: blur(18px);
+}
+:root.theme-galaxy .bot-panel::before,
+:root.theme-galaxy .updates-panel::before {
+  background: linear-gradient(90deg, transparent, rgba(155,48,255,0.38), rgba(0,212,255,0.18), transparent);
+  opacity: 0.32;
+}
+:root.theme-galaxy .bot-name {
+  color: #e0aaff !important;
+  text-shadow: 0 0 18px rgba(155,48,255,0.70) !important;
+}
+:root.theme-galaxy .bot-tagline { color: rgba(210,195,235,0.52) !important; }
+:root.theme-galaxy .bot-desc { color: rgba(195,180,220,0.65) !important; }
+
+/* ── GALAXY: Credit cards ── */
+:root.theme-galaxy .credit-card {
+  background: rgba(100,20,200,0.08);
+  border-color: rgba(155,48,255,0.18);
+}
+:root.theme-galaxy .credit-card:hover { border-color: rgba(155,48,255,0.42); }
+:root.theme-galaxy .credit-card-role { color: rgba(200,185,230,0.38) !important; }
+:root.theme-galaxy .credit-card-name { color: #e8e0f4 !important; }
+:root.theme-galaxy .credit-card-name.cyan { color: #00d4ff !important; }
+:root.theme-galaxy .credit-card-name.green { color: #4cffb0 !important; }
+
+/* ── GALAXY: Stat chips ── */
+:root.theme-galaxy .stat-chip {
+  background: rgba(80,15,180,0.15);
+  border: 1px solid rgba(155,48,255,0.20);
+  box-shadow: 0 0 12px rgba(80,10,160,0.08);
+}
+:root.theme-galaxy .stat-num { color: #c875ff !important; text-shadow: 0 0 12px rgba(155,48,255,0.55) !important; }
+:root.theme-galaxy .stat-lbl { color: rgba(200,185,230,0.46) !important; }
+:root.theme-galaxy .stat-chip--total {
+  border-color: rgba(155,48,255,0.52) !important;
+  box-shadow: 0 0 18px rgba(155,48,255,0.22), inset 0 0 18px rgba(80,20,180,0.08) !important;
+}
+:root.theme-galaxy .stat-chip--total .stat-lbl { color: rgba(200,185,230,0.52) !important; }
+:root.theme-galaxy .total-proc-count { color: #e0aaff !important; text-shadow: 0 0 10px rgba(155,48,255,0.55) !important; }
+:root.theme-galaxy .total-proc-arrow { color: #c875ff !important; }
+
+/* ── GALAXY: Updates ── */
+:root.theme-galaxy .updates-title { color: #e0aaff !important; text-shadow: 0 0 16px rgba(155,48,255,0.60) !important; }
+:root.theme-galaxy .updates-subtitle { color: rgba(200,185,230,0.46) !important; }
+:root.theme-galaxy .updates-text { color: rgba(200,185,230,0.78) !important; }
+:root.theme-galaxy .updates-text .upd-accent { color: #c875ff !important; }
+:root.theme-galaxy .updates-text .upd-cyan   { color: #00d4ff !important; }
+:root.theme-galaxy .updates-text .upd-green  { color: #4cffb0 !important; }
+:root.theme-galaxy .updates-text .upd-muted  { color: rgba(200,185,230,0.32) !important; }
+:root.theme-galaxy .upd-nav-btn {
+  background: rgba(80,15,160,0.12);
+  border-color: rgba(155,48,255,0.20);
+  color: rgba(200,185,230,0.48);
+}
+:root.theme-galaxy .upd-nav-btn:hover {
+  background: rgba(100,20,200,0.20);
+  border-color: rgba(155,48,255,0.48);
+  color: #e8e0f4;
+}
+
+/* ── GALAXY: Item list panel ── */
+:root.theme-galaxy .item-list-panel {
+  background: linear-gradient(180deg, rgba(14,8,30,0.96) 0%, rgba(9,5,20,0.93) 100%);
+  border-color: rgba(155,48,255,0.20);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 20px rgba(60,10,140,0.06);
+}
+:root.theme-galaxy .item-list-header {
+  background: rgba(50,15,100,0.45);
+  border-color: rgba(155,48,255,0.18);
+  color: rgba(200,185,230,0.52);
+}
+:root.theme-galaxy .cat-tab {
+  color: rgba(200,185,230,0.48);
+  border-color: rgba(155,48,255,0.16);
+  background: transparent;
+}
+:root.theme-galaxy .cat-tab.active,
+:root.theme-galaxy .cat-tab:hover {
+  color: #e8e0f4;
+  background: rgba(155,48,255,0.12);
+  border-color: rgba(155,48,255,0.48);
+  box-shadow: 0 0 10px rgba(155,48,255,0.12);
+}
+:root.theme-galaxy .item-btn {
+  color: rgba(200,185,230,0.50);
+  border-color: transparent;
+  background: transparent;
+}
+:root.theme-galaxy .item-btn:hover {
+  color: #e8e0f4;
+  background: rgba(155,48,255,0.09);
+  border-color: rgba(155,48,255,0.24);
+}
+:root.theme-galaxy .item-btn.active {
+  color: #e8e0f4;
+  background: rgba(155,48,255,0.16);
+  border-color: rgba(155,48,255,0.42);
+  box-shadow: 0 0 8px rgba(155,48,255,0.12);
+}
+:root.theme-galaxy .item-category-header {
+  color: rgba(200,185,230,0.34) !important;
+  border-color: rgba(155,48,255,0.14);
+}
+:root.theme-galaxy .item-category-header::before,
+:root.theme-galaxy .item-category-header::after { background: rgba(155,48,255,0.16); }
+
+/* ── GALAXY: Search ── */
+:root.theme-galaxy .item-search-wrap,
+:root.theme-galaxy #page-rolls .item-search-wrap,
+:root.theme-galaxy #page-analyze .item-search-wrap,
+:root.theme-galaxy #page-stuff .item-search-wrap,
+:root.theme-galaxy #page-compare .item-search-wrap {
+  background: rgba(9,5,22,0.92) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+}
+:root.theme-galaxy .item-search-input { color: #e8e0f4 !important; background: transparent !important; }
+:root.theme-galaxy .item-search-input::placeholder { color: rgba(200,185,230,0.26) !important; }
+
+/* ── GALAXY: Modifier panel ── */
+:root.theme-galaxy .mod-panel {
+  background: linear-gradient(180deg, rgba(16,8,32,0.94) 0%, rgba(10,5,22,0.91) 100%);
+  border-color: rgba(155,48,255,0.18);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.48);
+}
+:root.theme-galaxy .mod-panel-header {
+  background: rgba(50,15,100,0.42);
+  border-color: rgba(155,48,255,0.16);
+}
+:root.theme-galaxy .mod-panel-title { color: rgba(200,185,230,0.48) !important; }
+:root.theme-galaxy .mod-panel-value { color: #c875ff !important; text-shadow: 0 0 8px rgba(155,48,255,0.45) !important; }
+:root.theme-galaxy .mod-panel-arrow { color: #c875ff !important; }
+:root.theme-galaxy .mod-panel-body { background: rgba(16,8,32,0.55); }
+:root.theme-galaxy .mod-btn {
+  color: rgba(200,185,230,0.50);
+  border-color: rgba(155,48,255,0.16);
+  background: transparent;
+}
+:root.theme-galaxy .mod-btn:hover,
+:root.theme-galaxy .mod-btn.active {
+  color: #e8e0f4;
+  background: rgba(155,48,255,0.12);
+  border-color: rgba(155,48,255,0.44);
+  box-shadow: 0 0 10px rgba(155,48,255,0.14);
+}
+
+/* ── GALAXY: Console panel ── */
+:root.theme-galaxy .console-panel {
+  background: linear-gradient(155deg, rgba(12,6,26,0.98) 0%, rgba(8,4,18,0.96) 100%) !important;
+  border: 1px solid rgba(155,48,255,0.25) !important;
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.72),
+    0 0 30px rgba(60,10,140,0.10),
+    inset 0 0 40px rgba(40,5,100,0.05) !important;
+}
+:root.theme-galaxy .console-header {
+  background: rgba(35,12,70,0.75) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+}
+:root.theme-galaxy .console-title { color: rgba(200,185,230,0.65) !important; }
+:root.theme-galaxy .console-live-badge,
+:root.theme-galaxy .console-live-badge span { color: #4cffb0 !important; }
+:root.theme-galaxy .console-status { background: #4cffb0 !important; box-shadow: 0 0 8px rgba(76,255,176,0.75) !important; }
+:root.theme-galaxy .online-dot    { background: #4cffb0 !important; box-shadow: 0 0 8px rgba(76,255,176,0.75) !important; }
+:root.theme-galaxy .online-count  { color: #4cffb0 !important; }
+:root.theme-galaxy .console-tabs  { background: rgba(22,10,48,0.68) !important; border-color: rgba(155,48,255,0.16) !important; }
+:root.theme-galaxy .console-tab-btn { color: rgba(200,185,230,0.46) !important; border-bottom-color: transparent !important; }
+:root.theme-galaxy .console-tab-btn:hover { color: #e8e0f4 !important; background: rgba(155,48,255,0.09) !important; }
+:root.theme-galaxy .console-tab-btn.active { color: #e0aaff !important; border-bottom-color: #9b30ff !important; background: rgba(155,48,255,0.11) !important; }
+:root.theme-galaxy .analysis-card { border-color: rgba(155,48,255,0.16) !important; }
+:root.theme-galaxy .analysis-card:hover { background: rgba(155,48,255,0.05) !important; }
+:root.theme-galaxy .history-header { color: rgba(200,185,230,0.42) !important; border-color: rgba(155,48,255,0.16) !important; }
+:root.theme-galaxy .console-body { scrollbar-color: rgba(155,48,255,0.32) transparent !important; }
+:root.theme-galaxy .console-body::-webkit-scrollbar-thumb { background: rgba(155,48,255,0.32) !important; }
+:root.theme-galaxy .empty-title { color: rgba(200,185,230,0.44) !important; }
+:root.theme-galaxy .empty-desc   { color: rgba(200,185,230,0.28) !important; }
+:root.theme-galaxy .hint-row { background: rgba(155,48,255,0.06) !important; border-color: rgba(155,48,255,0.16) !important; }
+:root.theme-galaxy .hint-page { color: #c875ff !important; }
+:root.theme-galaxy .hint-desc { color: rgba(200,185,230,0.48) !important; }
+:root.theme-galaxy .card-time   { color: rgba(200,185,230,0.36) !important; }
+:root.theme-galaxy .card-main   { color: #e8e0f4 !important; }
+:root.theme-galaxy .card-detail { color: rgba(200,185,230,0.58) !important; }
+:root.theme-galaxy .card-result { color: #ff4444 !important; }
+:root.theme-galaxy .card-roll   { border-top-color: rgba(155,48,255,0.16) !important; }
+:root.theme-galaxy .card-roll-lbl { color: rgba(200,185,230,0.46) !important; }
+:root.theme-galaxy .card-type         { background: rgba(155,48,255,0.13) !important; color: #c875ff !important; }
+:root.theme-galaxy .card-type.analyze { background: rgba(155,48,255,0.13) !important; color: #c875ff !important; }
+:root.theme-galaxy .card-type.preview,
+:root.theme-galaxy .card-type.weapon  { background: rgba(0,212,255,0.13) !important; color: #00d4ff !important; }
+:root.theme-galaxy .card-type.compare { background: rgba(76,255,176,0.11) !important; color: #4cffb0 !important; }
+
+/* ── GALAXY: Page title block ── */
+:root.theme-galaxy .page-title-block { border-color: rgba(155,48,255,0.20); }
+:root.theme-galaxy .page-title-text  { color: #e0aaff !important; text-shadow: 0 0 16px rgba(155,48,255,0.55) !important; }
+:root.theme-galaxy .page-title-icon  { color: #c875ff !important; }
+:root.theme-galaxy .page-title-sub   { color: rgba(200,185,230,0.46) !important; }
+
+/* ── GALAXY: Roll table ── */
+:root.theme-galaxy .roll-table-wrap {
+  background: rgba(11,5,24,0.93);
+  border-color: rgba(155,48,255,0.18);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.42);
+}
+:root.theme-galaxy .roll-table-wrap thead th,
+:root.theme-galaxy .az-tbl thead th {
+  background: rgba(50,15,100,0.45);
+  color: rgba(200,185,230,0.58) !important;
+  border-color: rgba(155,48,255,0.16);
+}
+:root.theme-galaxy .roll-table-wrap tbody tr { border-color: rgba(155,48,255,0.10); }
+:root.theme-galaxy .td-base { color: rgba(200,185,230,0.82); }
+:root.theme-galaxy .td-roll { color: #c875ff; }
+:root.theme-galaxy .td-ref  { color: rgba(200,185,230,0.36); }
+
+/* ── GALAXY: Settings panel ── */
+:root.theme-galaxy .settings-panel {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:root.theme-galaxy .settings-content {
+  background: linear-gradient(155deg, rgba(14,7,30,0.98) 0%, rgba(9,5,20,0.96) 100%) !important;
+  border-color: rgba(155,48,255,0.22) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.65), 0 0 20px rgba(60,10,140,0.10) !important;
+}
+:root.theme-galaxy .settings-section-title { color: #c875ff !important; text-shadow: 0 0 10px rgba(155,48,255,0.42) !important; }
+:root.theme-galaxy .sett-entry-btn {
+  color: rgba(200,185,230,0.54) !important;
+  border-color: rgba(155,48,255,0.16) !important;
+  background: transparent !important; box-shadow: none !important;
+}
+:root.theme-galaxy .sett-entry-btn:hover {
+  background: rgba(155,48,255,0.09) !important;
+  color: #e8e0f4 !important;
+}
+:root.theme-galaxy .sett-entry-btn.active { color: #e0aaff !important; background: none !important; }
+:root.theme-galaxy .sett-entry-btn.dim { color: rgba(200,185,230,0.24) !important; }
+:root.theme-galaxy .sett-entry-sep      { color: rgba(200,185,230,0.24) !important; }
+:root.theme-galaxy .settings-gear-btn   { color: rgba(155,120,210,0.52); }
+:root.theme-galaxy .settings-gear-btn:hover { color: #c875ff; background: rgba(155,48,255,0.09); }
+:root.theme-galaxy .sett-lang-btn {
+  border-color: rgba(155,48,255,0.25) !important;
+  color: rgba(200,185,230,0.58) !important;
+  background: none !important;
+}
+:root.theme-galaxy .sett-lang-btn:hover { border-color: rgba(155,48,255,0.55) !important; color: #e8e0f4 !important; }
+:root.theme-galaxy .sett-lang-btn.active { border-color: #9b30ff !important; color: #e0aaff !important; }
+
+/* ── GALAXY: Palette popup ── */
+:root.theme-galaxy .palette-popup-inner {
+  background: rgba(9,5,20,0.98);
+  border: 1px solid rgba(155,48,255,0.28);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.72), 0 0 20px rgba(80,10,180,0.14);
+}
+:root.theme-galaxy .palette-item { border-color: rgba(155,48,255,0.20); }
+:root.theme-galaxy .palette-item img { border-color: rgba(155,48,255,0.25); }
+:root.theme-galaxy .palette-item:hover { background: rgba(155,48,255,0.09); box-shadow: 0 0 12px rgba(155,48,255,0.14); }
+:root.theme-galaxy .palette-future-icon { border-color: rgba(155,48,255,0.22); color: rgba(200,185,230,0.24); }
+:root.theme-galaxy .palette-backdrop { background: rgba(2,1,10,0.68); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+/* ── GALAXY: Avatar ring — пульсар ── */
+:root.theme-galaxy .avatar-ring-inner {
+  border-color: #9b30ff;
+  box-shadow: 0 0 20px rgba(155,48,255,0.55), 0 0 45px rgba(80,10,180,0.22), inset 0 0 18px rgba(80,20,180,0.08) !important;
+}
+:root.theme-galaxy .avatar-ring-outer { border-color: rgba(155,48,255,0.24); }
+:root button:focus-visible { outline-color: var(--gold); }
+
+/* ── GALAXY: az/cmp карточки ── */
+:root.theme-galaxy .az-card,
+:root.theme-galaxy .az-result-card,
+:root.theme-galaxy .cmp-result-card {
+  background: linear-gradient(155deg, rgba(18,9,36,0.94) 0%, rgba(11,6,24,0.91) 100%) !important;
+  border: 1px solid rgba(155,48,255,0.22) !important;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.58),
+    0 0 20px rgba(60,10,140,0.08),
+    inset 0 0 22px rgba(50,10,120,0.04) !important;
+}
+:root.theme-galaxy .az-res-stats-box {
+  background: rgba(40,12,80,0.55) !important;
+  border-color: rgba(155,48,255,0.18) !important;
+}
+:root.theme-galaxy .az-card .az-discord-input,
+:root.theme-galaxy .az-card .az-discord-input.weapon-input,
+:root.theme-galaxy .az-card .az-discord-input.armor-input {
+  background: rgba(14,7,30,0.80) !important;
+  border: 1px solid rgba(155,48,255,0.20) !important;
+  color: #e8e0f4 !important;
+  box-shadow: none !important;
+}
+:root.theme-galaxy .az-card .az-discord-input::placeholder { color: rgba(200,185,230,0.26) !important; opacity: 1 !important; }
+:root.theme-galaxy .az-card .az-discord-input:focus {
+  border-color: rgba(155,48,255,0.52) !important;
+  box-shadow: 0 0 0 2px rgba(155,48,255,0.16) !important;
+}
+:root.theme-galaxy .az-card .az-discord-dmg-box { background: rgba(30,10,62,0.68) !important; border-color: rgba(155,48,255,0.18) !important; }
+:root.theme-galaxy .az-card .az-discord-divider { background: rgba(155,48,255,0.20) !important; }
+:root.theme-galaxy .az-card .az-discord-armor-lbl { color: rgba(200,185,230,0.48) !important; }
+
+/* ── GALAXY: Discord panels / third panel ── */
+:root.theme-galaxy .az-discord-panel,
+:root.theme-galaxy .sp-discord-panel,
+:root.theme-galaxy .cmp-discord-panel {
+  background: linear-gradient(155deg, rgba(14,7,28,0.94) 0%, rgba(9,4,20,0.91) 100%);
+  border-color: rgba(155,48,255,0.20);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.48), 0 0 16px rgba(60,10,140,0.06);
+}
+:root.theme-galaxy .az-third-panel,
+:root.theme-galaxy #page-stuff .sp-third-panel,
+:root.theme-galaxy .cmp-third-panel {
+  background: linear-gradient(155deg, rgba(18,9,36,0.94) 0%, rgba(11,6,24,0.91) 100%) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.52), 0 0 20px rgba(60,10,140,0.06) !important;
+}
+:root.theme-galaxy .az-third-panel-tabs { background: rgba(24,10,52,0.52) !important; border-bottom-color: rgba(155,48,255,0.18) !important; }
+:root.theme-galaxy .az-third-tab { color: rgba(200,185,230,0.46) !important; }
+:root.theme-galaxy .az-third-tab:hover,
+:root.theme-galaxy .az-third-tab.active { color: #e0aaff !important; background: rgba(155,48,255,0.11) !important; border-bottom-color: #9b30ff !important; }
+
+/* ── GALAXY: Modal ── */
+:root.theme-galaxy .az-modal-box {
+  background: linear-gradient(155deg, rgba(18,9,36,0.99) 0%, rgba(11,6,24,0.97) 100%) !important;
+  border-color: rgba(155,48,255,0.28) !important;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.82), 0 0 40px rgba(80,10,180,0.14) !important;
+}
+:root.theme-galaxy .az-modal-head { background: rgba(40,12,80,0.58) !important; border-bottom-color: rgba(155,48,255,0.20) !important; }
+:root.theme-galaxy .az-modal-ttl  { color: #e0aaff !important; text-shadow: 0 0 12px rgba(155,48,255,0.50) !important; }
+:root.theme-galaxy .az-modal-x    { color: rgba(200,185,230,0.48) !important; }
+:root.theme-galaxy .az-modal-x:hover { color: #e0aaff !important; background: rgba(155,48,255,0.11) !important; }
+
+/* ── GALAXY: Table empty states ── */
+:root.theme-galaxy .table-empty,
+:root.theme-galaxy #az-empty, :root.theme-galaxy #sp-empty, :root.theme-galaxy #cmp-empty, :root.theme-galaxy #table-empty-state {
+  background: rgba(14,7,28,0.58);
+  border-color: rgba(155,48,255,0.16);
+}
+:root.theme-galaxy .table-empty-title,
+:root.theme-galaxy .table-empty-desc { color: rgba(200,185,230,0.38) !important; }
+
+/* ── GALAXY: Analyze button ── */
+:root.theme-galaxy .az-analyze-btn {
+  background: linear-gradient(180deg, rgba(155,48,255,0.94) 0%, rgba(110,28,210,0.94) 100%);
+  box-shadow: 0 4px 20px rgba(155,48,255,0.38), 0 2px 0 rgba(60,10,130,0.85), 0 0 32px rgba(80,10,200,0.22) !important;
+  color: #f0e4ff !important;
+}
+:root.theme-galaxy .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, rgba(200,117,255,0.95) 0%, rgba(155,48,255,0.95) 100%);
+  box-shadow: 0 6px 28px rgba(155,48,255,0.52), 0 2px 0 rgba(60,10,130,0.85), 0 0 44px rgba(80,10,200,0.32) !important;
+}
+:root.theme-galaxy .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, rgba(55,20,100,0.70) 0%, rgba(38,12,75,0.70) 100%);
+  box-shadow: none !important; color: rgba(200,185,230,0.38) !important;
+}
+:root.theme-galaxy .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, rgba(200,117,255,0.95) 0%, rgba(155,48,255,0.95) 100%) left no-repeat,
+    linear-gradient(180deg, rgba(32,10,65,0.90) 0%, rgba(20,6,44,0.90) 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 20px rgba(155,48,255,0.22), 0 2px 0 rgba(40,8,90,0.85) !important;
+  color: #f0e4ff !important;
+  cursor: not-allowed !important; pointer-events: none !important;
+  transform: none !important; transition: none !important;
+  animation: cdFillGalaxy var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillGalaxy {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+
+/* ── GALAXY: Gold/HP rows ── */
+:root.theme-galaxy .az-gold-row {
+  background: linear-gradient(90deg, rgba(80,20,180,0.28), rgba(50,10,130,0.28)) !important;
+  border: 1px solid rgba(155,48,255,0.20) !important;
+}
+:root.theme-galaxy .az-total-hp-row {
+  background: linear-gradient(90deg, rgba(76,255,176,0.15), rgba(40,180,120,0.12)) !important;
+  border-color: rgba(76,255,176,0.28) !important;
+}
+:root.theme-galaxy .az-total-hp-lbl { color: #4cffb0 !important; }
+:root.theme-galaxy .az-total-hp-val { color: #4cffb0 !important; text-shadow: 0 0 10px rgba(76,255,176,0.45) !important; }
+
+/* ── GALAXY: Stats input box ── */
+:root.theme-galaxy .az-stats-box { background: rgba(40,12,80,0.50) !important; border-color: rgba(155,48,255,0.18) !important; }
+:root.theme-galaxy .az-stat-input {
+  background: rgba(14,6,30,0.76) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+  color: #e8e0f4 !important;
+}
+:root.theme-galaxy .az-stat-input::placeholder { color: rgba(200,185,230,0.26) !important; }
+:root.theme-galaxy .az-stat-input:focus {
+  border-color: rgba(155,48,255,0.52) !important;
+  background: rgba(20,8,44,0.86) !important;
+  box-shadow: 0 0 0 2px rgba(155,48,255,0.15) !important;
+}
+:root.theme-galaxy .az-divider { background: linear-gradient(90deg, transparent, rgba(155,48,255,0.32), transparent) !important; }
+:root.theme-galaxy .az-sel-btn {
+  background: rgba(35,12,72,0.58) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+  color: rgba(200,185,230,0.78) !important;
+}
+:root.theme-galaxy .az-sel-btn:hover { background: rgba(60,20,120,0.68) !important; border-color: rgba(155,48,255,0.48) !important; }
+
+/* ── GALAXY: Dropdowns ── */
+:root.theme-galaxy .az-dropdown, :root.theme-galaxy .az-ref-dropdown {
+  background: rgba(11,5,24,0.98) !important;
+  border-color: rgba(155,48,255,0.26) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.72), 0 0 20px rgba(80,10,180,0.12) !important;
+}
+:root.theme-galaxy .az-dropdown::-webkit-scrollbar-thumb,
+:root.theme-galaxy .az-ref-dropdown::-webkit-scrollbar-thumb { background: rgba(155,48,255,0.32) !important; }
+:root.theme-galaxy .az-opt { color: rgba(200,185,230,0.78) !important; background: rgba(22,8,46,0.38) !important; border-color: rgba(155,48,255,0.12) !important; }
+:root.theme-galaxy .az-opt:hover { background: rgba(70,20,150,0.34) !important; border-color: rgba(155,48,255,0.34) !important; color: #e8e0f4 !important; }
+:root.theme-galaxy .az-opt.sel { color: #e0aaff !important; background: rgba(100,30,200,0.28) !important; border-color: rgba(155,48,255,0.48) !important; box-shadow: 0 0 10px rgba(155,48,255,0.14) !important; }
+
+/* ── GALAXY: Quote / dt panels ── */
+:root.theme-galaxy .az-quote-panel, :root.theme-galaxy .az-quote-mobile {
+  background: linear-gradient(135deg, rgba(18,9,36,0.92) 0%, rgba(11,6,24,0.88) 100%) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+}
+:root.theme-galaxy .dt-result-panel {
+  background: linear-gradient(155deg, rgba(14,7,28,0.96) 0%, rgba(9,4,18,0.93) 100%) !important;
+  border-color: rgba(155,48,255,0.20) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.48) !important;
+}
+:root.theme-galaxy .dt-result-panel-header {
+  background: rgba(35,12,70,0.68) !important;
+  border-bottom-color: rgba(155,48,255,0.18) !important;
+  color: rgba(200,185,230,0.75) !important;
+}
+
+/* ── GALAXY: Slots/buttons ── */
+:root.theme-galaxy .cmp-slot { background: rgba(50,14,110,0.28) !important; border-color: rgba(155,48,255,0.20) !important; }
+:root.theme-galaxy .cmp-slot:hover:not(.cmp-locked):not(.cmp-disc-no-hover) { background: rgba(75,20,165,0.38) !important; border-color: rgba(155,48,255,0.48) !important; }
+:root.theme-galaxy .sp-roll-btn { background: rgba(50,14,110,0.26) !important; border-color: rgba(155,48,255,0.20) !important; }
+:root.theme-galaxy .sp-roll-btn:hover { background: rgba(75,20,165,0.36) !important; border-color: rgba(155,48,255,0.48) !important; }
+:root.theme-galaxy .sp-roll-btn.active { background: rgba(155,48,255,0.20) !important; border-color: rgba(155,48,255,0.52) !important; }
+:root.theme-galaxy .cmp-view-btn { background: rgba(50,14,110,0.26) !important; border-color: rgba(155,48,255,0.20) !important; color: rgba(200,185,230,0.72) !important; }
+:root.theme-galaxy .cmp-view-btn:hover { background: rgba(75,20,165,0.36) !important; border-color: rgba(155,48,255,0.48) !important; color: #e8e0f4 !important; }
+:root.theme-galaxy .cmp-view-btn.active { background: rgba(155,48,255,0.17) !important; border-color: rgba(155,48,255,0.48) !important; }
+
 :root.theme-discord {
   --gold:           #5865F2;
   --gold-bright:    #7289DA;
@@ -893,6 +1938,11 @@
 
 /* ── DISCORD: Settings panel ── */
 :root.theme-discord .settings-panel {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:root.theme-discord .settings-content {
   background: #2b2d31 !important;
   border-color: #3b3d44 !important;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
@@ -2728,7 +3778,6 @@
   color: rgba(138,164,180,0.30) !important;
 }
 
-
 /* SVG иконки nav-бара — лёгкий тонкий стиль */
 :root.theme-easter .nav-btn svg path,
 :root.theme-easter .nav-btn svg circle,
@@ -3565,7 +4614,7 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
 }
 
 /* Per-theme glow on hover */
-.palette-item[data-theme="gold"]:hover img {
+.palette-item[data-theme="time"]:hover img {
   border-color: #c8932a;
   box-shadow: 0 0 14px #c8932a, 0 0 5px #c8932a;
 }
@@ -3602,20 +4651,20 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
    !important нужен, потому что theme-baldi/classic/discord/easter
    переопределяют border-color у .palette-item с большей специфичностью. */
 .palette-item.palette-active.palette-active img,
-:root .palette-item.palette-active img {
+:root.theme-galaxy .palette-item.palette-active img {
   border-color: var(--pal-glow, #c8932a) !important;
   box-shadow: 0 0 12px color-mix(in srgb, var(--pal-glow, #c8932a) 70%, transparent) !important;
 }
 .palette-item.palette-active.palette-active,
-:root .palette-item.palette-active {
+:root.theme-galaxy .palette-item.palette-active {
   border-color: color-mix(in srgb, var(--pal-glow, #c8932a) 45%, transparent) !important;
 }
 .palette-item.palette-active.palette-active .palette-label,
-:root .palette-item.palette-active .palette-label {
+:root.theme-galaxy .palette-item.palette-active .palette-label {
   color: var(--pal-glow, #c8932a) !important;
 }
 /* Per-palette glow colors (matches data-glow on each button) */
-.palette-item[data-theme="gold"]    { --pal-glow: #c8932a; }
+.palette-item[data-theme="time"]    { --pal-glow: #f5c842; }
 .palette-item[data-theme="galaxy"]  { --pal-glow: #9b30ff; }
 .palette-item[data-theme="easter"]  { --pal-glow: #E0607E; }
 .palette-item[data-theme="classic"] { --pal-glow: #447194; }
@@ -3953,7 +5002,6 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
     margin-top: 14px;
   }
 }
-
 
 /* stats-col — вертикальный столбик-разделитель между панелями */
 .stats-col {
@@ -4544,9 +5592,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .online-dot{width:9px;height:9px;border-radius:50%;background:var(--green-stat);box-shadow:0 0 6px var(--green-stat);animation:blink-dot 2s ease-in-out infinite;flex-shrink:0;}
 .online-icon{width:14px;height:14px;fill:var(--green-stat);opacity:.8;flex-shrink:0;}
 .online-count{font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:600;color:var(--green-stat);letter-spacing:1px;min-width:14px;}
-
-
-
 
 .console-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;flex:1;text-align:center;}
 .console-live-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--green-stat);text-transform:uppercase;display:flex;align-items:center;gap:4px;}
@@ -5203,7 +6248,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   text-align: center;
   min-height: 18px;
 }
-
 
 /* ── ARMOR PART TOGGLE ── */
 .az-armor-part-row{
@@ -7244,10 +8288,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .az-step-rhs.c-corr {
   color: #c875ff !important;
 }
-.theme-gold .c-corr {
+.theme-time .c-corr {
   color: #ff7043 !important;
 }
-.theme-gold .az-step-rhs.c-corr {
+.theme-time .az-step-rhs.c-corr {
   color: #c875ff !important;  
 }
 
@@ -8280,8 +9324,12 @@ body.scale-active .console-panel {
 :root.theme-discord .mod-panel,
 :root.theme-discord .console-panel,
 :root.theme-discord .roll-table-wrap,
-:root.theme-discord .table-empty,
-:root.theme-discord .settings-panel {
+:root.theme-discord .table-empty {
+  background: var(--dc-panel) !important;
+  border-color: var(--dc-border) !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25) !important;
+}
+:root.theme-discord .settings-content {
   background: var(--dc-panel) !important;
   border-color: var(--dc-border) !important;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.25) !important;
@@ -8510,6 +9558,78 @@ body.scale-active .console-panel {
   color: #ffffff !important;
 }
 
+/* ══════════════════════════════════════════════════
+   GALAXY THEME — additional fixes (v5)
+   - text outline on hero title
+   - randomizer button purple
+   - mobile Process / Tablet buttons match theme
+═══════════════════════════════════════════════════ */
+
+/* Hero title — solid purple fill + 4-direction black outline (matches eyebrow style) */
+:root.theme-galaxy .banner-game-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: #e0aaff !important;
+  color: #e0aaff !important;
+  filter: none !important;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0 0 22px rgba(155,48,255,0.65),
+     0 0 45px rgba(100,20,200,0.35) !important;
+}
+
+/* Randomizer button — purple to match result panels */
+:root.theme-galaxy .az-rand-btn {
+  background: linear-gradient(180deg, #9b30ff 0%, #6a14c0 100%) !important;
+  box-shadow: 0 2px 10px rgba(155,48,255,.55), 0 1px 0 #3a0a70 !important;
+}
+:root.theme-galaxy .az-rand-btn:hover {
+  background: linear-gradient(180deg, #b558ff 0%, #8025e0 100%) !important;
+  box-shadow: 0 5px 16px rgba(155,48,255,.75), 0 1px 0 #3a0a70 !important;
+}
+
+/* Mobile: remove galaxy purple background from credit cards (overlap with mask) */
+@media(max-width:960px){
+  :root.theme-galaxy .credit-card {
+    background: none !important;
+    border-color: transparent !important;
+  }
+  :root.theme-galaxy .credit-card:hover {
+    border-color: transparent !important;
+  }
+}
+
+/* Mobile Process / Tablet (.az-panel-btn) — Galaxy purple */
+:root.theme-galaxy .az-panel-btn {
+  background: linear-gradient(180deg, rgba(50,14,110,0.55) 0%, rgba(30,8,70,0.65) 100%) !important;
+  border-color: rgba(155,48,255,0.45) !important;
+  color: #e0aaff !important;
+}
+:root.theme-galaxy .az-panel-btn:hover {
+  border-color: rgba(155,48,255,0.85) !important;
+  background: linear-gradient(180deg, rgba(75,20,165,0.65) 0%, rgba(50,14,110,0.75) 100%) !important;
+  box-shadow: 0 4px 18px rgba(155,48,255,0.30) !important;
+}
+:root.theme-galaxy .az-panel-btn-icon { color: #e0aaff !important; }
+
+/* Mobile Process / Tablet — Discord blurple */
+:root.theme-discord .az-panel-btn {
+  background: #2b2d31 !important;
+  border-color: #3b3d44 !important;
+  color: #dbdee1 !important;
+}
+:root.theme-discord .az-panel-btn:hover {
+  border-color: #5865F2 !important;
+  background: #313338 !important;
+  box-shadow: 0 4px 18px rgba(88,101,242,0.25) !important;
+  color: #ffffff !important;
+}
+:root.theme-discord .az-panel-btn-icon { color: #5865F2 !important; }
+
 </style>
 <base target="_blank">
 </head>
@@ -8720,7 +9840,7 @@ body.scale-active .console-panel {
         <div class="palette-popup" id="palette-popup" style="display:none;">
           <div class="palette-popup-inner">
             <div class="palette-grid">
-              <button class="palette-item" data-theme="gold" data-glow="#c8932a" onclick="selectPalette('gold')" aria-label="Gold theme">
+              <button class="palette-item" data-theme="time" data-glow="#f5c842" onclick="selectPalette('time')" aria-label="Time theme">
                 <img src="images/Home Page/avatar1.png" alt="Gold">
                 <span class="palette-label">Time</span>
               </button>
@@ -8751,7 +9871,7 @@ body.scale-active .console-panel {
             </div>
           </div>
         </div>
-        <div class="bot-name">Calculate Roll Bot</div>
+        <div class="bot-name" data-i18n="bot_name">Calculate Roll Bot</div>
         <div class="bot-tagline" data-i18n="bot_tagline">Item Analyzer &amp; Roll Calculator</div>
         <div class="bot-desc" data-i18n="bot_desc">Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.</div>
         <div class="credits-block">
@@ -8781,7 +9901,7 @@ body.scale-active .console-panel {
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.8</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.0.8.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -8797,7 +9917,7 @@ body.scale-active .console-panel {
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.8</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.8.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -9296,7 +10416,6 @@ body.scale-active .console-panel {
             </div>
             <div class="az-quote-text" id="az-quote-mobile-text"></div>
           </div>
-
 
           <!-- Mobile: Process / Tablet buttons inside result card, above item name -->
           <div class="az-mobile-action-btns" id="az-mobile-action-btns">
@@ -11179,6 +12298,13 @@ function navigateTo(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const pageEl = document.getElementById('page-' + page);
   if (pageEl) { pageEl.classList.add('active'); currentPage = page; }
+  // ── Remember last visited page so reload restores it ──
+  try {
+    const _persistable = ['home','rolls','analyze','stuff','compare'];
+    if (_persistable.indexOf(page) !== -1) {
+      localStorage.setItem('_ed_last_page', page);
+    }
+  } catch(_) {}
   const navBtn = document.getElementById('navbtn-' + page);
   if (navBtn) navBtn.classList.add('active');
   syncConsole(page);
@@ -11625,7 +12751,6 @@ function addAnalysis(entry) {
   renderAllConsoles();
 }
 
-
 function nowStr() {
   return Date.now();
 }
@@ -11656,6 +12781,7 @@ const T = {
     nav_home:'Home', nav_rolls:'Tables', nav_analyze:'Analyze Roll', nav_weapon:'Weapon Preview', nav_compare:'Stuff Compare', nav_stuff:'Stuff Preview', nav_settings:'Settings',
     tab_analyses:'Analyses', tab_previews:'Previews', tab_compares:'Compares',
     banner_eyebrow:'Toolkit for',
+    bot_name:'Calculate Roll Bot',
     bot_tagline:'Item Analyzer & Roll Calculator',
     bot_desc:'Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.',
     credits_author:'Bot Author', credits_dev:'Successor / Dev', credits_data:'Database', credits_data_val:'Elemental Dungeons',
@@ -11831,13 +12957,16 @@ const T = {
     upd5_body: `<span class="upd-accent">What\'s new in v1.0.4?</span>\n\nA new game update with AWK Galaxy and Gravity has been released! In connection with that — a new color palette!\nHome page redesign!\nSettings have been added!\n\n<span class="upd-accent">NEW ITEMS!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Staff</span> — a new Secret Weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Viltron\'s Staff</span> — a new Ascended Weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Graviton Ring</span> — a new Secret Relic!\n<span class="upd-cyan">›</span> <span class="upd-accent">Lord Prisma\'s Ring</span> — a new Secret Relic!\n\n<span class="upd-accent">What\'s expected in v1.0.5?</span>\n  In the settings you\'ve probably noticed the setting <span class="upd-accent">Data entry type: Website / Discord</span>\n  I\'ll be refining it for all pages as soon as possible!\n  And the developers have said they\'ve only released part of the update, which means there may be even more things to come!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd6_title: 'UPDATES OF v1.0.5 VERSION!',
     upd6_sub: 'Developer Notes 04.04.2026',
-    upd6_body: `This update was finished a while ago and tested firsthand.\nAdmittedly, this one was tough for me — the code integrations were no joke. But I pulled through.\nIn quite a short span of time we've seen some solid updates. New weapons kept coming out along the way, and more are still on the horizon.\n\nSpecifics around all these items — how they look, their stats, and so on — are being worked out in the process. Thanks to new site features, finding the base values for each item has become much easier. There's a set formula, and we follow it. We've also adapted that formula where needed. For any math enthusiasts out there — it might actually be fun to poke around one of the site's features and try to figure out the values on your own.\n\nAt this point, I've achieved everything I set out to do. The pages have been polished up properly, along with the settings. The only things likely left to add to the site are possible mini-games... maybe even some kind of story lore, like a creepypasta? Just for fun :D.\n\nEither way, you know where to find me on Discord — <span class="upd-cyan">@yarreyt</span>.\nI'm no longer a tester, but I'm on good terms with many of them and they're happy to help. Even with all the interesting drama that's suddenly popped up along the way. Apparently, according to one particular tester... I'm quite the "harasser." Honestly, hearing that again is just funny at this point.\n\nI also want to express my gratitude for the support this project has received in the Elemental Dungeons Discord server. And more specifically: the <span class="upd-accent">#suggestions</span> channel, in the <span class="upd-green">CALCULATOR ROLL BOT</span> topic — as of writing this, it's gathered <span class="upd-accent">93 STARS!</span>\n\nAs for the game's developer, Moose — this is actually a fun story to tell.\nSo here's how it went: I submitted an appeal to have the site recognized as an official source for the game. However, Swuh told me this wasn't possible since the site was made by a regular player (even though I was a tester at the time), and that the only real option would be to transfer ownership to them. Still, Swuh offered a compromise — creating a separate Discord channel, something like "ED Community Projects", where verified fan resources for the game could be listed and made publicly accessible.\nMore than a month has passed since then, but Swuh and his admin team still haven't created the topic. I get it — they've got personal lives, work, and all of that. But in some ways I'm frustrated, because they clearly find time to develop the game and push out updates, while creating a topic takes less than a minute. An odd situation, all in all.\nI decided I couldn't just keep waiting and reached out to Moose directly. Told him I wanted the site to be made public.\nAfter some time he responded and asked for the link, saying he'd take a look later. A few days went by, and he replied with something like:\n<span class="upd-muted">"This site is genuinely good. It would of course be even better if it were integrated into a wiki or contained a wiki itself — but I wouldn't mind sharing the link somewhere in the Discord server."</span>\nAfter that message, me and the testers spammed him with GIFs saying ABSOLUTE MOOSE and settled in to wait. Then I got fired... for reasons you already know from the v1.0.3 notes. Time passed, and in the end, nothing they said actually happened. Which is also kind of strange.\n\nAnyway, enough talk — let's get to the actual update.\n\n<span class="upd-accent">What's new in v1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Discord Mode</span> — users who previously used the Discord bot can now enter commands using the familiar formulas. For newcomers, the input formats are listed below:\n         For Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. If your item has no reforge, leave the {reforge} argument blank.\n         For Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Same rule applies for the reforge.\n         For Stuff Compare: there are two formulas. Symbols in the formula are required!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  The input rules will become clear as you make mistakes. The validation here is strict — and the error messages are clear.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">New SECRET PAGE — Developer Tool.</span> A utility page that developers will use freely, and curious users can too — <span class="upd-muted">if you can find where it's hidden.</span>\n\nNew items that appeared in the previous update but weren't announced:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — a new Secret Weapon in the game.\n\n<span class="upd-cyan">›</span> A <span class="upd-accent">TOTAL PROCESSES counter</span> has been added to the home page. The user who suggested this fun idea — <span class="upd-cyan">@jejecrafter</span>. He's also a Tester, by the way.\n\n<span class="upd-accent">What might come in v1.0.6?</span>\nExpecting new game updates and new item releases. Some very interesting relics and armor are on the way — and from what developers and testers are saying, they're seriously powerful.\nAnd I, as always, am waiting for your ideas and bug reports. I've put good work into the desktop version, but the mobile side hasn't been tested as thoroughly yet.\nWith the new data entry system, there's also a chance you might find bugs related to saving data on pages and so on. So bug reports are very much welcome!\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to you all!</span>`,
+    upd6_body: `This update was finished a while ago and tested firsthand.\nAdmittedly, this one was tough for me — the code integrations were no joke. But I pulled through.\nIn quite a short span of time we\'ve seen some solid updates. New weapons kept coming out along the way, and more are still on the horizon.\n\nSpecifics around all these items — how they look, their stats, and so on — are being worked out in the process. Thanks to new site features, finding the base values for each item has become much easier. There\'s a set formula, and we follow it. We\'ve also adapted that formula where needed. For any math enthusiasts out there — it might actually be fun to poke around one of the site\'s features and try to figure out the values on your own.\n\nAt this point, I\'ve achieved everything I set out to do. The pages have been polished up properly, along with the settings. The only things likely left to add to the site are possible mini-games... maybe even some kind of story lore, like a creepypasta? Just for fun :D.\n\nEither way, you know where to find me on Discord — <span class="upd-cyan">@yarreyt</span>.\nAt the moment I\'m not a tester, but I\'m on good terms with many of them and they\'re happy to help.\n\nI also want to express my gratitude for the support this project has received in the Elemental Dungeons Discord server. And more specifically: the <span class="upd-accent">#suggestions</span> channel, in the <span class="upd-green">CALCULATOR ROLL BOT</span> topic — as of writing this, it\'s gathered <span class="upd-accent">93 STARS!</span>\n\n<span class="upd-accent">What\'s new in v1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Discord Mode</span> — users who previously used the Discord bot can now enter commands using the familiar formulas. For newcomers, the input formats are listed below:\n         For Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. If your item has no reforge, leave the {reforge} argument blank.\n         For Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Same rule applies for the reforge.\n         For Stuff Compare: there are two formulas. Symbols in the formula are required!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  The input rules will become clear as you make mistakes. The validation here is strict — and the error messages are clear.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">New SECRET PAGE — Developer Tool.</span> A utility page that developers will use freely, and curious users can too — <span class="upd-muted">if you can find where it\'s hidden.</span>\n\nNew items that appeared in the previous update but weren\'t announced:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — a new Secret Weapon in the game.\n\n<span class="upd-cyan">›</span> A <span class="upd-accent">TOTAL PROCESSES counter</span> has been added to the home page. The user who suggested this fun idea — <span class="upd-cyan">@jejecrafter</span>. He\'s also a Tester, by the way.\n\n<span class="upd-accent">What might come in v1.0.6?</span>\nExpecting new game updates and new item releases. Some very interesting relics and armor are on the way — and from what developers and testers are saying, they\'re seriously powerful.\nAnd I, as always, am waiting for your ideas and bug reports. I\'ve put good work into the desktop version, but the mobile side hasn\'t been tested as thoroughly yet.\nWith the new data entry system, there\'s also a chance you might find bugs related to saving data on pages and so on. So bug reports are very much welcome!\n\n<span class="upd-muted">That\'s all!\nA wonderful morning / day / evening / night to you all!</span>`,
     upd8_title: 'UPDATES OF v1.0.6 VERSION!',
     upd8_sub: 'Developer Notes 08.04.2026',
     upd8_body: `<span class="upd-accent">What's new in v1.0.6?</span>\nBesides mini-fixes and improvements to scaling and adaptation (achieving perfection for everyone is either difficult or impossible — more on that later),\nthe following has also been added:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Search system in item lists!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Two new color palettes</span> — <span class="upd-accent">Easter</span> and <span class="upd-accent">Classic</span>.\nThe Classic palette matches the inventory color from the game Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> has become even more informative. It now highlights suspicious values in results, and when multiple windows are open — highlights those that are numerically close to each other.\n\n<span class="upd-accent">What's next in v1.0.7?</span>\nAs always, send your ideas to my Discord DMs — <span class="upd-cyan">@yarreyt</span>.\nOne possible addition: a randomizer feature on the pages for a better understanding of how everything works. This could especially help newcomers when using the <span class="upd-accent">Discord</span> data entry mode.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd9_title: 'UPDATES OF v1.0.7 VERSION!',
     upd9_sub: 'Developer Notes 11.04.2026',
     upd9_body: `Recently, me and user <span class="upd-cyan">@koeftedestroyer</span> — developer of the <span class="upd-accent">ED Community Value List</span> website — have become, let\'s say, friends. So our sites now advertise each other!\n\nThe home page of this site will feature a link to his site.\nIf you want to know the current value of items, stay ahead in trades, and keep track of the market — visit his site. In my opinion (and not only mine) it\'s the best price-tracking site for this game.\n\n<span class="upd-accent">What\'s new in v1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Randomizer feature added!</span> Fills in completely random values in the input fields. In Discord input mode — it can also serve as an additional learning tool.\n\n<span class="upd-cyan">›</span> This site is about game math, right? It would be fun to add a palette that ties into that idea... probably... AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n<span class="upd-accent">NEW PALETTE:</span>\n<span class="upd-accent">BALDI</span>\n\nSorry for the outburst. It\'s just genuinely ironic that a palette from a game about an evil <span class="upd-accent">MATH</span> teacher now exists on a site whose entire purpose is also based on <span class="upd-accent">MATH</span>.\n\n<span class="upd-accent">What\'s coming in v1.0.8?</span>\nHonestly, no big ideas besides adding new palettes and items.\nSend your suggestions to my contact — <span class="upd-cyan">@yarreyt</span>\n\nAlso, I\'ve added a link to the site in my profile! So you, as site users, can direct interested people to my profile to follow the link to the site.\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!\nHappy Easter to everyone! Christ is risen — truly, He is risen.</span>`,
+    upd11_title: 'UPDATES OF v1.0.8.5 VERSION!',
+    upd11_sub: 'Developer Notes 18.04.2026',
+    upd11_body: `What\'s actually in v1.0.8.5...</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Contest Battleaxe</span> values have been updated.\n<span class="upd-cyan">›</span> <span class="upd-accent">NOTABLE CHANGE</span> — two palettes have been reworked: <span class="upd-accent">Galaxy</span> and <span class="upd-accent">Time</span>. Even better now, more beautiful.\n\n<span class="upd-accent">What\'s expected in v1.0.9?</span>\nHonestly, no ideas yet besides more palettes and new items.\nExpecting the same items mentioned on the previous page.\nSend suggestions to: <span class="upd-cyan">@yarreyt</span>\nFeel free to share the site — just mention my username and link to my profile.\nOr point people to the Discord channel — <span class="upd-accent">#game-faqs</span>!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd10_title: 'UPDATES OF v1.0.8 VERSION!',
     upd10_sub: 'Developer Notes 17.04.2026',
     upd10_body: `Collaboration with <span class="upd-cyan">SUSUheyb</span> is still going strong, and I want to congratulate him on the release of his update on April 16th.\n\nWe have a great celebration! Admin <span class="upd-cyan">@rebel</span> placed a link to the site — <span class="upd-accent">at my request</span> — in a pretty important channel: <span class="upd-accent">#game-faqs</span>. That means the link is now publicly available! We made it! Hooray!\n\nHuge thanks to everyone for the support! Right now in the <span class="upd-accent">#best-suggestions</span> channel you can see <span class="upd-accent">134 stars</span> on our topic! And we've succeeded!\n\nHowever, please follow the server rules. Don't forget that this is still just a link, which can be forwarded by anyone, or even copied for scam purposes.\nIf you want to point to the source of the site, either point to the channel itself which contains the official site link, OR mention me and tell people to check my profile bio. The link is mentioned there too.\n\n<span class="upd-accent">What's new in v1.0.8?</span>\nNothing major, except a newly added palette — <span class="upd-accent">Discord</span>!\nIn honor of the official mention of the site and its recognition.\n\nAlso, we're tentatively expecting the following:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nAlso possibly new weapons and relics (a heavily discussed topic).\n\n<span class="upd-accent">What's coming in v1.0.9?</span>\nI haven't come up with shit yet, but for now I'll occasionally add new color palettes — tied to events, or to my crazy fantasies :D\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -11846,13 +12975,14 @@ const T = {
     upd7_body: `<span class="upd-accent">Happy Easter to all of you!</span>\n\n<span class="upd-accent">What\'s new in v1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Scaling fix!</span> The interface is now even more comfortable for many users due to different monitor resolutions or zoom levels!\n\n<span class="upd-accent">NEW STUFF!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — a new secret weapon!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — a new secret relic!\n\n<span class="upd-accent">What\'s expected in v1.0.6</span>\n<span class="upd-cyan">›</span> Adding an item search across all pages!\n<span class="upd-cyan">›</span> Maybe a new color palette!\n\nOther than that... I\'m out of ideas. Suggest them on Discord — <span class="upd-cyan">@yarreyt</span>!\nAlso don\'t forget to support the site with stars in the Elemental Dungeons Discord server!\nIn <span class="upd-accent">#suggestions</span> → topic <span class="upd-green">CALCULATOR ROLL BOT</span>. As of this entry — already <span class="upd-accent">116 stars!</span> We have the highest star count among all top suggestions!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd4_title: 'UPDATES OF v1.0.3 VERSION!',
     upd4_sub: 'Developer Notes 20.03.2026',
-    upd4_body: `<span class="upd-accent">A few words from developer H2O</span>\n\nSomething happened recently between me and Swuh — here\'s the short version:\n\nI was unhappy with a change to one element and also found a bug. Along with that, I was pressuring Swuh to fix the bugs as quickly as possible and take my feedback on board — but in a negative way. After all the commotion, he stood his ground, and I lost my tester role. This happened on March 16th.\n\nI\'ve been trying to let him know about the bugs, and I even sent a message with an apology. Not just to get my tester role back (though I hope so), but to settle my own ego. I really don\'t like being in the wrong after some conflict — so I\'m apologising for all my screw-ups.\n\nJust today, March 20th, my access to the test server was cut off, which means updates will be a bit harder due to the limitations. Before, I could just hop in at an early stage, look around, note things down and write it all up ahead of time — so that with each update I could post new weapons, armor, and so on almost immediately. Now I can\'t do that.\n<span class="upd-muted">I\'m not demanding anything, but I hope for your support and understanding.\nI\'d really love to be forgiven. Whether I get my role back — that\'s entirely his decision.</span>\n\nAnyway, enough of the sad stuff — let\'s figure out how to work around this &gt;:P\nUpdates will keep coming. This won\'t stop me.\n\n<span class="upd-accent">What\'s new in v1.0.3</span>\n<span class="upd-cyan">›</span> Hooray, a new page — <span class="upd-accent">Stuff Compare</span>. You\'ll be able to compare the same type of weapon or armor with one or even two rolls, but with different stats. You\'ll see what things look like, the difference in damage / health, how much everything costs, and how much gold is left to spend!\n<span class="upd-cyan">›</span> Accordingly, a new console category has been added — <span class="upd-accent">Compares</span>, for your curiosity!\n<span class="upd-cyan">›</span> The icon for the swords <span class="upd-accent">Timelost Conqueror\'s Blade</span> and <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span> has been changed. Both swords are now gold, with a golden aura.\n\n<span class="upd-accent">What\'s expected in the next update v1.0.4</span>\n  In general, we\'ve gone through all the pages, but there\'s always room to add more variety.\n  If you have any ideas — write to me at <span class="upd-cyan">@yarreyt</span> on Discord. I also know that most users of this site are in the game\'s Discord server — <span class="upd-green">Elemental Dungeons</span>! So you can absolutely reach me there.\n  As for major plans, here\'s what I have in mind:\n  Since we\'re all from Discord and we\'re used to the bot\'s calculation functions, I\'ll add two input methods for each category!\n  · The first type is naturally our current input method — click this, click that, get a result.\n  · The second type is our old familiar method of entering values through an input field.\n  I\'ll make it possible to type commands directly on the pages. The input fields will have hints, so I don\'t think it\'ll be a problem. And if it is — I\'ll add GUIDES on the home page, as a button next to the bot avatar.\n\n<span class="upd-muted">Good night / evening / morning / afternoon to all of you. Enjoy using the site!\nOnce again — I hope for your support. ♥</span>`,
+    upd4_body: `<span class="upd-accent">A few words from developer H2O (YarreYT)</span>\n\nI am no longer a tester for Elemental Dungeons, but I assure you — that's not a problem!\n\n<span class="upd-accent">What\'s new in v1.0.3</span>\n<span class="upd-cyan">›</span> Hooray, a new page — <span class="upd-accent">Stuff Compare</span>. You\'ll be able to compare the same type of weapon or armor with one or even two rolls, but with different stats. You\'ll see what things look like, the difference in damage / health, how much everything costs, and how much gold is left to spend!\n<span class="upd-cyan">›</span> Accordingly, a new console category has been added — <span class="upd-accent">Compares</span>, for your curiosity!\n<span class="upd-cyan">›</span> The icon for the swords <span class="upd-accent">Timelost Conqueror\'s Blade</span> and <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span> has been changed. Both swords are now gold, with a golden aura.\n\n<span class="upd-accent">What\'s expected in the next update v1.0.4</span>\n  In general, we\'ve gone through all the pages, but there\'s always room to add more variety.\n  If you have any ideas — write to me at <span class="upd-cyan">@yarreyt</span> on Discord. I also know that most users of this site are in the game\'s Discord server — <span class="upd-green">Elemental Dungeons</span>! So you can absolutely reach me there.\n  As for major plans, here\'s what I have in mind:\n  Since we\'re all from Discord and we\'re used to the bot\'s calculation functions, I\'ll add two input methods for each category!\n  · The first type is naturally our current input method — click this, click that, get a result.\n  · The second type is our old familiar method of entering values through an input field.\n  I\'ll make it possible to type commands directly on the pages. The input fields will have hints, so I don\'t think it\'ll be a problem. And if it is — I\'ll add GUIDES on the home page, as a button next to the bot avatar.\n\n<span class="upd-muted">Good night / evening / morning / afternoon to all of you. Enjoy using the site!</span>`,
   },
   ru:{
     nav_home:'Главная', nav_rolls:'Таблицы', nav_analyze:'Анализ ролла', nav_weapon:'Просмотр оружия', nav_compare:'Сравнение вещей', nav_stuff:'Прогноз лута', nav_settings:'Настройки',
     tab_analyses:'Анализы', tab_previews:'Прогнозы', tab_compares:'Сравнения',
     banner_eyebrow:'Инструментарий для',
-    bot_tagline:'Item Analyzer & Roll Calculator',
+    bot_name:'Бот «Калькулятор роллов»',
+    bot_tagline:'Анализатор предметов & Калькулятор роллов, йоу',
     bot_desc:'Веб-версия бота для анализа роллов, прогнозов оружия и брони. Определяй роллы по урону, сравнивай предметы и планируй апгрейды.',
     credits_author:'Автор бота', credits_dev:'Преемник / Dev', credits_data:'База данных', credits_data_val:'Elemental Dungeons',
     vl_label:'Просмотреть цены на ваши предметы можно здесь:', vl_author:'от SUSUheyb',
@@ -12028,13 +13158,16 @@ const T = {
     upd5_body: `<span class="upd-accent">Что нового в 1.0.4 версии?</span>\n\nВ игре вышло новое обновление с AWK Галактикой и Гравитацией! В связи с этим и новая цветовая палитра!\nРедизайн домашней страницы!\nДобавлены настройки!\n\n<span class="upd-accent">НОВЫЕ ВЕЩИ!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Staff</span> — новое секретное оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Viltron\'s Staff</span> — новое Ascended оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Graviton Ring</span> — новый секретный релик!\n<span class="upd-cyan">›</span> <span class="upd-accent">Lord Prisma\'s Ring</span> — новый секретный релик!\n\n<span class="upd-accent">Что ожидается в 1.0.5 версии?</span>\n  В настройках вы наверняка заметили настройку <span class="upd-accent">Data entry type: Website / Discord</span>\n  Я её доработаю для всех страниц как можно скорее!\n  Ну и разработчики же сказали, что они выпустили лишь часть обновления, а значит, может быть ещё больше вещей!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd6_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.5v!',
     upd6_sub: 'Записи разработчика 04.04.2026',
-    upd6_body: `Обновление было закончено давно и протестировано собственными руками.\nКонечно это обновление мне давалось тяжким из-за тяжёлых внедрений кода. Но, я справился.\nВполне за короткое время мы повидали хорошие обновления, в процессе этих же обновлений выходили новые оружия, и они ещё будут выходить позже.\n\nКонкретно в процессе уточняется вопрос по всем этим предметам, как они выглядят и так далее. Так-же с учётом новых нововведений на сайте, находить базовые значения каждого предмета стало гораздо проще. Есть определённая формула и мы её соблюдаем. Эту формулу так-же мы адаптировали. Для математиков-энтузиастов будет интересно наверное протестировать одну из внедрений сайта и попробовать даже самостоятельно выявить значения.\n\nВ данный момент я добился всего чего хотел. Страницы были доработаны до ума, настройки. Вероятно всё что остаётся по внедрениям в сайт это возможные мини-игры.. может даже добавить какой-то сюжетный лор по типу крипипасты? В качестве развлечения :D.\n\nВ любом случае вам будет известен мой контакт в дискорде — <span class="upd-cyan">@yarreyt</span>.\nНа данный момент я не являюсь тестером, но тепло дружу с многими из них и они не против помогать. Пускай и на фоне всяких интересных конфликтов, произошедших внезапно. Я, оказывается по мнению одного человека-тестера.. ещё тот "домогатель". Ей богу, слышать это повторно даже смешно.\n\nТак-же, хочу выразить благодарность за поддержку проекту, в дискорд-сервере игры — <span class="upd-green">Elemental Dungeons</span>. И даже конкретнее: на канале <span class="upd-accent">#suggestions</span> в топике <span class="upd-green">CALCULATOR ROLL BOT</span> на момент записи этого сообщения собрало аж <span class="upd-accent">93 ЗВЕЗДЫ!</span>\n\nКасаемо сайта и разработчика игры Moose. Даже интересно рассказать.\nТема была такая. Я подал апелляцию на рассмотрение сайта чтобы он стал официальным источником игры. Однако Swuh мне сказал что это невозможно, так как сайт сделан пользователем игры (пускай даже на тот момент я был тестером) и единственный вариант: передать права на сайт им. Однако Swuh предложил такой компромисс как создать отдельный дискорд-канал под названием по типу: "ED Communities Projects", в котором могли бы быть проверенные фанатские источники по игре, и они могли бы быть общедоступными.\nПрошло с того момента больше месяца, но Swuh и его админ. состав так и не создали топик. И мне понятно, личная жизнь там у них тяжёлая, работа и так далее. Однако в какой-то степени я испытываю к ним недовольство, так как они в любом случае находят время для разработки игры и их обновлений, а для создания топика — времени занимает меньше минуты. В общем — спорная ситуация.\nЯ решил что терпеть это не могу и решил ЛИЧНО обратиться к Moose. Сказал ему чтобы сайт стал общедоступным.\nСпустя какое-то время он откликнулся и попросил ссылку на сайт и сказал что рассмотрит его позже. Спустя несколько дней он ответил по типу:\n<span class="upd-muted">"Этот сайт действительно хорош. Было бы конечно ещё лучше если бы сайт был внедрён там в википедию или сайт содержал википедию, но я не был бы против разместить ссылку где-нибудь в дискорд-сервере."</span>\nПосле этого сообщения мы с тестерами накидали ему гифок с содержанием текста ABSOLUTE MOOSE и принялись ждать. Меня уволили.. по известным вам причинам из обновления 1.0.3, прошло какое-то время и в общем ни одно из сказанного ими не было выполнено. Что на самом деле тоже странно.\n\nЧто-то слишком много разговора, переходим непосредственно к обновлениям.\n\n<span class="upd-accent">Что нового в версии 1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Настройка Discord</span> — теперь пользователи, которые ранее пользовались дискордом и здешним ботом, смогут повторно писать команды с известными вам формулами. Для новичков так-же указаны формулы введения команд:\n         Для Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. Если у вашего предмета нет заклинания, то не пишите ничего в аргументе {reforge}.\n         Для Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Аналогичная ситуация с заклинанием.\n         Для Stuff Compare: есть всего две формулы. Знаки в формуле обязательны!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  Все правила ввода команд вы поймёте с совершением ошибок. Здесь жёсткие валидации ошибок, и вполне понятные.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Новая СЕКРЕТНАЯ СТРАНИЦА — Developer Tool.</span> Спасательная страница и ею будут спокойно пользоваться как разработчики, так и с интересом и <span class="upd-muted">ЕСЛИ НАЙДЁТЕ ЕЁ РАСПОЛОЖЕНИЕ — пользователи.</span>\n\nНовые предметы которые появились в прошлом обновлении, но не были об этом сообщены:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — новое секретное оружие игры.\n\n<span class="upd-cyan">›</span> Так-же был добавлен <span class="upd-accent">счётчик ЗАПИСЕЙ ЗА ВСЁ ВРЕМЯ</span> на домашней странице. Пользователь, который подкинул такую интересную идею — <span class="upd-cyan">@jejecrafter</span>. Кстати он тоже Тестер.\n\n<span class="upd-accent">Что может быть в обновлении 1.0.6?</span>\nОжидаем новые обновления игры и выходы новых предметов. Ожидаются в данный момент очень интересные релики и броня, которые как заверяют разработчики и тестеры — очень сильные.\nНу и я, ожидаю ваши возможные идеи, и сообщения о багах. Я постарался над десктопной версией, а вот телефон пока слабо проверил.\nИ из-за новой системы ввода данных, есть так-же вероятность найти баг связанный с сохранением данных на страницах и так далее. Так что, ожидаю и сообщения про них тоже!\n\n<span class="upd-muted">На этом всё!\nВсем добрейшего утра/дня/вечера/ночи!</span>`,
+    upd6_body: `Обновление было закончено давно и протестировано собственными руками.\nКонечно это обновление мне давалось тяжким из-за тяжёлых внедрений кода. Но, я справился.\nВполне за короткое время мы повидали хорошие обновления, в процессе этих же обновлений выходили новые оружия, и они ещё будут выходить позже.\n\nКонкретно в процессе уточняется вопрос по всем этим предметам, как они выглядят и так далее. Так-же с учётом новых нововведений на сайте, находить базовые значения каждого предмета стало гораздо проще. Есть определённая формула и мы её соблюдаем. Эту формулу так-же мы адаптировали. Для математиков-энтузиастов будет интересно наверное протестировать одну из внедрений сайта и попробовать даже самостоятельно выявить значения.\n\nВ данный момент я добился всего чего хотел. Страницы были доработаны до ума, настройки. Вероятно всё что остаётся по внедрениям в сайт это возможные мини-игры.. может даже добавить какой-то сюжетный лор по типу крипипасты? В качестве развлечения :D.\n\nВ любом случае вам будет известен мой контакт в дискорде — <span class="upd-cyan">@yarreyt</span>.\nНа данный момент я не являюсь тестером, но тепло дружу с многими из них и они не против помогать.\n\nТак-же, хочу выразить благодарность за поддержку проекту, в дискорд-сервере игры — <span class="upd-green">Elemental Dungeons</span>. И даже конкретнее: на канале <span class="upd-accent">#suggestions</span> в топике <span class="upd-green">CALCULATOR ROLL BOT</span> на момент записи этого сообщения собрало аж <span class="upd-accent">93 ЗВЕЗДЫ!</span>\n\n<span class="upd-accent">Что нового в версии 1.0.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Настройка Discord</span> — теперь пользователи, которые ранее пользовались дискордом и здешним ботом, смогут повторно писать команды с известными вам формулами. Для новичков так-же указаны формулы введения команд:\n         Для Analyze Roll: <span class="upd-cyan">{damage/health} {upgrade} {y/n} {reforge}</span>. Если у вашего предмета нет заклинания, то не пишите ничего в аргументе {reforge}.\n         Для Stuff Preview: <span class="upd-cyan">{roll} {upgrade} {y/n} {reforge}</span>. Аналогичная ситуация с заклинанием.\n         Для Stuff Compare: есть всего две формулы. Знаки в формуле обязательны!\n         1 — <span class="upd-cyan">{roll} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n         2 — <span class="upd-cyan">{roll1} > {roll2} - {upgrade1} {y/n1} {reforge1} > {upgrade2} {y/n2} {reforge2}</span>\n  Все правила ввода команд вы поймёте с совершением ошибок. Здесь жёсткие валидации ошибок, и вполне понятные.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Новая СЕКРЕТНАЯ СТРАНИЦА — Developer Tool.</span> Спасательная страница и ею будут спокойно пользоваться как разработчики, так и с интересом и <span class="upd-muted">ЕСЛИ НАЙДЁТЕ ЕЁ РАСПОЛОЖЕНИЕ — пользователи.</span>\n\nНовые предметы которые появились в прошлом обновлении, но не были об этом сообщены:\n<span class="upd-cyan">›</span> <span class="upd-accent">Serious Staff</span> — новое секретное оружие игры.\n\n<span class="upd-cyan">›</span> Так-же был добавлен счётчик <span class="upd-accent">ЗАПИСЕЙ ЗА ВСЁ ВРЕМЯ</span> на домашней странице. Пользователь, который подкинул такую интересную идею — <span class="upd-cyan">@jejecrafter</span>. Кстати он тоже Тестер.\n\n<span class="upd-accent">Что может быть в обновлении 1.0.6?</span>\nОжидаем новые обновления игры и выходы новых предметов. Ожидаются в данный момент очень интересные релики и броня, которые как заверяют разработчики и тестеры — очень сильные.\nНу и я, ожидаю ваши возможные идеи, и сообщения о багах. Я постарался над десктопной версией, а вот телефон пока слабо проверил.\nИ из-за новой системы ввода данных, есть так-же вероятность найти баг связанный с сохранением данных на страницах и так далее. Так что, ожидаю и сообщения про них тоже!\n\n<span class="upd-muted">На этом всё!\nВсем добрейшего утра/дня/вечера/ночи!</span>`,
     upd8_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.6v!',
     upd8_sub: 'Запись разработчика 08.04.2026',
     upd8_body: `<span class="upd-accent">Что нового в версии 1.0.6?</span>\nПо-мимо мини-фиксов и улучшений по масштабированию и адаптации (идеально для всех это либо сложно, либо невозможно. Об этом позже)\nТак-же добавлено:\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Поисковая система в списках!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Две новые цветовые палитры</span> — <span class="upd-accent">Пасхальный</span> и <span class="upd-accent">Классическая</span>.\nКлассическая цветовая палитра повторяет цвет инвентаря из игры Elemental Dungeons.\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Developer Tool</span> стал ещё более понятным. Теперь при результатах он подсвечивает подозрительные значения, а при множественных окнах — подсвечивает те, которые близки друг к другу по цифрам.\n\n<span class="upd-accent">Что следующее в версии 1.0.7?</span>\nОпять же, пишите новые идеи мне в личку дискорда — <span class="upd-cyan">@yarreyt</span>.\nВ принципе можно добавить функцию рандомайзера на страницах для наибольшего понимания функций. Особенно это может помочь новичкам при использовании режима ввода данных <span class="upd-accent">«Discord»</span>.\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd9_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.7v!',
     upd9_sub: 'Записи разработчика 11.04.2026',
     upd9_body: `Недавно мы с пользователем <span class="upd-cyan">@koeftedestroyer</span> (разработчик сайта <span class="upd-accent">ED Community Value List</span>) скажем, сдружились, поэтому наши сайты рекламируют друг друга!\n\nНа домашней странице сайта будет расположена ссылка на его сайт.\nЕсли вы хотите узнать, сколько стоят актуальные предметы, быть в плюсах и следить за рынком — посещайте этот сайт. По-моему (и не только) это самый лучший сайт по ценам из игры.\n\n<span class="upd-accent">Что нового в обновлении 1.0.7?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Добавлена функция рандомайзера!</span> Вводит абсолютно рандомные значения в полях, а в случае Discord режима ввода данных — может быть дополнительным обучающим элементом.\n\n<span class="upd-cyan">›</span> Сайт у нас про математику игры, верно? Было бы круто добавить палитру связывающую идею.. наверное.. АААААААААААААААААААААААААААААААААА\n\n<span class="upd-accent">НОВАЯ ПАЛИТРА:</span>\n<span class="upd-accent">BALDI</span>\n\nИзвините за такую резкость. Просто действительно иронично, что палитра по игре про злого учителя <span class="upd-accent">МАТЕМАТИКИ</span>, теперь есть на сайте, чьи функции основаны так-же на <span class="upd-accent">МАТЕМАТИКЕ</span>.\n\n<span class="upd-accent">Что будет нового в версии 1.0.8?</span>\nЧестно, особых идей кроме добавлений новых палитр и предметов нет.\nПредлагайте мне по контакту — <span class="upd-cyan">@yarreyt</span>\n\nТак-же, я разместил ссылку на свой сайт в профиле! Поэтому вы, как пользователи сайта, сможете желающих направить на мой профиль, чтобы перейти по ссылке на сайт!\n\n<span class="upd-muted">Всем добрейшего утречка/дня/вечера/ночи!\nВсех с пасхой! Христос воскрес, во истину — воскрес.</span>`,
+    upd11_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8.5v!',
+    upd11_sub: 'Записи разработчика 18.04.2026',
+    upd11_body: `Что конкретно по обновлению 1.0.8.5...</span>\n<span class="upd-cyan">›</span> Значения оружия <span class="upd-accent">Contest Battleaxe</span> были изменены.\n<span class="upd-cyan">›</span> <span class="upd-accent">ЗАМЕТНОЕ ИЗМЕНЕНИЕ</span> — были реворкнуты две палитры: <span class="upd-accent">Galaxy</span> и <span class="upd-accent">Time</span>. Стали ещё лучше, более красивее.\n\n<span class="upd-accent">Что ожидается в 1.0.9?</span>\nДа так-же идей нет, кроме палитр и новых предметов.\nОжидаем такие-же предметы какие были упомянуты на прошлой странице.\nПишите по контакту — <span class="upd-cyan">@yarreyt</span>\nДелиться сайтом вы прежде можете, указывая мой юзер и на мой профиль.\nИли же указывать на дискорд-канал — <span class="upd-accent">#game-faqs</span>!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd10_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8v!',
     upd10_sub: 'Записи разработчика 17.04.2026',
     upd10_body: `Сотрудничество с <span class="upd-cyan">SUSUheyb</span> всё так-же продолжается и его поздравляю с выходом обновления 16 апреля.\n\nУ нас великий праздник! Администратор <span class="upd-cyan">@rebel</span> разместил ссылку на сайт <span class="upd-accent">ПО МОЕЙ ПРОСЬБЕ</span> на довольно таки важном канале <span class="upd-accent">#game-faqs</span>. Это значит что теперь ссылка стала общедоступной! Мы добились этого! Ура!\n\nВсем большое спасибо за поддержку! На данный момент на канале <span class="upd-accent">#best-suggestions</span> можно увидеть <span class="upd-accent">134 звезды</span> у нашего топика! И мы добились успеха!\n\nОднако, соблюдаем правила сервера. Не забываем что это всё ещё какая-то ссылка, которая может быть перекинута кем угодно, так-же и скопирована с целью мошенничества.\nЕсли вы хотите указать на источник сайта, то либо указываете на сам канал, в котором есть официальная ссылка сайта ИЛИ упоминаете меня и говорите чтобы посмотрели мою биографию в профиле. Там тоже упомянута ссылка.\n\n<span class="upd-accent">Что нового в версии 1.0.8?</span>\nОсобо ничего, кроме новой добавленной палитры — <span class="upd-accent">Discord</span>!\nВ честь официального упоминания сайта и его признания.\n\nА так-же, предварительно ожидаем такие вещи:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nА так-же может быть новые оружия и релики (очень обсуждаемая тема).\n\n<span class="upd-accent">Что будет в обновлении 1.0.9?</span>\nЯ ещё нихуя не придумал, но пока буду изредка добавлять новые цветовые палитры, связанные с событиями, или с моими ебанутыми фантазиями :D\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -12043,7 +13176,7 @@ const T = {
     upd7_body: `<span class="upd-accent">С пасхой вас всех!</span>\n\n<span class="upd-accent">Что нового в обновлении 1.0.5.5</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Исправлено масштабирование!</span> Теперь интерфейс у многих из-за разрешения монитора или масштабов стал ещё более удобным!\n\n<span class="upd-accent">НОВЫЕ ВЕЩИЧКИ!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Spear</span> — новое секретное оружие!</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Easter Ring</span> — новый секретный релик!\n\n<span class="upd-accent">Что ожидается в обновлении 1.0.6</span>\n<span class="upd-cyan">›</span> Добавлю поисковик предметов во всех страницах!\n<span class="upd-cyan">›</span> И может, добавлю новую цветовую палитру!\n\nВ остальном.. идей больше нет. Предлагайте их в дискорде — <span class="upd-cyan">@yarreyt</span>!\nТак-же не забываем поддерживать сайт звёздочками в дискорд-сервере Elemental Dungeons!\nНа канале <span class="upd-accent">#suggestions</span> → топик <span class="upd-green">CALCULATOR ROLL BOT</span>. На момент этой записи звёзд уже <span class="upd-accent">116!</span> У нас самое большое количество звёзд из лучших предложений!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd4_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.3v!',
     upd4_sub: 'Записи разработчика 20.03.2026',
-    upd4_body: `Немного новостей о разработчике H2O (то есть мне), произошёл недавний конфликт со Swuh, в котором, если вкратце, было так:\n\nЯ был недоволен изменениями одного элемента и так-же нашёл баг. Вместе со всем этим я навязывал Swuh\'у как можно быстрее исправить баги и прислушаться к мнению, в негативной форме. В результате переполоха он остался на своей позиции, а я лишился роли тестера. Это произошло 16 марта.\n\nЯ ему уже пытался сообщить о багах, и даже отправил сообщение с извинениями. По крайней мере не ради того чтобы вернуть роль тестера (хотя надеюсь), а ради утешения своего собственного эго. Мне не очень нравится в результате какого-то конфликта быть не правым и в итоге за все свои косяки - извиняюсь.\n\nТолько сегодня, 20 марта, мне отключили доступ к тест-серверу, поэтому обновления будут немного затруднены из-за ограничений. Раньше я мог просто зайти на ранней стадии, посмотреть, зафиксировать и записать вам заранее, чтобы с обновлением практически сразу загрузить новые виды оружий, брони. Теперь я этого не могу.\n<span class="upd-muted">Я в этом не настаиваю, но надеюсь на вашу поддержку и ваше понимание.\nМне бы очень хотелось чтобы меня простили. А вот возвращать на должность - полностью его решение.</span>\n\nА теперь, давайте без этого грустного говнеца, я придумаю что делать в этом случае &gt;:P\nОбновления будут. Мне даже это не помешает.\n\n<span class="upd-accent">Что нового в новом обновлении 1.0.3v</span>\n<span class="upd-cyan">›</span> Ура, новая страница — <span class="upd-accent">Stuff Compare</span>. Вы сможете сравнить одного типа оружие/брони с одним или даже двумя роллами, но с разными характеристиками. Вы узнаете что как выглядит, в чём разница в уроне/здоровьи, как что, сколько стоит, и сколько осталось потратить!\n<span class="upd-cyan">›</span> В соответствии с этим добавлена новая категория консоли — <span class="upd-accent">Compares</span>, ради вашего любопытства!\n<span class="upd-cyan">›</span> Изменена иконка для мечей: <span class="upd-accent">Timelost Conqueror\'s Blade</span> и <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span>. Теперь оба меча — золотые, с золотой аурой.\n\n<span class="upd-accent">Что ожидается в следующем обновлении 1.0.4v</span>\n  В целом, по страницам мы все прошлись, но и можно будет добавить разнообразия.\n  Если есть какие-то идеи, напишите мне по юзеру <span class="upd-cyan">@yarreyt</span> в дискорде. Я так-же знаю что в целом основные пользователи этого сайта, присутствуют в дискорд сервере игры — <span class="upd-green">Elemental Dungeons</span>! Поэтому вы тем более сможете написать мне!\n  Однако, из крупного у меня планы вот какие:\n  Так как мы все с дискорда и мы в целом привыкли к местным функциям бота для калькуляции ролла, то я сделаю два способа ввода данных для каждой категории!\n  · Первый тип — это естественно наш нынешний способ ввода данных, там нажал, нажал то, и получил результат.\n  · Второй тип — это наш, старый привычный ввод значений через поле ввода.\n  Я добавлю такую возможность, чтобы можно было вводить команды на страницах. Поле ввода будут с подсказками, так что не думаю что проблемы с этим будут. Даже если и будут, то добавлю ГАЙДЫ на домашней страницы, в виде кнопки возле аватара бота.\n\n<span class="upd-muted">Всем доброй ночи/вечера/утра/дня, удачного использования!\nЕщё раз, надеюсь на вашу поддержку. ♥</span>`,
+    upd4_body: `<span class="upd-accent">Касаемо новостей про разработчика сайта H2O (YarreYT)</span>\n\nЯ больше не являюсь тестером игры Elemental Dungeons, однако уверяю вас, это не является проблемой!\n\n<span class="upd-accent">Что нового в новом обновлении 1.0.3v</span>\n<span class="upd-cyan">›</span> Ура, новая страница — <span class="upd-accent">Stuff Compare</span>. Вы сможете сравнить одного типа оружие/брони с одним или даже двумя роллами, но с разными характеристиками. Вы узнаете что как выглядит, в чём разница в уроне/здоровьи, как что, сколько стоит, и сколько осталось потратить!\n<span class="upd-cyan">›</span> В соответствии с этим добавлена новая категория консоли — <span class="upd-accent">Compares</span>, ради вашего любопытства!\n<span class="upd-cyan">›</span> Изменена иконка для мечей: <span class="upd-accent">Timelost Conqueror\'s Blade</span> и <span class="upd-accent">Timelost Conqueror\'s Blade LE (Limited Edition)</span>. Теперь оба меча — золотые, с золотой аурой.\n\n<span class="upd-accent">Что ожидается в следующем обновлении 1.0.4v</span>\n  В целом, по страницам мы все прошлись, но и можно будет добавить разнообразия.\n  Если есть какие-то идеи, напишите мне по юзеру <span class="upd-cyan">@yarreyt</span> в дискорде. Я так-же знаю что в целом основные пользователи этого сайта, присутствуют в дискорд сервере игры — <span class="upd-green">Elemental Dungeons</span>! Поэтому вы тем более сможете написать мне!\n  Однако, из крупного у меня планы вот какие:\n  Так как мы все с дискорда и мы в целом привыкли к местным функциям бота для калькуляции ролла, то я сделаю два способа ввода данных для каждой категории!\n  · Первый тип — это естественно наш нынешний способ ввода данных, там нажал, нажал то, и получил результат.\n  · Второй тип — это наш, старый привычный ввод значений через поле ввода.\n  Я добавлю такую возможность, чтобы можно было вводить команды на страницах. Поле ввода будут с подсказками, так что не думаю что проблемы с этим будут. Даже если и будут, то добавлю ГАЙДЫ на домашней страницы, в виде кнопки возле аватара бота.\n\n<span class="upd-muted">Всем доброй ночи/вечера/утра/дня, удачного использования!</span>`,
   }
 };
 
@@ -12086,7 +13219,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 9;
+let updPage = 10;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -12098,6 +13231,7 @@ const UPD_PAGES = [
   { title:'upd8_title', sub:'upd8_sub', body:'upd8_body' },
   { title:'upd9_title', sub:'upd9_sub', body:'upd9_body' },
   { title:'upd10_title', sub:'upd10_sub', body:'upd10_body' },
+  { title:'upd11_title', sub:'upd11_sub', body:'upd11_body' },
 ];
 
 function updRender() {
@@ -13276,7 +14410,6 @@ function _refreshSiteErrorLang() {
 function azShowError(key) { showSiteError(key, true); }
 function azClearError() { /* auto-dismiss via timer */ }
 
-
 // ── Button cooldown (2s fill animation) ──
 const _btnCdTimers = {};
 const _btnCdEnd = {}; // stores cdEndTime per "btnId:catKey"
@@ -13456,7 +14589,6 @@ function azRandomize() {
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
-
 
 function azDoAnalyze() {
   if (!azCurrentItem) return;
@@ -14883,8 +16015,6 @@ function spUpdateRollDisplay() {
   el.className = 'az-roll-val ' + cls;
 }
 
-
-
 function spUpdateCorrDisplay() {
   const yBtn = document.getElementById('sp-corr-yes');
   const nBtn = document.getElementById('sp-corr-no');
@@ -15165,7 +16295,6 @@ function spRenderArmorResultCard() {
 function spShowError(key) { showSiteError(key, true); }
 function spClearError() { /* auto-dismiss via timer */ }
 
-
 // ── SP RANDOMIZER ────────────────────────────────────────────────────────────
 function spRandomize() {
   if (!spCurrentItem) return;
@@ -15276,7 +16405,6 @@ function spRandomize() {
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
-
 
 function spDoAnalyze(skipCd) {
   const item = spCurrentItem;
@@ -17030,7 +18158,6 @@ function cmpRandomize() {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-
 function cmpCheckSpecifics() {
   const item = cmpCurrentItem;
   if (!item) return;
@@ -17925,6 +19052,17 @@ function _cmpFormulaUpdateArrows(box) {
   btnR.style.pointerEvents = showR ? 'auto' : 'none';
 }
 
+// ── Restore last visited page on reload (skip 'home' since it's the default already active) ──
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    const _last = localStorage.getItem('_ed_last_page');
+    const _allowed = ['home','rolls','analyze','stuff','compare'];
+    if (_last && _last !== 'home' && _allowed.indexOf(_last) !== -1
+        && document.getElementById('page-' + _last)) {
+      navigateTo(_last);
+    }
+  } catch(_) {}
+});
 document.addEventListener('DOMContentLoaded', function() {
   const box = document.getElementById('cmp-disc-formula-box');
   if (box) {
@@ -18662,6 +19800,36 @@ document.getElementById('settings-panel').addEventListener('click', function(e) 
   e.stopPropagation();
 });
 
+// Re-sync settings UI when viewport switches between mobile and desktop
+function _syncSettingsForViewport() {
+  if (!_settingsOpen) return;
+  const panel = document.getElementById('settings-panel');
+  const bd = document.getElementById('settings-backdrop');
+  const mobile = isTrulyMobile(600);
+
+  if (mobile) {
+    // Mobile: show backdrop, clear desktop inline positioning
+    if (bd) bd.style.display = 'block';
+    panel.style.top = '';
+    panel.style.left = '';
+  } else {
+    // Desktop: hide backdrop and reposition panel under the gear button
+    if (bd) bd.style.display = 'none';
+    const btn = document.getElementById('settings-btn');
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      const panelEl = document.getElementById('settings-content');
+      const panelWidth = panelEl ? panelEl.offsetWidth : 230;
+      const scale = window._pageScale || 1;
+      panel.style.top  = (rect.bottom + 8) / scale + 'px';
+      panel.style.left = (rect.right - panelWidth * scale) / scale + 'px';
+    });
+  }
+}
+window.addEventListener('resize', _syncSettingsForViewport);
+window.addEventListener('orientationchange', _syncSettingsForViewport);
+
 // Language via settings panel
 function setLang(l) {
   if (lang === l) return;
@@ -18755,7 +19923,7 @@ const _THEMES = {
     tooltip: 'GOLD THEME',
     switchGlow: '#c8932a',
   },
-  gold: {
+  time: {
     banners: [
       'images/Home Page/banner1_1.png',
       'images/Home Page/banner1_2.png',
@@ -18827,11 +19995,12 @@ window._applyTheme = function(name) {
   if (!theme) return;
   localStorage.setItem('_ed_theme', name);
 
-  document.documentElement.classList.toggle('theme-gold',    name === 'gold');
+  document.documentElement.classList.toggle('theme-time',   name === 'time' || name === 'gold');
   document.documentElement.classList.toggle('theme-easter',  name === 'easter');
   document.documentElement.classList.toggle('theme-classic', name === 'classic');
   document.documentElement.classList.toggle('theme-baldi',   name === 'baldi');
   document.documentElement.classList.toggle('theme-discord', name === 'discord');
+  document.documentElement.classList.toggle('theme-galaxy', name === 'galaxy');
 
   const pageBg = document.querySelector('.page-bg');
   if (pageBg) {
@@ -18853,7 +20022,7 @@ window._applyTheme = function(name) {
   // ── ГЛАВНАЯ АВАТАРКА ──
   const mainAv = document.getElementById('main-avatar');
   const AV = {
-    gold:    'images/Home Page/avatar1.png',
+    time:    'images/Home Page/avatar1.png',
     galaxy:  'images/Home Page/avatar2.png',
     easter:  'images/Home Page/avatar3.png',
     classic: 'images/Home Page/avatar4.png',
@@ -18976,13 +20145,13 @@ function selectPalette(name) {
 /* Legacy wrappers — kept for safety */
 function toggleTheme() {
   const cur = localStorage.getItem('_ed_theme') || 'galaxy';
-  if (cur === 'galaxy') window._applyTheme('gold');
-  else if (cur === 'gold') window._applyTheme('galaxy');
+  if (cur === 'galaxy') window._applyTheme('time');
+  else if (cur === 'time' || cur === 'gold') window._applyTheme('galaxy');
   else window._applyTheme('galaxy');
 }
 function toggleEasterTheme() {
   const cur = localStorage.getItem('_ed_theme') || 'galaxy';
-  if (cur === 'easter') window._applyTheme('gold');
+  if (cur === 'easter') window._applyTheme('time');
   else window._applyTheme('easter');
 }
 
@@ -21049,8 +22218,8 @@ function clearItemSearch(panelId) {
   // Apply saved theme on load — early script already set the CSS class,
   // here we finish the rest: avatars, bg image, slideshow banners, tooltips.
   const _savedTheme = localStorage.getItem('_ed_theme') || 'easter';
-  if (_savedTheme === 'gold') {
-    window._applyTheme('gold');
+  if (_savedTheme === 'time' || _savedTheme === 'gold') {
+    window._applyTheme('time');
   } else if (_savedTheme === 'easter') {
     window._applyTheme('easter');
   } else if (_savedTheme === 'classic') {

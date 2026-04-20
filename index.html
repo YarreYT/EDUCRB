@@ -5104,7 +5104,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
 .hero-section{padding:24px 24px 24px 32px;display:flex;flex-direction:column;gap:16px;height:100%;overflow:hidden;}
 .game-banner{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border-gold);aspect-ratio:16/6;max-height:280px;}
-.banner-bg{width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;}
+.banner-bg{width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;visibility:hidden;}.banner-bg.ready{visibility:visible;}
 .banner-slide{position:absolute;inset:0;background-size:cover;background-position:center 0%;opacity:0;z-index:1;transition:opacity 1.5s ease-in-out;}
 .banner-slide.active{opacity:1;z-index:2;animation:scrollDown 8s linear;}
 .banner-slide.exiting{opacity:0;z-index:1;animation:scrollDown 8s linear;}
@@ -11080,10 +11080,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   <section class="hero-section">
     <div class="game-banner">
       <div class="banner-bg" id="banner-bg">
-        <div class="banner-slide" style="background-image:url('images/Home Page/banner2_1.png')"></div>
-        <div class="banner-slide" style="background-image:url('images/Home Page/banner2_2.png')"></div>
-        <div class="banner-slide" style="background-image:url('images/Home Page/banner2_3.png')"></div>
-        <div class="banner-slide" style="background-image:url('images/Home Page/banner2_4.png')"></div>
+        <div class="banner-slide" style="background-image:url('images/Home Page/banner3_1.png')"></div>
+        <div class="banner-slide" style="background-image:url('images/Home Page/banner3_2.png')"></div>
+        <div class="banner-slide" style="background-image:url('images/Home Page/banner3_3.png')"></div>
+        <div class="banner-slide" style="background-image:url('images/Home Page/banner3_4.png')"></div>
       </div>
       <div class="banner-overlay"></div>
       <div class="banner-title-block">
@@ -21418,6 +21418,8 @@ window._applyTheme = function(name) {
 
   // ── ПАЛИТРА: обновить активный кружок ──
   _paletteUpdateActive();
+  const _bb = document.getElementById('banner-bg');
+  if (_bb) _bb.classList.add('ready');
 };
 
 /* ══════════════════════════
@@ -21587,11 +21589,33 @@ function azSyncInputMode() {
       }
     }
   } else {
-    // Website mode: just refresh UI from current state variables.
-    // Do NOT re-parse the Discord input field — that would overwrite user edits.
-    // Discord data is only applied once when switching Discord→Website for the first time
-    // (handled by the caller: _azDiscWeapon/_azDiscArmor are reset on item/category change).
     if (azCurrentItem) {
+      if (azCurrentItem.isArmor) {
+        // Save current part's raw input first
+        azDiscordArmorSaveRaw();
+        // Re-parse ALL parts from raw — same pattern as SP, so repeated Discord→Website
+        // conversions always reflect the latest input, not stale azArmorPartData.
+        ['Helmet','Chestplate','Leggings'].forEach(p => {
+          const raw = (_azDiscArmorRaw[p] || '').trim();
+          const rp = raw.split(/\s+/);
+          const hpNum  = parseFloat(rp[0] || '');
+          const upgNum = parseInt(rp[1] || '', 10);
+          const ynCut  = (rp[2] || '').slice(0, 3).toLowerCase();
+
+          _azDiscArmor[p].hp  = (!isNaN(hpNum)  && (rp[0] || '') !== '') ? hpNum  : null;
+          _azDiscArmor[p].upg = (!isNaN(upgNum) && (rp[1] || '') !== '') ? upgNum : null;
+          _azDiscArmor[p].yn  = ynCut || null;
+
+          if (_azDiscArmor[p].hp !== null || _azDiscArmor[p].upg !== null) {
+            if (!azArmorPartData[p]) azArmorPartData[p] = {};
+            azArmorPartData[p].hp        = _azDiscArmor[p].hp;
+            azArmorPartData[p].upg       = _azDiscArmor[p].upg !== null
+              ? Math.min(_azDiscArmor[p].upg, azCurrentItem.maxUpg)
+              : null;
+            azArmorPartData[p].corrupted = (ynCut === 'y' || ynCut === 'yes');
+          }
+        });
+      }
       azRefreshWebsiteInputs();
     }
   }
@@ -23670,23 +23694,11 @@ function clearItemSearch(panelId) {
     }
     _slideshowTimer = setInterval(cycle, cycleTime);
   };
-  window._startSlideshow();
-
   // Apply saved theme on load — early script already set the CSS class,
   // here we finish the rest: avatars, bg image, slideshow banners, tooltips.
   const _savedTheme = localStorage.getItem('_ed_theme') || 'easter';
-  if (_savedTheme === 'time' || _savedTheme === 'gold') {
-    window._applyTheme('time');
-  } else if (_savedTheme === 'easter') {
-    window._applyTheme('easter');
-  } else if (_savedTheme === 'classic') {
-    window._applyTheme('classic');
-  } else if (_savedTheme === 'baldi') {
-    window._applyTheme('baldi');
-  } else if (_savedTheme === 'discord') {
-    window._applyTheme('discord');
-  }
-  // galaxy — no re-apply needed, defaults are already correct
+  const _themeToApply = (_savedTheme === 'gold') ? 'time' : _savedTheme;
+  window._applyTheme(_themeToApply);
 
   // Apply saved entry type and sync settings UI
   _applyEntryTypeUI();

@@ -497,6 +497,7 @@
   --theme-name:   time;
   --theme-switch-glow: #9b30ff;
   --gold-rgb:     245, 200, 66;
+  --color-upg:    rgba(245,210,120,0.85);
 }
 
 /* ── TIME: Page background — бездна портала ── */
@@ -827,8 +828,19 @@
 }
 :root.theme-time .az-card .az-discord-input::placeholder { color: rgba(245,210,120,0.22) !important; opacity: 1 !important; }
 :root.theme-time .az-card .az-discord-input:focus {
-  border-color: rgba(245,200,66,0.50) !important;
-  box-shadow: 0 0 12px rgba(245,200,66,0.18) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
+}
+:root.theme-time .az-card .az-discord-input.weapon-input:focus {
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
+}
+:root.theme-time .az-card .az-discord-input.armor-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent) !important;
+  caret-color: var(--color-hp) !important;
 }
 :root.theme-time .az-card .az-discord-dmg-box    { background: rgba(14,11,2,0.72) !important; border-color: rgba(245,200,66,0.14) !important; }
 :root.theme-time .az-card .az-discord-divider    { background: rgba(245,200,66,0.18) !important; }
@@ -922,14 +934,18 @@
 }
 :root.theme-time .az-stat-input::placeholder { color: rgba(245,210,120,0.22) !important; }
 :root.theme-time .az-stat-input:focus {
-  border-color: rgba(245,200,66,0.50) !important;
-  box-shadow: 0 0 12px rgba(245,200,66,0.18) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+}
+:root.theme-time .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
 }
 :root.theme-time .az-divider { background: linear-gradient(90deg, transparent, rgba(245,200,66,0.28), transparent) !important; }
 :root.theme-time .az-sel-btn {
   background: rgba(245,200,66,0.08) !important;
   border-color: rgba(245,200,66,0.24) !important;
-  color: rgba(245,210,120,0.70) !important;
+  color: var(--color-upg) !important;
 }
 :root.theme-time .az-sel-btn:hover { background: rgba(245,200,66,0.16) !important; border-color: rgba(245,200,66,0.48) !important; }
 :root.theme-time .az-dropdown, :root.theme-time .az-ref-dropdown {
@@ -938,7 +954,7 @@
 }
 :root.theme-time .az-dropdown::-webkit-scrollbar-thumb,
 :root.theme-time .az-ref-dropdown::-webkit-scrollbar-thumb { background: rgba(245,200,66,0.28) !important; }
-:root.theme-time .az-opt       { color: rgba(245,210,120,0.72) !important; background: rgba(7,6,1,0.40) !important; border-color: rgba(245,200,66,0.10) !important; }
+:root.theme-time .az-opt       { color: var(--color-upg) !important; background: rgba(7,6,1,0.40) !important; border-color: rgba(245,200,66,0.10) !important; }
 :root.theme-time .az-opt:hover { background: rgba(245,200,66,0.10) !important; border-color: rgba(245,200,66,0.32) !important; color: #e8e2d0 !important; }
 :root.theme-time .az-opt.sel   { color: #fff4a0 !important; background: rgba(245,200,66,0.12) !important; border-color: rgba(245,200,66,0.48) !important; box-shadow: 0 0 12px rgba(245,200,66,0.14) !important; }
 
@@ -993,7 +1009,13 @@
 }
 
 /* ── TIME: Mobile credit cards ── */
-@media(max-width:960px){
+@media(max-width:1306px){
+  :root.theme-time .credits-block {
+    background: rgba(245,200,66,0.07) !important;
+    border-color: rgba(245,200,66,0.18) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+  }
   :root.theme-time .credit-card {
     background: none !important;
     border-color: transparent !important;
@@ -1153,6 +1175,9 @@
 ══════════════════════════════════════════════════════ */
 
 /* ── GALAXY: Page background — туманность ── */
+:root.theme-galaxy {
+  --color-upg: rgba(200,185,230,0.85);
+}
 :root.theme-galaxy .page-bg {
   background-color: #07060f;
 }
@@ -1516,8 +1541,19 @@
 }
 :root.theme-galaxy .az-card .az-discord-input::placeholder { color: rgba(200,185,230,0.26) !important; opacity: 1 !important; }
 :root.theme-galaxy .az-card .az-discord-input:focus {
-  border-color: rgba(155,48,255,0.52) !important;
-  box-shadow: 0 0 0 2px rgba(155,48,255,0.16) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
+}
+:root.theme-galaxy .az-card .az-discord-input.weapon-input:focus {
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
+}
+:root.theme-galaxy .az-card .az-discord-input.armor-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent) !important;
+  caret-color: var(--color-hp) !important;
 }
 :root.theme-galaxy .az-card .az-discord-dmg-box { background: rgba(30,10,62,0.68) !important; border-color: rgba(155,48,255,0.18) !important; }
 :root.theme-galaxy .az-card .az-discord-divider { background: rgba(155,48,255,0.20) !important; }
@@ -1614,15 +1650,18 @@
 }
 :root.theme-galaxy .az-stat-input::placeholder { color: rgba(200,185,230,0.26) !important; }
 :root.theme-galaxy .az-stat-input:focus {
-  border-color: rgba(155,48,255,0.52) !important;
-  background: rgba(20,8,44,0.86) !important;
-  box-shadow: 0 0 0 2px rgba(155,48,255,0.15) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+}
+:root.theme-galaxy .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
 }
 :root.theme-galaxy .az-divider { background: linear-gradient(90deg, transparent, rgba(155,48,255,0.32), transparent) !important; }
 :root.theme-galaxy .az-sel-btn {
   background: rgba(35,12,72,0.58) !important;
   border-color: rgba(155,48,255,0.20) !important;
-  color: rgba(200,185,230,0.78) !important;
+  color: var(--color-upg) !important;
 }
 :root.theme-galaxy .az-sel-btn:hover { background: rgba(60,20,120,0.68) !important; border-color: rgba(155,48,255,0.48) !important; }
 
@@ -1634,7 +1673,7 @@
 }
 :root.theme-galaxy .az-dropdown::-webkit-scrollbar-thumb,
 :root.theme-galaxy .az-ref-dropdown::-webkit-scrollbar-thumb { background: rgba(155,48,255,0.32) !important; }
-:root.theme-galaxy .az-opt { color: rgba(200,185,230,0.78) !important; background: rgba(22,8,46,0.38) !important; border-color: rgba(155,48,255,0.12) !important; }
+:root.theme-galaxy .az-opt { color: var(--color-upg) !important; background: rgba(22,8,46,0.38) !important; border-color: rgba(155,48,255,0.12) !important; }
 :root.theme-galaxy .az-opt:hover { background: rgba(70,20,150,0.34) !important; border-color: rgba(155,48,255,0.34) !important; color: #e8e0f4 !important; }
 :root.theme-galaxy .az-opt.sel { color: #e0aaff !important; background: rgba(100,30,200,0.28) !important; border-color: rgba(155,48,255,0.48) !important; box-shadow: 0 0 10px rgba(155,48,255,0.14) !important; }
 
@@ -2127,7 +2166,7 @@
 :root.theme-discord .az-result-card,
 :root.theme-discord .cmp-result-card {
   background: #2b2d31 !important;
-  border: 1px solid #1e1f22 !important;
+  border: 1px solid #3b3d44 !important;
   box-shadow: 0 2px 0 #1e1f22, 0 4px 12px rgba(0,0,0,0.35) !important;
 }
 
@@ -2152,13 +2191,19 @@
   opacity: 1 !important;
 }
 :root.theme-discord .az-card .az-discord-input:focus {
-  border-color: #5865F2 !important;
-  box-shadow: 0 0 0 2px rgba(88,101,242,0.25) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
 }
-:root.theme-discord .az-card .az-discord-input.weapon-input:focus,
+:root.theme-discord .az-card .az-discord-input.weapon-input:focus {
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
+}
 :root.theme-discord .az-card .az-discord-input.armor-input:focus {
-  border-color: #5865F2 !important;
-  box-shadow: 0 0 0 2px rgba(88,101,242,0.25) !important;
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent) !important;
+  caret-color: var(--color-hp) !important;
 }
 
 /* Бокс Damage + delay внутри input-карточки */
@@ -2173,6 +2218,24 @@
 }
 
 /* Analyze / Preview / Compare кнопка — Discord blurple с анимацией перезарядки */
+:root.theme-discord .az-stats-box {
+  background: rgba(43,45,49,0.85) !important;
+  border: 1px solid #4e5058 !important;
+}
+:root.theme-discord .az-stat-input {
+  background: #1e1f22 !important;
+  border-color: #3b3d44 !important;
+  color: #dbdee1 !important;
+}
+:root.theme-discord .az-stat-input::placeholder { color: rgba(219,222,225,0.32) !important; }
+:root.theme-discord .az-stat-input:focus {
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+}
+:root.theme-discord .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
+}
 :root:root.theme-discord .az-analyze-btn {
   background: linear-gradient(180deg, #5865F2 0%, #4752C4 100%);
   box-shadow: 0 4px 14px rgba(88,101,242,0.30), 0 2px 0 #3C45A5 !important;
@@ -3022,9 +3085,9 @@
   caret-color: #1A6A1A;
 }
 :root.theme-baldi .az-card .az-discord-input::placeholder { color: rgba(26,18,8,0.38) !important; opacity: 1 !important; }
-:root.theme-baldi .az-card .az-discord-input:focus { border-color: #1A6A1A !important; box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important; }
-:root.theme-baldi .az-card .az-discord-input.weapon-input:focus { border-color: #C02020 !important; box-shadow: 0 0 0 2px rgba(192,32,32,0.18) !important; }
-:root.theme-baldi .az-card .az-discord-input.armor-input:focus  { border-color: #1A6A1A !important; box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important; }
+:root.theme-baldi .az-card .az-discord-input:focus { border-color: var(--color-dmg) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important; caret-color: var(--color-dmg) !important; }
+:root.theme-baldi .az-card .az-discord-input.weapon-input:focus { border-color: var(--color-dmg) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important; caret-color: var(--color-dmg) !important; }
+:root.theme-baldi .az-card .az-discord-input.armor-input:focus  { border-color: var(--color-hp) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent) !important; caret-color: var(--color-hp) !important; }
 
 /* Бокс Damage+Delay в az-card — светлый зеленоватый */
 :root.theme-baldi .az-card .az-discord-dmg-box {
@@ -3040,11 +3103,12 @@
 :root.theme-baldi .az-card .az-discord-preview-lbl.lbl-delay { color: #5A4030 !important; }
 :root.theme-baldi .az-card .az-discord-preview-lbl.lbl-corr  { color: #7A3A7A !important; }
 :root.theme-baldi .az-card .az-discord-preview-val { color: #2A2416 !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.hp     { color: #1A6A1A !important; }
 :root.theme-baldi .az-card .az-discord-preview-val.dmg    { color: #C02020 !important; }
 :root.theme-baldi .az-card .az-discord-preview-val.delay  { color: #5A4030 !important; }
 :root.theme-baldi .az-card .az-discord-preview-val.upg    { color: #1A6A1A !important; }
 :root.theme-baldi .az-card .az-discord-preview-val.corr-y { color: #1A6A1A !important; }
-:root.theme-baldi .az-card .az-discord-preview-val.corr-n { color: #2EB81E !important; }
+:root.theme-baldi .az-card .az-discord-preview-val.corr-n { color: #C02020 !important; }
 :root.theme-baldi .az-card .az-discord-preview-val.corr-u { color: #7A3A7A !important; }
 :root.theme-baldi .az-card .az-discord-divider { background: rgba(90,154,90,0.40) !important; }
 :root.theme-baldi .az-card .az-discord-armor-lbl { color: #5A5040 !important; }
@@ -3076,8 +3140,8 @@
   background: linear-gradient(180deg, #B8DDB8 0%, #A8D0A8 100%) !important;
   border-color: #5A9A5A !important;
 }
-:root.theme-baldi .az-stat-lbl { color: #C02020 !important; }
-:root.theme-baldi .az-stat-lbl.health-mode { color: #1A6A1A !important; }
+:root.theme-baldi .az-stat-lbl { color: var(--color-dmg) !important; }
+:root.theme-baldi .az-stat-lbl.health-mode { color: var(--color-hp) !important; }
 :root.theme-baldi .az-stat-input {
   background: rgba(255,255,255,0.55) !important;
   border-color: #7ABB7A !important;
@@ -3085,9 +3149,13 @@
 }
 :root.theme-baldi .az-stat-input::placeholder { color: rgba(26,18,8,0.35) !important; }
 :root.theme-baldi .az-stat-input:focus {
-  border-color: #1A6A1A !important;
+  border-color: var(--color-dmg) !important;
   background: rgba(255,255,255,0.75) !important;
-  box-shadow: 0 0 0 2px rgba(26,106,26,0.18) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+}
+:root.theme-baldi .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
 }
 :root.theme-baldi .az-divider {
   background: linear-gradient(90deg, transparent, #7ABB7A, transparent) !important;
@@ -3158,7 +3226,7 @@
 /* Corrupted row */
 :root.theme-baldi .az-corr-lbl { color: #8A3030 !important; }
 :root.theme-baldi .az-corr-btn.yes { color: #1A6A1A !important; }
-:root.theme-baldi .az-corr-btn.no  { color: #2EB81E !important; }
+:root.theme-baldi .az-corr-btn.no  { color: #C02020 !important; }
 :root.theme-baldi .az-corr-sep     { color: rgba(26,18,8,0.40) !important; }
 
 /* Weapon name / rarity — НЕ переопределяем, пусть работают оригинальные .rarity-* цвета */
@@ -4197,6 +4265,60 @@
 :root.theme-easter .rarity-rare      { color: #70a1ff !important; text-shadow: none !important; }
 :root.theme-easter .rarity-epic      { color: #c56cf0 !important; text-shadow: none !important; }
 
+/* ── BUNNY (Easter): обводка названий и редкостей предметов (как в Baldi) ──
+   Для обычных редкостей — text-stroke. Для Mythic/Ascended — drop-shadow,
+   чтобы не перекрывать градиент. */
+:root.theme-easter .az-weapon-name,
+:root.theme-easter .az-weapon-rarity:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 2px rgba(80,45,25,0.42) !important;
+  paint-order: stroke fill !important;
+}
+/* Названия предметов в результатах (az/sp/cmp) */
+:root.theme-easter #az-res-name,
+:root.theme-easter #sp-res-name,
+:root.theme-easter #cmp-res-name {
+  -webkit-text-stroke: 2px rgba(80,45,25,0.42) !important;
+  paint-order: stroke fill !important;
+}
+/* Редкости в результатах (az/sp/cmp) — кроме mythic/ascended */
+:root.theme-easter #az-res-rarity:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-easter #sp-res-rarity:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-easter #cmp-res-rarity:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 2px rgba(80,45,25,0.42) !important;
+  paint-order: stroke fill !important;
+}
+/* Кнопки брони (Helmet/Chestplate/Leggings) — кроме mythic/ascended */
+:root.theme-easter .az-res-part-btn:not(.rarity-mythic):not(.rarity-ascended),
+:root.theme-easter .az-part-btn:not(.rarity-mythic):not(.rarity-ascended) {
+  -webkit-text-stroke: 1.5px rgba(80,45,25,0.38) !important;
+  paint-order: stroke fill !important;
+}
+/* Mythic и Ascended — заменяем обводку на тень, чтобы сохранить градиент */
+:root.theme-easter .az-weapon-rarity.rarity-mythic,
+:root.theme-easter .az-weapon-rarity.rarity-ascended,
+:root.theme-easter #az-res-rarity.rarity-mythic,
+:root.theme-easter #az-res-rarity.rarity-ascended,
+:root.theme-easter #sp-res-rarity.rarity-mythic,
+:root.theme-easter #sp-res-rarity.rarity-ascended,
+:root.theme-easter #cmp-res-rarity.rarity-mythic,
+:root.theme-easter #cmp-res-rarity.rarity-ascended,
+:root.theme-easter .az-res-part-btn.rarity-mythic,
+:root.theme-easter .az-res-part-btn.rarity-ascended,
+:root.theme-easter .az-part-btn.rarity-mythic,
+:root.theme-easter .az-part-btn.rarity-ascended,
+:root.theme-easter .az-weapon-name.rarity-mythic,
+:root.theme-easter .az-weapon-name.rarity-ascended,
+:root.theme-easter #az-res-name.rarity-mythic,
+:root.theme-easter #az-res-name.rarity-ascended,
+:root.theme-easter #sp-res-name.rarity-mythic,
+:root.theme-easter #sp-res-name.rarity-ascended,
+:root.theme-easter #cmp-res-name.rarity-mythic,
+:root.theme-easter #cmp-res-name.rarity-ascended {
+  filter: drop-shadow(0 0 1px rgba(80,45,25,0.55)) drop-shadow(0 1px 1px rgba(80,45,25,0.40)) !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+
 :root.theme-easter .az-third-panel::before,
 :root.theme-easter #page-stuff .sp-third-panel::before,
 :root.theme-easter .cmp-third-panel::before {
@@ -4348,6 +4470,118 @@
   --bg-void: #A8C8D8;
 }
 
+/* ── TIME: DT slot buttons ── */
+:root.theme-time .dt-slot-btn {
+  background: rgba(245,200,66,0.07) !important;
+  border-color: rgba(245,200,66,0.30) !important;
+  color: rgba(245,200,66,0.55) !important;
+}
+:root.theme-time .dt-slot-btn:hover {
+  background: rgba(245,200,66,0.15) !important;
+  border-color: rgba(245,200,66,0.70) !important;
+  color: #ffe880 !important;
+}
+:root.theme-time .dt-slot-btn.active {
+  background: rgba(245,200,66,0.18) !important;
+  border-color: #f5c842 !important;
+  color: #ffe880 !important;
+  box-shadow: 0 0 10px rgba(245,200,66,0.25) !important;
+}
+:root.theme-time .dt-slot-add-btn {
+  background: rgba(245,200,66,0.04) !important;
+  border-color: rgba(245,200,66,0.22) !important;
+  color: rgba(245,200,66,0.45) !important;
+}
+:root.theme-time .dt-slot-add-btn:hover {
+  background: rgba(245,200,66,0.12) !important;
+  border-color: rgba(245,200,66,0.60) !important;
+  color: #ffe880 !important;
+}
+
+/* ── GALAXY: DT slot buttons ── */
+:root.theme-galaxy .dt-slot-btn {
+  background: rgba(155,48,255,0.08) !important;
+  border-color: rgba(155,48,255,0.32) !important;
+  color: rgba(200,117,255,0.60) !important;
+}
+:root.theme-galaxy .dt-slot-btn:hover {
+  background: rgba(155,48,255,0.18) !important;
+  border-color: rgba(200,117,255,0.70) !important;
+  color: #c875ff !important;
+}
+:root.theme-galaxy .dt-slot-btn.active {
+  background: rgba(155,48,255,0.22) !important;
+  border-color: #9b30ff !important;
+  color: #c875ff !important;
+  box-shadow: 0 0 10px rgba(155,48,255,0.28) !important;
+}
+:root.theme-galaxy .dt-slot-add-btn {
+  background: rgba(155,48,255,0.04) !important;
+  border-color: rgba(155,48,255,0.24) !important;
+  color: rgba(200,117,255,0.45) !important;
+}
+:root.theme-galaxy .dt-slot-add-btn:hover {
+  background: rgba(155,48,255,0.14) !important;
+  border-color: rgba(200,117,255,0.60) !important;
+  color: #c875ff !important;
+}
+
+/* ── DISCORD: DT slot buttons ── */
+:root.theme-discord .dt-slot-btn {
+  background: rgba(88,101,242,0.08) !important;
+  border-color: rgba(88,101,242,0.32) !important;
+  color: rgba(114,137,218,0.65) !important;
+}
+:root.theme-discord .dt-slot-btn:hover {
+  background: rgba(88,101,242,0.18) !important;
+  border-color: rgba(114,137,218,0.70) !important;
+  color: #99AAF5 !important;
+}
+:root.theme-discord .dt-slot-btn.active {
+  background: rgba(88,101,242,0.22) !important;
+  border-color: #5865F2 !important;
+  color: #99AAF5 !important;
+  box-shadow: 0 0 10px rgba(88,101,242,0.28) !important;
+}
+:root.theme-discord .dt-slot-add-btn {
+  background: rgba(88,101,242,0.04) !important;
+  border-color: rgba(88,101,242,0.24) !important;
+  color: rgba(114,137,218,0.50) !important;
+}
+:root.theme-discord .dt-slot-add-btn:hover {
+  background: rgba(88,101,242,0.14) !important;
+  border-color: rgba(114,137,218,0.60) !important;
+  color: #99AAF5 !important;
+}
+
+/* ── CLASSIC: DT slot buttons ── */
+:root.theme-classic .dt-slot-btn {
+  background: rgba(68,113,148,0.08) !important;
+  border-color: rgba(68,113,148,0.32) !important;
+  color: rgba(68,113,148,0.60) !important;
+}
+:root.theme-classic .dt-slot-btn:hover {
+  background: rgba(68,113,148,0.18) !important;
+  border-color: rgba(68,113,148,0.70) !important;
+  color: #447194 !important;
+}
+:root.theme-classic .dt-slot-btn.active {
+  background: rgba(68,113,148,0.22) !important;
+  border-color: #447194 !important;
+  color: #8aa4b4 !important;
+  box-shadow: 0 0 10px rgba(68,113,148,0.25) !important;
+}
+:root.theme-classic .dt-slot-add-btn {
+  background: rgba(68,113,148,0.04) !important;
+  border-color: rgba(68,113,148,0.22) !important;
+  color: rgba(68,113,148,0.45) !important;
+}
+:root.theme-classic .dt-slot-add-btn:hover {
+  background: rgba(68,113,148,0.14) !important;
+  border-color: rgba(68,113,148,0.60) !important;
+  color: #447194 !important;
+}
+
 /* ── EASTER: analysis-card в правой консоли ── */
 :root.theme-easter .analysis-card {
   border-bottom-color: rgba(150, 196, 150, 0.5) !important;
@@ -4387,7 +4621,7 @@
 ═══════════════════════════════════════════════════ */
 
 /* 1. Credits-block на мобиле — убрать тёмный фон, добавить пасхальный */
-@media(max-width:960px) {
+@media(max-width:1306px) {
   :root.theme-easter .credits-block {
     background: rgba(237, 228, 220, 0.55) !important;
     border-color: #D4B8A4 !important;
@@ -4497,7 +4731,7 @@
 }
 
 /* 5. Три кружка на мобиле — flex ряд вместо абсолютного позиционирования */
-@media(max-width:960px) {
+@media(max-width:988px) {
   .bot-panel { overflow: visible !important; }
 
   /* Превращаем trio в flex-ряд: [левый кружок] [центральная аватарка] [правый кружок] */
@@ -4521,7 +4755,7 @@
 
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',sans-serif;min-height:var(--real-vh);overflow-x:hidden;}
-body.scale-active{overflow:hidden;height:var(--real-vh);}
+/* scale-active removed — site is fully responsive */
 
 /* ── BG ── */
 .page-bg{position:fixed;inset:0;z-index:0;
@@ -4716,7 +4950,7 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   display: none;
 }
 /* Desktop: фиксируем высоту ровно на 2 ряда, третий и далее — скролл */
-@media(min-width: 641px) {
+@media(min-width: 961px) {
   .bot-panel {
     flex-direction: column;
     align-items: center;
@@ -4739,19 +4973,11 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
   .bot-main-col {
     margin-left: 0;
   }
-}
   .palette-popup {
-    /* Обёртка — нужна для fade-hint снизу */
     position: fixed;
   }
   .palette-popup-inner {
     box-sizing: border-box;
-    /* Высота ровно 2 ряда:
-       item = img(36) + gap(4) + label(~11) + pad-top(6) + pad-bottom(5) = 62px per row
-       grid row-gap = 2px
-       2 rows = 62*2 + 2 = 126px
-       inner padding top+bottom = 10+10 = 20px
-       total = 146px */
     max-height: 146px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -4762,18 +4988,23 @@ body.scale-active{overflow:hidden;height:var(--real-vh);}
     border-radius: 2px;
   }
 }
-@media(max-width: 640px) {
+/* Mobile + tablet (≤960px): полноценный центральный оверлей с бэкдропом */
+@media(max-width: 988px) {
   .palette-backdrop {
-    display: block;
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 9998;
-    background: rgba(0,0,0,0.38);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
   :root.theme-easter .palette-backdrop {
-    background: rgba(61,42,24,0.28);
+    background: rgba(61,42,24,0.30);
+  }
+  .palette-popup-inner {
+    max-height: none !important;
+    overflow-y: visible !important;
   }
 }
 .page-bg::after{content:'';position:absolute;inset:0;
@@ -4823,7 +5054,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 @media(hover:hover){.nav-btn-soon:hover .tooltip{opacity:1;top:50px;}}
 
 .nav-btn .tooltip{
-  position:absolute;top:44px;bottom:auto;left:50%;transform:translateX(-50%);
+  position:absolute;top:46px;bottom:auto;left:50%;transform:translateX(-50%);
   background:rgba(10,10,16,.98);border:1px solid var(--border-gold);color:var(--gold-bright);
   font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;
   text-transform:uppercase;padding:4px 8px;border-radius:4px;white-space:nowrap;
@@ -4832,7 +5063,13 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 @media(hover:hover){.nav-btn:hover .tooltip{opacity:1;}}
 .icon-svg{width:22px;height:22px;fill:currentColor;}
 
-@media(max-width:600px){
+/* ── Banner title: зафиксировать размер 601–988px (≈ размер на 666px) ── */
+@media(min-width:601px) and (max-width:988px){
+  .banner-game-title{font-size:38px!important;letter-spacing:2px!important;}
+  .banner-eyebrow{font-size:13px!important;letter-spacing:3px!important;}
+}
+
+@media(max-width:988px){
   nav{
     top:auto;bottom:0;border-bottom:none;border-top:1px solid var(--border-gold);
     padding:0;
@@ -4843,6 +5080,12 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .nav-btn .tooltip{position:absolute!important;bottom:50px!important;left:50%!important;transform:translateX(-50%)!important;top:auto!important;z-index:300;}
   .lang-other{position:fixed;bottom:56px;left:16px;top:auto;transform:none;padding:6px 12px;}
   main{padding-top:0!important;padding-bottom:var(--nav-h)!important;}
+  #page-home,#page-rolls,#page-analyze,#page-stuff,#page-compare,#page-devtool{
+    padding-top:0!important;padding-bottom:var(--nav-h)!important;
+    min-height:0!important;
+  }
+}
+@media(max-width:600px){
   .game-banner{aspect-ratio:16/7!important;max-height:180px!important;}
   .banner-game-title{font-size:clamp(30px,6.5vw,44px)!important;letter-spacing:2px!important;}
   .banner-eyebrow{font-size:clamp(11px,2.2vw,16px)!important;letter-spacing:3px!important;}
@@ -4890,10 +5133,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 
 .bot-panel{background:rgba(11,11,18,.84);border:1px solid var(--border-gold);border-radius:16px;padding:24px 24px 24px;
-  backdrop-filter:blur(14px);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:0;
-  flex:1;min-width:0;}
+  backdrop-filter:blur(14px);position:relative;overflow:visible;display:flex;flex-direction:column;align-items:center;gap:0;
+  flex:1;min-width:0;min-height:0;}
 .bot-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);opacity:.3;}
-.bot-avatar-wrap{position:relative;width:120px;height:120px;margin-bottom:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%;}
+.bot-avatar-wrap{position:relative;width:120px;height:120px;margin-bottom:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:visible;border-radius:50%;}
 .avatar-ring-outer{position:absolute;inset:-7px;border-radius:50%;border:1.5px solid color-mix(in srgb, var(--gold) 28%, transparent);animation:pulse-ring 5s ease-in-out infinite;pointer-events:none;}
 .avatar-ring-inner{position:absolute;inset:0;border-radius:50%;border:2.5px solid var(--gold);pointer-events:none;box-shadow:0 0 24px color-mix(in srgb, var(--gold) 50%, transparent),inset 0 0 20px color-mix(in srgb, var(--gold) 7%, transparent);z-index:2;}
 @keyframes pulse-ring{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.07);opacity:.9}}
@@ -4929,8 +5172,22 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   align-items: center;
   flex: 1;
   min-width: 0;
+  min-height: 0;
   width: 100%;
+  overflow: visible;
 }
+.bot-scroll-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.bot-scroll-body::-webkit-scrollbar { width: 3px; }
+.bot-scroll-body::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
 .value-list-block {
   display: flex;
   flex-direction: column;
@@ -5085,27 +5342,30 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .total-proc-arrow.visible { opacity: .8; pointer-events: auto; }
 .total-proc-arrow:hover { opacity: 1; color: var(--gold-bright); }
 
-@media(max-width:960px){
-  #page-home{grid-template-columns:1fr;height:auto;overflow:visible;}
-  #page-analyze { grid-template-columns: 1fr; }
-  .analyze-section { padding: 20px 16px 24px; }
-  .hero-section{padding:20px 16px 16px;height:auto;overflow:visible;}
-  .bot-updates-row{flex-direction:column;gap:16px;flex:none;min-height:unset;}
-  .stats-col{display:none;}
-  .bot-panel{padding:20px 16px 16px;border-radius:12px;width:100%;overflow:visible;flex:none;}
-  .bot-avatar-wrap{width:90px;height:90px;margin-bottom:12px;}
-  .bot-avatar-img{width:90px;height:90px;}
+@media(max-width:1306px){
   /* credits — горизонтальный ряд с mask */
   .credits-block{flex-direction:row;flex-wrap:wrap;gap:20px;padding:10px 16px;flex:none;
     background:rgba(0,0,0,.25);border:1px solid var(--border-rune);border-radius:10px;
     justify-content:center;
-    -webkit-mask-image:linear-gradient(to right,transparent 0%,black 15%,black 85%,transparent 100%);
-    mask-image:linear-gradient(to right,transparent 0%,black 15%,black 85%,transparent 100%);}
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,black 25%,black 75%,transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0%,black 25%,black 75%,transparent 100%);}
   .credit-card{flex:none;width:auto;background:none;border:none;border-radius:0;padding:0;
     flex-direction:column;gap:3px;-webkit-mask-image:none;mask-image:none;}
   .credit-card:hover{border-color:transparent;}
   .credit-card-role{font-size:10px;letter-spacing:1px;}
   .credit-card-name{font-size:14px;}
+}
+@media(max-width:988px){
+  #page-home{grid-template-columns:1fr;height:auto;overflow:visible;}
+  #page-analyze { grid-template-columns: 1fr; }
+  .analyze-section { padding: 20px 16px 24px; }
+  .hero-section{padding:20px 24px 16px;height:auto;overflow:visible;}
+  .bot-updates-row{flex-direction:column;gap:16px;flex:none;min-height:unset;}
+  .stats-col{display:none;}
+  .bot-panel{padding:20px 20px 16px;border-radius:12px;overflow:visible;flex:none;}
+  .bot-avatar-wrap{width:90px;height:90px;margin-bottom:12px;}
+  .bot-avatar-img{width:90px;height:90px;}
+
   /* stats-col-mobile — 2 сверху, total посередине, 3 снизу: 6-col grid */
   .stats-col-mobile{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;margin-top:12px;}
   .stats-col-mobile .stat-chip{padding:12px 8px;}
@@ -5123,14 +5383,14 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 }
 @media(max-width:480px){
   #page-home{grid-template-columns:1fr;}
-  .hero-section{padding:12px 12px 10px;}
+  .hero-section{padding:12px 20px 10px;}
   .game-banner{aspect-ratio:16/7!important;max-height:160px!important;}
   .banner-game-title{font-size:clamp(22px,8.5vw,38px)!important;letter-spacing:2px!important;}
   .banner-eyebrow{font-size:clamp(10px,3vw,16px)!important;letter-spacing:3px!important;}
   .banner-sub{font-size:9px!important;letter-spacing:2px!important;}
   .banner-title-block{padding:6px 12px!important;}
   .bot-updates-row{gap:12px;}
-  .bot-panel{padding:16px 12px 14px;gap:0;width:100%;}
+  .bot-panel{padding:16px 20px 14px;gap:0;}
   .bot-avatar-wrap{width:76px;height:76px;margin-bottom:10px;}
   .bot-avatar-img{width:76px;height:76px;}
   .bot-name{font-size:16px;}
@@ -5248,7 +5508,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .updates-text .upd-green  { color: var(--green-stat); }
 .updates-text .upd-muted  { color: var(--text-muted); font-style: italic; }
 
-@media(max-width:960px){
+@media(max-width:988px){
   .updates-panel { padding: 18px 16px 16px; border-radius: 12px; }
   .updates-title { font-size: 15px; }
   .updates-body  { max-height: 200px; }
@@ -5284,7 +5544,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .cat-tab.active{border-color:var(--gold);color:var(--gold-bright);background:color-mix(in srgb, var(--gold) 10%, transparent);}
 .cat-tab svg{width:18px;height:18px;fill:currentColor;flex-shrink:0;}
 
-@media(max-width:760px){
+@media(max-width:865px){
   .category-tabs{width:100%;}
   .cat-tab{max-width:none;flex:1;}
   #page-rolls .content-area{flex-direction:column;}
@@ -5438,6 +5698,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 
 /* Roll table */
 .roll-table-wrap{background:rgba(8,8,14,.82);border:1px solid var(--border-rune);border-radius:12px;overflow:hidden;}
+/* Multi-column tables: allow horizontal scroll */
+.dt-result-panel .roll-table-wrap,
+.dt-mob-panel .roll-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
 .roll-table-wrap table{width:100%;border-collapse:collapse;}
 .roll-table-wrap thead th{
   padding:10px 14px;text-align:center;
@@ -5566,7 +5829,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .td-knk-neg{color:#ff6b6b;}
 .td-knk-zero{color:var(--text-muted);}
 
-@media(max-width:960px){
+@media(max-width:988px){
   #page-rolls{grid-template-columns:1fr;}
   .rolls-section{padding:20px 16px 24px;}
 }
@@ -5718,25 +5981,18 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .console-panel::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:color-mix(in srgb, var(--gold) 8%, transparent);animation:scan-line 8s linear infinite;pointer-events:none;z-index:10;}
 @keyframes scan-line{from{top:0}to{top:100%}}
 
-@media(max-width:960px){
-  .console-panel{border-left:none;border-top:1px solid var(--border-gold);height:auto;max-height:none;position:static;overflow:visible;}
-  .console-tab-pane{overflow:visible;max-height:none;}
-}
-@media(max-width:600px){
-  /* Mobile: constrain console body to ~3 cards, then scroll */
+@media(max-width:988px){
+  .console-panel{border-left:none !important;border-top:1px solid var(--border-gold) !important;height:auto !important;max-height:none !important;position:static !important;overflow:visible !important;}
+  .console-tab-pane{overflow:visible !important;max-height:none !important;}
+  /* Console body: начальный потолок, JS пересчитает через updateMobConsoleHeight */
   .console-body{
-    max-height:270px;
-    overflow-y:auto;
+    max-height:240px;
+    overflow-y:auto !important;
     -webkit-overflow-scrolling:touch;
-    display:none;
-    flex-direction:column;
-    min-height:0;
   }
-  .console-body.visible{display:flex;}
-  .console-tab-pane{overflow:hidden;}
 }
 @media(max-width:480px){
-  .console-panel{height:auto;}
+  .console-panel{height:auto !important;}
 }
 
 /* ══════════════════════════════
@@ -5872,7 +6128,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   width: 100%;
 }
 .az-v-arrow.visible { display: flex; }
-@media(min-width:761px){
+@media(min-width:866px){
   /* Hide vertical arrow on desktop — horizontal arrow is used instead */
   .az-v-arrow { display: none !important; }
 }
@@ -5989,7 +6245,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .az-stat-row:last-child{margin-bottom:0;}
 .az-stat-lbl{
   font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;
-  color:#ff6b35;min-width:80px;
+  color:var(--color-dmg);min-width:80px;
 }
 .az-stat-lbl.health-mode{color:var(--color-hp);}
 .az-stat-input{
@@ -5998,9 +6254,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-family:'Share Tech Mono',monospace;font-size:14px;color:#fff;
   outline:none;transition:border-color .2s,box-shadow .2s;text-align:left;width:100%;box-sizing:border-box;
 }
-.az-stat-input:focus{border-color:#ff6b35;background:rgba(255,255,255,.08);box-shadow:0 0 0 2px rgba(255,107,53,.18);}
-.az-stats-box.health-mode .az-stat-input:focus{border-color:#7fff00;box-shadow:0 0 0 2px rgba(127,255,0,.15);}
-.az-stats-box.gold-mode .az-stat-input:focus{border-color:var(--gold-bright);box-shadow:0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent);}
+.az-stat-input:focus{border-color:var(--color-dmg);background:rgba(255,255,255,.08);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-dmg) 22%,transparent);}
+.az-stats-box.health-mode .az-stat-input:focus{border-color:var(--color-hp);background:rgba(255,255,255,.08);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-hp) 22%,transparent);}
+.az-stats-box.gold-mode .az-stat-input:focus{border-color:var(--gold-bright) !important;box-shadow:0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;}
 .az-discord-input.gold-input:focus{border-color:var(--gold-bright) !important;box-shadow:0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;}
 .az-stat-input::placeholder{color:#3a5070;}
 
@@ -6039,15 +6295,16 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   gap:4px;
 }
 .az-opt{
-  padding:6px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:12px;
+  padding:4px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:12px;
   color:#5fcc00;transition:all .12s;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:rgba(127,255,0,.04);border:1px solid #1a3a20;border-radius:5px;
-  text-align:center;gap:1px;min-width:0;
+  text-align:center;gap:0;min-width:0;width:100%;box-sizing:border-box;
+  height:42px;overflow:hidden;
 }
 .az-opt:hover{background:rgba(127,255,0,.13);border-color:#3a6030;}
 .az-opt.sel{color:var(--color-upg);background:rgba(127,255,0,.12);border-color:#5fcc00;box-shadow:0 0 6px rgba(127,255,0,.2);}
-.az-opt .az-opt-sub{color:#3a6030;font-size:9px;line-height:1.2;}
+.az-opt .az-opt-sub{color:#3a6030;font-size:8px;line-height:1.2;white-space:nowrap;}
 
 .az-reforge-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative;}
 .az-ref-btn{
@@ -6124,18 +6381,19 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   box-sizing: border-box;
 }
 .az-discord-input:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 14%, transparent);
+  border-color: var(--color-dmg);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent);
+  caret-color: var(--color-dmg);
 }
 .az-discord-input.weapon-input:focus {
-  border-color: #ff4444;
-  box-shadow: 0 0 0 2px rgba(255,68,68,.18);
-  caret-color: #ff4444;
+  border-color: var(--color-dmg);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent);
+  caret-color: var(--color-dmg);
 }
 .az-discord-input.armor-input:focus {
-  border-color: #7fff00;
-  box-shadow: 0 0 0 2px rgba(127,255,0,.15);
-  caret-color: #7fff00;
+  border-color: var(--color-hp);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent);
+  caret-color: var(--color-hp);
 }
 .az-discord-input::placeholder {
   color: var(--text-dim);
@@ -6197,6 +6455,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-weight: 600;
 }
 .az-discord-preview-val.dmg   { color: var(--color-dmg); }
+.az-discord-preview-val.hp    { color: var(--color-hp); }
 .az-discord-preview-val.delay { color: #ccc; }
 .az-discord-preview-val.upg   { color: var(--color-upg); }
 .az-discord-preview-val.corr-y { color: var(--color-hp); }
@@ -6536,22 +6795,25 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .az-gold-val.total{color:#cd7f32;}
 .az-gold-sub{font-family:'Rajdhani',sans-serif;font-size:10px;color:var(--text-dim);}
 
-@media(max-width:960px){
-  #page-analyze{grid-template-columns:1fr;}
+@media(max-width:988px){
+  #page-analyze{grid-template-columns:1fr;min-height:0;}
   .analyze-section{padding:20px 16px 24px;}
 }
-@media(max-width:760px){
-  #page-analyze .content-area{flex-direction:column;}
+@media(max-width:865px){
+  #page-analyze .content-area{flex-direction:column;align-items:center;padding:0 16px;box-sizing:border-box;}
   #page-analyze .item-list-panel{
     width:100%;position:static;align-self:auto;
     max-height:none;overflow:visible;flex-direction:row;flex-wrap:wrap;
   }
   #page-analyze .item-list-header{display:none;}
 }
-@media(max-width:760px){
+@media(max-width:865px){
   .analyze-area {
     flex-direction: column;
     width: 100%;
+    align-items: center;
+    padding: 0 16px;
+    box-sizing: border-box;
   }
   .analyze-area .table-empty {
     width: 100%;
@@ -6561,19 +6823,19 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   #page-analyze .az-card,
   #page-analyze .az-result-card {
     width: 100%;
-    max-width: 100%;
+    max-width: var(--card-w);
   }
   #page-analyze .az-left-col {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: var(--card-w) !important;
   }
-  .az-arrow-zone { display: none !important; }
-  .az-h-arrow { display: none !important; }
+  #page-analyze .az-arrow-zone { display: none !important; }
+  #page-analyze .az-h-arrow { display: none !important; }
   .az-v-arrow { display: none; }
   .az-v-arrow.visible { display: flex; }
-  .az-third-panel { display: none !important; }
-  .az-quote-panel { display: none !important; }
-  .az-quote-mobile.visible { display: block; }
+  #page-analyze .az-third-panel { display: none !important; }
+  #page-analyze .az-quote-panel { display: none !important; }
+  #page-analyze .az-quote-mobile.visible { display: block; }
 }
 @media(max-width:600px){
   /* Analyze Roll item list — identical to Tables */
@@ -6700,7 +6962,14 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   backdrop-filter: blur(8px);
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  /* Центрируем с учётом nav-панели: на >988px nav сверху, иначе снизу.
+     Этот padding задаёт «безопасную зону», в которой по-настоящему центрируется box. */
+  padding: calc(var(--nav-h) + 16px) 20px 16px;
+}
+@media(max-width:988px){
+  .az-modal {
+    padding: 16px 20px calc(var(--nav-h) + 16px);
+  }
 }
 .az-modal.open { display: flex; }
 .az-modal-box {
@@ -6709,7 +6978,8 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   border-radius: 16px;
   width: 100%;
   max-width: 920px;
-  max-height: 88vh;
+  /* Высота не должна вылезать за «безопасную зону» (вьюпорт минус nav и отступы) */
+  max-height: calc(var(--real-vh) - var(--nav-h) - 32px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -7043,9 +7313,22 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   max-width: 290px;
 }
 .az-mobile-action-btns { display: none; }
-@media(max-width:960px){
+@media(max-width:865px){
   .az-third-panel { display: none !important; }
   .az-arrow-zone { display: none !important; }
+}
+/* 866-988px: скрываем третью панель, оставляем h-arrow видимой, показываем мобильные кнопки */
+@media(min-width:866px) and (max-width:988px){
+  #page-analyze .az-third-panel { display: none !important; }
+  #page-analyze .az-arrow-zone { display: none !important; }
+  #page-stuff .az-third-panel { display: none !important; }
+  #page-stuff .sp-third-panel { display: none !important; }
+  #page-stuff .az-arrow-zone { display: none !important; }
+  .az-mobile-action-btns { display: flex; flex-direction: row; gap: 8px; width: 100%; margin-top: 8px; margin-bottom: 12px; }
+  .az-mobile-action-btns .az-panel-btn { flex: 1; min-width: 0; padding: 10px 8px; font-size: 13px; letter-spacing: 1px; gap: 6px; }
+  .az-mobile-action-btns .az-panel-btn-icon { font-size: 16px; }
+}
+@media(max-width:988px){
   .az-mobile-action-btns {
     display: flex;
     flex-direction: row;
@@ -7084,7 +7367,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   opacity: .35;
 }
 /* Explicitly hide mobile quote on desktop */
-@media(min-width:761px){
+@media(min-width:866px){
   .az-quote-mobile.visible { display: none !important; }
 }
 .az-quote-panel {
@@ -7145,26 +7428,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   font-style: italic;
 }
 
-@media(max-width:760px){
-  /* Модал — прижат к низу, выезжает снизу вверх поверх nav-панели */
-  .az-modal {
-    align-items: flex-end !important;
-    justify-content: stretch !important;
-    padding: 0 !important;
-  }
-  .az-modal-box, .az-modal-box.narrow {
-    max-width: 100% !important;
-    width: 100% !important;
-    height: auto !important;
-    max-height: calc(var(--real-vh) - 48px) !important;
-    border-radius: 20px 20px 0 0 !important;
-    border-bottom: none !important;
-    animation: azSheetUp .32s cubic-bezier(.34,1.3,.64,1) !important;
-  }
-  @keyframes azSheetUp {
-    0%  { transform: translateY(100%); opacity: 0; }
-    100%{ transform: translateY(0);    opacity: 1; }
-  }
+@media(max-width:865px){
+  /* Содержимое модала: компактные таблицы и сетки на узких экранах.
+     Сам контейнер .az-modal / .az-modal-box больше не переопределяем —
+     центрирование и учёт nav-панели заданы в базовых стилях. */
   .az-proc-grid { grid-template-columns: 1fr; }
   .az-proc-divider { display: none; }
   .az-proc-col { padding: 0 4px; }
@@ -7173,13 +7440,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   .az-tbl tbody td { font-size: 10px; padding: 4px 4px; }
   .az-tbl td.c-upg { font-size: 11px; }
 
-  .az-modal-content {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    flex: 1;
-    min-height: 0;
-    max-height: calc(var(--real-vh) - 48px - 53px) !important;
-  }
   .az-tbl-wrap {
     overflow-x: auto !important;
     overflow-y: visible !important;
@@ -7220,19 +7480,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   }
   #az-result-card {
     margin-top: 20px;
-  }
-}
-
-/* На <=600px нав-бар переезжает вниз — модал должен подняться над ним */
-@media(max-width:600px) {
-  .az-modal {
-    padding-bottom: var(--nav-h) !important;
-  }
-  .az-modal-box, .az-modal-box.narrow {
-    max-height: calc(var(--real-vh) - var(--nav-h) - 8px) !important;
-  }
-  .az-modal-content {
-    max-height: calc(var(--real-vh) - var(--nav-h) - 8px - 53px) !important;
   }
 }
 
@@ -7444,31 +7691,31 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .sp-tbl-col:first-child { text-align: left; flex: 0 0 36px; }
 
 /* Responsive */
-@media(max-width:960px) {
-  #page-stuff { grid-template-columns: 1fr; }
+@media(max-width:988px) {
+  #page-stuff { grid-template-columns: 1fr; min-height: 0; }
   .stuff-section { padding: 20px 16px 24px; }
 }
 /* Intermediate scale: console still visible but compact */
-@media(max-width:760px) {
-  #page-stuff .content-area { flex-direction: column; }
+@media(max-width:865px) {
+  #page-stuff .content-area { flex-direction: column; align-items: center; padding: 0 16px; box-sizing: border-box; }
   #page-stuff .item-list-panel {
     width: 100%; position: static; align-self: auto;
     max-height: none; overflow: visible; flex-direction: row; flex-wrap: wrap;
   }
   #page-stuff .item-list-header { display: none; }
   #page-stuff .item-search-wrap { width: 100%; }
-  .stuff-area { flex-direction: column; }
+  .stuff-area { flex-direction: column; width: 100%; align-items: center; padding: 0 16px; box-sizing: border-box; }
   .stuff-area .table-empty { width: 100%; box-sizing: border-box; }
   #page-stuff .sp-left-col,
   #page-stuff .az-card,
-  #page-stuff .az-result-card { width: 100% !important; max-width: 100% !important; }
+  #page-stuff .az-result-card { width: 100% !important; max-width: var(--card-w) !important; }
   #page-stuff .sp-h-arrow { display: none !important; }
   #page-stuff .sp-third-panel { display: none !important; }
   #page-stuff .az-quote-panel { display: none !important; }
   #page-stuff .az-quote-mobile.visible { display: block; }
   #page-stuff .az-arrow-zone { display: none !important; }
 }
-@media(max-width:960px){
+@media(max-width:988px){
   #page-stuff .sp-third-panel { display: none !important; }
   #page-stuff .az-arrow-zone { display: none !important; }
 }
@@ -7517,7 +7764,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     background: color-mix(in srgb, var(--gold) 8%, transparent) !important;
   }
 }
-@media(max-width:760px) {
+@media(max-width:865px) {
   #page-stuff #sp-result-card { margin-top: 0; }
   #page-stuff .sp-v-arrow { margin: 7px auto 28px; }
   /* SP mobile btns shown via JS (mab.style.display = 'flex') on mobile */
@@ -7653,28 +7900,28 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   display:none;flex-direction:row;gap:8px;width:100%;margin-top:14px;margin-bottom:14px;
 }
 .cmp-mobile-action-btns .az-panel-btn{flex:1;min-width:0;padding:10px 8px;font-size:13px;letter-spacing:1px;gap:6px;}
-@media(min-width:961px){
-  /* On desktop: hide vertical arrow and mobile btns */
-  .cmp-v-arrow, .cmp-mobile-action-btns{display:none!important;}
-}
-/* 761-960px: horizontal layout, h-arrow visible, no third panel, show mobile btns */
-@media(min-width:761px) and (max-width:960px){
-  .cmp-third-panel{display:none!important;}
-  .cmp-mobile-action-btns.visible{display:flex;}
+@media(min-width:989px){
+  /* На true desktop (>=989): vertical arrow скрыта; mobile-btns показываются только при .visible */
   .cmp-v-arrow{display:none!important;}
+}
+/* 866-988px: горизонтальный layout — без третьей панели, показываем mobile-btns и h-arrow */
+@media(min-width:866px) and (max-width:988px){
+  .cmp-third-panel{display:none!important;}
+  .cmp-v-arrow{display:none!important;}
+  .cmp-mobile-action-btns.visible{display:flex!important;}
   .cmp-result-card{width:var(--card-w);max-width:290px;}
 }
-@media(max-width:760px){
+@media(max-width:865px){
   .cmp-v-arrow.visible{display:flex;}
   .cmp-mobile-action-btns.visible{display:flex;}
-  .cmp-result-card{width:100%!important;max-width:100%!important;}
-  .cmp-h-arrow,.cmp-third-panel{display:none!important;}
-  .cmp-table-area{flex-direction:column;align-items:stretch;}
+  .cmp-result-card{width:100%!important;max-width:var(--card-w)!important;}
+  .cmp-third-panel{display:none!important;}
+  .cmp-table-area{flex-direction:column;align-items:center;width:100%;padding:0 16px;box-sizing:border-box;min-width:0;}
   .cmp-v-arrow{margin:5px auto 26px;}
 }
 /* Fix SP v-arrow bottom margin */
 #page-stuff .sp-v-arrow{margin:2px auto 28px;}
-@media(min-width:761px){
+@media(min-width:866px){
   /* Hide vertical arrow on desktop — horizontal arrow is used instead */
   #page-stuff .sp-v-arrow { display: none !important; }
 }
@@ -7824,6 +8071,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 #page-devtool .content-area {
   align-items: stretch !important;
 }
+.dt-right-col {
+  display: contents; /* на десктопе прозрачная обёртка */
+}
 .dt-result-panels {
   display: flex;
   flex-direction: row;
@@ -7870,6 +8120,17 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 .dt-result-panel-body:has(.roll-table-wrap) {
   padding: 0;
   align-items: stretch;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 0 0 360px;
+  height: 360px;
+  max-height: 360px;
+}
+/* Badge сразу после body — одинаковая y-позиция в обеих панелях */
+.dt-result-panel > .dt-panel-value-badge {
+  flex: 0 0 auto;
+  margin-top: 0;
 }
 .dt-result-panel-body .table-empty-icon {
   font-size: 42px;
@@ -7887,8 +8148,8 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  padding: 28px 16px 32px;
+  flex: none;
+  padding: 16px 16px 20px;
   text-align: center;
 }
 .dt-panel-value-badge-lbl {
@@ -7905,7 +8166,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 22px 24px 20px;
+  padding: 14px 20px 12px;
   background: color-mix(in srgb, var(--gold) 6%, transparent);
   border: 1px solid color-mix(in srgb, var(--gold) 28%, transparent);
   border-radius: 14px;
@@ -7919,6 +8180,30 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   flex-direction: column;
   width: 100%;
   margin-top: 0;
+}
+/* ── DT Tablet action buttons (hidden by default, shown 866–988px) ── */
+.dt-tablet-action-btns {
+  display: none;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+.dt-tablet-action-btns .az-panel-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 8px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  gap: 6px;
+}
+/* Горизонтальный скролл таблицы в мобильных панелях */
+.dt-mob-panel .roll-table-wrap {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+.dt-mob-panel .roll-table-wrap table {
+  min-width: 320px;
 }
 .dt-mob-tab-btns {
   display: none;
@@ -7959,13 +8244,84 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   background: color-mix(in srgb, var(--gold) 18%, transparent);
   box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 22%, transparent);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Theme overrides for .dt-mob-tab-btn / .dt-mob-panel  (mobile <866)
+   ══════════════════════════════════════════════════════════════ */
+
+/* BALDI */
+:root.theme-baldi .dt-mob-tab-btn {
+  background: rgba(255,255,255,0.45) !important;
+  border-color: #7ABB7A !important;
+  color: #2A2416 !important;
+  box-shadow: 1px 1px 0 #5A9A5A !important;
+}
+:root.theme-baldi .dt-mob-tab-btn:hover {
+  background: rgba(255,255,255,0.65) !important;
+  border-color: #1A6A1A !important;
+  box-shadow: 0 3px 0 #5A9A5A !important;
+}
+:root.theme-baldi .dt-mob-tab-btn.active {
+  background: #B8D8B0 !important;
+  border-color: #1A6A1A !important;
+  color: #1A6A1A !important;
+  box-shadow: 1px 1px 0 #5A9A5A !important;
+}
+:root.theme-baldi .dt-mob-panel {
+  background: #C8ECC8 !important;
+  border-color: #5A9A5A !important;
+  box-shadow: 2px 2px 0 #5A9A5A !important;
+}
+
+/* TIME */
+:root.theme-time .dt-mob-tab-btn {
+  background: linear-gradient(180deg,#1a1208 0%,#0d0904 100%) !important;
+  border-color: rgba(245,200,66,0.3) !important;
+  color: #f5c842 !important;
+}
+:root.theme-time .dt-mob-tab-btn:hover,
+:root.theme-time .dt-mob-tab-btn.active {
+  background: rgba(245,200,66,0.18) !important;
+  border-color: #f5c842 !important;
+  color: #fff4a0 !important;
+  box-shadow: 0 0 14px rgba(245,200,66,0.25) !important;
+}
+
+/* GALAXY */
+:root.theme-galaxy .dt-mob-tab-btn {
+  background: linear-gradient(180deg,#1a0a2e 0%,#0d0420 100%) !important;
+  border-color: rgba(155,48,255,0.32) !important;
+  color: #c08aff !important;
+}
+:root.theme-galaxy .dt-mob-tab-btn:hover,
+:root.theme-galaxy .dt-mob-tab-btn.active {
+  background: rgba(155,48,255,0.18) !important;
+  border-color: #9b30ff !important;
+  color: #e0aaff !important;
+  box-shadow: 0 0 14px rgba(155,48,255,0.30) !important;
+}
+
+/* DISCORD */
+:root.theme-discord .dt-mob-tab-btn {
+  background: #2B2D31 !important;
+  border-color: #404249 !important;
+  color: #DCDDDE !important;
+}
+:root.theme-discord .dt-mob-tab-btn:hover,
+:root.theme-discord .dt-mob-tab-btn.active {
+  background: #404249 !important;
+  border-color: #5865F2 !important;
+  color: #FFFFFF !important;
+}
+
+
 .dt-mob-panel {
   display: none;
   flex-direction: column;
   background: rgba(8,8,14,.6);
   border: 1px solid var(--border-rune);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
 }
 .dt-mob-panel.active {
@@ -7991,8 +8347,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 /* Fixed-width slots — styled like sp-roll-btn */
 .dt-slot-btn {
-  flex: 1;
-  max-width: 54px;
+  flex: 0 0 44px;
+  width: 44px;
+  max-width: 44px;
   height: 44px;
   background: rgba(255,255,255,.05);
   border: 1.5px solid #1a3048;
@@ -8024,8 +8381,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 /* + button: same size as slot buttons */
 .dt-slot-add-btn {
-  flex: 1;
-  max-width: 54px;
+  flex: 0 0 44px;
+  width: 44px;
+  max-width: 44px;
   height: 44px;
   background: rgba(255,255,255,.03);
   border: 1.5px dashed #1a3048;
@@ -8109,6 +8467,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   opacity: 0;
   pointer-events: none;
 }
+/* Mid-divider минус-кнопка: скрыта по умолчанию, показывается только в 989-1306 */
+.dt-slot-del-btn-mid { display: none; }
+@media(min-width:989px) and (max-width:1306px) {
+  .dt-slot-del-btn-mid { display: flex; }
+}
 
 /* Badge multi-value: column layout, adaptive font */
 .dt-panel-value-badge-num {
@@ -8143,9 +8506,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 
 /* Mobile */
-@media(max-width:960px){
-  #page-compare{grid-template-columns:1fr;}
-  #page-devtool{grid-template-columns:1fr;}
+@media(max-width:988px){
+  #page-compare{grid-template-columns:1fr;min-height:0;}
+  #page-devtool{grid-template-columns:1fr;min-height:0;}
   .dt-result-panels { display: none; }
   .cmp-section{padding:20px 16px 24px;}
   .dt-mob-result-wrap.has-data { display: flex; }
@@ -8153,9 +8516,120 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   #dt-mob-v-arrow { margin-top: 8px; margin-bottom: 8px; }
   #dt-mob-result-wrap { margin-top: 18px; }
 }
+
+/* ── Tablet 866–988px: devtool — одна панель справа с таб-системой ── */
+@media(min-width:866px) and (max-width:988px){
+  /* Горизонтальный layout: левая колонка + правая колонка */
+  #page-devtool .content-area {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 14px;
+  }
+  /* dt-right-col — сдвинут вниз на высоту slot-bar, кнопки абсолютно в верхней части */
+  .dt-right-col {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    align-self: stretch !important;
+    position: relative !important;
+    padding-top: 48px !important; /* slot-bar: 44px + 4px margin */
+    box-sizing: border-box !important;
+  }
+  /* Таблет кнопки — абсолютно в верхней части dt-right-col, ровно на уровне slot-bar */
+  .dt-tablet-action-btns {
+    display: none;
+    position: absolute !important;
+    top: -8px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 44px !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    z-index: 2 !important;
+  }
+  .dt-tablet-action-btns.visible {
+    display: flex !important;
+  }
+  /* Панели — занимают всё место внутри padding-top области */
+  .dt-result-panels {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    align-self: stretch !important;
+    margin-top: 0 !important;
+    min-height: 0 !important;
+  }
+  /* Активная панель — на всю высоту */
+  .dt-result-panel.dt-tablet-active {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  /* Скрываем вторую панель — показываем только активную */
+  .dt-result-panel {
+    flex: none !important;
+    max-height: none !important;
+    overflow-y: auto;
+    display: none !important;
+  }
+  .dt-result-panel.dt-tablet-active {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  /* Горизонтальный скролл таблицы */
+  .dt-result-panel .roll-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dt-result-panel .roll-table-wrap table {
+    min-width: 320px;
+  }
+  /* Inferred badge */
+  .dt-result-panel .dt-panel-value-badge-num {
+    font-size: clamp(12px, 2.5vw, 20px) !important;
+  }
+  .dt-result-panel .dt-panel-value-badge-lbl {
+    font-size: 9px !important;
+    letter-spacing: 2.5px !important;
+  }
+  .dt-result-panel .dt-panel-value-badge-inner {
+    padding: 10px 12px 10px !important;
+  }
+  /* Скрываем мобильный wrap и стрелку */
+  .dt-mob-result-wrap { display: none !important; }
+  #dt-mob-v-arrow { display: none !important; }
+  /* Левая колонка: «расширенный» размер 360px (как нравится пользователю).
+     Раньше было var(--card-w)=290px, но в этом диапазоне есть место под более
+     просторные карточки и кнопки 1..5 — закрепляем 360px стабильно, чтобы
+     ширина не «прыгала» при ресайзе через границу 866px. */
+  #page-devtool {
+    --card-w: 360px;
+  }
+  #page-devtool .az-left-col,
+  #page-devtool .az-card {
+    width: 360px !important;
+    max-width: 360px !important;
+    min-width: 0 !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+  /* Slot-row не должен раздувать колонку: ограничиваем его шириной родителя */
+  #page-devtool .dt-slots-bar,
+  #page-devtool .dt-slots-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
 /* devtool: no gap between slot bar and card on all screens */
 #page-devtool .az-left-col { gap: 0; }
-@media(max-width:600px){
+@media(max-width:865px),
+       (min-width:866px) and (max-width:988px),
+       (min-width:1307px){
   .dt-slot-btn,
   .dt-slot-add-btn {
     flex: none;
@@ -8163,23 +8637,23 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     max-width: none;
   }
 }
-@media(max-width:760px){
+@media(max-width:865px){
   #page-devtool .az-left-col,
-  #page-devtool .az-card { width: 100% !important; max-width: 100% !important; }
-  #page-devtool .az-left-col { width: 100% !important; max-width: 100% !important; }
-  #page-devtool .content-area { flex-direction: column; }
+  #page-devtool .az-card { width: 100% !important; max-width: var(--card-w) !important; }
+  #page-devtool .az-left-col { width: 100% !important; max-width: var(--card-w) !important; }
+  #page-devtool .content-area { flex-direction: column; align-items: center; padding: 0 16px; box-sizing: border-box; }
 }
-@media(max-width:760px){
-  #page-compare .content-area{flex-direction:column;}
+@media(max-width:865px){
+  #page-compare .content-area{flex-direction:column;align-items:center;padding:0 16px;box-sizing:border-box;}
   #page-compare .item-list-panel{
     width:100%;position:static;align-self:auto;
     max-height:none;overflow:visible;flex-direction:row;flex-wrap:wrap;
   }
   #page-compare .item-list-header{display:none;}
-  .cmp-table-area{flex-direction:column;}
+  .cmp-table-area{flex-direction:column;align-items:center;}
   .cmp-table-area .table-empty{width:100%;box-sizing:border-box;}
-  #cmp-active{width:100%;max-width:100%;}
-  #cmp-active .az-card{width:100%;max-width:100%;box-sizing:border-box;}
+  #cmp-active{width:100%;max-width:var(--card-w);}
+  #cmp-active .az-card{width:100%;max-width:var(--card-w);box-sizing:border-box;}
 }
 @media(max-width:600px){
   #page-compare{padding-top:0;padding-bottom:var(--nav-h);}
@@ -8345,6 +8819,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @keyframes settFadeIn {
   from { opacity: 0; transform: translateY(-5px) scale(.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes settModalIn {
+  from { opacity: 0; transform: scale(.88) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* Mobile: fullscreen overlay, card centered */
@@ -8521,35 +8999,9 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 /* ── Hide old lang-toggle ── */
 .lang-toggle { display: none !important; }
 
-/* ── Scale wrap: JS sets transform to counter browser zoom ── */
+/* scale-wrap: no zoom compensation, just a neutral wrapper */
 #scale-wrap {
-  transform-origin: top left;
-  /* will-change intentionally NOT set in CSS — it creates a containing block
-     that breaks position:fixed on mobile even when no transform is applied.
-     JS sets will-change only when scale is actually active (desktop). */
-}
-
-/* When scale is active:
-   - body is locked to 100vh via JS (overflow:hidden, height:100vh)
-   - scrollable pages get overflow-y:auto + height:var(--real-vh) so ONLY
-     the page content scrolls; nav (outside main) and console (sticky inside main)
-     stay correctly anchored */
-body.scale-active #page-rolls,
-body.scale-active #page-analyze,
-body.scale-active #page-stuff,
-body.scale-active #page-compare,
-body.scale-active #page-devtool {
-  height: var(--real-vh);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-gold) transparent;
-  will-change: transform;
-  transform: translateZ(0);
-}
-/* When page is its own scroll container, console sticky top = 0 (nav is not inside scroll flow) */
-body.scale-active .console-panel {
-  top: 0;
+  /* intentionally empty */
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -8678,15 +9130,21 @@ body.scale-active .console-panel {
 :root.theme-easter .az-discord-preview-val[style*="gold-bright"] { color: #C84E78 !important; }
 :root.theme-easter .az-stat-lbl[style*="gold-bright"] { color: #C84E78 !important; }
 
+/* DevTool: inline gold-bright Value лейбл/значение — приводим Website и Discord
+   режимы к одному цвету в темах, где общие правила .az-stat-lbl перекрывают inline.
+   Источник истины — var(--gold-bright) самой темы (как в Discord-режиме). */
+:root.theme-discord .az-stat-lbl[style*="gold-bright"],
+:root.theme-discord .az-discord-preview-lbl[style*="gold-bright"],
+:root.theme-discord .az-discord-preview-val[style*="gold-bright"] { color: var(--gold-bright) !important; }
+:root.theme-baldi .az-stat-lbl[style*="gold-bright"],
+:root.theme-baldi .az-discord-preview-lbl[style*="gold-bright"],
+:root.theme-baldi .az-discord-preview-val[style*="gold-bright"] { color: #8B4A00 !important; }
+
 /* DevTool: золотой инпут focus */
 :root.theme-easter .az-discord-input.gold-input:focus {
   border-color: #C84E78 !important;
   box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
   caret-color: #C84E78 !important;
-}
-:root.theme-easter .az-stats-box.gold-mode .az-stat-input:focus {
-  border-color: #C84E78 !important;
-  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
 }
 
 /* DevTool: слоты-кнопки вверху */
@@ -8731,8 +9189,8 @@ body.scale-active .console-panel {
   background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,240,232,.45) 100%) !important;
   border-color: #D4B8A4 !important;
 }
-:root.theme-easter .az-stat-lbl { color: #C84E78 !important; }
-:root.theme-easter .az-stat-lbl.health-mode { color: #4E9466 !important; }
+:root.theme-easter .az-stat-lbl { color: var(--color-dmg) !important; }
+:root.theme-easter .az-stat-lbl.health-mode { color: var(--color-hp) !important; }
 :root.theme-easter .az-stat-input {
   background: rgba(255,255,255,.7) !important;
   border-color: #D4B8A4 !important;
@@ -8740,12 +9198,48 @@ body.scale-active .console-panel {
 }
 :root.theme-easter .az-stat-input::placeholder { color: #C4A898 !important; }
 :root.theme-easter .az-stat-input:focus {
-  border-color: #C84E78 !important;
-  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
 }
 :root.theme-easter .az-stats-box.health-mode .az-stat-input:focus {
-  border-color: #4E9466 !important;
-  box-shadow: 0 0 0 2px rgba(78,148,102,.15) !important;
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
+}
+
+/* ── ALL THEMES: gold-mode (DevTool) всегда золотой, перекрывает dmg/hp ── */
+
+/* DevTool: Value-инпут всегда подсвечивается цветом заголовка Value (var(--gold-bright)),
+   независимо от выбранной темы — побеждаем тематические dmg/hp правила */
+:root.theme-time   .az-stats-box.gold-mode .az-stat-input:focus,
+:root.theme-galaxy .az-stats-box.gold-mode .az-stat-input:focus,
+:root.theme-discord .az-stats-box.gold-mode .az-stat-input:focus,
+:root.theme-baldi  .az-stats-box.gold-mode .az-stat-input:focus,
+:root.theme-easter .az-stats-box.gold-mode .az-stat-input:focus,
+:root.theme-classic .az-stats-box.gold-mode .az-stat-input:focus {
+  border-color: var(--gold-bright) !important;
+  background: rgba(255,255,255,.08) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;
+  caret-color: var(--gold-bright) !important;
+}
+:root.theme-time   .az-discord-input.gold-input:focus,
+:root.theme-galaxy .az-discord-input.gold-input:focus,
+:root.theme-discord .az-discord-input.gold-input:focus,
+:root.theme-baldi  .az-discord-input.gold-input:focus,
+:root.theme-easter .az-discord-input.gold-input:focus,
+:root.theme-classic .az-discord-input.gold-input:focus {
+  border-color: var(--gold-bright) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;
+  caret-color: var(--gold-bright) !important;
+}
+:root .az-stats-box.gold-mode .az-stat-input:focus {
+  border-color: var(--gold-bright) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;
+  caret-color: var(--gold-bright) !important;
+}
+:root .az-discord-input.gold-input:focus {
+  border-color: var(--gold-bright) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent) !important;
+  caret-color: var(--gold-bright) !important;
 }
 
 /* Разделитель */
@@ -8850,18 +9344,19 @@ body.scale-active .console-panel {
 }
 :root.theme-easter .az-discord-input::placeholder { color: #C4A898 !important; opacity: 1 !important; }
 :root.theme-easter .az-discord-input:focus {
-  border-color: #C84E78 !important;
-  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
 }
 :root.theme-easter .az-discord-input.weapon-input:focus {
-  border-color: #C84E78 !important;
-  box-shadow: 0 0 0 2px rgba(200,78,120,.18) !important;
-  caret-color: #C84E78 !important;
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+  caret-color: var(--color-dmg) !important;
 }
 :root.theme-easter .az-discord-input.armor-input:focus {
-  border-color: #4E9466 !important;
-  box-shadow: 0 0 0 2px rgba(78,148,102,.15) !important;
-  caret-color: #4E9466 !important;
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 20%, transparent) !important;
+  caret-color: var(--color-hp) !important;
 }
 
 /* Discord preview box */
@@ -8957,13 +9452,13 @@ body.scale-active .console-panel {
 :root.theme-easter #cmp-res-roll-row span:first-child { color: #A08060 !important; }
 
 /* ══ BALDI: MOBILE FIXES ══ */
-@media(max-width:960px) {
+@media(max-width:1306px) {
   :root.theme-baldi .credits-block {
     background: #D6EDCF !important;
     border-color: #A09878 !important;
     box-shadow: none !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
   }
   :root.theme-baldi .credit-card {
     background: none !important;
@@ -8973,13 +9468,13 @@ body.scale-active .console-panel {
 }
 
 /* ══ CLASSIC: MOBILE FIXES ══ */
-@media(max-width:960px) {
+@media(max-width:1306px) {
   :root.theme-classic .credits-block {
     background: #1e2d3e !important;
     border: #253a4e !important;
     box-shadow: none !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
   }
   :root.theme-classic .credit-card {
     background: none !important;
@@ -9154,12 +9649,12 @@ body.scale-active .console-panel {
 }
 
 /* 9. Mobile: credits block — dark bg with mask-image fade like desktop */
-@media(max-width:960px) {
+@media(max-width:1306px) {
   :root.theme-discord .credits-block {
-    background: rgba(0,0,0,0.35) !important;
+    background: rgba(0,0,0,0.2) !important;
     border-color: #3b3d44 !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
   }
   :root.theme-discord .credit-card {
     background: transparent !important;
@@ -9193,6 +9688,9 @@ body.scale-active .console-panel {
 :root.theme-discord .az-stat-lbl.health-mode,
 :root.theme-discord .az-discord-preview-lbl.lbl-hp {
   color: var(--color-hp) !important;
+}
+:root.theme-discord .az-stat-lbl {
+  color: var(--color-dmg) !important;
 }
 
 /* Empty states — Discord colors */
@@ -9593,7 +10091,13 @@ body.scale-active .console-panel {
 }
 
 /* Mobile: remove galaxy purple background from credit cards (overlap with mask) */
-@media(max-width:960px){
+@media(max-width:1306px){
+  :root.theme-galaxy .credits-block {
+    background: rgba(100,20,200,0.18) !important;
+    border-color: rgba(155,48,255,0.35) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+  }
   :root.theme-galaxy .credit-card {
     background: none !important;
     border-color: transparent !important;
@@ -9630,6 +10134,821 @@ body.scale-active .console-panel {
 }
 :root.theme-discord .az-panel-btn-icon { color: #5865F2 !important; }
 
+/* ══════════════════════════════════════════════════════
+   TABLET RANGE: 601px – 960px
+   Адаптации для диапазона между мобильным и десктопом
+══════════════════════════════════════════════════════ */
+
+/* ── 1. Settings: центральный модал (как на мобильном) ── */
+@media (min-width: 601px) and (max-width: 988px) {
+  .settings-panel {
+    position: fixed !important;
+    inset: 0 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 600;
+    pointer-events: none;
+    background: transparent;
+  }
+  .settings-panel.open {
+    display: flex;
+    pointer-events: all;
+  }
+  .settings-content {
+    position: relative;
+    z-index: 601;
+    min-width: 250px;
+    max-width: 320px;
+    width: 85vw;
+    animation: settModalIn .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .settings-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 599;
+    background: rgba(0,0,0,0.38);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .settings-backdrop.open {
+    display: block;
+  }
+  .settings-close-btn { display: flex !important; }
+}
+
+/* ── 2. Console: ограничение высоты и скролл ── */
+@media (min-width: 601px) and (max-width: 988px) {
+  .console-body {
+    max-height: 240px;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    display: none;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .console-body.visible { display: flex; }
+  .console-tab-pane { overflow: hidden; }
+}
+
+/* ── 3. Banner title: фиксированный размер 601–988px ── */
+@media (min-width: 601px) and (max-width: 988px) {
+  .banner-game-title {
+    font-size: 38px !important;
+    letter-spacing: 2px !important;
+    white-space: nowrap !important;
+  }
+  .banner-eyebrow {
+    font-size: 13px !important;
+    letter-spacing: 3px !important;
+  }
+}
+
+/* ── 5. Карточки AZ/SP/CMP/Rolls — ограничение ширины + растущие отступы ── */
+@media (max-width: 865px) {
+  /* Горизонтальный padding секций растёт с шириной экрана */
+  .analyze-section,
+  .rolls-section,
+  .stuff-section,
+  .cmp-section {
+    padding-left:  clamp(16px, 5vw, 60px) !important;
+    padding-right: clamp(16px, 5vw, 60px) !important;
+  }
+  /* Карточки: не шире 480px, центрируются */
+  #page-analyze .az-left-col,
+  #page-analyze .az-card,
+  #page-analyze .az-result-card,
+  #page-rolls .az-card,
+  #page-stuff .sp-left-col,
+  #page-stuff .az-card,
+  #page-stuff .az-result-card,
+  #cmp-active,
+  #cmp-active .az-card,
+  .cmp-result-card,
+  #page-devtool .az-left-col,
+  #page-devtool .az-card,
+  #dt-mob-result-wrap {
+    max-width: 480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* ── 5b. Домашняя страница — ограничение ширины контента на 601–988px ── */
+@media (min-width: 601px) and (max-width: 988px) {
+  /* hero-section: растущие горизонтальные отступы */
+  .hero-section {
+    padding-left:  clamp(16px, 6vw, 80px) !important;
+    padding-right: clamp(16px, 6vw, 80px) !important;
+  }
+  /* banner сохраняет свою ширину, просто центрируется */
+  .game-banner {
+    max-width: 506px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100%;
+  }
+  /* bot-panel + updates-panel: не шире 506px, центрируются */
+  .bot-panel,
+  .updates-panel {
+    max-width: 506px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  /* credits-block и stats-col-mobile тоже не растягиваются */
+  .credits-block,
+  .stats-col-mobile {
+    max-width: 506px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ── 4. Item list: grid 2-колонки на 601–865px ── */
+@media (min-width: 601px) and (max-width: 865px) {
+  #page-analyze .item-list-panel,
+  #page-rolls .item-list-panel,
+  #page-stuff .item-list-panel,
+  #page-compare .item-list-panel {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: min-content !important;
+    gap: 4px !important;
+    padding: 6px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    position: static !important;
+    align-self: auto !important;
+    align-items: start !important;
+  }
+  #page-analyze .item-list-header,
+  #page-rolls .item-list-header,
+  #page-stuff .item-list-header,
+  #page-compare .item-list-header { display: none !important; }
+
+  #page-analyze .item-search-wrap,
+  #page-rolls .item-search-wrap,
+  #page-stuff .item-search-wrap,
+  #page-compare .item-search-wrap {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3 !important;
+    background: rgba(8,8,14,.99) !important;
+  }
+  #page-analyze .item-search-no-results,
+  #page-rolls .item-search-no-results,
+  #page-stuff .item-search-no-results,
+  #page-compare .item-search-no-results {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+  #page-analyze .item-btn,
+  #page-rolls .item-btn,
+  #page-stuff .item-btn,
+  #page-compare .item-btn {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 7px 10px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    border: 1px solid var(--border-rune) !important;
+    border-radius: 7px !important;
+    height: auto !important;
+    min-height: unset !important;
+    line-height: 1.4 !important;
+  }
+  #page-analyze .item-btn.active,
+  #page-rolls .item-btn.active,
+  #page-stuff .item-btn.active,
+  #page-compare .item-btn.active {
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+    background: color-mix(in srgb, var(--gold) 8%, transparent) !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ДИАПАЗОН 989–1306px: мобильный layout в видимой зоне (левее консоли)
+   Консоль справа остаётся — grid не меняем.
+   Контент переключается в мобильный режим как ≤988, но внутри своей 1fr колонки.
+══════════════════════════════════════════════════════════════ */
+@media(min-width:989px) and (max-width:1306px) {
+
+  /* ── Banner title: однострочный "Elemental Dungeons" ── */
+  .banner-game-title { font-size: clamp(36px, 3.5vw, 42px) !important; letter-spacing: 2px !important; }
+  .banner-eyebrow    { font-size: 14px !important; letter-spacing: 4px !important; }
+
+  /* ── HOME: layout — скроллится, карточки НЕ растягиваются ── */
+  #page-home {
+    grid-template-columns: 1fr var(--console-w) !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  #page-home .hero-section {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 20px 28px 16px !important;
+  }
+  #page-home .bot-updates-row {
+    flex-direction: column !important;
+    flex: none !important;
+    min-height: unset !important;
+    gap: 16px !important;
+    align-items: center !important;
+  }
+  #page-home .stats-col        { display: none !important; }
+  #page-home .stats-col-mobile { display: grid !important; }
+  /* bot-panel: фиксированная ширина, не растягивается */
+  #page-home .bot-panel {
+    padding: 20px 24px 16px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    overflow: visible !important;
+    flex: none !important;
+  }
+  /* credits горизонтально как на <988px */
+  #page-home .credits-block {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    padding: 10px 16px !important;
+    justify-content: center !important;
+    background: rgba(0,0,0,.25) !important;
+    border: 1px solid var(--border-rune) !important;
+    border-radius: 10px !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+  }
+  #page-home .credit-card {
+    flex: none !important;
+    width: auto !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  #page-home .credit-card:hover { border-color: transparent !important; }
+  #page-home .credit-card-role  { font-size: 10px !important; letter-spacing: 1px !important; }
+  #page-home .credit-card-name  { font-size: 14px !important; }
+  /* ── Тематические фоны credits-block для 989–1306px ── */
+  :root.theme-time    #page-home .credits-block { background: rgba(245,200,66,0.07) !important; border-color: rgba(245,200,66,0.18) !important; }
+  :root.theme-galaxy  #page-home .credits-block { background: rgba(100,20,200,0.18) !important; border-color: rgba(155,48,255,0.35) !important; }
+  :root.theme-discord #page-home .credits-block { background: rgba(0,0,0,0.2) !important; border-color: #3b3d44 !important; }
+  :root.theme-discord #page-home .credit-card { background: none !important; border: none !important; }
+  :root.theme-baldi   #page-home .credits-block { background: #E0F2D8 !important; border-color: #7AAB6A !important; box-shadow: 1px 1px 0 #7AAB6A !important; }
+  :root.theme-classic #page-home .credits-block { background: #1e2d3e !important; border-color: #253a4e !important; }
+  :root.theme-easter  #page-home .credits-block { background: rgba(237,228,220,0.6) !important; border-color: #D4B8A4 !important; }
+  /* stats-col-mobile: та же ширина что и bot-panel */
+  #page-home .stats-col-mobile {
+    width: 100% !important;
+    max-width: 520px !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 8px !important;
+    margin-top: 12px !important;
+  }
+  #page-home .stats-col-mobile .stat-chip:nth-child(1) { grid-column: 1 / span 3 !important; }
+  #page-home .stats-col-mobile .stat-chip:nth-child(2) { grid-column: 4 / span 3 !important; }
+  #page-home .stats-col-mobile .stat-chip:nth-child(3) { grid-column: 1 / span 6 !important; }
+  #page-home .stats-col-mobile .stat-chip:nth-child(4) { grid-column: 1 / span 2 !important; }
+  #page-home .stats-col-mobile .stat-chip:nth-child(5) { grid-column: 3 / span 2 !important; }
+  #page-home .stats-col-mobile .stat-chip:nth-child(6) { grid-column: 5 / span 2 !important; }
+  #page-home .updates-panel { flex: none !important; width: 100% !important; max-width: 520px !important; }
+  #page-home .updates-body  { max-height: 240px !important; }
+  #page-home .console-panel {
+    border-left: 1px solid var(--border-gold) !important;
+    border-top: none !important;
+    height: calc(var(--real-vh) - var(--nav-h)) !important;
+    max-height: calc(var(--real-vh) - var(--nav-h)) !important;
+    position: sticky !important;
+    top: var(--nav-h) !important;
+    overflow: hidden !important;
+  }
+
+  /* ── ROLLS ── */
+  #page-rolls { grid-template-columns: 1fr var(--console-w) !important; }
+  #page-rolls .rolls-section { padding: 20px 24px 24px !important; }
+  #page-rolls .content-area  {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  /* Список слева: sticky, фиксированная ширина, скролл */
+  #page-rolls .item-list-panel {
+    width: var(--item-list-w) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: calc(var(--nav-h) + 14px) !important;
+    align-self: flex-start !important;
+    max-height: calc(var(--real-vh) - var(--nav-h) - 60px) !important;
+    overflow-y: auto !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    display: flex !important;
+  }
+  #page-rolls .item-list-header { display: block !important; }
+  #page-rolls .item-search-wrap { width: 100% !important; }
+  /* Зона таблиц: занимает оставшееся пространство, скролл */
+  #page-rolls .table-area {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow-y: auto !important;
+    max-height: calc(var(--real-vh) - var(--nav-h) - 60px) !important;
+  }
+  /* Таблица с роллами: горизонтальный скролл если не влезает */
+  #page-rolls .roll-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── ANALYZE: список слева (sticky), карточки по центру с отступами ── */
+  #page-analyze { grid-template-columns: 1fr var(--console-w) !important; }
+  #page-analyze .analyze-section { padding: 20px 20px 24px !important; }
+  /* content-area: горизонтальный ряд — список слева, карточки справа от него */
+  #page-analyze .content-area {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  /* Список: sticky слева, как на 866-988 */
+  #page-analyze .item-list-panel {
+    width: var(--item-list-w) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: calc(var(--nav-h) + 14px) !important;
+    align-self: flex-start !important;
+    max-height: calc(var(--real-vh) - var(--nav-h) - 60px) !important;
+    overflow-y: auto !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+  #page-analyze .item-list-header { display: block !important; }
+  /* Зона карточек: центрируем, фиксированная ширина */
+  #page-analyze .analyze-area {
+    flex: 1 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+  #page-analyze .az-left-col,
+  #page-analyze .az-card,
+  #page-analyze .az-result-card {
+    width: 100% !important;
+    max-width: var(--card-w) !important;
+  }
+  #page-analyze .az-left-col { width: 100% !important; max-width: var(--card-w) !important; }
+  /* Убираем десктопные панели, показываем мобильные */
+  #page-analyze .az-arrow-zone  { display: none !important; }
+  #page-analyze .az-h-arrow     { display: none !important; }
+  #page-analyze .az-third-panel { display: none !important; }
+  #page-analyze .az-quote-panel { display: none !important; }
+  #page-analyze .az-quote-mobile.visible { display: block !important; }
+  #page-analyze .az-v-arrow     { display: none; margin: 6px auto 10px !important; }
+  #page-analyze .az-v-arrow.visible { display: flex !important; }
+  #page-analyze #az-result-card { margin-top: 20px !important; }
+
+  /* ── STUFF PREVIEW: аналогично AZ ── */
+  #page-stuff { grid-template-columns: 1fr var(--console-w) !important; }
+  #page-stuff .stuff-section { padding: 20px 20px 24px !important; }
+  #page-stuff .content-area {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  #page-stuff .item-list-panel {
+    width: var(--item-list-w) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: calc(var(--nav-h) + 14px) !important;
+    align-self: flex-start !important;
+    max-height: calc(var(--real-vh) - var(--nav-h) - 60px) !important;
+    overflow-y: auto !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+  #page-stuff .item-list-header { display: block !important; }
+  #page-stuff .item-search-wrap { width: 100% !important; }
+  .stuff-area {
+    flex: 1 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+  .stuff-area .table-empty { width: 100% !important; max-width: var(--card-w) !important; box-sizing: border-box !important; }
+  #page-stuff .sp-left-col,
+  #page-stuff .az-card,
+  #page-stuff .az-result-card { width: 100% !important; max-width: var(--card-w) !important; }
+  #page-stuff .sp-h-arrow     { display: none !important; }
+  #page-stuff .sp-third-panel { display: none !important; }
+  #page-stuff .az-quote-panel { display: none !important; }
+  #page-stuff .az-quote-mobile.visible { display: block !important; }
+  #page-stuff .az-arrow-zone  { display: none !important; }
+  #page-stuff .sp-v-arrow     { display: none; margin: 6px auto 10px !important; }
+  #page-stuff .sp-v-arrow.visible { display: flex !important; }
+  #page-stuff #sp-result-card { margin-top: 20px !important; }
+
+  /* ── COMPARE: аналогично AZ ── */
+  #page-compare { grid-template-columns: 1fr var(--console-w) !important; }
+  #page-compare .cmp-section { padding: 20px 20px 24px !important; }
+  #page-compare .content-area {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  #page-compare .item-list-panel {
+    width: var(--item-list-w) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: calc(var(--nav-h) + 14px) !important;
+    align-self: flex-start !important;
+    max-height: calc(var(--real-vh) - var(--nav-h) - 60px) !important;
+    overflow-y: auto !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+  #page-compare .item-list-header { display: block !important; }
+  .cmp-table-area {
+    flex: 1 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+  .cmp-table-area .table-empty { width: 100% !important; max-width: var(--card-w) !important; box-sizing: border-box !important; }
+  #page-compare .az-result-card,
+  #cmp-active { width: 100% !important; max-width: var(--card-w) !important; }
+  #cmp-active .az-card { width: 100% !important; max-width: var(--card-w) !important; }
+  
+  #page-compare .cmp-third-panel { display: none !important; }
+  #page-compare .cmp-v-arrow     { display: none; margin: 6px auto 10px !important; }
+  #page-compare .cmp-v-arrow.visible { display: flex !important; }
+  #page-compare .cmp-result-card { width: 100% !important; max-width: var(--card-w) !important; margin-top: 20px !important; align-self: center !important; }
+  .cmp-mobile-action-btns.visible { display: flex !important; }
+
+  /* Process / Tablet кнопки — отступ снизу как на 866-988 */
+  .az-mobile-action-btns {
+    gap: 8px !important;
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* ── DEVELOPER TOOL: 2×2 grid — CHECK/CONFIRM сверху рядом, панели снизу рядом ── */
+  #page-devtool { grid-template-columns: 1fr var(--console-w) !important; }
+  #page-devtool .analyze-section,
+  #page-devtool .cmp-section { padding: 20px 20px 24px !important; }
+  /* content-area: вертикальная колонка — слоты → ряд карточек → ряд панелей */
+  #page-devtool .content-area {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+  /* az-left-col — горизонтальный ряд двух карточек (слоты-бар на отдельной строке) */
+  #page-devtool .az-left-col {
+    order: 1 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    flex: none !important;
+  }
+  /* Слоты-бар — по центру на всю строку */
+  #page-devtool .dt-slots-bar {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    order: 0 !important;
+    justify-content: center !important;
+    margin-bottom: 10px !important;
+  }
+  #page-devtool .dt-slots-row {
+    flex: none !important;
+  }
+  /* Каждая карточка — половина, order 1 (после slots-bar order 0) */
+  #page-devtool .az-card.dt-split-card {
+    flex: 1 !important;
+    width: 0 !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    order: 1 !important;
+  }
+  /* Минус-кнопка слота: убираем с первой карточки (она будет внутри OR-разделителя)
+     и убираем компенсирующий padding-top, чтобы карточка не была выше второй */
+  #page-devtool .az-card.dt-split-card > .dt-slot-del-btn {
+    display: none !important;
+  }
+  #page-devtool .az-card.dt-split-card.dt-card-with-del {
+    padding-top: 14px !important;
+  }
+  /* OR divider — между карточками, вертикальный, содержит минус-кнопку по центру */
+  #page-devtool .dt-or-divider {
+    flex-direction: column !important;
+    align-self: stretch !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    order: 1 !important;
+    position: relative !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  #page-devtool .dt-or-line {
+    width: 1px !important;
+    height: 30px !important;
+    flex: none !important;
+  }
+  /* Кнопка минуса в OR-разделителе: поднимаем на уровень строк ввода (Value-row),
+     значительно выше середины OR-разделителя */
+  #page-devtool .dt-or-divider .dt-slot-del-btn-mid {
+    position: absolute !important;
+    top: 36px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+  }
+  /* Уменьшаем CHECK/CONFIRM TRUE VALUE кнопки в узком диапазоне 989-1070,
+     чтобы текст не переносился на две строки */
+  @media(min-width:989px) and (max-width:1070px){
+    #page-devtool #dt-check-btn,
+    #page-devtool #dt-confirm-btn {
+      font-size: 11px !important;
+      letter-spacing: 1px !important;
+      padding: 11px 4px !important;
+      gap: 6px !important;
+    }
+    #page-devtool #dt-check-btn .az-btn-chevrons,
+    #page-devtool #dt-confirm-btn .az-btn-chevrons {
+      font-size: 11px !important;
+    }
+  }
+  /* dt-right-col — горизонтальный ряд двух панелей */
+  #page-devtool .dt-right-col {
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    flex: none !important;
+    position: static !important;
+    padding-top: 12px !important;
+    align-self: center !important;
+  }
+  /* Таб-кнопки — скрываем, обе панели видны одновременно */
+  #page-devtool .dt-tablet-action-btns { display: none !important; }
+  /* dt-result-panels — горизонтальный ряд, расширяем по ширине az-left-col */
+  #page-devtool .dt-result-panels {
+    display: flex !important;
+    flex-direction: row !important;
+    flex: 1 !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  /* Каждая панель — половина, увеличенная высота для вытянутого вида */
+  #page-devtool .dt-result-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 360px !important;
+  }
+  /* Тело панели растягивается чтобы заполнить высоту */
+  #page-devtool .dt-result-panel-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  /* Когда внутри таблица — прижимаем к верху без центрирования
+     (фикс зазора у Confirm на 992-1005) */
+  #page-devtool .dt-result-panel-body:has(.roll-table-wrap) {
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    flex: 0 0 320px !important;
+    height: 320px !important;
+    max-height: 320px !important;
+    overflow-y: auto !important;
+  }
+  /* Badge всегда сразу после body одинаковой высоты — выровнен по той же y во всех панелях */
+  #page-devtool .dt-result-panel .dt-panel-value-badge {
+    flex: 0 0 auto !important;
+    margin-top: 0 !important;
+  }
+  /* Мобильные элементы — скрываем */
+  #page-devtool .dt-mob-result-wrap { display: none !important; }
+  #page-devtool #dt-mob-v-arrow     { display: none !important; }
+
+  /* Inferred / Looking — уменьшаем шрифт, чтобы число влезало в одну строку */
+  #page-devtool .dt-result-panel .dt-panel-value-badge-num {
+    font-size: clamp(14px, 1.7vw, 22px) !important;
+    line-height: 1.2 !important;
+  }
+  #page-devtool .dt-result-panel .dt-panel-value-badge-lbl {
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+  }
+  #page-devtool .dt-result-panel .dt-panel-value-badge-inner {
+    padding: 12px 12px 10px !important;
+  }
+
+  /* DevTool: плавное расширение с ростом разрешения 989→1306 */
+  /* При 989px: ~600px wide; при 1120px: ~640px; при 1306px: ~680px */
+  #page-devtool .az-left-col,
+  #page-devtool .dt-right-col {
+    max-width: clamp(580px, calc(50vw + 12px), 680px) !important;
+  }
+
+  /* ── Консоль на всех страницах кроме home: sticky сбоку ── */
+  #page-analyze .console-panel,
+  #page-rolls   .console-panel,
+  #page-stuff   .console-panel,
+  #page-compare .console-panel,
+  #page-devtool .console-panel {
+    border-left: 1px solid var(--border-gold) !important;
+    border-top: none !important;
+    height: calc(var(--real-vh) - var(--nav-h)) !important;
+    max-height: calc(var(--real-vh) - var(--nav-h)) !important;
+    position: sticky !important;
+    top: var(--nav-h) !important;
+    overflow: hidden !important;
+  }
+  /* Консоль: скролл внутри как на десктопе */
+  #page-analyze .console-tab-pane,
+  #page-rolls   .console-tab-pane,
+  #page-stuff   .console-tab-pane,
+  #page-compare .console-tab-pane,
+  #page-devtool .console-tab-pane,
+  #page-home    .console-tab-pane {
+    overflow: hidden !important;
+    max-height: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ДИАПАЗОН 1307–1690px: широкий планшет
+   Третья панель скрыта — центрируем ряд (карточка + стрелка + комментарий)
+   по горизонтали внутри рабочей области.
+══════════════════════════════════════════════════════════════ */
+@media(min-width:1307px) and (max-width:1690px) {
+
+  /* ── Banner title: масштабируется чтобы влезть в 2 строки с начала диапазона ── */
+  .banner-game-title { font-size: clamp(42px, 3.8vw, 68px) !important; letter-spacing: 2px !important; }
+
+  /* ── ANALYZE: центрируем ряд двух панелей ── */
+  #page-analyze .analyze-area {
+    justify-content: center !important;
+  }
+
+  /* ── STUFF PREVIEW: центрируем ряд двух панелей ── */
+  #page-stuff .stuff-area {
+    justify-content: center !important;
+  }
+  /* SP: третья панель скрыта */
+  #page-stuff .sp-third-panel { display: none !important; }
+
+  /* ── COMPARE: центрируем ряд двух панелей ── */
+  #page-compare .cmp-table-area {
+    justify-content: center !important;
+  }
+
+  /* CMP: третья панель скрыта, мобильные кнопки видимы */
+  .cmp-third-panel { display: none !important; }
+  .cmp-mobile-action-btns.visible { display: flex !important; }
+
+  /* Process / Tablet кнопки — отступ снизу как на 866-988 */
+  .az-mobile-action-btns {
+    gap: 8px !important;
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* ── DevTool: горизонтальный layout как на 866–988px ── */
+  #page-devtool .content-area {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 14px;
+  }
+  .dt-right-col {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    align-self: stretch !important;
+    position: relative !important;
+    padding-top: 48px !important;
+    box-sizing: border-box !important;
+  }
+  .dt-tablet-action-btns {
+    display: none;
+    position: absolute !important;
+    top: -8px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 44px !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    z-index: 2 !important;
+  }
+  .dt-tablet-action-btns.visible {
+    display: flex !important;
+  }
+  .dt-result-panels {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    align-self: stretch !important;
+    margin-top: 0 !important;
+    min-height: 0 !important;
+  }
+  .dt-result-panel.dt-tablet-active {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  .dt-result-panel {
+    flex: none !important;
+    max-height: none !important;
+    overflow-y: auto;
+    display: none !important;
+  }
+  .dt-result-panel.dt-tablet-active {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .dt-result-panel .roll-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dt-result-panel .roll-table-wrap table {
+    min-width: 320px;
+  }
+  /* Inferred / Looking badge — увеличенный шрифт, масштабируется с шириной */
+  .dt-result-panel .dt-panel-value-badge-num {
+    font-size: clamp(18px, 2.2vw, 30px) !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+  }
+  .dt-result-panel .dt-panel-value-badge-lbl {
+    font-size: 10px !important;
+    letter-spacing: 3px !important;
+  }
+  .dt-result-panel .dt-panel-value-badge-inner {
+    padding: 14px 16px 12px !important;
+  }
+  .dt-mob-result-wrap { display: none !important; }
+  #dt-mob-v-arrow { display: none !important; }
+  #page-devtool {
+    --card-w: 360px;
+  }
+  #page-devtool .az-left-col,
+  #page-devtool .az-card {
+    width: 360px !important;
+    max-width: 360px !important;
+    min-width: 0 !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+  #page-devtool .dt-slots-bar,
+  #page-devtool .dt-slots-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+}
+
+
+
 </style>
 <base target="_blank">
 </head>
@@ -9638,73 +10957,31 @@ body.scale-active .console-panel {
 <div class="settings-backdrop" id="settings-backdrop" onclick="closeSettings()"></div>
 
 <script>
-/* ── Zoom Compensator ──
-   scale-wrap contains ALL page content including nav, settings, toast.
-   transform: scale(1/zoom) makes everything look identical at any browser zoom.
-   page-bg stays outside (covers true viewport).
-   position:fixed inside a transformed element acts like position:absolute
-   relative to the transformed ancestor — which is exactly what we want.
+/* ── Large-screen scaling (> 1920px only) ──
+   CSS zoom на <html>: браузер сам пересчитывает все пиксели, медиазапросы,
+   innerWidth — ничего не ломается ниже 1920px.
 */
 (function() {
-  function getZoom() {
-    return Math.min(2.5, Math.max(0.25, window.outerWidth / window.innerWidth));
-  }
+  var BASE_WIDTH = 1920;
 
   function applyScale() {
-    const wrap = document.getElementById('scale-wrap');
-    if (!wrap) return;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
 
-    const isTouch  = window.matchMedia('(pointer: coarse)').matches;
-    const isNarrow = window.innerWidth <= 960;
-    if (isTouch || isNarrow) {
-      wrap.style.willChange = '';
-      wrap.style.transform  = '';
-      wrap.style.zoom       = '';
-      wrap.style.width      = '';
-      wrap.style.height     = '';
-      document.body.style.overflow = '';
-      document.body.style.height   = '';
+    if (vw > BASE_WIDTH) {
+      var scale = vw / BASE_WIDTH;
+      document.documentElement.style.zoom = scale;
+      window._pageScale = scale;
+      document.documentElement.style.setProperty('--real-vh', (vh / scale) + 'px');
+    } else {
+      document.documentElement.style.zoom = '';
       window._pageScale = 1;
-      document.documentElement.style.setProperty('--real-vh', window.innerHeight + 'px');
-      document.body.classList.remove('scale-active');
-      return;
+      document.documentElement.style.setProperty('--real-vh', vh + 'px');
     }
-
-    const zoom    = getZoom();
-    // Round to 4 decimal places — eliminates subpixel rounding jitter between
-    // compositor layers (scale-wrap transformed layer vs page-bg fixed layer)
-    const scale   = Math.round((1 / zoom) * 10000) / 10000;
-    const layoutH = Math.round(zoom * window.innerHeight);
-    const layoutW = Math.round(zoom * window.innerWidth);
-
-    // CSS zoom (not transform:scale) — borders/scrollbars stay physically 1px
-    // at any browser zoom level, without any calc() compensation.
-    wrap.style.willChange = '';
-    wrap.style.transform  = '';
-    wrap.style.zoom       = scale;
-    wrap.style.width      = layoutW + 'px';
-    wrap.style.height     = layoutH + 'px';
-    window._pageScale     = scale;
-    document.body.classList.add('scale-active');
-
-    document.body.style.overflow = '';
-    document.body.style.height   = '';
-
-    // layoutH = zoom * window.innerHeight = physical pixel height before CSS zoom shrinks it.
-    // This ensures --real-vh always equals the true visible viewport height regardless of zoom level.
-    document.documentElement.style.setProperty('--real-vh', layoutH + 'px');
-
-    requestAnimationFrame(() => {
-      if (typeof azAlignArrow  === 'function') azAlignArrow();
-      if (typeof spAlignArrow  === 'function') spAlignArrow();
-      if (typeof cmpAlignArrow === 'function') cmpAlignArrow();
-    });
   }
 
-  // Run before DOM renders to avoid flash
   document.addEventListener('DOMContentLoaded', applyScale);
   window.addEventListener('resize', applyScale);
-  // Also try immediately in case DOM is already ready
   applyScale();
 })();
 </script>
@@ -9871,6 +11148,7 @@ body.scale-active .console-panel {
             </div>
           </div>
         </div>
+        <div class="bot-scroll-body">
         <div class="bot-name" data-i18n="bot_name">Calculate Roll Bot</div>
         <div class="bot-tagline" data-i18n="bot_tagline">Item Analyzer &amp; Roll Calculator</div>
         <div class="bot-desc" data-i18n="bot_desc">Web version of the bot for analyzing rolls, weapon and armor forecasts. Identify rolls by damage, compare items and plan upgrades.</div>
@@ -9898,10 +11176,11 @@ body.scale-active .console-panel {
           </div>
         </div>
         <!-- VALUE LIST LINK -->
+        </div><!-- /bot-scroll-body -->
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.8.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.0.9</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -9917,7 +11196,7 @@ body.scale-active .console-panel {
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.8.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.0.9</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -10301,7 +11580,7 @@ body.scale-active .console-panel {
                 <div class="az-discord-dmg-box">
                   <div style="display:flex;align-items:center;gap:6px;">
                     <span class="az-discord-preview-lbl lbl-hp" data-i18n="lbl_health">Health:</span>
-                    <span class="az-discord-preview-val upg" id="az-disc-armor-hp-val">?</span>
+                    <span class="az-discord-preview-val hp" id="az-disc-armor-hp-val">?</span>
                   </div>
                 </div>
                 <div class="az-discord-preview-row">
@@ -11800,6 +13079,7 @@ body.scale-active .console-panel {
 
         <!-- ══════════ OR / ИЛИ DIVIDER ══════════ -->
         <div class="dt-or-divider">
+          <button class="dt-slot-del-btn dt-slot-del-btn-mid" id="dt-slot-del-btn-mid" onclick="dtDeleteSlot()" title="−" disabled>−</button>
           <span class="dt-or-line"></span>
           <span class="dt-or-text" data-i18n="btn_or">OR</span>
           <span class="dt-or-line"></span>
@@ -11953,6 +13233,21 @@ body.scale-active .console-panel {
 
       </div>
 
+      <!-- ── DT Right column (desktop panels + tablet action btns) ── -->
+      <div class="dt-right-col">
+
+        <!-- ── DT Tablet action buttons (866–988px) — переключают панели, без расчётов ── -->
+        <div class="dt-tablet-action-btns" id="dt-tablet-action-btns">
+          <button class="az-panel-btn dt-tablet-tab-btn active" id="dt-tablet-tab-check" onclick="dtTabletSwitchPanel('check')">
+            <span class="az-panel-btn-icon">🔎</span>
+            <span data-i18n="devtool_check_btn">CHECK TRUE VALUE</span>
+          </button>
+          <button class="az-panel-btn dt-tablet-tab-btn" id="dt-tablet-tab-confirm" onclick="dtTabletSwitchPanel('confirm')">
+            <span class="az-panel-btn-icon">✅</span>
+            <span data-i18n="devtool_confirm_btn">CONFIRM TRUE VALUE</span>
+          </button>
+        </div>
+
       <!-- ── DT Result Panels (desktop only) ── -->
       <div class="dt-result-panels">
 
@@ -11987,6 +13282,8 @@ body.scale-active .console-panel {
         </div>
 
       </div><!-- end dt-result-panels -->
+
+      </div><!-- end dt-right-col -->
 
     </div>
   </section>
@@ -12278,21 +13575,54 @@ Object.defineProperty(window, 'analysisHistory', {
 });
 window._analysisHistory = [];
 
-/* ── MOBILE DETECTION (zoom-independent: outerWidth is physical browser window size) ── */
+/* ── MOBILE DETECTION (zoom-AWARE: использует CSS-пиксели, как и @media) ── */
+/* ВАЖНО: JS-логика брейкпоинтов ДОЛЖНА совпадать с CSS @media запросами.
+   Раньше функция считала "физическую" ширину окна через outerWidth/innerWidth,
+   игнорируя zoom браузера. Это приводило к рассогласованию: при Ctrl+ CSS
+   переключался на мобильный layout (1690→1306→988→865→…), а JS продолжал
+   считать что мы на десктопе и не показывал mab/мобильный комментарий.
+   Теперь JS читает ту же ширину, что и @media (CSS-пиксели = innerWidth).
+   В DevTools (responsive mode) zoom = 1, поэтому поведение идентично. */
+function getPhysicalWidth() {
+  // CSS-пиксели = innerWidth. Учитывает zoom браузера, как и @media.
+  // visualViewport.width предпочтительнее (точнее при pinch-zoom на тачпаде),
+  // с откатом на innerWidth для старых браузеров.
+  var vv = window.visualViewport;
+  return Math.round((vv && vv.width) ? vv.width : window.innerWidth);
+}
 function isTrulyMobile(threshold) {
-  // innerWidth matches CSS media queries and is correct on mobile
-  // (scale transform is never active on touch/narrow devices, so innerWidth is reliable)
-  var t = threshold || 960;
-  return window.innerWidth <= t;
+  // 866–988: горизонтальный планшетный режим — НЕ мобила для AZ/SP логики
+  // 989–1306: контент в мобильном режиме левее консоли
+  // 1307–1690: широкий планшет — третья панель скрыта, mab показана
+  var w = getPhysicalWidth();
+  if (threshold) return w <= threshold;
+  // Без threshold: мобила = ≤865 ИЛИ 989–1306 ИЛИ 1307–1690
+  // 866–988 считается планшетом — там работают горизонтальные стрелки и quote-panel
+  return w <= 865 || (w >= 989 && w <= 1306) || (w >= 1307 && w <= 1690);
+}
+
+// Хелпер: 866-988px — планшетный режим (third-panel скрыта, mab показана)
+function isTablet866Px() {
+  var w = getPhysicalWidth();
+  return w >= 866 && w <= 988;
+}
+
+// Хелпер: 1307–1690px — широкий планшет (third-panel скрыта, mab показана)
+function isTablet1307Px() {
+  var w = getPhysicalWidth();
+  return w >= 1307 && w <= 1690;
+}
+
+// Хелпер: нужно ли показывать мобильные кнопки (mab) — ≤865, 866-988, 989-1306, 1307-1690
+function isMabVisible() {
+  return isTrulyMobile() || isTablet866Px();
 }
 
 /* ── PAGE ROUTING ── */
 function navigateTo(page) {
   // Close any open modals; only restore body overflow if scale is NOT active
   document.querySelectorAll('.az-modal.open').forEach(m => m.classList.remove('open'));
-  if (!document.body.classList.contains('scale-active')) {
-    document.body.style.overflow = '';
-  }
+  document.body.style.overflow = '';
 
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.scrollTop = 0; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -12314,12 +13644,14 @@ function navigateTo(page) {
   // When scale-active, pages scroll themselves (overflow-y:auto) — reset their scroll too
   if (pageEl) pageEl.scrollTop = 0;
   // Recalculate slot button widths when devtool becomes visible
-  if (page === 'devtool') requestAnimationFrame(() => dtResizeSlotBtns());
+  if (page === 'devtool') { _dtLastRowW = 0; requestAnimationFrame(() => requestAnimationFrame(() => { dtResizeSlotBtns(); dtMobUpdateVisibility(); })); }
   // Re-align arrows after page becomes visible (layout may differ from when they were set)
   requestAnimationFrame(() => {
     if (typeof azAlignArrow  === 'function') azAlignArrow();
     if (typeof spAlignArrow  === 'function') spAlignArrow();
     if (typeof cmpAlignArrow === 'function') cmpAlignArrow();
+    if (window.updateMobConsoleHeight) updateMobConsoleHeight();
+    if (window.attachMobConsoleObserver) attachMobConsoleObserver();
   });
 }
 
@@ -12967,6 +14299,9 @@ const T = {
     upd11_title: 'UPDATES OF v1.0.8.5 VERSION!',
     upd11_sub: 'Developer Notes 18.04.2026',
     upd11_body: `What\'s actually in v1.0.8.5...</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">Contest Battleaxe</span> values have been updated.\n<span class="upd-cyan">›</span> <span class="upd-accent">NOTABLE CHANGE</span> — two palettes have been reworked: <span class="upd-accent">Galaxy</span> and <span class="upd-accent">Time</span>. Even better now, more beautiful.\n\n<span class="upd-accent">What\'s expected in v1.0.9?</span>\nHonestly, no ideas yet besides more palettes and new items.\nExpecting the same items mentioned on the previous page.\nSend suggestions to: <span class="upd-cyan">@yarreyt</span>\nFeel free to share the site — just mention my username and link to my profile.\nOr point people to the Discord channel — <span class="upd-accent">#game-faqs</span>!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
+    upd12_title: 'UPDATES OF v1.0.9 VERSION!',
+    upd12_sub: 'Developer Notes 20.04.2026',
+    upd12_body: `It's been more than a day since the link wasn't removed — which is honestly great!\nFewer questions about rolls are appearing in the chat. Everyone knows to head over to <span class="upd-accent">#game-faqs</span> and visit the site. That's a real win.\n\n<span class="upd-accent">What's new in v1.0.9?</span>\nGiven that we've become more official, it was time to seriously think about responsiveness. SO!\nI'VE ADAPTED THE SITE FOR ALL POSSIBLE SCREEN WIDTHS, FOR THE MAXIMUM COMFORT OF EVERYONE WHO USES IT!\n<span class="upd-muted">(I can't be 100% sure everything works correctly on every device — I'll be asking for your feedback and any bugs you find)</span>\n\n<span class="upd-accent">What's coming in the milestone update v1.1.0?</span>\nA new palette — <span class="upd-accent">Atlantic!</span> Just felt like it, and it's a nod to the developer's name — H2O.\nAnd of course we're waiting for new items! Especially:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor, not guaranteed to appear\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nWell, it was at least mentioned in a contest on the <span class="upd-accent">#contests</span> channel in Discord.\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to all of you! :D</span>`,
     upd10_title: 'UPDATES OF v1.0.8 VERSION!',
     upd10_sub: 'Developer Notes 17.04.2026',
     upd10_body: `Collaboration with <span class="upd-cyan">SUSUheyb</span> is still going strong, and I want to congratulate him on the release of his update on April 16th.\n\nWe have a great celebration! Admin <span class="upd-cyan">@rebel</span> placed a link to the site — <span class="upd-accent">at my request</span> — in a pretty important channel: <span class="upd-accent">#game-faqs</span>. That means the link is now publicly available! We made it! Hooray!\n\nHuge thanks to everyone for the support! Right now in the <span class="upd-accent">#best-suggestions</span> channel you can see <span class="upd-accent">134 stars</span> on our topic! And we've succeeded!\n\nHowever, please follow the server rules. Don't forget that this is still just a link, which can be forwarded by anyone, or even copied for scam purposes.\nIf you want to point to the source of the site, either point to the channel itself which contains the official site link, OR mention me and tell people to check my profile bio. The link is mentioned there too.\n\n<span class="upd-accent">What's new in v1.0.8?</span>\nNothing major, except a newly added palette — <span class="upd-accent">Discord</span>!\nIn honor of the official mention of the site and its recognition.\n\nAlso, we're tentatively expecting the following:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nAlso possibly new weapons and relics (a heavily discussed topic).\n\n<span class="upd-accent">What's coming in v1.0.9?</span>\nI haven't come up with shit yet, but for now I'll occasionally add new color palettes — tied to events, or to my crazy fantasies :D\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -13168,6 +14503,9 @@ const T = {
     upd11_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8.5v!',
     upd11_sub: 'Записи разработчика 18.04.2026',
     upd11_body: `Что конкретно по обновлению 1.0.8.5...</span>\n<span class="upd-cyan">›</span> Значения оружия <span class="upd-accent">Contest Battleaxe</span> были изменены.\n<span class="upd-cyan">›</span> <span class="upd-accent">ЗАМЕТНОЕ ИЗМЕНЕНИЕ</span> — были реворкнуты две палитры: <span class="upd-accent">Galaxy</span> и <span class="upd-accent">Time</span>. Стали ещё лучше, более красивее.\n\n<span class="upd-accent">Что ожидается в 1.0.9?</span>\nДа так-же идей нет, кроме палитр и новых предметов.\nОжидаем такие-же предметы какие были упомянуты на прошлой странице.\nПишите по контакту — <span class="upd-cyan">@yarreyt</span>\nДелиться сайтом вы прежде можете, указывая мой юзер и на мой профиль.\nИли же указывать на дискорд-канал — <span class="upd-accent">#game-faqs</span>!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
+    upd12_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.9v!',
+    upd12_sub: 'Записи разработчика 20.04.2026',
+    upd12_body: `Уже прошло больше чем день как ссылку не удалили, что даже круто!\nПользователей в чате стало меньше, касаемо вопросов про ролл. Все знают что надо переходить на канал <span class="upd-accent">#game-faqs</span> и зайти на сайт. Это реально успех.\n\n<span class="upd-accent">Что касаемо обновления 1.0.9</span>\nУчитывая, что мы стали более официальными, нужно было всерьёз задуматься насчёт адаптации. ПОЭТОМУ!\nЯ АДАПТИРОВАЛ САЙТ ПОД ВСЕ ВОЗМОЖНЫЕ ШИРИНЫ ЭКРАНОВ, ДЛЯ МАКСИМАЛЬНОГО УДОБСТВА КАЖДОГО, КТО ЗДЕСЬ ПОЛЬЗУЕТСЯ САЙТОМ!\n<span class="upd-muted">(я не могу быть уверенным в том что всё работает корректно на каждом устройстве, буду интересоваться вашим мнением и найденными багами)</span>\n\n<span class="upd-accent">Что ожидается в юбилейном? обновлении 1.1.0..</span>\nНовая палитра — <span class="upd-accent">Atlantic!</span> Просто захотелось, да и отсылка на имя разработчика — H2O.\nНу и ждём конечно же новые предметы! Особенно:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня, не гарантировано её появление\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nНу, по крайней мере, упоминалась в конкурсе на канале <span class="upd-accent">#contests</span> в дискорде.\n\n<span class="upd-muted">А на этом всё!\nВсем добрейшего утра/дня/вечера/ночи! :D</span>`,
     upd10_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8v!',
     upd10_sub: 'Записи разработчика 17.04.2026',
     upd10_body: `Сотрудничество с <span class="upd-cyan">SUSUheyb</span> всё так-же продолжается и его поздравляю с выходом обновления 16 апреля.\n\nУ нас великий праздник! Администратор <span class="upd-cyan">@rebel</span> разместил ссылку на сайт <span class="upd-accent">ПО МОЕЙ ПРОСЬБЕ</span> на довольно таки важном канале <span class="upd-accent">#game-faqs</span>. Это значит что теперь ссылка стала общедоступной! Мы добились этого! Ура!\n\nВсем большое спасибо за поддержку! На данный момент на канале <span class="upd-accent">#best-suggestions</span> можно увидеть <span class="upd-accent">134 звезды</span> у нашего топика! И мы добились успеха!\n\nОднако, соблюдаем правила сервера. Не забываем что это всё ещё какая-то ссылка, которая может быть перекинута кем угодно, так-же и скопирована с целью мошенничества.\nЕсли вы хотите указать на источник сайта, то либо указываете на сам канал, в котором есть официальная ссылка сайта ИЛИ упоминаете меня и говорите чтобы посмотрели мою биографию в профиле. Там тоже упомянута ссылка.\n\n<span class="upd-accent">Что нового в версии 1.0.8?</span>\nОсобо ничего, кроме новой добавленной палитры — <span class="upd-accent">Discord</span>!\nВ честь официального упоминания сайта и его признания.\n\nА так-же, предварительно ожидаем такие вещи:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nА так-же может быть новые оружия и релики (очень обсуждаемая тема).\n\n<span class="upd-accent">Что будет в обновлении 1.0.9?</span>\nЯ ещё нихуя не придумал, но пока буду изредка добавлять новые цветовые палитры, связанные с событиями, или с моими ебанутыми фантазиями :D\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -13219,7 +14557,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 10;
+let updPage = 11;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -13232,6 +14570,7 @@ const UPD_PAGES = [
   { title:'upd9_title', sub:'upd9_sub', body:'upd9_body' },
   { title:'upd10_title', sub:'upd10_sub', body:'upd10_body' },
   { title:'upd11_title', sub:'upd11_sub', body:'upd11_body' },
+  { title:'upd12_title', sub:'upd12_sub', body:'upd12_body' },
 ];
 
 function updRender() {
@@ -13620,6 +14959,7 @@ function azSaveCategorySnapshot(cat) {
       armorResults: JSON.parse(JSON.stringify(azArmorResults)),
       resCurrentPart: azResCurrentPart,
       resultVisible: document.getElementById('az-result-card')?.style.display !== 'none',
+      discArmor: JSON.parse(JSON.stringify(_azDiscArmor)),
     };
   }
 }
@@ -13677,6 +15017,7 @@ function azSwitchCat(cat) {
       azIntendedUpg      = azSelectedUpg;
       azIsCorrupted      = azArmorPartData[azCurrentArmorPart].corrupted;
       azSelectedReforge  = 'None';
+      if (snap.discArmor) _azDiscArmor = snap.discArmor;
     }
     azRenderList();
     document.querySelectorAll('#az-item-list-panel .item-btn').forEach(b => {
@@ -13691,7 +15032,9 @@ function azSwitchCat(cat) {
     img.src = azGetArmorImageSrc(snap.item, isArmor ? azCurrentArmorPart : null);
     img.onload  = () => { img.style.display='block'; ph.style.display='none'; };
     img.onerror = () => { img.style.display='none';  ph.style.display='block'; };
-    document.getElementById('az-weapon-name').textContent = snap.item.name;
+    document.getElementById('az-weapon-name').textContent = (isArmor)
+      ? snap.item.name.replace(' Set','') + ' ' + azPartLabel(azCurrentArmorPart)
+      : snap.item.name;
     document.getElementById('az-weapon-name').className = 'az-weapon-name ' + ri.css;
     document.getElementById('az-weapon-rarity').textContent = ri.label.toUpperCase();
     document.getElementById('az-weapon-rarity').className = 'az-weapon-rarity ' + ri.css;
@@ -13762,12 +15105,14 @@ function azSwitchCat(cat) {
           azIsCorrupted  = _prevCorr;
         }
         document.getElementById('az-v-arrow')?.classList.add('visible');
-        if (isTrulyMobile()) {
+        if (isMabVisible()) {
           const mab = document.getElementById('az-mobile-action-btns');
           if (mab) mab.style.display = 'flex';
-        } else {
+        }
+        if (!isMabVisible()) {
           requestAnimationFrame(() => azAlignArrow());
         }
+        requestAnimationFrame(() => { if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
       } else {
         // Weapon: restore by re-rendering from saved data (language-independent)
         if (snap.resultVisible && snap.lastDmg !== null) {
@@ -13784,10 +15129,11 @@ function azSwitchCat(cat) {
             azRenderProcessTablet(azLastDmg);
           }
           document.getElementById('az-v-arrow')?.classList.add('visible');
-          if (isTrulyMobile()) {
+          if (isMabVisible()) {
             const mab = document.getElementById('az-mobile-action-btns');
             if (mab) mab.style.display = 'flex';
-          } else if (snap.hArrowVisible) {
+          }
+          if (!isMabVisible() && snap.hArrowVisible) {
             requestAnimationFrame(() => azAlignArrow());
           }
         }
@@ -14461,8 +15807,9 @@ function syncBtnCdForCat(btnId, catKey, onExpire) {
     clearTimeout(_btnCdTimers[btnId]);
     delete _btnCdActiveCat[btnId];
     btn.classList.remove('cd-active');
-    // Defer onExpire so the caller has time to restore snapshot state first
-    if (onExpire) setTimeout(onExpire, 0);
+    // NOTE: onExpire is NOT called here — callers (azSwitchCat etc.) call their
+    // update functions explicitly after fully restoring snapshot state.
+    // Calling it via setTimeout(0) here would fire before state is restored.
   }
 }
 
@@ -14685,14 +16032,16 @@ function azDoAnalyze() {
 
     document.getElementById('az-result-card').style.display = 'block';
     document.getElementById('az-v-arrow').classList.add('visible');
-    if (isTrulyMobile()) {
+    if (isMabVisible()) {
       const mab = document.getElementById('az-mobile-action-btns');
       if (mab) mab.style.display = 'flex';
+    }
+    if (isTrulyMobile()) {
       requestAnimationFrame(() => document.getElementById('az-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
     }
     document.getElementById('az-arrow-zone').classList.add('visible');
 
-    // Render process/tablet for the displayed part
+
     const shownRes = azArmorResults[azResCurrentPart];
     const prevPart = azCurrentArmorPart;
     const prevUpg  = azSelectedUpg;
@@ -14708,7 +16057,7 @@ function azDoAnalyze() {
     document.getElementById('az-h-arrow').classList.add('visible');
     document.getElementById('az-third-panel').classList.add('visible');
     azSwitchThirdTab('process');
-    requestAnimationFrame(() => azAlignArrow());
+    requestAnimationFrame(() => { azAlignArrow(); if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
     const setName = azCurrentItem.name.replace(' Set','');
     triggerBtnCooldown('az-analyze-btn', 2000, azCurrentCat, azUpdateAnalyzeBtn);
     if (filledParts.length === 1) {
@@ -14862,9 +16211,11 @@ function azDoAnalyze() {
 
     document.getElementById('az-result-card').style.display = 'block';
     document.getElementById('az-v-arrow').classList.add('visible');
-    if (isTrulyMobile()) {
+    if (isMabVisible()) {
       const mab = document.getElementById('az-mobile-action-btns');
       if (mab) mab.style.display = 'flex';
+    }
+    if (isTrulyMobile()) {
       requestAnimationFrame(() => document.getElementById('az-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
     }
     document.getElementById('az-arrow-zone').classList.add('visible');
@@ -14872,7 +16223,7 @@ function azDoAnalyze() {
     document.getElementById('az-h-arrow').classList.add('visible');
     document.getElementById('az-third-panel').classList.add('visible');
     azSwitchThirdTab('process');
-    requestAnimationFrame(() => azAlignArrow());
+    requestAnimationFrame(() => { azAlignArrow(); if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
 
     triggerBtnCooldown('az-analyze-btn', 2000, azCurrentCat, azUpdateAnalyzeBtn);
     addAnalysis({
@@ -16470,6 +17821,7 @@ function spDoAnalyze(skipCd) {
   document.getElementById('sp-result-card').style.display = 'block';
   document.getElementById('sp-empty').style.display = 'none';
   if (_spPage) _spPage.scrollTop = _spScrollSave;
+  requestAnimationFrame(() => { if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
 
   if (isArmor) {
     // Save current part's results
@@ -16627,21 +17979,23 @@ function spDoAnalyze(skipCd) {
   document.getElementById('sp-left-col').style.display = 'flex';
 
   const isMobile = isTrulyMobile();
-  const isTrueMobile = isTrulyMobile(760);
+  const isTrueMobile = isTrulyMobile(865);
   const mab = document.getElementById('sp-mobile-action-btns');
-  if (mab) mab.style.display = isMobile ? 'flex' : 'none';
+  if (mab) mab.style.display = isMabVisible() ? 'flex' : 'none';
 
+  const isTablet866  = !isTrueMobile && isTablet866Px();
+  const isTablet1307 = isTablet1307Px();
   if (!isMobile) {
     document.getElementById('sp-h-arrow').classList.add('visible');
     document.getElementById('sp-third-panel').classList.add('visible');
     requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
-  } else if (!isTrueMobile) {
-    // 761-960px: horizontal layout, h-arrow yes, third panel no
+  } else if (isTablet866 || isTablet1307) {
+    // 866-988px or 1307-1690px: horizontal layout, h-arrow visible, third panel hidden
     document.getElementById('sp-h-arrow').classList.add('visible');
     document.getElementById('sp-third-panel').classList.remove('visible');
     requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
   } else {
-    // <=760px: vertical layout
+    // <=865px or 989-1306px: vertical layout — scroll to result
     document.getElementById('sp-h-arrow').classList.remove('visible');
     requestAnimationFrame(() => document.getElementById('sp-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
   }
@@ -17061,6 +18415,7 @@ function cmpSwitchCategory(cat) {
       if (_cmpPage1) _cmpPage1.scrollTop = _cmpSS1;
       if (cat === 'armor') cmpRenderArmorResultView();
       else if (cmpResultActual && cmpResultWished) cmpRenderResultView();
+      requestAnimationFrame(() => { if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
     }
     // ── Discord mode: update formula and re-parse for the restored category ──
     if (_entryType === 'old') {
@@ -18221,8 +19576,7 @@ function cmpCheckSpecifics() {
     if (isTrulyMobile()) {
       requestAnimationFrame(() => document.getElementById('cmp-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
     }
-
-    // Log to Compares console
+    requestAnimationFrame(() => { if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
     const _cmpArmorParts = ['Helmet','Chestplate','Leggings']
       .filter(p => cmpArmorComputedResults[p] !== null)
       .map(p => {
@@ -18301,8 +19655,7 @@ function cmpCheckSpecifics() {
   if (isTrulyMobile()) {
     requestAnimationFrame(() => document.getElementById('cmp-result-card').scrollIntoView({behavior:'smooth', block:'start'}));
   }
-
-  // Log to Compares console
+  requestAnimationFrame(() => { if(window.azSpAdaptLayout) azSpAdaptLayout(); if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
   addCompareWeapon(item, rollA, rollB, upgA, upgB, corrA, corrB, refNameA, refNameB, cmpResultActual.dmg, cmpResultWished.dmg);
 }
 
@@ -18891,7 +20244,7 @@ function cmpSyncInputMode() {
       if (!isArmor) {
         // ── WEAPON: parse fresh from the saved raw input, then apply ──
         const wVal = wInp ? wInp.value : _cmpDiscWeaponInput;
-        if (_cmpDisc.roll1 === null && wVal && wVal.trim()) cmpDiscordParse();
+        if (wVal && wVal.trim()) cmpDiscordParse();
         const d = _cmpDisc;
         if (d.roll1 !== null) {
           const ref1Name = d.ref1
@@ -18920,6 +20273,10 @@ function cmpSyncInputMode() {
           if (d.yn2 !== null) { cmpCorrB = (d.yn2 === 'y' || d.yn2 === 'yes'); }
           if (d.ref1 !== null || d.ref2 !== null) {
             cmpRefA = ref1Name; cmpRefB = ref2Name; cmpRefAChosen = true;
+          } else {
+            // Both reforges were cleared — reset both to None without marking as chosen
+            // so refB auto-fill logic doesn't trigger
+            cmpRefA = 'None'; cmpRefB = 'None'; cmpRefAChosen = false;
           }
         }
       } else {
@@ -19062,6 +20419,34 @@ document.addEventListener('DOMContentLoaded', function() {
       navigateTo(_last);
     }
   } catch(_) {}
+  // Начальный расчёт высоты консоли на мобильном
+  requestAnimationFrame(() => {
+    if(window.updateMobConsoleHeight) updateMobConsoleHeight();
+    if(window.attachMobConsoleObserver) attachMobConsoleObserver();
+  });
+
+  // MutationObserver: пересчитывать при изменении структуры DOM (появление/скрытие блоков)
+  let _mobConsoleTimer = null;
+  function _scheduleConsoleUpdate() {
+    if (_mobConsoleTimer) return;
+    _mobConsoleTimer = requestAnimationFrame(() => {
+      _mobConsoleTimer = null;
+      if (window.updateMobConsoleHeight) updateMobConsoleHeight();
+    });
+  }
+
+  const _mobConsoleObserver = new MutationObserver(_scheduleConsoleUpdate);
+  document.querySelectorAll('.page').forEach(page => {
+    _mobConsoleObserver.observe(page, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+  });
+
+  // Скролл страницы тоже пересчитывает
+  window.addEventListener('scroll', _scheduleConsoleUpdate, { passive: true });
 });
 document.addEventListener('DOMContentLoaded', function() {
   const box = document.getElementById('cmp-disc-formula-box');
@@ -19753,14 +21138,14 @@ function openSettings() {
   panel.classList.add('open');
   document.getElementById('settings-btn').classList.add('active');
 
-  // Show backdrop on mobile
-  if (isTrulyMobile(600)) {
+  // Show backdrop on mobile/tablet (≤960px)
+  if (isTrulyMobile(988)) {
     const bd = document.getElementById('settings-backdrop');
-    if (bd) bd.style.display = 'block';
+    if (bd) { bd.style.display = 'block'; bd.classList.add('open'); }
   }
 
-  // Desktop: position below the gear button, right edge aligned (opens to the left)
-  if (!isTrulyMobile(600)) {
+  // Desktop only (>960px): position below the gear button, right edge aligned
+  if (!isTrulyMobile(988)) {
     const btn = document.getElementById('settings-btn');
     const rect = btn.getBoundingClientRect();
     // Position after render so we get the real panel width.
@@ -19785,7 +21170,7 @@ function closeSettings() {
   document.getElementById('settings-panel').classList.remove('open');
   document.getElementById('settings-btn').classList.remove('active');
   const bd = document.getElementById('settings-backdrop');
-  if (bd) bd.style.display = 'none';
+  if (bd) { bd.style.display = 'none'; bd.classList.remove('open'); }
 }
 
 // Close on outside click — but NOT if click was inside the panel content
@@ -20064,7 +21449,7 @@ function openPalettePopup(e) {
   popup.style.display = 'block';
   _paletteOpen = true;
 
-  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const isMobile = (getPhysicalWidth() <= 988);
 
   if (isMobile) {
     // Mobile: fixed centered
@@ -20294,11 +21679,10 @@ function azRefreshWebsiteInputs() {
 
   // 4. Reforge selector (только оружие)
   if (!isArmor) {
-    if (_azDiscWeapon && _azDiscWeapon.ref != null) {
-      // Discord→Website: применяем reforge из Discord-данных
-      azSelectedReforge = _azDiscWeapon.ref;
+    if (_azDiscWeapon) {
+      // Discord→Website: применяем reforge из Discord-данных (null = стёрт = None)
+      azSelectedReforge = _azDiscWeapon.ref || 'None';
     }
-    // Чистый Website-режим: azSelectedReforge остаётся как есть — пользователь выбирает сам
     const refValEl = document.getElementById('az-ref-val');
     if (refValEl) refValEl.textContent = azSelectedReforge === 'None' ? t('ref_none_select') : azSelectedReforge + ' Reforge';
     azBuildRefDrop();
@@ -21275,17 +22659,34 @@ let _dtSlots = [dtMakeSlot()];
 let _dtActiveSlot = 0;
 
 // ── Recalculate slot button widths on mobile ──
+let _dtLastRowW = 0;
 function dtResizeSlotBtns() {
-  if (!window.matchMedia('(max-width:600px)').matches) return;
   const row = document.getElementById('dt-slots-row');
   if (!row) return;
+  const w = getPhysicalWidth();
+  const needResize = w <= 865 || (w >= 866 && w <= 988) || (w >= 1307);
+
+  // ВАЖНО: всегда сначала сбрасываем инлайновые ширины, чтобы измерить
+  // реальную ширину контейнера в текущем layout, а не «застывшую» ширину
+  // от предыдущей зоны (иначе при ресайзе вниз-и-обратно кнопки и карточка
+  // остаются растянутыми из мобильного режима).
+  const btns = row.querySelectorAll('.dt-slot-btn, .dt-slot-add-btn');
+  btns.forEach(b => { b.style.width = ''; });
+
+  if (!needResize) {
+    _dtLastRowW = 0;
+    return;
+  }
+
+  // Принудительный reflow + измерение в следующем кадре,
+  // чтобы layout успел пересчитать offsetWidth контейнера после сброса.
+  // Делаем измерение СРАЗУ (после очистки выше offsetWidth уже корректен).
   const rowW = row.offsetWidth;
   if (!rowW) return;
+  _dtLastRowW = rowW;
   const gaps = (DT_MAX_SLOTS - 1) * 5;
   const btnW = Math.floor((rowW - gaps) / DT_MAX_SLOTS);
-  row.querySelectorAll('.dt-slot-btn, .dt-slot-add-btn').forEach(b => {
-    b.style.width = btnW + 'px';
-  });
+  btns.forEach(b => { b.style.width = btnW + 'px'; });
 }
 
 // ── Render the slot bar ──
@@ -21297,11 +22698,13 @@ function dtRenderSlotBar() {
   if (!row) return;
 
   row.innerHTML = '';
+  const _cachedW = _dtLastRowW ? Math.floor((_dtLastRowW - (DT_MAX_SLOTS - 1) * 5) / DT_MAX_SLOTS) : 0;
   _dtSlots.forEach((_, i) => {
     const btn = document.createElement('button');
     btn.className = 'dt-slot-btn' + (i === _dtActiveSlot ? ' active' : '');
     btn.textContent = i + 1;
     btn.onclick = () => dtSwitchSlot(i);
+    if (_cachedW) btn.style.width = _cachedW + 'px';
     row.appendChild(btn);
   });
 
@@ -21312,10 +22715,11 @@ function dtRenderSlotBar() {
   }
 
   if (delBtn) delBtn.disabled = _dtSlots.length <= 1;
+  const delBtnMid = document.getElementById('dt-slot-del-btn-mid');
+  if (delBtnMid) delBtnMid.disabled = _dtSlots.length <= 1;
   if (card) card.classList.toggle('dt-card-with-del', _dtSlots.length > 1);
-
-  // Mobile: measure actual row width and set fixed button size based on 5 slots max
-  if (window.matchMedia('(max-width:600px)').matches) {
+  const _rw = getPhysicalWidth();
+  if (_rw <= 865 || (_rw >= 866 && _rw <= 988) || _rw >= 1307) {
     requestAnimationFrame(() => dtResizeSlotBtns());
   }
 }
@@ -21906,8 +23310,11 @@ function dtRenderMultiTable(panelBodyId, allResults, mode) {
     bodyRows += `</tr>`;
   }
 
-  wrap.innerHTML = `<div class="roll-table-wrap" style="width:100%;box-sizing:border-box;">
-    <table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`;
+  // min-width: ROLL(60px) + each T.V. col(90px min) — ensures horizontal scroll when needed
+  const colMinW = 90;
+  const tableMinW = 60 + allResults.length * colMinW;
+  wrap.innerHTML = `<div class="roll-table-wrap" style="width:100%;box-sizing:border-box;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <table style="min-width:${tableMinW}px;"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`;
 
   // Build Print buttons row — inject after table render so we can attach data via JS (no JSON-in-onclick)
   const table = wrap.querySelector('table');
@@ -21990,29 +23397,79 @@ let _dtMobHasConfirm = false;
 let _dtMobActiveTab = 'check';
 
 function dtMobUpdateVisibility() {
-  // Use innerWidth (matches CSS @media max-width:960px) instead of outerWidth
-  const isMobile = window.innerWidth <= 960;
+  const isMobile = getPhysicalWidth() <= 988;
+  const isTablet = (getPhysicalWidth() >= 866 && getPhysicalWidth() <= 988) || (getPhysicalWidth() >= 989 && getPhysicalWidth() <= 1306) || (getPhysicalWidth() >= 1307 && getPhysicalWidth() <= 1690);
   const arrow = document.getElementById('dt-mob-v-arrow');
   const wrap = document.getElementById('dt-mob-result-wrap');
   const tabBtns = document.getElementById('dt-mob-tab-btns');
+  const tabletBtns = document.getElementById('dt-tablet-action-btns');
+  const checkPanel = document.getElementById('dt-check-panel');
+  const confirmPanel = document.getElementById('dt-confirm-panel');
   if (!wrap) return;
   const hasAny = _dtMobHasCheck || _dtMobHasConfirm;
   const hasBoth = _dtMobHasCheck && _dtMobHasConfirm;
-  if (arrow) arrow.classList.toggle('visible', hasAny);
-  if (wrap) wrap.classList.toggle('has-data', hasAny);
-  if (tabBtns) tabBtns.style.display = (isMobile && hasBoth) ? 'flex' : 'none';
+
+  // Mobile: показываем враппер и таб-кнопки
+  if (arrow) arrow.classList.toggle('visible', hasAny && !isTablet);
+  if (wrap) wrap.classList.toggle('has-data', hasAny && !isTablet);
+  if (tabBtns) tabBtns.style.display = (isMobile && !isTablet && hasBoth) ? 'flex' : 'none';
+
+  // Tablet: кнопки только когда есть ОБА результата
+  if (tabletBtns) tabletBtns.classList.toggle('visible', isTablet && hasBoth);
+
+
+  // Tablet: одна активная панель — переключается кнопками
+  if (isTablet) {
+    // Показываем только активную панель
+    const activeTab = _dtMobActiveTab || 'check';
+    if (checkPanel) checkPanel.classList.toggle('dt-tablet-active', activeTab === 'check');
+    if (confirmPanel) confirmPanel.classList.toggle('dt-tablet-active', activeTab === 'confirm');
+    // Если нет данных по confirm — всегда показываем check
+    if (!_dtMobHasConfirm && checkPanel) {
+      checkPanel.classList.add('dt-tablet-active');
+      if (confirmPanel) confirmPanel.classList.remove('dt-tablet-active');
+    }
+    if (!_dtMobHasCheck && !_dtMobHasConfirm) {
+      // Нет данных — показываем check (пустой)
+      if (checkPanel) checkPanel.classList.add('dt-tablet-active');
+      if (confirmPanel) confirmPanel.classList.remove('dt-tablet-active');
+    }
+  } else {
+    // Desktop: обе панели видны (убираем tablet-active)
+    if (checkPanel) checkPanel.classList.remove('dt-tablet-active');
+    if (confirmPanel) confirmPanel.classList.remove('dt-tablet-active');
+  }
+}
+
+// ── DT Tablet: переключение панелей (только UI, без расчётов) ──
+function dtTabletSwitchPanel(tab) {
+  _dtMobActiveTab = tab;
+  const checkPanel   = document.getElementById('dt-check-panel');
+  const confirmPanel = document.getElementById('dt-confirm-panel');
+  const checkBtn     = document.getElementById('dt-tablet-tab-check');
+  const confirmBtn   = document.getElementById('dt-tablet-tab-confirm');
+  if (checkPanel)   checkPanel.classList.toggle('dt-tablet-active',   tab === 'check');
+  if (confirmPanel) confirmPanel.classList.toggle('dt-tablet-active', tab === 'confirm');
+  if (checkBtn)     checkBtn.classList.toggle('active',   tab === 'check');
+  if (confirmBtn)   confirmBtn.classList.toggle('active', tab === 'confirm');
 }
 
 function dtMobSwitchTab(tab) {
   _dtMobActiveTab = tab;
-  const checkPanel   = document.getElementById('dt-mob-check-panel');
-  const confirmPanel = document.getElementById('dt-mob-confirm-panel');
+  // Mobile panels
+  const mobCheckPanel   = document.getElementById('dt-mob-check-panel');
+  const mobConfirmPanel = document.getElementById('dt-mob-confirm-panel');
   const checkBtn     = document.getElementById('dt-mob-tab-check');
   const confirmBtn   = document.getElementById('dt-mob-tab-confirm');
-  if (checkPanel)   checkPanel.classList.toggle('active',   tab === 'check');
-  if (confirmPanel) confirmPanel.classList.toggle('active', tab === 'confirm');
+  if (mobCheckPanel)   mobCheckPanel.classList.toggle('active',   tab === 'check');
+  if (mobConfirmPanel) mobConfirmPanel.classList.toggle('active', tab === 'confirm');
   if (checkBtn)     checkBtn.classList.toggle('active',     tab === 'check');
   if (confirmBtn)   confirmBtn.classList.toggle('active',   tab === 'confirm');
+  // Tablet desktop panels — переключаем dt-tablet-active
+  const deskCheckPanel   = document.getElementById('dt-check-panel');
+  const deskConfirmPanel = document.getElementById('dt-confirm-panel');
+  if (deskCheckPanel)   deskCheckPanel.classList.toggle('dt-tablet-active',   tab === 'check');
+  if (deskConfirmPanel) deskConfirmPanel.classList.toggle('dt-tablet-active', tab === 'confirm');
 }
 
 // ── Shared calculate & render for check/confirm ──
@@ -22073,7 +23530,7 @@ function dtRunCalc(mode) {
 
   requestAnimationFrame(() => {
     const wrap = document.getElementById('dt-mob-result-wrap');
-    if (wrap && isTrulyMobile(960)) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (wrap && isTrulyMobile(988)) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
@@ -22263,15 +23720,93 @@ function clearItemSearch(panelId) {
     }
   }, {passive:true});
 
+  // ── Динамическая высота консоли на мобильном (<988px) ──
+  // Считает свободное пространство: viewport - nav - контент над консолью.
+  // Минимум MIN_H (~3 карточки), максимум MAX_H (~8 карточек).
+  window.updateMobConsoleHeight = function() {
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 56;
+    const vh = window.innerHeight;
+
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+    const consolePanel = activePage.querySelector('.console-panel');
+    if (!consolePanel) return;
+
+    // Если десктоп — сбросить inline стиль и выйти
+    if (getPhysicalWidth() > 988) {
+      consolePanel.querySelectorAll('.console-body').forEach(b => { b.style.maxHeight = ''; });
+      return;
+    }
+
+    const MIN_H = 260; // ~3 карточки
+
+    // Высота шапки консоли (header + tabs)
+    const consoleHeader = consolePanel.querySelector('.console-header');
+    const consoleTabs   = consolePanel.querySelector('.console-tabs');
+    const headerH = (consoleHeader ? consoleHeader.offsetHeight : 0)
+                  + (consoleTabs   ? consoleTabs.offsetHeight   : 0);
+
+    // padding-top страницы (навбар сверху на 600-988px)
+    const pagePadTop = parseInt(getComputedStyle(activePage).paddingTop) || 0;
+
+    // Суммируем offsetHeight всех прямых детей страницы ДО консоли
+    let contentH = 0;
+    for (const child of activePage.children) {
+      if (child === consolePanel) break;
+      contentH += child.offsetHeight;
+    }
+
+    // Доступное место для тела консоли — без MAX ограничения сверху
+    const available = vh - pagePadTop - contentH - headerH - navH;
+    const bodyH = Math.max(MIN_H, available);
+
+    consolePanel.querySelectorAll('.console-body').forEach(b => {
+      b.style.maxHeight = bodyH + 'px';
+    });
+  };
+
+  // Дебаунс-версия — чтобы не дёргать при каждом DOM-изменении
+  let _mobConsoleTimer = null;
+  window.scheduleUpdateMobConsoleHeight = function() {
+    if (_mobConsoleTimer) clearTimeout(_mobConsoleTimer);
+    _mobConsoleTimer = setTimeout(() => { updateMobConsoleHeight(); _mobConsoleTimer = null; }, 50);
+  };
+
+  // MutationObserver — следит за изменениями DOM на активной странице
+  // и пересчитывает высоту консоли автоматически
+  let _mobConsoleObserver = null;
+  window.attachMobConsoleObserver = function() {
+    if (_mobConsoleObserver) { _mobConsoleObserver.disconnect(); _mobConsoleObserver = null; }
+    if (getPhysicalWidth() > 988) return;
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+    _mobConsoleObserver = new MutationObserver(() => scheduleUpdateMobConsoleHeight());
+    _mobConsoleObserver.observe(activePage, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+  };
+
   // Realign compare and analyze arrows on resize
-  let _palettePrevMobile = window.matchMedia('(max-width: 640px)').matches;
+  let _palettePrevMobile = (getPhysicalWidth() <= 988);
+  let _dtPrevZone = (function(){ const w = getPhysicalWidth(); return w <= 865 ? 'sm' : (w <= 988 ? 'md' : (w <= 1306 ? 'lg' : 'xl')); })();
   window.addEventListener('resize', () => {
     requestAnimationFrame(() => {
+      // Если зона изменилась — сбросить кеш ширины слотов чтобы пересчитать
+      const _w = getPhysicalWidth();
+      const _zone = _w <= 865 ? 'sm' : (_w <= 988 ? 'md' : (_w <= 1306 ? 'lg' : 'xl'));
+      const _zoneChanged = _zone !== _dtPrevZone;
+      if (_zoneChanged) { _dtLastRowW = 0; _dtPrevZone = _zone; }
       cmpAlignArrow(); azAlignArrow(); spAlignArrow(); dtMobUpdateVisibility(); dtResizeSlotBtns();
+      // При смене зоны вызываем повторно через ещё один кадр —
+      // layout родительских контейнеров (flex-direction, grid) к этому моменту
+      // уже точно применён, и offsetWidth слот-ряда корректен.
+      if (_zoneChanged) {
+        requestAnimationFrame(() => { _dtLastRowW = 0; dtResizeSlotBtns(); });
+      }
       azSpAdaptLayout();
+      if (window.updateMobConsoleHeight) updateMobConsoleHeight();
+      if (window.attachMobConsoleObserver) attachMobConsoleObserver();
       // Palette popup: если открыто и режим (мобайл/десктоп) сменился — переоткрыть в нужном виде
       if (_paletteOpen) {
-        const nowMobile = window.matchMedia('(max-width: 640px)').matches;
+        const nowMobile = (getPhysicalWidth() <= 988);
         if (nowMobile !== _palettePrevMobile) {
           closePalettePopup();
           setTimeout(() => openPalettePopup(), 0);
@@ -22292,45 +23827,70 @@ function clearItemSearch(panelId) {
         }
         _palettePrevMobile = nowMobile;
       } else {
-        _palettePrevMobile = window.matchMedia('(max-width: 640px)').matches;
+        _palettePrevMobile = (getPhysicalWidth() <= 988);
       }
     });
   });
 
+  // ── ZOOM/pinch handler: visualViewport.resize ловит pinch-zoom на тачпаде
+  //    и плавные изменения масштаба, которые не всегда триггерят обычное
+  //    window 'resize'. Перебрасываем в обычный resize, чтобы переиспользовать
+  //    весь существующий код адаптации (mab, quote, панели, стрелки). ──
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
   // ── AZ / SP: адаптация layout при ресайзе ──
-  // При переходе desktop↔mobile пересчитываем видимость панелей, стрелок и кнопок
+  // Пороги: >1690 = десктоп | 1307–1690 = широкий планшет | 866–1306 = не-десктоп (мобайл/планшет/широкий-мобайл) | ≤865 = полный мобайл
   window.azSpAdaptLayout = function() {
     // ── ANALYZE ROLL ──
     const azResultCard = document.getElementById('az-result-card');
     const azResultVisible = azResultCard && azResultCard.style.display !== 'none';
     if (azResultVisible) {
-      const mobile = isTrulyMobile();
-      const trueMobile = isTrulyMobile(760);
-      // Mobile action buttons
+      const mobile     = isTrulyMobile();     // ≤865 | 989–1306 | 1307–1690 = не десктоп
+      const trueMobile = isTrulyMobile(865);  // ≤865  = полный мобайл
+      const tablet866  = isTablet866Px();     // 866–988 планшет
+      const tablet1307 = isTablet1307Px();    // 1307–1690 широкий планшет
+      // Mobile action buttons — на ≤865, 866-988, 989-1306, 1307-1690
       const azMab = document.getElementById('az-mobile-action-btns');
-      if (azMab) azMab.style.display = mobile ? 'flex' : 'none';
-      // Mobile quote visibility
+      if (azMab) azMab.style.display = isMabVisible() ? 'flex' : 'none';
+      // Mobile quote — на ≤865, 866-988, 989-1306 (но НЕ на 1307-1690)
       const azQuoteMob = document.getElementById('az-quote-mobile');
       if (azQuoteMob && azQuoteMob.innerHTML.trim()) {
-        if (mobile) azQuoteMob.classList.add('visible');
+        if (mobile && !tablet1307) azQuoteMob.classList.add('visible');
         else azQuoteMob.classList.remove('visible');
       }
-      // Desktop quote visibility
+      // Desktop quote — на >1690 и на 1307-1690
       const azQuotePanel = document.getElementById('az-quote-panel');
       if (azQuotePanel && azQuotePanel.innerHTML.trim()) {
-        if (!mobile) azQuotePanel.classList.add('visible');
+        if (!mobile || tablet1307) azQuotePanel.classList.add('visible');
         else azQuotePanel.classList.remove('visible');
       }
-      // Arrow zone, h-arrow, third panel — desktop only
       const azArrowZone = document.getElementById('az-arrow-zone');
       const azHArrow    = document.getElementById('az-h-arrow');
       const azThird     = document.getElementById('az-third-panel');
       if (!mobile) {
+        // Десктоп (>1690): стрелка + третья панель
         if (azArrowZone) azArrowZone.classList.add('visible');
         if (azHArrow)    azHArrow.classList.add('visible');
         if (azThird)     azThird.classList.add('visible');
         requestAnimationFrame(() => azAlignArrow());
+      } else if (tablet866) {
+        // 866–988: горизонтальная стрелка остаётся видимой, но без третьей панели
+        if (azArrowZone) azArrowZone.classList.remove('visible');
+        if (azHArrow)    azHArrow.classList.add('visible');
+        if (azThird)     azThird.classList.remove('visible');
+        requestAnimationFrame(() => azAlignArrow());
+      } else if (tablet1307) {
+        // 1307–1690: нет третьей панели, h-стрелка остаётся, есть мобильные кнопки
+        if (azArrowZone) azArrowZone.classList.remove('visible');
+        if (azHArrow)    azHArrow.classList.add('visible');
+        if (azThird)     azThird.classList.remove('visible');
+        requestAnimationFrame(() => azAlignArrow());
       } else {
+        // ≤865 или 989–1306: нет стрелки, нет третьей панели
         if (azArrowZone) azArrowZone.classList.remove('visible');
         if (azHArrow)    azHArrow.classList.remove('visible');
         if (azThird)     azThird.classList.remove('visible');
@@ -22341,33 +23901,74 @@ function clearItemSearch(panelId) {
     const spResultCard = document.getElementById('sp-result-card');
     const spResultVisible = spResultCard && spResultCard.style.display !== 'none';
     if (spResultVisible) {
-      const mobile = isTrulyMobile();
-      const trueMobile = isTrulyMobile(760);
+      const mobile    = isTrulyMobile();
+      const tablet866 = isTablet866Px();
+      const tablet1307 = isTablet1307Px();    // 1307–1690 широкий планшет
       const spMab = document.getElementById('sp-mobile-action-btns');
-      if (spMab) spMab.style.display = mobile ? 'flex' : 'none';
-      // Mobile quote
+      if (spMab) spMab.style.display = isMabVisible() ? 'flex' : 'none';
+      // Mobile quote — на ≤865, 866-988, 989-1306 (но НЕ на 1307-1690)
       const spQuoteMob = document.querySelector('#sp-result-card .az-quote-mobile');
       if (spQuoteMob && spQuoteMob.innerHTML.trim()) {
-        if (trueMobile) spQuoteMob.classList.add('visible');
+        if (mobile && !tablet1307) spQuoteMob.classList.add('visible');
         else spQuoteMob.classList.remove('visible');
       }
-      const spHArrow  = document.getElementById('sp-h-arrow');
-      const spThird   = document.getElementById('sp-third-panel');
-      const spVArrow  = document.getElementById('sp-v-arrow');
+      const spHArrow = document.getElementById('sp-h-arrow');
+      const spThird  = document.getElementById('sp-third-panel');
       if (!mobile) {
-        // Desktop (>960px): h-arrow + third panel
+        // Десктоп (>1690): h-стрелка + третья панель
         if (spHArrow) spHArrow.classList.add('visible');
         if (spThird)  spThird.classList.add('visible');
         requestAnimationFrame(() => requestAnimationFrame(() => { spAlignArrow(); spSyncPanelHeight(); }));
-      } else if (!trueMobile) {
-        // Tablet (761-960px): h-arrow, no third panel
+      } else if (tablet866) {
+        // 866–988: h-стрелка без третьей панели
+        if (spHArrow) spHArrow.classList.add('visible');
+        if (spThird)  spThird.classList.remove('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
+      } else if (tablet1307) {
+        // 1307–1690: нет третьей панели, h-стрелка остаётся, есть мобильные кнопки
         if (spHArrow) spHArrow.classList.add('visible');
         if (spThird)  spThird.classList.remove('visible');
         requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
       } else {
-        // Mobile (<=760px): no h-arrow, no third panel
+        // ≤865 или 989–1306: нет h-стрелки, нет третьей панели
         if (spHArrow) spHArrow.classList.remove('visible');
         if (spThird)  spThird.classList.remove('visible');
+      }
+    }
+
+    // ── COMPARE ──
+    const cmpResultCard = document.getElementById('cmp-result-card');
+    const cmpResultVisible = cmpResultCard && cmpResultCard.style.display !== 'none';
+    if (cmpResultVisible) {
+      const w = getPhysicalWidth();
+      const tablet866 = isTablet866Px();
+      const tablet1307 = isTablet1307Px();    // 1307–1690 широкий планшет
+      const cmpHArrow = document.getElementById('cmp-h-arrow');
+      const cmpThird  = document.getElementById('cmp-third-panel');
+      const cmpMab    = document.getElementById('cmp-mobile-action-btns');
+      if (w > 1690) {
+        // Десктоп (>1690): h-стрелка + третья панель
+        if (cmpHArrow) cmpHArrow.classList.add('visible');
+        if (cmpThird)  cmpThird.classList.add('visible');
+        if (cmpMab)    cmpMab.classList.remove('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => cmpAlignArrow()));
+      } else if (tablet1307) {
+        // 1307–1690: нет третьей панели, h-стрелка остаётся, есть мобильные кнопки
+        if (cmpHArrow) cmpHArrow.classList.add('visible');
+        if (cmpThird)  cmpThird.classList.remove('visible');
+        if (cmpMab)    cmpMab.classList.add('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => cmpAlignArrow()));
+      } else if (tablet866) {
+        // 866–988: h-стрелка без третьей панели
+        if (cmpHArrow) cmpHArrow.classList.add('visible');
+        if (cmpThird)  cmpThird.classList.remove('visible');
+        if (cmpMab)    cmpMab.classList.add('visible');
+        requestAnimationFrame(() => requestAnimationFrame(() => cmpAlignArrow()));
+      } else {
+        // ≤865 или 989–1306: без h-стрелки и третьей панели, есть мобильные кнопки
+        if (cmpHArrow) cmpHArrow.classList.remove('visible');
+        if (cmpThird)  cmpThird.classList.remove('visible');
+        if (cmpMab)    cmpMab.classList.add('visible');
       }
     }
   };

@@ -26043,7 +26043,7 @@ function clearItemSearch(panelId) {
   function _curTheme(){ return localStorage.getItem('_ed_theme') || 'galaxy'; }
   function _getVol(){ return Math.max(0, Math.min(100, parseInt(localStorage.getItem('_ed_bg_volume') ?? '100', 10))); }
   function _isEnabled(){ return _getVol() > 0; }
-  function _isActive(){ return _SND.visible && _SND.focused; }
+  function _isActive(){ return true; }
   function _shouldSound(){ return _isEnabled() && _isActive(); }
   function _shouldBg(){ return _shouldSound() && !_SND.baldiBgMuted; }
 
@@ -26207,12 +26207,9 @@ function clearItemSearch(panelId) {
   window.sndApplyVolume = _applyVolume;
 
   // ── видимость / фокус ──
-  document.addEventListener('visibilitychange', () => {
-    _SND.visible = !document.hidden;
-    _applyVolume();
-  });
-  window.addEventListener('blur',  () => { _SND.focused = false; _applyVolume(); });
-  window.addEventListener('focus', () => { _SND.focused = true;  _applyVolume(); });
+  document.addEventListener('visibilitychange', () => { _SND.visible = !document.hidden; });
+  window.addEventListener('blur',  () => { _SND.focused = false; });
+  window.addEventListener('focus', () => { _SND.focused = true;  });
 
   // ── монки-патч setBgSound, чтобы громкость моментально применялась ──
   if (typeof window.setBgSound === 'function'){

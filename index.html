@@ -7,16 +7,31 @@
 <!-- ── EARLY THEME: применяем класс темы ДО рендера страницы, без мигания ── -->
 <script>
 (function(){
-  var t = localStorage.getItem('_ed_theme');
+  // ── Cookie helpers (используются здесь и позже в коде) ──
+  window._edGetCookie = function(name) {
+    var m = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
+    return m ? decodeURIComponent(m[1]) : null;
+  };
+  window._edSetCookie = function(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value)
+      + '; max-age=31536000; path=/; SameSite=Lax';
+  };
+
+  // cookie приоритетнее localStorage — переживает ITP в Safari
+  var t = window._edGetCookie('_ed_theme') || localStorage.getItem('_ed_theme');
   // Первый визит — пасхальная тема по умолчанию
-  if (!t) { t = 'easter'; localStorage.setItem('_ed_theme', 'easter'); }
-  if (t === 'gold') { t = 'time'; localStorage.setItem('_ed_theme', 'time'); }
-  if (t === 'gold' || t === 'time') document.documentElement.classList.add('theme-time');
+  if (!t) { t = 'easter'; }
+  if (t === 'gold') { t = 'time'; }
+  // Сохраняем в оба хранилища
+  window._edSetCookie('_ed_theme', t);
+  localStorage.setItem('_ed_theme', t);
+  if (t === 'time') document.documentElement.classList.add('theme-time');
   if (t === 'easter')  document.documentElement.classList.add('theme-easter');
   if (t === 'classic') document.documentElement.classList.add('theme-classic');
   if (t === 'baldi')   document.documentElement.classList.add('theme-baldi');
   if (t === 'discord') document.documentElement.classList.add('theme-discord');
   if (t === 'galaxy')  document.documentElement.classList.add('theme-galaxy');
+  if (t === 'atlantic') document.documentElement.classList.add('theme-atlantic');
 })();
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="images/Stuff/Weapons/ascvoidblade.png">
@@ -981,6 +996,10 @@
 :root.theme-time .cmp-view-btn:hover { background: rgba(245,200,66,0.14) !important; border-color: rgba(245,200,66,0.48) !important; color: #e8e2d0 !important; }
 :root.theme-time .cmp-view-btn.active { background: rgba(245,200,66,0.15) !important; border-color: rgba(245,200,66,0.48) !important; }
 
+/* ── TIME: CMP Discord card — Upgrades value color ── */
+:root.theme-time #cmp-disc-upg-a,
+:root.theme-time #cmp-disc-upg-b { color: var(--color-upg) !important; }
+
 /* ── TIME: Banner title — мобильный override ── */
 :root.theme-time .banner-game-title {
   background: none !important;
@@ -1011,17 +1030,30 @@
 /* ── TIME: Mobile credit cards ── */
 @media(max-width:1306px){
   :root.theme-time .credits-block {
-    background: rgba(245,200,66,0.07) !important;
-    border-color: rgba(245,200,66,0.18) !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    background: rgba(245,200,66,0.04) !important;
+    border-top: 1px solid rgba(245,200,66,0.12) !important;
+    border-bottom: 1px solid rgba(245,200,66,0.12) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-time .credits-block:hover {
+    background: rgba(245,200,66,0.09) !important;
+    border-color: rgba(245,200,66,0.35) !important;
   }
   :root.theme-time .credit-card {
     background: none !important;
-    border-color: transparent !important;
-  }
-  :root.theme-time .credit-card:hover {
-    border-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -1075,6 +1107,1235 @@
   --color-corr:   #9B5E85;
   --color-reforge:#2E8AA5;
 }
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC THEME
+   Глубокий океан + песочные акценты на панелях.
+   Фон: deep navy/teal (banner6_1) — глубина воды
+   Панели: тёплый песочный беж — контраст «берег vs океан»
+   Акценты: бирюза, аквамарин, золото-песок
+   Текст: светлый цвета морской пены на тёмном,
+          тёмный шоколад/уголь на песочных панелях
+══════════════════════════════════════════════════════ */
+:root.theme-atlantic {
+  /* Базовые семантические токены (для совместимости с :root системой) */
+  --gold:           #2DB8E8;   /* основной акцент — яркая бирюза */
+  --gold-bright:    #6FD8FF;   /* блик на воде */
+  --gold-glow:      #B8E8FF;   /* пенный отблеск */
+  --amber:          #E8C078;   /* тёплый песок */
+  --cyan-rune:      #6FD8FF;
+  --green-stat:     #4FB89A;   /* морская зелень */
+  --border-gold:    #C8B488;   /* кромка песка */
+  --border-rune:    #C84766;   /* коралловый риф */
+  --bg-void:        #0E4866;   /* мелководье вместо впадины */
+  --theme-bg-image: url('images/Home Page/banner7_1.png');
+  --theme-name:     atlantic;
+  --theme-switch-glow: #2DB8E8;
+  --gold-rgb:       45, 184, 232;
+  /* Тексты — светлые на тёмном океане */
+  --text-primary:   #EAF6FB;
+  --text-muted:     #B0D6E8;
+  --text-dim:       #7FB3CC;
+  /* Утилитарные оттенки Atlantic */
+  --atl-deep:       #0B3552;   /* глубокая вода (но не чёрная) */
+  --atl-ocean:      #145A82;   /* основной океан */
+  --atl-wave:       #1F7AAB;   /* волна */
+  --atl-shallow:    #2DB8E8;   /* мелководье — ЯРКИЙ */
+  --atl-bright:     #6FD8FF;   /* блик */
+  --atl-foam:       #DCF1F8;   /* пена */
+  --atl-sand:       #E8D4A8;   /* мокрый песок (панели) */
+  --atl-sand-warm:  #D9BE85;   /* тёплый песок (заголовки) */
+  --atl-sand-dark:  #6E5A38;   /* мокрый тёмный песок (бордеры) */
+  --atl-driftwood:  #2A1F10;   /* плавник — очень тёмный текст на песке */
+  --atl-driftwood2: #4A3820;   /* вторичный тёмный текст */
+  /* Semantic UI */
+  --color-dmg:    #E04E6E;
+  --color-hp:     #4FB89A;
+  --color-upg:    #2DB8E8;
+  --color-corr:   #9B6FBF;
+  --color-reforge:#1F7AAB;
+}
+
+/* ── ATLANTIC: фон страницы ── */
+:root.theme-atlantic body {
+  background: #0E4866 !important;
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .page-bg {
+  background-image: url('images/Home Page/banner7_2.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  filter: saturate(1.15) brightness(1.10);
+}
+:root.theme-atlantic .page-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(111,216,255,0.20) 0%, rgba(20,90,130,0.40) 55%, rgba(11,53,82,0.55) 100%);
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+:root.theme-atlantic nav {
+  background: linear-gradient(180deg, rgba(6,28,46,0.97), rgba(10,40,65,0.96)) !important;
+  border-color: rgba(45,184,232,0.35) !important;
+  box-shadow: 0 2px 18px rgba(11,53,82,0.55);
+}
+:root.theme-atlantic nav::after {
+  background: linear-gradient(90deg, transparent, rgba(111,216,255,0.6), transparent) !important;
+}
+:root.theme-atlantic .nav-btn { color: rgba(220,241,248,0.78) !important; }
+:root.theme-atlantic .nav-btn:hover {
+  color: #DCF1F8 !important;
+  background: rgba(45,184,232,0.18) !important;
+}
+:root.theme-atlantic .nav-btn.active {
+  color: #6FD8FF !important;
+  background: rgba(45,184,232,0.25) !important;
+  text-shadow: 0 0 12px rgba(111,216,255,0.7);
+}
+:root.theme-atlantic .nav-btn svg path,
+:root.theme-atlantic .nav-btn svg circle,
+:root.theme-atlantic .nav-btn svg line,
+:root.theme-atlantic .nav-btn svg polyline,
+:root.theme-atlantic .nav-btn svg rect {
+  stroke: rgba(220,241,248,0.78) !important;
+}
+:root.theme-atlantic .nav-btn.active svg,
+:root.theme-atlantic .nav-btn.active svg path,
+:root.theme-atlantic .nav-btn.active svg circle,
+:root.theme-atlantic .nav-btn.active svg line,
+:root.theme-atlantic .nav-btn.active svg polyline,
+:root.theme-atlantic .nav-btn.active svg rect {
+  stroke: #6FD8FF !important;
+  filter: none !important;
+}
+
+/* ── BANNER ── */
+:root.theme-atlantic .banner-overlay {
+  background: none !important;
+}
+:root.theme-atlantic .banner-eyebrow { color: rgba(199,232,242,0.78) !important; }
+:root.theme-atlantic .banner-game-title {
+  color: #C7E8F2 !important;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 24px rgba(95,200,232,0.65), 0 2px 8px rgba(6,30,46,0.8) !important;
+}
+:root.theme-atlantic .banner-glow-line {
+  background: linear-gradient(90deg, transparent, rgba(95,200,232,0.7), transparent) !important;
+}
+
+/* ── ПАНЕЛИ: ПЕСОЧНЫЕ (главный «контраст берега») ── */
+:root.theme-atlantic .bot-panel,
+:root.theme-atlantic .updates-panel,
+:root.theme-atlantic .item-list-panel,
+:root.theme-atlantic .mod-panel {
+  background: linear-gradient(180deg, #EBD8B0 0%, #DCC392 100%) !important;
+  border: 1px solid rgba(110,90,56,0.65) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,250,235,0.35) inset,
+    0 8px 32px rgba(11,53,82,0.55),
+    0 0 24px rgba(45,184,232,0.22) !important;
+  color: var(--atl-driftwood) !important;
+}
+:root.theme-atlantic .bot-panel::before,
+:root.theme-atlantic .updates-panel::before {
+  background: linear-gradient(135deg, rgba(255,250,235,0.25), transparent 60%) !important;
+}
+
+/* Текст внутри песочных панелей */
+/* "Calculate Roll Bot" — коралловый/розовый цвет ракушки */
+:root.theme-atlantic .bot-name {
+  color: #C84766 !important;
+  text-shadow:
+    0 1px 0 rgba(255,250,235,0.55),
+    0 0 18px rgba(232,108,128,0.35) !important;
+}
+:root.theme-atlantic .bot-tagline { color: rgba(61,46,26,0.62) !important; }
+:root.theme-atlantic .bot-desc    { color: rgba(61,46,26,0.78) !important; }
+
+/* ATLANTIC: credit-card — ПРОЗРАЧНЫЙ фон + КОРАЛЛОВАЯ рамка с плавными
+   прозрачными краями (через mask-image из базовой формулы — как в Easter).
+   Одинаково на десктопе и мобиле <1306px. Селекторы с #page-home — чтобы
+   перебить общую мобильную формулу. */
+:root.theme-atlantic .credit-card,
+:root.theme-atlantic #page-home .credit-card {
+  background: transparent !important;
+  border: 1px solid #C84766 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  padding: 10px 14px !important;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+          mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+}
+:root.theme-atlantic .credit-card:hover,
+:root.theme-atlantic #page-home .credit-card:hover {
+  border-color: #E25A78 !important;
+  box-shadow: none !important;
+}
+/* Подпись роли — коралл с прозрачностью, читаема на песке */
+:root.theme-atlantic .credit-card-role  {
+  color: rgba(140,40,60,0.72) !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+}
+/* Базовое имя — тёмный плавник (driftwood), чтобы было читаемо */
+:root.theme-atlantic .credit-card-name  {
+  color: #2A2418 !important;
+  text-shadow: 0 1px 0 rgba(255,250,235,0.45) !important;
+  font-weight: 700 !important;
+}
+/* «Cyan»-имя (Successor / Dev) — насыщенный океан */
+:root.theme-atlantic .credit-card-name.cyan  {
+  color: #1F6AA8 !important;
+  text-shadow: 0 1px 0 rgba(255,250,235,0.45) !important;
+}
+/* «Green»-имя (Database) — насыщенный изумруд, читаем на песке */
+:root.theme-atlantic .credit-card-name.green {
+  color: #1F7A52 !important;
+  text-shadow: 0 1px 0 rgba(255,250,235,0.45) !important;
+}
+/* SVG icons inside credit cards — inherit from bot-panel */
+
+/* ATLANTIC: stat-chips — РАЗНЫЕ стили для десктопа и мобилы.
+   ДЕСКТОП (>=1306px): океанский тёмно-синий градиент + циан акценты (формат из index_26).
+   МОБИЛА (<1306px): кремово-песочный фон + коралловая рамка (формат из index_27).
+   Селекторы перебивают общую мобильную формулу .stats-col-mobile .stat-chip. */
+
+/* ===== DESKTOP (>=1306px): стиль index_26 — океанский акцент на песке ===== */
+@media (min-width: 1306px) {
+  :root.theme-atlantic .stat-chip,
+  :root.theme-atlantic .stats-col-mobile .stat-chip,
+  :root.theme-atlantic .stats-col .stat-chip {
+    background: linear-gradient(135deg, rgba(11,53,82,0.72) 0%, rgba(20,90,130,0.65) 100%) !important;
+    border: 1px solid rgba(45,184,232,0.38) !important;
+    box-shadow: 0 2px 10px rgba(11,53,82,0.35), 0 0 0 1px rgba(111,216,255,0.06) inset !important;
+  }
+  :root.theme-atlantic .stat-num {
+    color: #6FD8FF !important;
+    text-shadow: 0 0 10px rgba(111,216,255,0.45) !important;
+  }
+  :root.theme-atlantic .stat-lbl { color: rgba(176,214,232,0.70) !important; }
+  :root.theme-atlantic .stat-chip--total,
+  :root.theme-atlantic .stats-col-mobile .stat-chip--total,
+  :root.theme-atlantic .stats-col .stat-chip--total {
+    background: linear-gradient(135deg, rgba(45,184,232,0.25) 0%, rgba(20,90,130,0.72) 100%) !important;
+    border-color: rgba(111,216,255,0.55) !important;
+    box-shadow: 0 0 14px rgba(111,216,255,0.20), 0 0 0 1px rgba(111,216,255,0.12) inset !important;
+  }
+  :root.theme-atlantic .stat-chip--total .stat-lbl,
+  :root.theme-atlantic .stats-col-mobile .stat-chip--total .stat-lbl {
+    color: #6FD8FF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
+  }
+  :root.theme-atlantic .total-proc-count,
+  :root.theme-atlantic .stats-col-mobile .total-proc-count {
+    color: #6FD8FF !important;
+    text-shadow: 0 0 14px rgba(111,216,255,0.65) !important;
+    font-weight: 700 !important;
+  }
+  :root.theme-atlantic .total-proc-arrow { color: #2A9DC8 !important; }
+}
+
+/* ===== MOBILE (<1306px): стиль index_27 — песочно-кремовый + коралл ===== */
+@media (max-width: 1305px) {
+  :root.theme-atlantic .stat-chip,
+  :root.theme-atlantic .stats-col-mobile .stat-chip,
+  :root.theme-atlantic .stats-col .stat-chip {
+    background: linear-gradient(180deg, rgba(255,248,224,0.65) 0%, rgba(235,216,176,0.45) 100%) !important;
+    border: 1px solid rgba(200,71,102,0.45) !important;
+    box-shadow:
+      0 2px 8px rgba(110,90,56,0.18),
+      0 0 0 1px rgba(255,250,235,0.45) inset !important;
+  }
+  :root.theme-atlantic .stat-chip:hover,
+  :root.theme-atlantic .stats-col-mobile .stat-chip:hover,
+  :root.theme-atlantic .stats-col .stat-chip:hover {
+    border-color: #E25A78 !important;
+    box-shadow:
+      0 3px 12px rgba(200,71,102,0.30),
+      0 0 0 1px rgba(255,250,235,0.55) inset !important;
+  }
+  :root.theme-atlantic .stat-num {
+    color: #C84766 !important;
+    text-shadow: 0 1px 0 rgba(255,250,235,0.55) !important;
+    font-weight: 700 !important;
+  }
+  :root.theme-atlantic .stat-lbl {
+    color: #C84766 !important;
+    font-weight: 600 !important;
+  }
+  /* TOTAL — выделена коралловой рамкой + кремовый фон поярче */
+  :root.theme-atlantic .stat-chip--total,
+  :root.theme-atlantic .stats-col-mobile .stat-chip--total,
+  :root.theme-atlantic .stats-col .stat-chip--total {
+    background: linear-gradient(180deg, rgba(255,250,235,0.85) 0%, rgba(245,225,180,0.65) 100%) !important;
+    border: 1.5px solid #C84766 !important;
+    box-shadow:
+      0 2px 12px rgba(200,71,102,0.22),
+      0 0 0 1px rgba(255,250,235,0.55) inset !important;
+  }
+  :root.theme-atlantic .stat-chip--total .stat-lbl,
+  :root.theme-atlantic .stats-col-mobile .stat-chip--total .stat-lbl {
+    color: #C84766 !important;
+    opacity: 1 !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+  }
+  :root.theme-atlantic .total-proc-count,
+  :root.theme-atlantic .stats-col-mobile .total-proc-count {
+    color: #C84766 !important;
+    text-shadow: 0 1px 0 rgba(255,250,235,0.65) !important;
+    font-weight: 800 !important;
+  }
+  :root.theme-atlantic .total-proc-arrow { color: #C84766 !important; }
+}
+
+/* Updates — заголовок коралловый, как и Calculate Roll Bot */
+:root.theme-atlantic .updates-title {
+  color: #C84766 !important;
+  text-shadow:
+    0 0 16px rgba(232,108,128,0.40),
+    0 1px 0 rgba(255,250,235,0.5) !important;
+}
+:root.theme-atlantic .updates-subtitle { color: rgba(61,46,26,0.55) !important; }
+:root.theme-atlantic .updates-text     { color: rgba(61,46,26,0.86) !important; }
+:root.theme-atlantic .updates-text .upd-accent { color: #C84766 !important; font-weight: 600; }
+:root.theme-atlantic .updates-text .upd-cyan   { color: #E25A78 !important; }
+:root.theme-atlantic .updates-text .upd-green  { color: #2F7A5A !important; }
+:root.theme-atlantic .updates-text .upd-muted  { color: rgba(61,46,26,0.45) !important; }
+:root.theme-atlantic .upd-nav-btn {
+  background: rgba(255,250,235,0.55) !important;
+  border: 1px solid rgba(142,117,72,0.45) !important;
+  color: #0B3A56 !important;
+}
+:root.theme-atlantic .upd-nav-btn:hover {
+  background: rgba(200,71,102,0.18) !important;
+  border-color: rgba(200,71,102,0.65) !important;
+}
+
+/* Item list / категории — песочные с океанскими акцентами */
+:root.theme-atlantic .item-list-header { color: rgba(61,46,26,0.78) !important; }
+:root.theme-atlantic .cat-tab {
+  color: rgba(61,46,26,0.65) !important;
+  background: rgba(255,250,235,0.30) !important;
+  border: 1px solid rgba(142,117,72,0.30) !important;
+}
+:root.theme-atlantic .cat-tab.active,
+:root.theme-atlantic .cat-tab:hover {
+  color: #0B3A56 !important;
+  background: rgba(42,157,200,0.18) !important;
+  border-color: rgba(42,157,200,0.55) !important;
+}
+:root.theme-atlantic .item-btn {
+  background: transparent !important;
+  border: none !important;
+  border-left: 2px solid transparent !important;
+  color: var(--atl-driftwood) !important;
+  transition: background 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
+}
+:root.theme-atlantic .item-btn:hover {
+  background: rgba(200, 71, 102, 0.08) !important;
+  border-left-color: rgba(200, 71, 102, 0.40) !important;
+  color: #C84766 !important;
+}
+:root.theme-atlantic .item-btn.active {
+  background: rgba(200, 71, 102, 0.14) !important;
+  border-left-color: #C84766 !important;
+  color: #C84766 !important;
+  box-shadow: none !important;
+}
+:root.theme-atlantic .item-category-header { color: rgba(61,46,26,0.72) !important; }
+:root.theme-atlantic .item-category-header::before,
+:root.theme-atlantic .item-category-header::after { background: rgba(142,117,72,0.30) !important; }
+
+/* Поиск */
+:root.theme-atlantic .item-search-wrap,
+:root.theme-atlantic #page-rolls .item-search-wrap,
+:root.theme-atlantic #page-analyze .item-search-wrap,
+:root.theme-atlantic #page-stuff .item-search-wrap,
+:root.theme-atlantic #page-compare .item-search-wrap {
+  background: rgba(255,250,235,0.45) !important;
+  border: 1px solid rgba(142,117,72,0.40) !important;
+}
+:root.theme-atlantic .item-search-input { color: var(--atl-driftwood) !important; background: transparent !important; }
+:root.theme-atlantic .item-search-input::placeholder { color: rgba(61,46,26,0.45) !important; }
+:root.theme-atlantic .item-search-input:focus {
+  border-color: rgba(200,71,102,0.70) !important;
+  background: rgba(255,250,235,0.55) !important;
+  box-shadow: 0 0 0 2px rgba(200,71,102,0.18) !important;
+}
+:root.theme-atlantic .item-search-wrap:focus-within .item-search-icon { color: #C84766 !important; opacity: 1 !important; }
+
+/* Mod-panel */
+:root.theme-atlantic .mod-panel-header {
+  background: linear-gradient(180deg, rgba(255,250,235,0.40), rgba(217,190,133,0.30)) !important;
+  border-bottom: 1px solid rgba(142,117,72,0.40) !important;
+}
+:root.theme-atlantic .mod-panel-title { color: rgba(61,46,26,0.62) !important; }
+:root.theme-atlantic .mod-panel-value {
+  color: #115A82 !important;
+  text-shadow: 0 0 8px rgba(42,157,200,0.40) !important;
+}
+:root.theme-atlantic .mod-panel-arrow { color: #2A9DC8 !important; }
+:root.theme-atlantic .mod-panel-body  { background: rgba(255,250,235,0.30) !important; }
+:root.theme-atlantic .mod-btn {
+  background: rgba(255,250,235,0.45) !important;
+  border: 1px solid rgba(142,117,72,0.35) !important;
+  color: var(--atl-driftwood) !important;
+}
+:root.theme-atlantic .mod-btn:hover,
+:root.theme-atlantic .mod-btn.active {
+  background: rgba(42,157,200,0.20) !important;
+  border-color: #2A9DC8 !important;
+  color: #0B3A56 !important;
+}
+
+/* Console panel — АТЛАНТИЧЕСКАЯ (морская), не песочная */
+:root.theme-atlantic .console-panel {
+  background: linear-gradient(180deg, rgba(11,53,82,0.94) 0%, rgba(20,90,130,0.92) 100%) !important;
+  border: 1px solid rgba(45,184,232,0.35) !important;
+  box-shadow:
+    0 0 0 1px rgba(111,216,255,0.10) inset,
+    0 8px 32px rgba(11,53,82,0.55),
+    0 0 24px rgba(45,184,232,0.18) !important;
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .console-panel,
+:root.theme-atlantic .console-panel .console-title,
+:root.theme-atlantic .console-panel .empty-title,
+:root.theme-atlantic .console-panel .empty-desc,
+:root.theme-atlantic .console-panel .history-header,
+:root.theme-atlantic .console-panel .hint-desc {
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .console-header {
+  background: linear-gradient(180deg, rgba(20,90,130,0.65), rgba(11,53,82,0.55)) !important;
+  border-bottom: 1px solid rgba(45,184,232,0.30) !important;
+}
+:root.theme-atlantic .console-title { color: #DCF1F8 !important; letter-spacing: 1px; }
+:root.theme-atlantic .console-live-badge,
+:root.theme-atlantic .console-live-badge span { color: #6FFFD0 !important; }
+:root.theme-atlantic .console-status   { background: #4FFFB0 !important; box-shadow: 0 0 8px rgba(79,255,176,0.75) !important; }
+:root.theme-atlantic .online-dot       { background: #4FFFB0 !important; box-shadow: 0 0 8px rgba(79,255,176,0.75) !important; }
+:root.theme-atlantic .online-icon path { stroke: #4FFFB0 !important; fill: #4FFFB0 !important; }
+:root.theme-atlantic .online-count     { color: #4FFFB0 !important; }
+:root.theme-atlantic .console-tabs     { border-color: rgba(45,184,232,0.25) !important; }
+:root.theme-atlantic .console-tab-btn  { color: rgba(220,241,248,0.55) !important; }
+:root.theme-atlantic .console-tab-btn:hover { color: #6FD8FF !important; }
+:root.theme-atlantic .console-tab-btn.active {
+  color: #6FD8FF !important;
+  border-bottom-color: #6FD8FF !important;
+  text-shadow: 0 0 10px rgba(111,216,255,0.6);
+}
+/* Console записи (карточки процессов) — полупрозрачные на тёмно-морском */
+:root.theme-atlantic .console-panel .history-row,
+:root.theme-atlantic .console-panel .console-entry,
+:root.theme-atlantic .console-panel .preview-entry,
+:root.theme-atlantic .console-panel .compare-entry {
+  background: rgba(45,184,232,0.06) !important;
+  border-color: rgba(45,184,232,0.18) !important;
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .console-panel .history-row:hover {
+  background: rgba(45,184,232,0.12) !important;
+  border-color: rgba(45,184,232,0.40) !important;
+}
+/* "ANALYZE/WEAPON" чипы и подобные — читаемые на морском */
+:root.theme-atlantic .console-panel [class*="badge"],
+:root.theme-atlantic .console-panel [class*="chip"],
+:root.theme-atlantic .console-panel [class*="tag"] {
+  background: rgba(111,216,255,0.14) !important;
+  color: #DCF1F8 !important;
+  border-color: rgba(111,216,255,0.35) !important;
+}
+
+/* Page title */
+:root.theme-atlantic .page-title-block { border-color: rgba(95,200,232,0.40) !important; }
+:root.theme-atlantic .page-title-text  {
+  color: #C7E8F2 !important;
+  text-shadow: 0 0 18px rgba(95,200,232,0.55) !important;
+}
+:root.theme-atlantic .page-title-icon  { color: #5FC8E8 !important; }
+:root.theme-atlantic .page-title-sub   { color: rgba(199,232,242,0.65) !important; }
+
+/* Roll table — песочные строки, океанские акценты */
+:root.theme-atlantic .roll-table-wrap {
+  background: rgba(235,216,176,0.92) !important;
+  border: 1px solid rgba(142,117,72,0.45) !important;
+  color: var(--atl-driftwood) !important;
+}
+:root.theme-atlantic .roll-table-wrap tbody tr {
+  border-color: rgba(142,117,72,0.20) !important;
+}
+
+/* Palette popup — коралловая окантовка */
+:root.theme-atlantic .palette-item        { border-color: rgba(200,71,102,0.30) !important; }
+:root.theme-atlantic .palette-item img    { border-color: rgba(200,71,102,0.40) !important; }
+:root.theme-atlantic .palette-item:hover  {
+  background: rgba(200,71,102,0.10) !important;
+  box-shadow: 0 0 16px rgba(200,71,102,0.22) !important;
+}
+
+/* Avatar ring — коралловый */
+:root.theme-atlantic .avatar-ring-inner {
+  border-color: #C84766 !important;
+  box-shadow: 0 0 24px rgba(200,71,102,0.55), inset 0 0 20px rgba(200,71,102,0.07) !important;
+}
+:root.theme-atlantic .avatar-ring-outer { border-color: rgba(200,71,102,0.22) !important; }
+:root.theme-atlantic .palette-trigger:hover {
+  box-shadow: 0 0 28px rgba(200,71,102,0.60) !important;
+}
+
+/* Theme switch indicator */
+.theme-switch-btn-atlantic {
+  box-shadow: 0 0 12px rgba(42,157,200,0.55) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: READABILITY ON SAND PANELS
+   Любой текст / svg / иконка внутри песочных панелей —
+   тёмный плавник, чтобы было читаемо.
+   ═════════════════════════════════════════════════════ */
+:root.theme-atlantic .bot-panel,
+:root.theme-atlantic .bot-panel *:not(.credit-card-name.cyan):not(.credit-card-name.green):not(.upd-cyan):not(.upd-green):not(.upd-accent):not([class*="rarity-"]):not(.bot-name):not(.credit-card):not(.credit-card-role):not(.credit-card-name):not(.stat-num):not(.stat-lbl):not(.total-proc-count),
+:root.theme-atlantic .updates-panel,
+:root.theme-atlantic .updates-panel *:not(.upd-cyan):not(.upd-green):not(.upd-accent):not([class*="rarity-"]):not(.updates-title),
+:root.theme-atlantic .item-list-panel,
+:root.theme-atlantic .item-list-panel *:not([class*="rarity-"]):not(.item-search-input):not(.c-corr):not(.c-ref):not(.c-both):not(.c-gold):not(.c-upg),
+:root.theme-atlantic .mod-panel,
+:root.theme-atlantic .mod-panel *:not([class*="rarity-"]) {
+  color: var(--atl-driftwood) !important;
+}
+/* Иконки/SVG внутри песочных панелей */
+:root.theme-atlantic .bot-panel svg path,
+:root.theme-atlantic .bot-panel svg circle,
+:root.theme-atlantic .bot-panel svg line,
+:root.theme-atlantic .updates-panel svg path,
+:root.theme-atlantic .item-list-panel svg path,
+:root.theme-atlantic .mod-panel svg path {
+  stroke: var(--atl-driftwood2) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: PAGE BACKGROUNDS for all sub-pages
+   Чтобы при прокрутке везде был океанский фон, а не чёрный.
+   ═════════════════════════════════════════════════════ */
+:root.theme-atlantic #page-home,
+:root.theme-atlantic #page-rolls,
+:root.theme-atlantic #page-analyze,
+:root.theme-atlantic #page-stuff,
+:root.theme-atlantic #page-compare,
+:root.theme-atlantic #page-devtool {
+  background: transparent !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: Page title (Tables, Analyze, etc.)
+   ═════════════════════════════════════════════════════ */
+:root.theme-atlantic .page-title-block { border-color: rgba(111,216,255,0.45) !important; }
+:root.theme-atlantic .page-title-text  {
+  color: #DCF1F8 !important;
+  text-shadow: 0 0 18px rgba(111,216,255,0.65) !important;
+}
+:root.theme-atlantic .page-title-icon  { color: #6FD8FF !important; }
+:root.theme-atlantic .page-title-sub   { color: rgba(220,241,248,0.7) !important; }
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: TABLES PAGE (Weapon / Armor / Relics, поиск, категории)
+   Кнопки-категории под нав-баром.
+   ═════════════════════════════════════════════════════ */
+:root.theme-atlantic .cat-tab {
+  background: rgba(11,53,82,0.55) !important;
+  border: 1px solid rgba(45,184,232,0.30) !important;
+  color: rgba(220,241,248,0.78) !important;
+}
+:root.theme-atlantic .cat-tab:hover {
+  background: rgba(45,184,232,0.18) !important;
+  border-color: rgba(45,184,232,0.55) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .cat-tab.active {
+  background: rgba(45,184,232,0.30) !important;
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+  box-shadow: 0 0 14px rgba(111,216,255,0.40);
+}
+
+/* ── ATLANTIC: Reforge reference table (песочный фон) — заголовки тёмные ── */
+:root.theme-atlantic .roll-table-wrap thead th {
+  color: var(--atl-driftwood) !important;
+  background: rgba(217,190,133,0.55) !important;
+  border-bottom: 1px solid rgba(110,90,56,0.50) !important;
+}
+/* Reforge-секция: тёмный дефолт УБРАН — цвета задаются по классам td-* */
+/* Таблица роллов (#table-container): песочные цвета (как reforge-section) */
+:root.theme-atlantic #table-container .roll-table-wrap {
+  background: rgba(235,216,176,0.92) !important;
+  border: 1px solid rgba(142,117,72,0.45) !important;
+}
+:root.theme-atlantic #table-container .roll-table-wrap thead th {
+  color: var(--atl-driftwood) !important;
+  background: rgba(217,190,133,0.55) !important;
+  border-bottom: 1px solid rgba(110,90,56,0.50) !important;
+}
+/* tbody td blanket-color УБРАН — цвета задаются по td.td-roll/td-base/td-corr/td-both */
+:root.theme-atlantic #table-container .roll-table-wrap tbody tr {
+  border-color: rgba(142,117,72,0.20) !important;
+}
+:root.theme-atlantic #table-container .roll-table-wrap tbody tr:hover {
+  background: rgba(142,117,72,0.10) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   TABLES PAGE — ПОЛНАЯ ЦВЕТОВАЯ ПАЛИТРА (Atlantic)
+   Roll = коралл; Damage/Crit/Knock = разноцветные;
+   Corrupted = малиновый, Godly = бирюза, Both = фиолет.
+   ═══════════════════════════════════════════════════ */
+
+/* --- Roll-таблица (#table-container) --- */
+/* Номера роллов 1..11 — коралл, как названия reforge */
+:root.theme-atlantic #table-container .td-roll {
+  color: #C84766 !important;
+  font-weight: 700 !important;
+}
+:root.theme-atlantic #table-container .row-best .td-roll {
+  color: #C84766 !important;
+  text-shadow: 0 0 8px rgba(200,71,102,0.45) !important;
+}
+:root.theme-atlantic #table-container .row-best td {
+  background: rgba(200,71,102,0.10) !important;
+}
+/* Колонки по типам стата — на тёплом песке нужны насыщенные тёмные акценты */
+:root.theme-atlantic #table-container .td-base { color: var(--atl-driftwood) !important; font-weight: 600 !important; }
+:root.theme-atlantic #table-container .td-corr { color: #B02828 !important; font-weight: 600 !important; }   /* Corrupted — алый */
+:root.theme-atlantic #table-container .td-ref  { color: #1F6AA8 !important; font-weight: 600 !important; }   /* Reforged — океан */
+:root.theme-atlantic #table-container .td-both { color: #7A3FB0 !important; font-weight: 700 !important; }   /* Corrupted & Godly — фиолет */
+
+/* +/- значения */
+:root.theme-atlantic .roll-table-wrap .pos,
+:root.theme-atlantic .roll-table-wrap [class*="positive"] { color: #2A7A40 !important; }
+:root.theme-atlantic .roll-table-wrap .neg,
+:root.theme-atlantic .roll-table-wrap [class*="negative"] { color: #B02828 !important; }
+
+/* --- Reforge reference таблица --- */
+/* Названия рефорджей — коралл */
+:root.theme-atlantic #reforge-section .roll-table-wrap td.td-ref-name,
+:root.theme-atlantic #reforge-section .roll-table-wrap td:first-child {
+  color: #C84766 !important;
+  font-weight: 700 !important;
+}
+/* Damage / Crit / Knock — РАЗНЫЕ цвета (как во всех остальных палитрах сайта) */
+:root.theme-atlantic #reforge-section .td-dmg-pos  { color: #B02828 !important; font-weight: 600 !important; } /* Damage — красный */
+:root.theme-atlantic #reforge-section .td-dmg-neg  { color: #7E1A1A !important; }
+:root.theme-atlantic #reforge-section .td-dmg-zero { color: rgba(61,46,26,0.55) !important; }
+:root.theme-atlantic #reforge-section .td-ref-pos  { color: #C9881F !important; font-weight: 600 !important; } /* Crit — янтарь */
+:root.theme-atlantic #reforge-section .td-ref-neg  { color: #7A4A14 !important; }
+:root.theme-atlantic #reforge-section .td-ref-zero { color: rgba(61,46,26,0.55) !important; }
+:root.theme-atlantic #reforge-section .td-knk-pos  { color: #2F7A5A !important; font-weight: 600 !important; } /* Knock — зелёный */
+:root.theme-atlantic #reforge-section .td-knk-neg  { color: #1A4A33 !important; }
+:root.theme-atlantic #reforge-section .td-knk-zero { color: rgba(61,46,26,0.55) !important; }
+
+/* Семантические колонки (если используются в reforge-таблицах analyze/preview) */
+:root.theme-atlantic #reforge-section .roll-table-wrap td.c-corr { color: #B02828 !important; }
+:root.theme-atlantic #reforge-section .roll-table-wrap td.c-ref  { color: #1F6AA8 !important; }
+:root.theme-atlantic #reforge-section .roll-table-wrap td.c-both { color: #7A3FB0 !important; }
+:root.theme-atlantic #reforge-section .roll-table-wrap td.c-upg  { color: #115A82 !important; }
+:root.theme-atlantic #reforge-section .roll-table-wrap tr.cur td.c-upg { color: #2DB8E8 !important; }
+
+/* Элементные/тематические цвета — magic, sword, health, easter (общая семантика проекта) */
+:root.theme-atlantic .roll-table-wrap td.c-magic,
+:root.theme-atlantic .az-tbl td.c-magic   { color: #6A4FBF !important; font-weight: 600 !important; } /* magic — фиолет */
+:root.theme-atlantic .roll-table-wrap td.c-sword,
+:root.theme-atlantic .az-tbl td.c-sword   { color: #1F6AA8 !important; font-weight: 600 !important; } /* sword — океан */
+:root.theme-atlantic .roll-table-wrap td.c-health,
+:root.theme-atlantic .az-tbl td.c-health  { color: #2F7A5A !important; font-weight: 600 !important; } /* health — зелень */
+:root.theme-atlantic .roll-table-wrap td.c-easter,
+:root.theme-atlantic .az-tbl td.c-easter  { color: #C84766 !important; font-weight: 600 !important; } /* easter — коралл */
+
+/* "// Reforge Reference" подпись и т.п. */
+:root.theme-atlantic #page-rolls .item-category-header,
+:root.theme-atlantic #page-rolls .item-list-header,
+:root.theme-atlantic #page-analyze .item-category-header,
+:root.theme-atlantic #page-stuff  .item-category-header,
+:root.theme-atlantic #page-compare .item-category-header {
+  color: #DCF1F8 !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: ANALYZE / PREVIEW / COMPARE / DEVTOOL
+   Карточки az-card, az-result-card, sp-*, cmp-*, dt-* — морские.
+   ═════════════════════════════════════════════════════ */
+:root.theme-atlantic .az-card,
+:root.theme-atlantic .az-result-card,
+:root.theme-atlantic .az-third-panel,
+:root.theme-atlantic .sp-third-panel,
+:root.theme-atlantic .cmp-third-panel,
+:root.theme-atlantic .az-quote-panel,
+:root.theme-atlantic .az-quote-mobile,
+:root.theme-atlantic .dt-result-panel,
+:root.theme-atlantic .dt-mob-panel {
+  background: linear-gradient(180deg, rgba(11,53,82,0.92), rgba(20,90,130,0.88)) !important;
+  border: 1px solid rgba(45,184,232,0.32) !important;
+  box-shadow:
+    0 0 0 1px rgba(111,216,255,0.10) inset,
+    0 8px 32px rgba(11,53,82,0.55),
+    0 0 24px rgba(45,184,232,0.18) !important;
+  color: var(--text-primary) !important;
+}
+/* Заголовки шагов / формулы */
+:root.theme-atlantic .az-step-title,
+:root.theme-atlantic .az-step-lbl,
+:root.theme-atlantic .az-proc-col-hdr,
+:root.theme-atlantic .az-proc-step-num,
+:root.theme-atlantic .az-step-n {
+  color: #6FD8FF !important;
+}
+:root.theme-atlantic .az-step-formula,
+:root.theme-atlantic .az-step-formula--base,
+:root.theme-atlantic .az-step-rhs {
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .az-step-lhs {
+  color: rgba(220,241,248,0.55) !important;
+}
+:root.theme-atlantic .az-sep {
+  background: rgba(45,184,232,0.30) !important;
+  border: none !important;
+}
+:root.theme-atlantic .az-proc-divider {
+  background: linear-gradient(180deg, transparent, rgba(45,184,232,0.35) 12%, rgba(45,184,232,0.35) 88%, transparent) !important;
+}
+:root.theme-atlantic .az-step-rhs.c-teal { color: #6FD8FF !important; }
+
+/* Process / Tablet табы (на az-third-panel) */
+:root.theme-atlantic .az-third-panel-tabs {
+  background: rgba(11,53,82,0.55) !important;
+  border-bottom: 1px solid rgba(45,184,232,0.25) !important;
+}
+:root.theme-atlantic .az-third-tab {
+  color: rgba(220,241,248,0.55) !important;
+}
+:root.theme-atlantic .az-third-tab:hover,
+:root.theme-atlantic .az-third-tab.active {
+  color: #6FD8FF !important;
+  border-bottom-color: #6FD8FF !important;
+  text-shadow: 0 0 10px rgba(111,216,255,0.55);
+}
+
+/* Stuff page разделители */
+:root.theme-atlantic .sp-third-half-title { color: #6FD8FF !important; }
+:root.theme-atlantic .sp-third-divider-h  {
+  background: linear-gradient(90deg, transparent, rgba(45,184,232,0.45), transparent) !important;
+}
+
+/* "ROLL: 10" большой результат — название и редкость НЕ трогаем
+   (как в Easter), оставляем семантические цвета rarity */
+
+/* Devtool слоты */
+:root.theme-atlantic .dt-result-panel-header {
+  background: linear-gradient(180deg, rgba(20,90,130,0.65), rgba(11,53,82,0.55)) !important;
+  border-bottom: 1px solid rgba(45,184,232,0.25) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .dt-slot-btn {
+  background: rgba(11,53,82,0.55) !important;
+  border: 1px solid rgba(45,184,232,0.30) !important;
+  color: rgba(220,241,248,0.78) !important;
+}
+:root.theme-atlantic .dt-slot-btn:hover {
+  background: rgba(45,184,232,0.18) !important;
+  border-color: rgba(45,184,232,0.55) !important;
+}
+:root.theme-atlantic .dt-slot-btn.active {
+  background: rgba(45,184,232,0.30) !important;
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+  box-shadow: 0 0 12px rgba(111,216,255,0.45);
+}
+:root.theme-atlantic .dt-slot-add-btn {
+  background: rgba(45,184,232,0.10) !important;
+  border: 1px dashed rgba(45,184,232,0.50) !important;
+  color: #6FD8FF !important;
+}
+:root.theme-atlantic .dt-slot-add-btn:hover {
+  background: rgba(45,184,232,0.20) !important;
+  border-color: #6FD8FF !important;
+}
+:root.theme-atlantic .dt-mob-tab-btn {
+  background: rgba(11,53,82,0.55) !important;
+  border: 1px solid rgba(45,184,232,0.25) !important;
+  color: rgba(220,241,248,0.7) !important;
+}
+:root.theme-atlantic .dt-mob-tab-btn:hover,
+:root.theme-atlantic .dt-mob-tab-btn.active {
+  background: rgba(45,184,232,0.20) !important;
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+}
+
+/* Cmp / Dt empty states */
+:root.theme-atlantic .cmp-table-area .table-empty,
+:root.theme-atlantic .dt-result-panel-body .table-empty {
+  color: rgba(220,241,248,0.5) !important;
+}
+
+/* Вернуть голубую рамку панели Select An Item (border-rune переопределён на коралловый) */
+:root.theme-atlantic .table-empty {
+  border-color: #3D9CC8 !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: BUTTONS (analyze / mobile action / discord-input)
+   ═════════════════════════════════════════════════════ */
+/* ── ATLANTIC: Кнопка анализа (как Easter/Baldi по структуре) ── */
+:root.theme-atlantic .az-analyze-btn {
+  background: linear-gradient(180deg, #2DB8E8 0%, #1A7AAB 100%);
+  box-shadow: 0 4px 16px rgba(45,184,232,0.40), 0 2px 0 #0B3552 !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(11,53,82,0.55);
+  border: none !important;
+}
+:root.theme-atlantic .az-analyze-btn:hover:not(.cd-active) {
+  background: linear-gradient(180deg, #6FD8FF 0%, #2DB8E8 100%);
+  box-shadow: 0 6px 22px rgba(111,216,255,0.55), 0 2px 0 #0B3552 !important;
+  transform: translateY(-1px);
+}
+:root.theme-atlantic .az-analyze-btn:active:not(.cd-active) {
+  transform: translateY(1px);
+}
+:root.theme-atlantic .az-analyze-btn:disabled {
+  background: linear-gradient(180deg, rgba(45,184,232,0.40) 0%, rgba(26,122,171,0.40) 100%);
+  box-shadow: none !important;
+  color: rgba(220,241,248,0.50) !important;
+  text-shadow: none !important;
+}
+/* ── ATLANTIC: Cooldown анимация ── */
+:root:root.theme-atlantic .az-analyze-btn.cd-active {
+  background:
+    linear-gradient(180deg, #6FD8FF 0%, #2DB8E8 100%) left no-repeat,
+    linear-gradient(180deg, #0B3552 0%, #0E4866 100%);
+  background-size: 0% 100%, 100% 100%;
+  box-shadow: 0 4px 16px rgba(45,184,232,0.15), 0 2px 0 #0B3552 !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(11,53,82,0.55) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
+  animation: cdFillAtlantic var(--cd-duration, 2s) linear forwards !important;
+}
+@keyframes cdFillAtlantic {
+  0%   { background-size: 0% 100%, 100% 100%; }
+  100% { background-size: 100% 100%, 100% 100%; }
+}
+:root.theme-atlantic .az-mobile-action-btns .az-panel-btn,
+:root.theme-atlantic .az-panel-btn {
+  background: rgba(45,184,232,0.16) !important;
+  border: 1px solid rgba(45,184,232,0.45) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .az-mobile-action-btns .az-panel-btn:hover,
+:root.theme-atlantic .az-panel-btn:hover {
+  background: rgba(45,184,232,0.28) !important;
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+}
+:root.theme-atlantic .az-discord-input {
+  background: rgba(11,53,82,0.55) !important;
+  border: 1px solid rgba(45,184,232,0.35) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .az-discord-input::placeholder { color: rgba(220,241,248,0.40) !important; }
+
+/* Reforge (Precise / Godly) badge */
+:root.theme-atlantic .az-timer-icon { color: #6FD8FF !important; }
+
+/* Modal — на тёмном морском */
+:root.theme-atlantic .az-modal-box {
+  background: linear-gradient(180deg, rgba(11,53,82,0.96), rgba(20,90,130,0.94)) !important;
+  border: 1px solid rgba(45,184,232,0.45) !important;
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .az-modal-box .az-proc-step-num,
+:root.theme-atlantic .az-modal-box .az-step-n   { color: #6FD8FF !important; }
+:root.theme-atlantic .az-modal-box .az-step-lbl { color: #DCF1F8 !important; }
+:root.theme-atlantic .az-modal-box .az-step-lhs { color: rgba(220,241,248,0.55) !important; }
+:root.theme-atlantic .az-modal-box .az-step-rhs { color: #DCF1F8 !important; }
+:root.theme-atlantic .az-modal-box .az-step-rhs.c-teal { color: #6FD8FF !important; }
+
+/* Скроллбары на консоли — морские */
+:root.theme-atlantic .console-body::-webkit-scrollbar-thumb {
+  background: rgba(45,184,232,0.45) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: панели результатов (Damage/Health, Gold, Total HP)
+   и Discord-режим preview — приводим к атлантической палитре,
+   чтобы гармонировать с морскими карточками результатов.
+   ═════════════════════════════════════════════════════ */
+/* Damage / Health бокс */
+:root.theme-atlantic .az-stats-box {
+  background: linear-gradient(180deg, rgba(11,53,82,0.55) 0%, rgba(20,90,130,0.50) 100%) !important;
+  border-color: rgba(45,184,232,0.30) !important;
+}
+:root.theme-atlantic .az-stat-lbl { color: var(--color-dmg) !important; }
+:root.theme-atlantic .az-stat-lbl.health-mode { color: var(--color-hp) !important; }
+:root.theme-atlantic .az-stat-input {
+  background: rgba(11,53,82,0.55) !important;
+  border-color: rgba(45,184,232,0.30) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .az-stat-input::placeholder { color: rgba(220,241,248,0.30) !important; }
+:root.theme-atlantic .az-stat-input:focus {
+  border-color: var(--color-dmg) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-dmg) 22%, transparent) !important;
+}
+:root.theme-atlantic .az-stats-box.health-mode .az-stat-input:focus {
+  border-color: var(--color-hp) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-hp) 22%, transparent) !important;
+}
+
+/* Gold rows (Next upgrade / Gold spent / Gold to max) */
+:root.theme-atlantic .az-gold-row {
+  background: linear-gradient(90deg, rgba(11,53,82,0.55), rgba(20,90,130,0.50)) !important;
+  border: 1px solid rgba(45,184,232,0.30) !important;
+}
+:root.theme-atlantic .az-gold-lbl { color: rgba(220,241,248,0.78) !important; }
+:root.theme-atlantic .az-gold-sub { color: rgba(220,241,248,0.55) !important; }
+
+/* Total HP row */
+:root.theme-atlantic .az-total-hp-row {
+  background: linear-gradient(90deg, rgba(79,184,154,0.16), rgba(45,184,232,0.10)) !important;
+  border-color: rgba(79,184,154,0.40) !important;
+}
+:root.theme-atlantic .az-total-hp-lbl { color: var(--color-hp) !important; }
+:root.theme-atlantic .az-total-hp-val {
+  color: var(--color-hp) !important;
+  text-shadow: 0 0 10px rgba(79,184,154,0.45) !important;
+}
+
+/* Roll label / value subtle text внутри морских карточек */
+:root.theme-atlantic .az-roll-lbl { color: rgba(220,241,248,0.62) !important; }
+
+/* Discord-режим preview бокс (Website mode тоже использует .az-discord-dmg-box / labels) */
+:root.theme-atlantic .az-discord-dmg-box {
+  background: linear-gradient(180deg, rgba(11,53,82,0.55) 0%, rgba(20,90,130,0.50) 100%) !important;
+  border-color: rgba(45,184,232,0.30) !important;
+}
+:root.theme-atlantic .az-discord-preview-lbl.lbl-dmg  { color: var(--color-dmg) !important; }
+:root.theme-atlantic .az-discord-preview-lbl.lbl-hp   { color: var(--color-hp) !important; }
+:root.theme-atlantic .az-discord-preview-lbl.lbl-upg  { color: var(--color-upg) !important; }
+:root.theme-atlantic .az-discord-preview-lbl.lbl-corr { color: var(--color-corr) !important; }
+:root.theme-atlantic .az-discord-preview-val.dmg     { color: var(--color-dmg) !important; }
+:root.theme-atlantic .az-discord-preview-val.upg     { color: var(--color-upg) !important; }
+:root.theme-atlantic .az-discord-preview-val.corr-y  { color: var(--color-hp) !important; }
+:root.theme-atlantic .az-discord-preview-val.corr-n  { color: var(--color-dmg) !important; }
+:root.theme-atlantic .az-discord-preview-val.corr-u  { color: var(--color-corr) !important; }
+:root.theme-atlantic .az-disc-reforge-line { color: var(--color-reforge) !important; }
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: CREDITS-BLOCK для всех мобильных диапазонов
+   (как у Time / Baldi / Classic / Discord / Galaxy / Easter)
+   На десктопе credits-block — колонка внутри песочной панели
+   и не нуждается в фоне; mask-image включается только когда
+   credits-block становится горизонтальным рядом.
+   ═════════════════════════════════════════════════════ */
+/* <=1306px — мобильный/планшетный диапазон (горизонтальный ряд).
+   Делаем как в Galaxy: КОРАЛЛОВАЯ рамка + плавная маска по краям —
+   на КОНТЕЙНЕРЕ .credits-block (одна общая обводка вокруг всех карточек).
+   Сами .credit-card — без рамки/фона/маски (их базовые мобильные стили
+   с .credit-card{background:rgba(0,0,0,.45);border:...} перебиваем). */
+@media(max-width:1306px) {
+  :root.theme-atlantic .credits-block,
+  :root.theme-atlantic #page-home .credits-block {
+    background: transparent !important;
+    border-top: 1px solid #C84766 !important;
+    border-bottom: 1px solid #C84766 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    gap: 20px !important;
+    width: 100% !important;
+    padding: 10px 16px !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: border-color .2s !important;
+  }
+  :root.theme-atlantic .credits-block:hover,
+  :root.theme-atlantic #page-home .credits-block:hover {
+    border-color: #E25A78 !important;
+  }
+  :root.theme-atlantic .credit-card,
+  :root.theme-atlantic #page-home .credit-card {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    flex: none !important;
+    width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+}
+}
+/* (старый сброс контейнера .credits-block удалён — теперь рамка задаётся
+   внутри @media(max-width:1306px) выше, а на десктопе контейнер по умолчанию
+   прозрачный.) */
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: ФИКСЫ ИЗ ОБРАТНОЙ СВЯЗИ (v2)
+   1) Внутренняя панель результатов (Name/Rarity/Damage/Delay)
+   2) Process formula rows — убрать «светлый» rgba(0,0,0,.3) фон
+   3) Settings popup + tooltip nav — морская палитра
+   4) Tables: возвращаем семантические цвета типизированным td
+   5) DevTool inline-val (Discord/Website) — единый цвет
+   ═════════════════════════════════════════════════════ */
+
+/* (1) az-res-stats-box: внутренняя панель с именем/редкостью/уроном/кд
+   Не трогаем цвет имени и редкости — они задаются rarity-семантикой. */
+:root.theme-atlantic .az-res-stats-box,
+:root.theme-atlantic .az-result-card .az-res-stats-box,
+:root.theme-atlantic .cmp-card .az-res-stats-box,
+:root.theme-atlantic .az-card .az-res-stats-box {
+  background: linear-gradient(180deg, #173b5e 0%, #1f5079 55%, #246593 100%) !important;
+  background-color: #1f5079 !important;
+  border: 1.5px solid #4FC3E8 !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 0 0 1px rgba(111,216,255,0.18) inset,
+    0 0 18px rgba(79,195,232,0.35) inset,
+    0 0 0 1px rgba(79,195,232,0.25),
+    0 6px 22px rgba(11,53,82,0.55) !important;
+}
+:root.theme-atlantic #az-res-dmg-lbl,
+:root.theme-atlantic #sp-res-dmg-lbl,
+:root.theme-atlantic #cmp-res-dmg-lbl {
+  color: var(--color-dmg);
+}
+:root.theme-atlantic .az-res-val.dmg     { color: var(--color-dmg) !important; text-shadow: 0 0 10px rgba(224,78,110,0.40) !important; }
+:root.theme-atlantic .az-res-val.hp      { color: var(--color-hp) !important; text-shadow: 0 0 10px rgba(79,184,154,0.40) !important; }
+:root.theme-atlantic .az-res-val.delay   { color: #6FD8FF !important; }
+:root.theme-atlantic .az-res-upg-lbl     { color: var(--color-upg) !important; }
+:root.theme-atlantic .az-res-corr-lbl    { color: var(--color-corr) !important; }
+:root.theme-atlantic .az-res-upg-val     { color: var(--color-upg) !important; }
+:root.theme-atlantic .az-res-corr-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-atlantic .az-res-corr-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-atlantic .az-res-corr-val.corr-u { color: var(--color-corr) !important; }
+:root.theme-atlantic .az-res-reforge     { color: var(--color-reforge) !important; }
+
+/* (2) Process panel — формулы. Убираем фон. */
+:root.theme-atlantic .az-step-formula {
+  background: none !important;
+  border: 1px solid rgba(45,184,232,0.18) !important;
+}
+:root.theme-atlantic .az-step-formula--base {
+  background: transparent !important;
+  border: 1px solid rgba(111,216,255,0.28) !important;
+  box-shadow: none !important;
+}
+:root.theme-atlantic .az-step-lhs--base { color: #6FD8FF !important; }
+:root.theme-atlantic .az-base-val {
+  text-shadow: 0 0 10px rgba(111,216,255,0.55) !important;
+}
+:root.theme-atlantic .az-modal-box .az-step-formula {
+  background: none !important;
+  border: 1px solid rgba(45,184,232,0.18) !important;
+}
+:root.theme-atlantic .az-modal-box .az-step-formula--base {
+  background: transparent !important;
+  border: 1px solid rgba(111,216,255,0.28) !important;
+}
+
+/* (3) SETTINGS popup — морская палитра вместо чёрного */
+:root.theme-atlantic .settings-panel {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:root.theme-atlantic .settings-content {
+  background: linear-gradient(180deg, rgba(11,53,82,0.97) 0%, rgba(20,90,130,0.95) 100%) !important;
+  border: 1px solid rgba(45,184,232,0.45) !important;
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.55),
+    0 0 32px rgba(45,184,232,0.18),
+    0 0 0 1px rgba(111,216,255,0.10) inset !important;
+  color: var(--text-primary) !important;
+}
+:root.theme-atlantic .settings-section-title,
+:root.theme-atlantic .sett-section-label {
+  color: #6FD8FF !important;
+  text-shadow: 0 0 12px rgba(111,216,255,0.50) !important;
+  border-bottom-color: rgba(45,184,232,0.30) !important;
+}
+:root.theme-atlantic .sett-entry-btn {
+  color: rgba(220,241,248,0.65) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+:root.theme-atlantic .sett-entry-btn:hover {
+  color: #DCF1F8 !important;
+  background: rgba(45,184,232,0.10) !important;
+  border-color: rgba(45,184,232,0.32) !important;
+}
+:root.theme-atlantic .sett-entry-btn.active {
+  color: #6FD8FF !important;
+  background: none !important;
+}
+:root.theme-atlantic .sett-entry-btn.dim { color: rgba(220,241,248,0.30) !important; }
+:root.theme-atlantic .sett-entry-sep     { color: rgba(220,241,248,0.30) !important; }
+:root.theme-atlantic .settings-gear-btn  { color: rgba(176,214,232,0.60) !important; }
+:root.theme-atlantic .settings-gear-btn:hover {
+  color: #6FD8FF !important;
+  background: rgba(45,184,232,0.10) !important;
+}
+:root.theme-atlantic .sett-lang-btn {
+  background: rgba(45,184,232,0.10) !important;
+  border: 1px solid rgba(45,184,232,0.32) !important;
+  color: rgba(220,241,248,0.78) !important;
+}
+:root.theme-atlantic .sett-lang-btn:hover {
+  border-color: rgba(111,216,255,0.65) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .sett-lang-btn.active {
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+  background: rgba(45,184,232,0.18) !important;
+}
+
+/* (3b) TOOLTIP в навигации — морская палитра вместо чёрного */
+:root.theme-atlantic .nav-btn .tooltip {
+  background: linear-gradient(180deg, rgba(11,53,82,0.97), rgba(20,90,130,0.95)) !important;
+  border: 1px solid rgba(45,184,232,0.55) !important;
+  color: #6FD8FF !important;
+  box-shadow: 0 4px 14px rgba(11,53,82,0.55), 0 0 12px rgba(45,184,232,0.22) !important;
+}
+
+/* (4) TABLES — возвращаем семантику типизированным td. */
+:root.theme-atlantic .roll-table-wrap td.c-base,
+:root.theme-atlantic .az-tbl td.c-base {
+  color: var(--atl-driftwood) !important;
+}
+:root.theme-atlantic .roll-table-wrap td.c-upg,
+:root.theme-atlantic .az-tbl td.c-upg {
+  color: #115A82 !important;
+  text-shadow: 0 1px 0 rgba(255,250,235,0.45);
+}
+:root.theme-atlantic .roll-table-wrap tr.cur td.c-upg,
+:root.theme-atlantic .az-tbl tr.cur td.c-upg {
+  color: #2DB8E8 !important;
+  text-shadow: 0 0 10px rgba(45,184,232,0.45);
+}
+:root.theme-atlantic .roll-table-wrap td.c-corr,
+:root.theme-atlantic .az-tbl td.c-corr {
+  color: #C8443A !important;
+}
+:root.theme-atlantic .roll-table-wrap td.c-ref,
+:root.theme-atlantic .az-tbl td.c-ref {
+  color: #2A7FB8 !important;
+}
+:root.theme-atlantic .roll-table-wrap td.c-both,
+:root.theme-atlantic .az-tbl td.c-both {
+  color: #8E5CB8 !important;
+}
+:root.theme-atlantic .roll-table-wrap tbody tr.cur td,
+:root.theme-atlantic .az-tbl tbody tr.cur td {
+  background: rgba(45,184,232,0.14) !important;
+}
+
+/* (5) DEV TOOL: cmp-disc-inline-val (Discord/Website) — единый цвет */
+:root.theme-atlantic .cmp-disc-inline-val,
+:root.theme-atlantic .az-discord-panel .sp-disc-roll-val-el,
+:root.theme-atlantic .sp-discord-panel .sp-disc-roll-val-el,
+:root.theme-atlantic .cmp-discord-panel .cmp-disc-inline-val {
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic #cmp-disc-upg-a,
+:root.theme-atlantic #cmp-disc-upg-b { color: var(--color-upg) !important; }
+:root.theme-atlantic .cmp-disc-inline-val.corr-y,
+:root.theme-atlantic .cmp-discord-panel .cmp-disc-inline-val.corr-y { color: var(--color-hp) !important; }
+:root.theme-atlantic .cmp-disc-inline-val.corr-n,
+:root.theme-atlantic .cmp-discord-panel .cmp-disc-inline-val.corr-n { color: var(--color-dmg) !important; }
+:root.theme-atlantic .cmp-disc-inline-val.corr-u,
+:root.theme-atlantic .cmp-discord-panel .cmp-disc-inline-val.corr-u { color: var(--color-corr) !important; }
+:root.theme-atlantic .cmp-disc-ref-val,
+:root.theme-atlantic .cmp-discord-panel .cmp-disc-ref-val { color: var(--color-reforge) !important; }
+
+/* ── ATLANTIC: Tablet — Gold column (инлайн-стиль перебивается через !important) ── */
+:root.theme-atlantic .az-tbl td.c-gold { color: var(--amber) !important; }
+
+/* ── ATLANTIC: Tablet — az-tbl-foot (footnote) ── */
+:root.theme-atlantic .az-tbl-foot { color: rgba(220,241,248,0.60) !important; }
+
+/* ── ATLANTIC: Tablet — sp-third-panel / az-third-panel header ("TABLET" tab) ── */
+:root.theme-atlantic .az-tbl-wrap { background: transparent !important; }
+:root.theme-atlantic .az-tbl {
+  background: transparent !important;
+}
+:root.theme-atlantic .az-tbl thead th {
+  color: #6FD8FF !important;
+  background: rgba(11,53,82,0.65) !important;
+  border-bottom: 1px solid rgba(45,184,232,0.35) !important;
+}
+:root.theme-atlantic .az-tbl tbody td {
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .az-tbl tbody tr {
+  border-color: rgba(45,184,232,0.12) !important;
+}
+:root.theme-atlantic .az-tbl tbody tr:hover {
+  background: rgba(45,184,232,0.08) !important;
+}
+/* Restore semantic column colors over the td override */
+:root.theme-atlantic .az-tbl td.c-upg   { color: #2DB8E8 !important; }
+:root.theme-atlantic .az-tbl tr.cur td.c-upg { color: #6FD8FF !important; }
+:root.theme-atlantic .az-tbl td.c-base  { color: rgba(220,241,248,0.85) !important; }
+:root.theme-atlantic .az-tbl td.c-corr  { color: #E04E6E !important; }
+:root.theme-atlantic .az-tbl td.c-ref   { color: #4AAAD8 !important; }
+:root.theme-atlantic .az-tbl td.c-both  { color: #9B6FBF !important; }
+:root.theme-atlantic .az-tbl td.c-gold  { color: var(--amber) !important; }
+:root.theme-atlantic .az-tbl tr.cur td  { background: rgba(45,184,232,0.14) !important; }
+
+/* ── ATLANTIC: Compare — Actual / Wished buttons ── */
+:root.theme-atlantic .cmp-view-btn {
+  background: rgba(45,184,232,0.10) !important;
+  border-color: rgba(45,184,232,0.35) !important;
+  color: rgba(220,241,248,0.65) !important;
+}
+:root.theme-atlantic .cmp-view-btn:hover {
+  background: rgba(45,184,232,0.20) !important;
+  border-color: rgba(111,216,255,0.60) !important;
+  color: #DCF1F8 !important;
+}
+:root.theme-atlantic .cmp-view-btn.active {
+  background: rgba(45,184,232,0.25) !important;
+  border-color: #6FD8FF !important;
+  color: #6FD8FF !important;
+  box-shadow: 0 0 12px rgba(111,216,255,0.30) !important;
+}
+
+/* ── ATLANTIC: Stuff Preview — sp-tbl-row (Tablet panel) ── */
+:root.theme-atlantic .sp-tbl-row.header   { color: #6FD8FF !important; border-bottom-color: rgba(45,184,232,0.30) !important; }
+:root.theme-atlantic .sp-tbl-row.data     { color: rgba(220,241,248,0.78) !important; }
+:root.theme-atlantic .sp-tbl-row.data:hover { color: #DCF1F8 !important; }
+:root.theme-atlantic .sp-tbl-row.data.highlight { color: #6FD8FF !important; }
+
+/* ── ATLANTIC: Cooldown animation — fallback for non-az-analyze-btn buttons ── */
+:root.theme-atlantic button.cd-active:not(.az-analyze-btn) {
+  background:
+    linear-gradient(135deg, #2DB8E8 0%, #6FD8FF 100%) left no-repeat,
+    linear-gradient(135deg, #0B3552 0%, #145A82 100%) !important;
+  background-size: 0% 100%, 100% 100% !important;
+  box-shadow: 0 4px 18px rgba(45,184,232,0.18), 0 2px 0 rgba(11,53,82,0.85) !important;
+  color: #FFFFFF !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  animation: cdFillAtlantic var(--cd-duration, 2s) linear forwards !important;
+}
+
 
 /* ══════════════════════════════════════════════════════
    CLASSIC THEME
@@ -1165,6 +2426,121 @@
    Рамки:        #3b3d44  — subtle dividers
 ══════════════════════════════════════════════════════ */
 
+
+/* ══════════════════════════════════════════════════════
+   ATLANTIC: DEVTOOL FIXES
+   1) Value label + value → голубой вместо кораллового
+   2) DevTool tables → песочный фон + тёмный текст + контрастные подсветки
+══════════════════════════════════════════════════════ */
+
+/* ── (1) Value label / value — голубой в Website и Discord режимах ── */
+:root.theme-atlantic [data-i18n="devtool_value_lbl"] {
+  color: #6FD8FF !important;
+}
+:root.theme-atlantic #dt-disc-val-check,
+:root.theme-atlantic #dt-disc-val-confirm {
+  color: #6FD8FF !important;
+}
+
+/* ── (2) DevTool tables — песочный фон, тёмный текст, читаемые подсветки ── */
+:root.theme-atlantic .dt-result-panel .roll-table-wrap,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap {
+  background: rgba(235,216,176,0.92) !important;
+  border-color: rgba(142,117,72,0.45) !important;
+  color: var(--atl-driftwood) !important;
+  box-shadow: none !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap thead th,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap thead th {
+  color: var(--atl-driftwood) !important;
+  background: rgba(217,190,133,0.55) !important;
+  border-bottom-color: rgba(110,90,56,0.50) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap tbody td,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap tbody td {
+  color: var(--atl-driftwood) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap tbody tr,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap tbody tr {
+  border-color: rgba(142,117,72,0.20) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap tbody tr:hover,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap tbody tr:hover {
+  background: rgba(142,117,72,0.10) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .td-roll,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .td-roll {
+  color: #C84766 !important;
+  font-weight: 700 !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .td-base,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .td-base {
+  color: var(--atl-driftwood) !important;
+}
+
+/* Подсветки — насыщенные фоны + тёмный текст для контраста на песке */
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-near-int td,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-near-int td {
+  background: rgba(46, 122, 90, 0.22) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-near-int .td-roll,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-near-int .td-roll,
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-near-int .td-base,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-near-int .td-base {
+  color: #1A6A1A !important;
+  text-shadow: none !important;
+}
+
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-match td,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-match td {
+  background: rgba(42, 157, 200, 0.22) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-match .td-roll,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-match .td-roll,
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-match .td-base,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-match .td-base {
+  color: #115A82 !important;
+  text-shadow: none !important;
+}
+
+:root.theme-atlantic .dt-result-panel .roll-table-wrap td.cell-match,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap td.cell-match {
+  background: rgba(42, 157, 200, 0.28) !important;
+  color: #115A82 !important;
+  text-shadow: none !important;
+}
+
+:root.theme-atlantic .dt-result-panel .roll-table-wrap td.cell-best,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap td.cell-best {
+  background: rgba(46, 122, 74, 0.32) !important;
+  color: #1A6A1A !important;
+  text-shadow: none !important;
+}
+
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-best td,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-best td {
+  background: rgba(200, 71, 102, 0.14) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap .row-best .td-roll,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap .row-best .td-roll {
+  color: #C84766 !important;
+  text-shadow: 0 0 8px rgba(200,71,102,0.35) !important;
+}
+
+
+
+/* ── (3) Print button — тёмный текст на песочном фоне ── */
+:root.theme-atlantic .dt-result-panel .roll-table-wrap button,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap button {
+  color: var(--atl-driftwood) !important;
+  border-color: rgba(110,90,56,0.55) !important;
+}
+:root.theme-atlantic .dt-result-panel .roll-table-wrap button:hover,
+:root.theme-atlantic .dt-mob-panel .roll-table-wrap button:hover {
+  color: #C84766 !important;
+  border-color: #C84766 !important;
+  opacity: 1 !important;
+}
 /* ══════════════════════════════════════════════════════
    GALAXY THEME — FULL STYLE OVERRIDE
    Оригинальные цвета сохранены. Переделан стиль:
@@ -1262,6 +2638,49 @@
 }
 :root.theme-galaxy .bot-tagline { color: rgba(210,195,235,0.52) !important; }
 :root.theme-galaxy .bot-desc { color: rgba(195,180,220,0.65) !important; }
+
+/*
+  ══════════════════════════════════════════════════════════════════
+  📐 ФОРМУЛА: CREDIT-CARD ДЛЯ ЛЮБОЙ ПАЛИТРЫ
+  ══════════════════════════════════════════════════════════════════
+
+  КОНЦЕПЦИЯ: на всех диапазонах визуальная яркость и ощущение блока
+  должны быть одинаковыми. Достигается разными носителями фона:
+
+  ┌─────────────────┬──────────────────────────────────────────────┐
+  │ >1306px         │ Фон на каждой .credit-card отдельно.         │
+  │ (десктоп)       │ .credits-block — без фона.                   │
+  │                 │ Карточки стоят колонкой, каждая со своей     │
+  │                 │ рамкой. Hover — на одну карточку.            │
+  ├─────────────────┼──────────────────────────────────────────────┤
+  │ ≤1306px         │ Фон переезжает на .credits-block.            │
+  │ (планшет/моб)   │ .credit-card — прозрачные, без рамок.        │
+  │                 │ Карточки в ряд (flex-direction:row).         │
+  │                 │ Маска по краям (gradient transparent→black). │
+  │                 │ Hover — на весь .credits-block сразу.        │
+  └─────────────────┴──────────────────────────────────────────────┘
+
+  ЗНАЧЕНИЯ ДЛЯ НОВОЙ ПАЛИТРЫ (подставить свои цвета):
+
+    DESKTOP — .credit-card:
+      background:   rgba(R,G,B, 0.08)          ← слабый фон
+      border-color: rgba(R,G,B, 0.18)          ← тонкая рамка
+      hover border: rgba(R,G,B, 0.42)          ← рамка при hover
+
+    MOBILE — .credits-block:
+      background:   rgba(R,G,B, 0.08)          ← тот же alpha что на десктопе!
+      border-top/bottom: 1px solid rgba(R,G,B, 0.18)
+      border-left/right: none                  ← края скрыты маской
+      mask: linear-gradient(to right,
+              transparent 0%, black 12%,
+              black 88%, transparent 100%)
+      hover background: rgba(R,G,B, 0.15)      ← чуть ярче при hover
+      hover border:     rgba(R,G,B, 0.42)
+
+    КЛЮЧЕВОЕ ПРАВИЛО: alpha мобильного .credits-block = alpha
+    десктопного .credit-card. Иначе яркость будет отличаться.
+  ══════════════════════════════════════════════════════════════════
+*/
 
 /* ── GALAXY: Credit cards ── */
 :root.theme-galaxy .credit-card {
@@ -1703,6 +3122,10 @@
 :root.theme-galaxy .cmp-view-btn:hover { background: rgba(75,20,165,0.36) !important; border-color: rgba(155,48,255,0.48) !important; color: #e8e0f4 !important; }
 :root.theme-galaxy .cmp-view-btn.active { background: rgba(155,48,255,0.17) !important; border-color: rgba(155,48,255,0.48) !important; }
 
+/* ── GALAXY: CMP Discord card — Upgrades value color ── */
+:root.theme-galaxy #cmp-disc-upg-a,
+:root.theme-galaxy #cmp-disc-upg-b { color: var(--color-upg) !important; }
+
 :root.theme-discord {
   --gold:           #5865F2;
   --gold-bright:    #7289DA;
@@ -1840,7 +3263,7 @@
 
 /* ── DISCORD: Credits ── */
 :root.theme-discord .credit-card {
-  background: rgba(88,101,242,0.08);
+  background: #232428;
   border-color: #3b3d44;
 }
 :root.theme-discord .credit-card-role { color: rgba(219,222,225,0.45) !important; }
@@ -2404,7 +3827,7 @@
   -webkit-background-clip: unset;
   -webkit-text-fill-color: #2EB81E;
   background-clip: unset;
-  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  text-shadow: -2px -2px 0 #000, 0 -2px 0 #000, 2px -2px 0 #000, 2px 0 0 #000, 2px 2px 0 #000, 0 2px 0 #000, -2px 2px 0 #000, -2px 0 0 #000;
 }
 :root.theme-baldi .banner-glow-line {
   background: #7AAB6A;
@@ -4620,11 +6043,33 @@
    EASTER: MOBILE FIXES — всё что не доставало
 ═══════════════════════════════════════════════════ */
 
-/* 1. Credits-block на мобиле — убрать тёмный фон, добавить пасхальный */
+/* 1. Credits-block на мобиле — формула кредиток */
 @media(max-width:1306px) {
   :root.theme-easter .credits-block {
-    background: rgba(237, 228, 220, 0.55) !important;
-    border-color: #D4B8A4 !important;
+    background: rgba(237,228,220,0.6) !important;
+    border-top: 1px solid #D4B8A4 !important;
+    border-bottom: 1px solid #D4B8A4 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-easter .credits-block:hover {
+    background: rgba(237,228,220,0.8) !important;
+    border-color: #C4A090 !important;
+  }
+  :root.theme-easter .credit-card {
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -4803,6 +6248,15 @@ body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',
   border-color: #D4B8A4;
   box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 0 10px color-mix(in srgb, #E0607E 10%, transparent);
 }
+/* Atlantic theme popup — песочный как основные панели */
+:root.theme-atlantic .palette-popup-inner {
+  background: linear-gradient(180deg, #EBD8B0 0%, #DCC392 100%);
+  border: 1px solid rgba(110,90,56,0.65);
+  box-shadow: 0 4px 16px rgba(11,53,82,0.35), 0 0 10px rgba(200,71,102,0.12);
+}
+/* Названия палитр читаемы на песочном фоне */
+:root.theme-atlantic .palette-label { color: rgba(61,46,26,0.65) !important; }
+:root.theme-atlantic .palette-item:hover .palette-label { color: rgba(61,46,26,0.90) !important; }
 
 .palette-grid {
   display: grid;
@@ -4868,6 +6322,14 @@ body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',
   border-color: #2EB81E;
   box-shadow: 0 0 14px #2EB81E, 0 0 5px #2EB81E;
 }
+.palette-item[data-theme="discord"]:hover img {
+  border-color: #5865F2;
+  box-shadow: 0 0 14px #5865F2, 0 0 5px #5865F2;
+}
+.palette-item[data-theme="atlantic"]:hover img {
+  border-color: #C84766;
+  box-shadow: 0 0 14px #C84766, 0 0 5px #C84766;
+}
 .palette-item:hover {
   transform: scale(1.07);
   background: rgba(255,255,255,0.04);
@@ -4904,6 +6366,7 @@ body{background:var(--bg-void);color:var(--text-primary);font-family:'Rajdhani',
 .palette-item[data-theme="classic"] { --pal-glow: #447194; }
 .palette-item[data-theme="baldi"]   { --pal-glow: #2EB81E; }
 .palette-item[data-theme="discord"] { --pal-glow: #5865F2; }
+.palette-item[data-theme="atlantic"] { --pal-glow: #C84766; }
 
 .palette-label {
   font-family: 'Rajdhani', sans-serif;
@@ -5247,6 +6710,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 :root.theme-baldi  { --vl-accent: #2EB81E; }
 :root.theme-classic{ --vl-accent: #447194; }
 :root.theme-easter { --vl-accent: #E0607E; }
+:root.theme-atlantic { --vl-accent: #C84766; }
 
 /* Mobile */
 @media (max-width: 640px) {
@@ -5366,18 +6830,32 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   .bot-avatar-wrap{width:90px;height:90px;margin-bottom:12px;}
   .bot-avatar-img{width:90px;height:90px;}
 
-  /* stats-col-mobile — 2 сверху, total посередине, 3 снизу: 6-col grid */
-  .stats-col-mobile{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;margin-top:12px;}
-  .stats-col-mobile .stat-chip{padding:12px 8px;}
+  /* stats-col-mobile — 2 сверху, total посередине, 3 снизу: 6-col grid (СЕТКА СОХРАНЕНА) */
+  .stats-col-mobile{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;width:100%;margin-top:14px;}
+  /* Визуал плитки приведён к десктопному виду (рамка, мягкая тень, акцент при hover) */
+  .stats-col-mobile .stat-chip{
+    padding:14px 10px;
+    border-radius:12px;
+    background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.42) 100%);
+    border:1px solid var(--border-rune,rgba(255,255,255,0.18));
+    box-shadow:
+      0 2px 10px rgba(0,0,0,0.30),
+      0 0 0 1px rgba(255,255,255,0.04) inset;
+    transition:border-color .2s, transform .15s, box-shadow .2s;
+  }
+  .stats-col-mobile .stat-chip:hover{
+    border-color:var(--border-gold,var(--gold,rgba(255,255,255,0.45)));
+    transform:translateY(-1px);
+  }
   .stats-col-mobile .stat-chip:nth-child(1){grid-column:1 / span 3;}
   .stats-col-mobile .stat-chip:nth-child(2){grid-column:4 / span 3;}
   .stats-col-mobile .stat-chip:nth-child(3){grid-column:1 / span 6;}
   .stats-col-mobile .stat-chip:nth-child(4){grid-column:1 / span 2;}
   .stats-col-mobile .stat-chip:nth-child(5){grid-column:3 / span 2;}
   .stats-col-mobile .stat-chip:nth-child(6){grid-column:5 / span 2;}
-  .stats-col-mobile .stat-num{font-size:18px;}
-  .stats-col-mobile .stat-lbl{font-size:10px;}
-  .stats-col-mobile .total-proc-count{font-size:18px;max-width:none;}
+  .stats-col-mobile .stat-num{font-size:20px;font-weight:700;letter-spacing:0.5px;}
+  .stats-col-mobile .stat-lbl{font-size:10px;letter-spacing:1.5px;margin-top:4px;}
+  .stats-col-mobile .total-proc-count{font-size:22px;max-width:none;font-weight:700;}
   .updates-panel{flex:none;}
   .updates-body{max-height:240px;}
 }
@@ -6666,6 +8144,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 
 .az-res-val{font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:600;}
 .az-res-val.dmg{color:var(--color-dmg);}
+.az-res-val.hp{color:var(--color-hp);}
 .az-res-val.delay{color:#ccc;}
 
 .az-res-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:0 4px;}
@@ -8954,6 +10433,40 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 }
 .sett-entry-sep.dim { font-size: 12px; opacity: .4; }
 
+/* ── Volume slider ── */
+.sett-volume-row {
+  display: flex; align-items: center;
+}
+.sett-volume-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--gold-bright) 0%, var(--gold-bright) var(--vol-pct, 100%), var(--border-gold) var(--vol-pct, 100%), var(--border-gold) 100%);
+  outline: none; cursor: pointer;
+  transition: background .1s;
+}
+.sett-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 6px var(--gold-glow);
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.sett-volume-slider::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%; border: none;
+  background: var(--gold-bright);
+  box-shadow: 0 0 6px var(--gold-glow);
+  cursor: pointer;
+}
+.sett-volume-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+.sett-volume-slider:hover::-moz-range-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
 /* ── Palette hint ── */
 .sett-section--palette { margin-top: 2px; }
 .sett-palette-hint {
@@ -9457,16 +10970,32 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 /* ══ BALDI: MOBILE FIXES ══ */
 @media(max-width:1306px) {
   :root.theme-baldi .credits-block {
-    background: #D6EDCF !important;
-    border-color: #A09878 !important;
+    background: #E0F2D8 !important;
+    border-top: 1px solid #7AAB6A !important;
+    border-bottom: 1px solid #7AAB6A !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
     box-shadow: none !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-baldi .credits-block:hover {
+    background: #cce8c0 !important;
+    border-color: #5A8B4A !important;
   }
   :root.theme-baldi .credit-card {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -9474,13 +11003,30 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @media(max-width:1306px) {
   :root.theme-classic .credits-block {
     background: #1e2d3e !important;
-    border: #253a4e !important;
+    border-top: 1px solid #253a4e !important;
+    border-bottom: 1px solid #253a4e !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
     box-shadow: none !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-classic .credits-block:hover {
+    background: #253a4e !important;
+    border-color: #2e4a60 !important;
   }
   :root.theme-classic .credit-card {
     background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -9651,17 +11197,33 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   color: #949ba4;
 }
 
-/* 9. Mobile: credits block — dark bg with mask-image fade like desktop */
+/* 9. Mobile: credits block — формула кредиток */
 @media(max-width:1306px) {
   :root.theme-discord .credits-block {
-    background: rgba(0,0,0,0.2) !important;
-    border-color: #3b3d44 !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    background: #232428 !important;
+    border-top: 1px solid #3b3d44 !important;
+    border-bottom: 1px solid #3b3d44 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-discord .credits-block:hover {
+    background: #2b2d31 !important;
+    border-color: #5865F2 !important;
   }
   :root.theme-discord .credit-card {
-    background: transparent !important;
+    background: none !important;
     border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -9866,12 +11428,12 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 
 @media(min-width:961px) {
   :root.theme-discord .credit-card {
-    background: var(--dc-bg) !important;
-    border-color: var(--dc-border) !important;
+    background: #232428 !important;
+    border-color: #3b3d44 !important;
   }
   :root.theme-discord .credit-card:hover {
-    background: var(--dc-hover) !important;
-    border-color: rgba(255,255,255,0.18) !important;
+    background: #2b2d31 !important;
+    border-color: #5865F2 !important;
   }
 }
 
@@ -10093,20 +11655,36 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   box-shadow: 0 5px 16px rgba(155,48,255,.75), 0 1px 0 #3a0a70 !important;
 }
 
-/* Mobile: remove galaxy purple background from credit cards (overlap with mask) */
+/* ── GALAXY: Credit cards mobile (≤1306px) — см. формулу выше ── */
 @media(max-width:1306px){
   :root.theme-galaxy .credits-block {
-    background: rgba(100,20,200,0.18) !important;
-    border-color: rgba(155,48,255,0.35) !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%) !important;
+    background: rgba(100,20,200,0.08) !important;
+    border-top: 1px solid rgba(155,48,255,0.18) !important;
+    border-bottom: 1px solid rgba(155,48,255,0.18) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 10px !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-galaxy .credits-block:hover {
+    background: rgba(100,20,200,0.15) !important;
+    border-color: rgba(155,48,255,0.42) !important;
   }
   :root.theme-galaxy .credit-card {
     background: none !important;
-    border-color: transparent !important;
-  }
-  :root.theme-galaxy .credit-card:hover {
-    border-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    flex: none !important;
+    width: auto !important;
   }
 }
 
@@ -10442,14 +12020,112 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   #page-home .credit-card:hover { border-color: transparent !important; }
   #page-home .credit-card-role  { font-size: 10px !important; letter-spacing: 1px !important; }
   #page-home .credit-card-name  { font-size: 14px !important; }
-  /* ── Тематические фоны credits-block для 989–1306px ── */
-  :root.theme-time    #page-home .credits-block { background: rgba(245,200,66,0.07) !important; border-color: rgba(245,200,66,0.18) !important; }
-  :root.theme-galaxy  #page-home .credits-block { background: rgba(100,20,200,0.18) !important; border-color: rgba(155,48,255,0.35) !important; }
-  :root.theme-discord #page-home .credits-block { background: rgba(0,0,0,0.2) !important; border-color: #3b3d44 !important; }
-  :root.theme-discord #page-home .credit-card { background: none !important; border: none !important; }
-  :root.theme-baldi   #page-home .credits-block { background: #E0F2D8 !important; border-color: #7AAB6A !important; box-shadow: 1px 1px 0 #7AAB6A !important; }
-  :root.theme-classic #page-home .credits-block { background: #1e2d3e !important; border-color: #253a4e !important; }
-  :root.theme-easter  #page-home .credits-block { background: rgba(237,228,220,0.6) !important; border-color: #D4B8A4 !important; }
+  /* ── Тематические фоны credits-block для 989–1306px (формула кредиток) ── */
+
+  /* TIME */
+  :root.theme-time #page-home .credits-block {
+    background: rgba(245,200,66,0.04) !important;
+    border-top: 1px solid rgba(245,200,66,0.12) !important;
+    border-bottom: 1px solid rgba(245,200,66,0.12) !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; gap: 0 !important;
+    width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-time #page-home .credits-block:hover { background: rgba(245,200,66,0.09) !important; border-color: rgba(245,200,66,0.35) !important; }
+  :root.theme-time #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* GALAXY */
+  :root.theme-galaxy #page-home .credits-block {
+    background: rgba(100,20,200,0.08) !important;
+    border-top: 1px solid rgba(155,48,255,0.18) !important;
+    border-bottom: 1px solid rgba(155,48,255,0.18) !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; gap: 0 !important;
+    width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-galaxy #page-home .credits-block:hover { background: rgba(100,20,200,0.15) !important; border-color: rgba(155,48,255,0.42) !important; }
+  :root.theme-galaxy #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* DISCORD */
+  :root.theme-discord #page-home .credits-block {
+    background: #232428 !important;
+    border-top: 1px solid #3b3d44 !important;
+    border-bottom: 1px solid #3b3d44 !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; gap: 0 !important;
+    width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-discord #page-home .credits-block:hover { background: #2b2d31 !important; border-color: #5865F2 !important; }
+  :root.theme-discord #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* BALDI */
+  :root.theme-baldi #page-home .credits-block {
+    background: #E0F2D8 !important;
+    border-top: 1px solid #7AAB6A !important;
+    border-bottom: 1px solid #7AAB6A !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; box-shadow: none !important;
+    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-baldi #page-home .credits-block:hover { background: #cce8c0 !important; border-color: #5A8B4A !important; }
+  :root.theme-baldi #page-home .credit-card { background: none !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* CLASSIC */
+  :root.theme-classic #page-home .credits-block {
+    background: #1e2d3e !important;
+    border-top: 1px solid #253a4e !important;
+    border-bottom: 1px solid #253a4e !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; box-shadow: none !important;
+    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-classic #page-home .credits-block:hover { background: #253a4e !important; border-color: #2e4a60 !important; }
+  :root.theme-classic #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* EASTER */
+  :root.theme-easter #page-home .credits-block {
+    background: rgba(237,228,220,0.6) !important;
+    border-top: 1px solid #D4B8A4 !important;
+    border-bottom: 1px solid #D4B8A4 !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important;
+    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: background .2s, border-color .2s !important;
+  }
+  :root.theme-easter #page-home .credits-block:hover { background: rgba(237,228,220,0.8) !important; border-color: #C4A090 !important; }
+  :root.theme-easter #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+
+  /* ATLANTIC */
+  :root.theme-atlantic #page-home .credits-block {
+    background: transparent !important;
+    border-top: 1px solid #C84766 !important;
+    border-bottom: 1px solid #C84766 !important;
+    border-left: none !important; border-right: none !important;
+    border-radius: 10px !important; box-shadow: none !important;
+    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
+    transition: border-color .2s !important;
+  }
+  :root.theme-atlantic #page-home .credits-block:hover { border-color: #E25A78 !important; }
+  :root.theme-atlantic #page-home .credit-card { background: transparent !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 10px 18px !important; -webkit-mask-image: none !important; mask-image: none !important; }
   /* stats-col-mobile: та же ширина что и bot-panel */
   #page-home .stats-col-mobile {
     width: 100% !important;
@@ -11064,6 +12740,13 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         <button class="sett-entry-btn sett-entry-old" id="sett-entry-old" onclick="setEntryType('old')">Discord</button>
       </div>
     </div>
+    <!-- Background Sound -->
+    <div class="sett-section">
+      <div class="sett-section-label" id="sett-sound-label">Background sound: 100%</div>
+      <div class="sett-volume-row">
+        <input type="range" min="0" max="100" value="100" class="sett-volume-slider" id="sett-volume-slider" oninput="setBgVolume(this.value)">
+      </div>
+    </div>
     <!-- Color Palette hint -->
     <div class="sett-section sett-section--palette">
       <div class="sett-section-label" id="sett-palette-label">Color palette:</div>
@@ -11176,6 +12859,10 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
                 <img src="images/Home Page/avatar6.png" alt="Discord">
                 <span class="palette-label">Discord</span>
               </button>
+              <button class="palette-item" data-theme="atlantic" data-glow="#2A9DC8" onclick="selectPalette('atlantic')" aria-label="Atlantic theme">
+                <img src="images/Home Page/avatar7.png" alt="Atlantic">
+                <span class="palette-label">Atlantic</span>
+              </button>
               <button class="palette-item palette-item-future" disabled aria-label="Coming soon">
                 <span class="palette-future-icon">?</span>
                 <span class="palette-label">Soon</span>
@@ -11215,7 +12902,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.0.9</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.1.0</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -11231,7 +12918,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.0.9</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.1.0</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
@@ -13477,7 +15164,7 @@ const ITEMS = {
     {id:'dcr',   name:"Diamond Cracker",               stats:DCR, maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'db',    name:"Doombringer",                   stats:DB,  maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'ea_st', name:"Easter Spear",                  stats:EAS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
-    {id:'gl_st', name:"Glitched Staff",                stats:GLS, maxUpg:99,  rarity:'secret',    delay:0.4,   minRoll:6},
+    {id:'gl_st', name:"Glitched Staff",                stats:GLS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:6},
     {id:'asc_lk',name:"Lightning Katana V2",           stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
     {id:'me',    name:"Magma's Edge",                  stats:ME,  maxUpg:44,  rarity:'mythic',    delay:0.6,   minRoll:1},
     {id:'asc_me',name:"Magma's Edge V2",               stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.65,  minRoll:6},
@@ -13599,7 +15286,7 @@ let currentPage = 'home';
 let currentCategory = 'weapon';
 let currentItem = null;
 let currentArmorPart = 'Helmet';
-let lang = localStorage.getItem('_ed_lang') || 'en';
+let lang = (window._edGetCookie && window._edGetCookie('_ed_lang')) || localStorage.getItem('_ed_lang') || 'en';
 // Глобальный массив — управляется Firebase listener'ом
 if (!window.analysisHistory) window.analysisHistory = [];
 // Псевдоним для совместимости с кодом ниже
@@ -13662,12 +15349,13 @@ function navigateTo(page) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.scrollTop = 0; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const pageEl = document.getElementById('page-' + page);
-  if (pageEl) { pageEl.classList.add('active'); currentPage = page; }
+  if (pageEl) { pageEl.classList.add('active'); currentPage = page; window.currentPage = page; }
   // ── Remember last visited page so reload restores it ──
   try {
     const _persistable = ['home','rolls','analyze','stuff','compare'];
     if (_persistable.indexOf(page) !== -1) {
       localStorage.setItem('_ed_last_page', page);
+      window._edSetCookie('_ed_last_page', page);
     }
   } catch(_) {}
   const navBtn = document.getElementById('navbtn-' + page);
@@ -14337,6 +16025,9 @@ const T = {
     upd12_title: 'UPDATES OF v1.0.9 VERSION!',
     upd12_sub: 'Developer Notes 20.04.2026',
     upd12_body: `It's been more than a day since the link wasn't removed — which is honestly great!\nFewer questions about rolls are appearing in the chat. Everyone knows to head over to <span class="upd-accent">#game-faqs</span> and visit the site. That's a real win.\n\n<span class="upd-accent">What's new in v1.0.9?</span>\nGiven that we've become more official, it was time to seriously think about responsiveness. SO!\nI'VE ADAPTED THE SITE FOR ALL POSSIBLE SCREEN WIDTHS, FOR THE MAXIMUM COMFORT OF EVERYONE WHO USES IT!\n<span class="upd-muted">(I can't be 100% sure everything works correctly on every device — I'll be asking for your feedback and any bugs you find)</span>\n\n<span class="upd-accent">What's coming in the milestone update v1.1.0?</span>\nA new palette — <span class="upd-accent">Atlantic!</span> Just felt like it, and it's a nod to the developer's name — H2O.\nAnd of course we're waiting for new items! Especially:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor, not guaranteed to appear\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nWell, it was at least mentioned in a contest on the <span class="upd-accent">#contests</span> channel in Discord.\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to all of you! :D</span>`,
+    upd13_title: 'UPDATES OF v1.1.0 VERSION!',
+    upd13_sub: 'Developer Notes 22.04.2026',
+    upd13_body: `I'm in a pretty good mood today and got a great idea about palette design and their atmosphere. So that's what this update is all about!\n\n<span class="upd-accent">Reminder!</span> The link is still available in the <span class="upd-accent">#game-faqs</span> channel — if you want to mention it to someone, direct them to that channel. Please don't share the link directly.\n\n<span class="upd-accent">Regarding Contest Battleaxe.</span> The game developers change its base values quite often — sometimes buffing it, sometimes nerfing it.\nTo avoid having to update it every time, let's make a deal!\nIf Contest Battleaxe has the same roll as <span class="upd-accent">Cupid</span>, use the values from <span class="upd-accent">Cupid Wrath</span> — they're identical.\nIf not, and the values are noticeably lower, then use Contest Battleaxe's values as shown!\n\n<span class="upd-accent">What's new in v1.1.0?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">NEW COLOR PALETTE — Atlantic!</span>\n<span class="upd-cyan">›</span> AND A COOL NEW FEATURE! <span class="upd-accent">SOUND EFFECTS!</span>\nEach palette has its own set of sounds that closely matches its design and atmosphere — for full immersion.\nVolume can also be adjusted in the settings!\n\n<span class="upd-accent">What's coming in v1.1.1?</span>\nQuite a beautiful number — three identical digits.\nSo in the game, we're genuinely expecting something truly grand, related to new items. And as always, we're waiting. Eagerly!\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
     upd10_title: 'UPDATES OF v1.0.8 VERSION!',
     upd10_sub: 'Developer Notes 17.04.2026',
     upd10_body: `Collaboration with <span class="upd-cyan">SUSUheyb</span> is still going strong, and I want to congratulate him on the release of his update on April 16th.\n\nWe have a great celebration! Admin <span class="upd-cyan">@rebel</span> placed a link to the site — <span class="upd-accent">at my request</span> — in a pretty important channel: <span class="upd-accent">#game-faqs</span>. That means the link is now publicly available! We made it! Hooray!\n\nHuge thanks to everyone for the support! Right now in the <span class="upd-accent">#best-suggestions</span> channel you can see <span class="upd-accent">134 stars</span> on our topic! And we've succeeded!\n\nHowever, please follow the server rules. Don't forget that this is still just a link, which can be forwarded by anyone, or even copied for scam purposes.\nIf you want to point to the source of the site, either point to the channel itself which contains the official site link, OR mention me and tell people to check my profile bio. The link is mentioned there too.\n\n<span class="upd-accent">What's new in v1.0.8?</span>\nNothing major, except a newly added palette — <span class="upd-accent">Discord</span>!\nIn honor of the official mention of the site and its recognition.\n\nAlso, we're tentatively expecting the following:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nAlso possibly new weapons and relics (a heavily discussed topic).\n\n<span class="upd-accent">What's coming in v1.0.9?</span>\nI haven't come up with shit yet, but for now I'll occasionally add new color palettes — tied to events, or to my crazy fantasies :D\n\n<span class="upd-muted">A wonderful morning / day / evening / night to all of you!</span>`,
@@ -14541,6 +16232,9 @@ const T = {
     upd12_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.9v!',
     upd12_sub: 'Записи разработчика 20.04.2026',
     upd12_body: `Уже прошло больше чем день как ссылку не удалили, что даже круто!\nПользователей в чате стало меньше, касаемо вопросов про ролл. Все знают что надо переходить на канал <span class="upd-accent">#game-faqs</span> и зайти на сайт. Это реально успех.\n\n<span class="upd-accent">Что касаемо обновления 1.0.9</span>\nУчитывая, что мы стали более официальными, нужно было всерьёз задуматься насчёт адаптации. ПОЭТОМУ!\nЯ АДАПТИРОВАЛ САЙТ ПОД ВСЕ ВОЗМОЖНЫЕ ШИРИНЫ ЭКРАНОВ, ДЛЯ МАКСИМАЛЬНОГО УДОБСТВА КАЖДОГО, КТО ЗДЕСЬ ПОЛЬЗУЕТСЯ САЙТОМ!\n<span class="upd-muted">(я не могу быть уверенным в том что всё работает корректно на каждом устройстве, буду интересоваться вашим мнением и найденными багами)</span>\n\n<span class="upd-accent">Что ожидается в юбилейном? обновлении 1.1.0..</span>\nНовая палитра — <span class="upd-accent">Atlantic!</span> Просто захотелось, да и отсылка на имя разработчика — H2O.\nНу и ждём конечно же новые предметы! Особенно:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня, не гарантировано её появление\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nНу, по крайней мере, упоминалась в конкурсе на канале <span class="upd-accent">#contests</span> в дискорде.\n\n<span class="upd-muted">А на этом всё!\nВсем добрейшего утра/дня/вечера/ночи! :D</span>`,
+    upd13_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.1.0v!',
+    upd13_sub: 'Записи разработчика 22.04.2026',
+    upd13_body: `Я в хорошем достаточно настроении и мне пришла хорошая идея по поводу оформления палитр и их атмосферы. Так вот, об этом и обновление!\n\n<span class="upd-accent">Напоминаю!</span> Ссылка до сих пор есть на канале <span class="upd-accent">#game-faqs</span> и если хотите упомянуть ссылку, то направляйте людей именно на этот канал, не называйте ссылку повторно.\n\n<span class="upd-accent">Касаемо оружия Contest Battleaxe.</span> Разработчики игры довольно таки часто изменяют базовые значения этому оружию. Они его делают то сильнее, то слабее.\nЧтобы мне не приходилось каждый раз менять ему значения, давайте договоримся!\nЕсли Contest Battleaxe того-же ролла, что и <span class="upd-accent">Cupid</span>, то рассматривайте данные у оружия <span class="upd-accent">Cupid Wrath</span>. Они идентичны.\nЕсли нет, и они гораздо ниже, то уже рассматривайте у Contest Battleaxe как есть!\n\n<span class="upd-accent">Что нового в обновлении 1.1.0?</span>\n<span class="upd-cyan">›</span> <span class="upd-accent">НОВАЯ ЦВЕТОВАЯ ПАЛИТРА — Atlantic!</span>\n<span class="upd-cyan">›</span> А ТАК-ЖЕ НОВАЯ КРУТАЯ ФИШКА! <span class="upd-accent">ЗВУКОВЫЕ ЭФФЕКТЫ!</span>\nУ каждой палитры есть свой набор звуков, который приближённо походит на их дизайн и атмосферу, для полного погружения.\nГромкость так-же настраивается в настройках!\n\n<span class="upd-accent">Что будет в обновлении 1.1.1?</span>\nЧисло довольно таки красивое, 3 одинаковых числа.\nПоэтому мы в игре ожидаем во истину, что-то грандиозное, связанное с новыми предметами. А мы как всегда, ждём их. С нетерпением!\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
     upd10_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.8v!',
     upd10_sub: 'Записи разработчика 17.04.2026',
     upd10_body: `Сотрудничество с <span class="upd-cyan">SUSUheyb</span> всё так-же продолжается и его поздравляю с выходом обновления 16 апреля.\n\nУ нас великий праздник! Администратор <span class="upd-cyan">@rebel</span> разместил ссылку на сайт <span class="upd-accent">ПО МОЕЙ ПРОСЬБЕ</span> на довольно таки важном канале <span class="upd-accent">#game-faqs</span>. Это значит что теперь ссылка стала общедоступной! Мы добились этого! Ура!\n\nВсем большое спасибо за поддержку! На данный момент на канале <span class="upd-accent">#best-suggestions</span> можно увидеть <span class="upd-accent">134 звезды</span> у нашего топика! И мы добились успеха!\n\nОднако, соблюдаем правила сервера. Не забываем что это всё ещё какая-то ссылка, которая может быть перекинута кем угодно, так-же и скопирована с целью мошенничества.\nЕсли вы хотите указать на источник сайта, то либо указываете на сам канал, в котором есть официальная ссылка сайта ИЛИ упоминаете меня и говорите чтобы посмотрели мою биографию в профиле. Там тоже упомянута ссылка.\n\n<span class="upd-accent">Что нового в версии 1.0.8?</span>\nОсобо ничего, кроме новой добавленной палитры — <span class="upd-accent">Discord</span>!\nВ честь официального упоминания сайта и его признания.\n\nА так-же, предварительно ожидаем такие вещи:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nА так-же может быть новые оружия и релики (очень обсуждаемая тема).\n\n<span class="upd-accent">Что будет в обновлении 1.0.9?</span>\nЯ ещё нихуя не придумал, но пока буду изредка добавлять новые цветовые палитры, связанные с событиями, или с моими ебанутыми фантазиями :D\n\n<span class="upd-muted">Всем добрейшего утра/дня/вечера/ночи!</span>`,
@@ -14592,7 +16286,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 11;
+let updPage = 12;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -14606,6 +16300,7 @@ const UPD_PAGES = [
   { title:'upd10_title', sub:'upd10_sub', body:'upd10_body' },
   { title:'upd11_title', sub:'upd11_sub', body:'upd11_body' },
   { title:'upd12_title', sub:'upd12_sub', body:'upd12_body' },
+  { title:'upd13_title', sub:'upd13_sub', body:'upd13_body' },
 ];
 
 function updRender() {
@@ -14878,6 +16573,7 @@ function _applyRandBtnTitles() {
 function toggleLang() {
   lang = lang === 'en' ? 'ru' : 'en';
   localStorage.setItem('_ed_lang', lang);
+  window._edSetCookie('_ed_lang', lang);
   _applySettingsLangUI();
   applyLang();
 }
@@ -16244,6 +17940,9 @@ function azDoAnalyze() {
     document.getElementById('az-gold-sub').textContent =
       goldRemaining > 0 ? (t('until_level') + ' ' + maxUpg) : '';
 
+    if (typeof window.__applyAtlanticStatsBoxStyle === 'function') {
+      window.__applyAtlanticStatsBoxStyle();
+    }
     document.getElementById('az-result-card').style.display = 'block';
     document.getElementById('az-v-arrow').classList.add('visible');
     if (isMabVisible()) {
@@ -16356,6 +18055,9 @@ function azRenderWeaponResultCard(snap) {
   document.getElementById('az-gold-spent').textContent = azFmtNum(goldSpent) + ' 🪙';
   document.getElementById('az-gold-total').textContent = goldRemaining > 0 ? azFmtNum(goldRemaining) + ' 🪙' : '✓';
   document.getElementById('az-gold-sub').textContent   = goldRemaining > 0 ? (t('until_level') + ' ' + maxUpg) : '';
+  if (typeof window.__applyAtlanticStatsBoxStyle === 'function') {
+    window.__applyAtlanticStatsBoxStyle();
+  }
 }
 
 // Render armor result card, showing azResCurrentPart data + part switcher + total HP
@@ -16435,8 +18137,8 @@ function azRenderArmorResultCard(ri) {
   const resDmgLbl = document.getElementById('az-res-dmg-lbl');
   if (resDmgLbl) { resDmgLbl.style.color = 'var(--color-hp)'; resDmgLbl.textContent = t('lbl_health'); }
   const resDmgVal = document.getElementById('az-res-dmg');
-  resDmgVal.className = 'az-res-val';
-  resDmgVal.style.color = 'var(--color-hp)';
+  resDmgVal.className = 'az-res-val hp';
+  resDmgVal.style.color = '';
   resDmgVal.textContent = azFmtDmg(res.hp);
 
   // Hide delay row for armor
@@ -16461,6 +18163,10 @@ function azRenderArmorResultCard(ri) {
     res.goldRemaining > 0 ? azFmtNum(res.goldRemaining) + ' 🪙' : '✓';
   document.getElementById('az-gold-sub').textContent =
     res.goldRemaining > 0 ? (t('until_level') + ' ' + res.maxUpg) : '';
+
+  if (typeof window.__applyAtlanticStatsBoxStyle === 'function') {
+    window.__applyAtlanticStatsBoxStyle();
+  }
 
   // Build part switcher
   const rarClass = 'rarity-' + azCurrentItem.rarity;
@@ -16777,6 +18483,7 @@ let spArmorPartData = {
 
 // ── SP Category snapshots ──
 const spCategorySnapshot = { weapon: null, armor: null };
+let spLastWeaponResult = null; // { stat, base, growthFactor, roll, upg, corr, refName, refMult }
 
 function spSaveCategorySnapshot(cat) {
   if (cat === 'weapon') {
@@ -16787,6 +18494,7 @@ function spSaveCategorySnapshot(cat) {
       reforge: spSelectedReforge,
       corrupted: spIsCorrupted,
       resultVisible: document.getElementById('sp-result-card')?.style.display !== 'none',
+      lastWeaponResult: spLastWeaponResult ? { ...spLastWeaponResult } : null,
     };
   } else {
     if (spCurrentItem?.isArmor) {
@@ -16848,7 +18556,7 @@ function spSwitchCat(cat) {
     document.querySelectorAll('#sp-item-list-panel .item-btn').forEach(b => {
       if (b.textContent === snap.item.name) b.classList.add('active');
     });
-    spRestoreUI(snap.item, snap.resultVisible);
+    spRestoreUI(snap.item, snap.resultVisible, snap);
   } else {
     // No snapshot — fresh
     spCurrentItem = null; spCurrentPart = 'Helmet'; spCurrentArmorPart = 'Helmet';
@@ -16862,7 +18570,54 @@ function spSwitchCat(cat) {
   }
 }
 
-function spRestoreUI(item, resultVisible) {
+function spRenderWeaponResultCard(snap) {
+  const item = snap.item;
+  const wr   = snap.lastWeaponResult;
+  if (!item || !wr) return;
+  const { stat, base, growthFactor, roll, upg, corr, refName, refMult } = wr;
+  const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
+  const imgBox = document.getElementById('sp-res-img-box');
+  const imgEl  = document.getElementById('sp-res-img');
+  const phEl   = document.getElementById('sp-res-placeholder');
+  const imgPath = spGetItemImage(item);
+  if (imgPath) { imgEl.src = imgPath; imgEl.style.display = 'block'; phEl.style.display = 'none'; }
+  else { imgEl.style.display = 'none'; phEl.style.display = 'block'; }
+  azApplyRarityBorder(imgBox, ri);
+  document.getElementById('sp-res-roll-row').style.display = 'none';
+  const nameEl = document.getElementById('sp-res-name');
+  nameEl.textContent = item.name; nameEl.className = ri.css;
+  document.getElementById('sp-res-rarity').textContent = ri.label.toUpperCase();
+  document.getElementById('sp-res-rarity').className = 'az-res-val ' + ri.css;
+  const dmgLbl = document.getElementById('sp-res-dmg-lbl');
+  const dmgVal = document.getElementById('sp-res-dmg');
+  dmgLbl.textContent = t('lbl_damage'); dmgLbl.style.color = 'var(--color-dmg)';
+  dmgVal.className = 'az-res-val dmg'; dmgVal.style.color = '';
+  dmgVal.textContent = azFmtDmg(stat);
+  const delayRow = document.getElementById('sp-res-delay-row');
+  if (item.delay) { delayRow.style.display = 'flex'; document.getElementById('sp-res-delay').textContent = item.delay + 's'; }
+  else { delayRow.style.display = 'none'; }
+  document.getElementById('sp-res-upg').textContent = upg;
+  const corrEl = document.getElementById('sp-res-corr');
+  corrEl.textContent = corr ? 'Yes' : 'No';
+  corrEl.className = 'az-res-corr-val ' + (corr ? 'yes' : 'no');
+  const refEl = document.getElementById('sp-res-reforge');
+  refEl.style.display = '';
+  refEl.textContent = refName !== 'None' ? refName + ' Reforge' : '—';
+  document.getElementById('sp-res-part-row').classList.remove('visible');
+  document.getElementById('sp-total-hp-row').classList.remove('visible');
+  const nextUpgCost = (upg < item.maxUpg) ? (UPGRADE_COSTS[upg + 1] || 0) : null;
+  let spent = 0; for (let i = 1; i <= upg; i++) spent += (UPGRADE_COSTS[i] || 0);
+  let totalToMax = 0; for (let i = 1; i <= item.maxUpg; i++) totalToMax += (UPGRADE_COSTS[i] || 0);
+  const remaining = Math.max(0, totalToMax - spent);
+  document.getElementById('sp-gold-next').textContent = nextUpgCost !== null ? azFmtNum(nextUpgCost) + ' 🪙' : t('lbl_max_level');
+  document.getElementById('sp-gold-spent').textContent = azFmtNum(spent) + ' 🪙';
+  document.getElementById('sp-gold-total').textContent = remaining > 0 ? azFmtNum(remaining) + ' 🪙' : '✓';
+  document.getElementById('sp-gold-sub').textContent = remaining > 0 ? (t('until_level') + ' ' + item.maxUpg) : '';
+  spRenderProcess(item, roll, upg, corr, refName, refMult, stat, base, growthFactor);
+  spRenderTablet(item, roll, upg, corr, refName, refMult);
+}
+
+function spRestoreUI(item, resultVisible, snap) {
   const isArmor = !!item.isArmor;
   const ri = RARITY_INFO[item.rarity] || RARITY_INFO.legendary;
   const imgBox = document.getElementById('sp-img-box');
@@ -16912,9 +18667,28 @@ function spRestoreUI(item, resultVisible) {
   }
   // Sync input mode (Website vs Discord)
   spSyncInputMode();
-  // Restore result if it was visible
+  // Restore result if it was visible — direct render, no spDoAnalyze (no sound, no log)
   if (resultVisible) {
-    spDoAnalyze(true);
+    const _spPage = document.getElementById('page-stuff');
+    const _spScrollSave = _spPage ? _spPage.scrollTop : 0;
+    document.getElementById('sp-result-card').style.display = 'block';
+    document.getElementById('sp-empty').style.display = 'none';
+    if (_spPage) _spPage.scrollTop = _spScrollSave;
+    if (item.isArmor) {
+      spRenderArmorResultCard();
+      spRenderArmorProcessTablet(spResCurrentPart);
+    } else if (snap && snap.lastWeaponResult) {
+      spRenderWeaponResultCard(snap);
+    }
+    document.getElementById('sp-left-col').style.display = 'flex';
+    if (!isTrulyMobile()) {
+      document.getElementById('sp-h-arrow').classList.add('visible');
+      document.getElementById('sp-third-panel').classList.add('visible');
+      requestAnimationFrame(() => requestAnimationFrame(() => spAlignArrow()));
+    }
+    document.getElementById('sp-v-arrow').classList.add('visible');
+    if (!isTrulyMobile()) requestAnimationFrame(() => spSyncPanelHeight());
+    requestAnimationFrame(() => { if(window.updateMobConsoleHeight) updateMobConsoleHeight(); });
   }
 }
 
@@ -17606,7 +19380,8 @@ function spRenderArmorResultCard() {
   const dmgVal = document.getElementById('sp-res-dmg');
   dmgLbl.textContent = t('lbl_health');
   dmgLbl.style.color = 'var(--color-hp)';
-  dmgVal.style.color = 'var(--color-hp)';
+  dmgVal.className = 'az-res-val hp';
+  dmgVal.style.color = '';
   dmgVal.textContent = azFmtDmg(res.hp);
 
   // Hide delay
@@ -17912,6 +19687,7 @@ function spDoAnalyze(skipCd) {
     const dmgLbl = document.getElementById('sp-res-dmg-lbl');
     const dmgVal = document.getElementById('sp-res-dmg');
     dmgLbl.textContent = t('lbl_damage'); dmgLbl.style.color = 'var(--color-dmg)';
+    dmgVal.className = 'az-res-val dmg';
     dmgVal.style.color = '';
     dmgVal.textContent = azFmtDmg(stat);
 
@@ -17943,9 +19719,8 @@ function spDoAnalyze(skipCd) {
 
     spRenderProcess(item, roll, upg, corr, refName, refMult, stat, base, growthFactor);
     spRenderTablet(item, roll, upg, corr, refName, refMult);
+    spLastWeaponResult = { stat, base, growthFactor, roll, upg, corr, refName, refMult };
   }
-
-  // ── Log to Previews console ──
   if (!isArmor) {
     // Weapon preview
     addPreview({
@@ -18394,7 +20169,10 @@ function cmpSwitchCategory(cat) {
         dmgLbl.style.color = isResArmor ? 'var(--color-hp)' : 'var(--color-dmg)';
       }
       const dmgVal = document.getElementById('cmp-res-dmg');
-      if (dmgVal) dmgVal.style.color = isResArmor ? 'var(--color-hp)' : '';
+      if (dmgVal) {
+        if (isResArmor) { dmgVal.className = 'az-res-val hp'; dmgVal.style.color = ''; }
+        else { dmgVal.className = 'az-res-val dmg'; dmgVal.style.color = ''; }
+      }
       // Reforge — hidden for armor, visible for weapon
       const refEl = document.getElementById('cmp-res-reforge');
       if (refEl) refEl.style.display = isResArmor ? 'none' : 'flex';
@@ -19869,7 +21647,8 @@ function cmpRenderArmorResultView() {
   const dmgLbl = document.getElementById('cmp-res-dmg-lbl');
   const dmgVal = document.getElementById('cmp-res-dmg');
   dmgLbl.textContent = t('lbl_health'); dmgLbl.style.color = 'var(--color-hp)';
-  dmgVal.style.color = 'var(--color-hp)';
+  dmgVal.className = 'az-res-val hp';
+  dmgVal.style.color = '';
   dmgVal.textContent = azFmtDmg(res.hp);
 
   // Diff badges (Wished view)
@@ -20447,7 +22226,7 @@ function _cmpFormulaUpdateArrows(box) {
 // ── Restore last visited page on reload (skip 'home' since it's the default already active) ──
 document.addEventListener('DOMContentLoaded', function() {
   try {
-    const _last = localStorage.getItem('_ed_last_page');
+    const _last = (window._edGetCookie && window._edGetCookie('_ed_last_page')) || localStorage.getItem('_ed_last_page');
     const _allowed = ['home','rolls','analyze','stuff','compare'];
     if (_last && _last !== 'home' && _allowed.indexOf(_last) !== -1
         && document.getElementById('page-' + _last)) {
@@ -21255,6 +23034,7 @@ function setLang(l) {
   if (lang === l) return;
   lang = l;
   localStorage.setItem('_ed_lang', l);
+  window._edSetCookie('_ed_lang', l);
   _applySettingsLangUI();
   applyLang();
 }
@@ -21276,19 +23056,23 @@ function _applySettingsLangUI() {
   if (entryLbl) entryLbl.textContent = lang === 'en' ? 'Data entry type:' : 'Тип ввода данных:';
   const paletteLbl = document.getElementById('sett-palette-label');
   if (paletteLbl) paletteLbl.textContent = lang === 'en' ? 'Color palette:' : 'Цветовая палитра:';
+  const soundLbl = document.getElementById('sett-sound-label');
+  if (soundLbl) { /* handled by _applyBgSoundUI below */ }
   const paletteHint = document.getElementById('sett-palette-hint');
   if (paletteHint) paletteHint.textContent = lang === 'en'
     ? 'To change the color palette\n— click on the site avatar on the home page'
     : 'Чтобы поменять цветовую палитру\n— нажмите на аватарку сайта, на домашней странице';
   _applyEntryTypeUI();
+  _applyBgSoundUI();
 }
 
 // Data entry type
-let _entryType = localStorage.getItem('_ed_entry_type') || 'new';
+let _entryType = (window._edGetCookie && window._edGetCookie('_ed_entry_type')) || localStorage.getItem('_ed_entry_type') || 'new';
 
 function setEntryType(type) {
   _entryType = type;
   localStorage.setItem('_ed_entry_type', type);
+  window._edSetCookie('_ed_entry_type', type);
   _applyEntryTypeUI();
   // If on Analyze Roll and item selected — sync input mode live
   if (azCurrentItem) azSyncInputMode();
@@ -21303,6 +23087,45 @@ function setEntryType(type) {
   cmpUpdateCheckBtn();
   // Developer Tool — sync input mode
   dtSyncInputMode();
+}
+
+// Background sound — volume slider (0..100, default 100)
+let _bgVolume = (() => {
+  const stored = (window._edGetCookie && window._edGetCookie('_ed_bg_volume')) || localStorage.getItem('_ed_bg_volume');
+  return (stored !== null) ? parseInt(stored, 10) : 100;
+})();
+// Legacy On/Off compat: treat 'on'→100, 'off'→0 if old key exists
+(function _migrateLegacySound(){
+  const old = localStorage.getItem('_ed_bg_sound');
+  if (old === 'off' && localStorage.getItem('_ed_bg_volume') === null) { _bgVolume = 0; }
+  localStorage.removeItem('_ed_bg_sound');
+})();
+
+function setBgVolume(val) {
+  _bgVolume = Math.max(0, Math.min(100, parseInt(val, 10)));
+  localStorage.setItem('_ed_bg_volume', _bgVolume);
+  window._edSetCookie('_ed_bg_volume', _bgVolume);
+  _applyBgSoundUI();
+  if (typeof window.sndApplyVolume === 'function') window.sndApplyVolume();
+}
+
+// Keep legacy setBgSound callable just in case
+function setBgSound(val) {
+  setBgVolume(val === 'off' ? 0 : 100);
+}
+
+function _applyBgSoundUI() {
+  const slider = document.getElementById('sett-volume-slider');
+  if (slider) {
+    slider.value = _bgVolume;
+    slider.style.setProperty('--vol-pct', _bgVolume + '%');
+    // Update track fill via background directly (CSS var on element)
+    slider.style.background = `linear-gradient(to right, var(--gold-bright) 0%, var(--gold-bright) ${_bgVolume}%, var(--border-gold) ${_bgVolume}%, var(--border-gold) 100%)`;
+  }
+  const _sndLang = localStorage.getItem('_ed_lang') || 'en';
+  const base = _sndLang === 'en' ? 'Background sound:' : 'Фоновый звук:';
+  const lbl = document.getElementById('sett-sound-label');
+  if (lbl) lbl.textContent = base + ' ' + _bgVolume + '%';
 }
 
 function _applyEntryTypeUI() {
@@ -21407,6 +23230,19 @@ const _THEMES = {
     switchAvatar: 'images/Home Page/avatar2.png',
     tooltip: 'GALAXY THEME',
     switchGlow: '#5865F2',
+  },
+  atlantic: {
+    banners: [
+      'images/Home Page/banner7_1.png',
+      'images/Home Page/banner7_2.png',
+      'images/Home Page/banner7_3.png',
+      'images/Home Page/banner7_4.png',
+    ],
+    bgImage: 'images/Home Page/banner6_1.png',
+    mainAvatar: 'images/Home Page/avatar7.png',
+    switchAvatar: 'images/Home Page/avatar2.png',
+    tooltip: 'ATLANTIC THEME',
+    switchGlow: '#2A9DC8',
   }
 };
 
@@ -21414,6 +23250,7 @@ window._applyTheme = function(name) {
   const theme = _THEMES[name];
   if (!theme) return;
   localStorage.setItem('_ed_theme', name);
+  window._edSetCookie('_ed_theme', name);
 
   document.documentElement.classList.toggle('theme-time',   name === 'time' || name === 'gold');
   document.documentElement.classList.toggle('theme-easter',  name === 'easter');
@@ -21421,6 +23258,7 @@ window._applyTheme = function(name) {
   document.documentElement.classList.toggle('theme-baldi',   name === 'baldi');
   document.documentElement.classList.toggle('theme-discord', name === 'discord');
   document.documentElement.classList.toggle('theme-galaxy', name === 'galaxy');
+  document.documentElement.classList.toggle('theme-atlantic', name === 'atlantic');
 
   const pageBg = document.querySelector('.page-bg');
   if (pageBg) {
@@ -21442,12 +23280,13 @@ window._applyTheme = function(name) {
   // ── ГЛАВНАЯ АВАТАРКА ──
   const mainAv = document.getElementById('main-avatar');
   const AV = {
-    time:    'images/Home Page/avatar1.png',
-    galaxy:  'images/Home Page/avatar2.png',
-    easter:  'images/Home Page/avatar3.png',
-    classic: 'images/Home Page/avatar4.png',
-    baldi:   'images/Home Page/avatar5.png',
-    discord: 'images/Home Page/avatar6.png',
+    time:     'images/Home Page/avatar1.png',
+    galaxy:   'images/Home Page/avatar2.png',
+    easter:   'images/Home Page/avatar3.png',
+    classic:  'images/Home Page/avatar4.png',
+    baldi:    'images/Home Page/avatar5.png',
+    discord:  'images/Home Page/avatar6.png',
+    atlantic: 'images/Home Page/avatar7.png',
   };
   if (mainAv) mainAv.src = AV[name] || AV.galaxy;
 
@@ -21455,6 +23294,29 @@ window._applyTheme = function(name) {
   _paletteUpdateActive();
   const _bb = document.getElementById('banner-bg');
   if (_bb) _bb.classList.add('ready');
+
+  const applyAtlanticStatsBoxStyle = () => {
+    const isAtlantic = document.documentElement.classList.contains('theme-atlantic');
+    document.querySelectorAll('.az-res-stats-box').forEach((box) => {
+      if (!(box instanceof HTMLElement)) return;
+      if (isAtlantic) {
+        box.style.background = 'linear-gradient(180deg, #173b5e 0%, #1f5079 55%, #246593 100%)';
+        box.style.backgroundColor = '#1f5079';
+        box.style.border = '1.5px solid #4FC3E8';
+        box.style.borderRadius = '10px';
+        box.style.boxShadow = '0 0 0 1px rgba(111,216,255,0.18) inset, 0 0 18px rgba(79,195,232,0.35) inset, 0 0 0 1px rgba(79,195,232,0.25), 0 6px 22px rgba(11,53,82,0.55)';
+      } else {
+        box.style.background = '';
+        box.style.backgroundColor = '';
+        box.style.border = '';
+        box.style.borderRadius = '';
+        box.style.boxShadow = '';
+      }
+    });
+  };
+
+  applyAtlanticStatsBoxStyle();
+  window.__applyAtlanticStatsBoxStyle = applyAtlanticStatsBoxStyle;
 };
 
 /* ══════════════════════════
@@ -21739,8 +23601,14 @@ function azRefreshWebsiteInputs() {
   // 4. Reforge selector (только оружие)
   if (!isArmor) {
     if (_azDiscWeapon) {
-      // Discord→Website: применяем reforge из Discord-данных (null = стёрт = None)
-      azSelectedReforge = _azDiscWeapon.ref || 'None';
+      if (_azDiscWeapon.ref !== null) {
+        // Reforge введён и распознан → применяем
+        azSelectedReforge = _azDiscWeapon.ref;
+      } else if (!_azDiscWeapon._rawRef) {
+        // Reforge не вводился вообще → сбрасываем в None
+        azSelectedReforge = 'None';
+      }
+      // _rawRef есть, но ref === null → неизвестный → не трогаем azSelectedReforge
     }
     const refValEl = document.getElementById('az-ref-val');
     if (refValEl) refValEl.textContent = azSelectedReforge === 'None' ? t('ref_none_select') : azSelectedReforge + ' Reforge';
@@ -21816,12 +23684,14 @@ function azDiscordParse() {
   if (reforgeLine) {
     if (!refRaw) {
       reforgeLine.textContent = '—';
-      _azDiscWeapon.ref = null;
+      _azDiscWeapon.ref    = null;
+      _azDiscWeapon._rawRef = null;
     } else {
       const knownRef = Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase());
       const display = knownRef ? (knownRef + ' Reforge') : refRaw;
       reforgeLine.textContent = display.length > 18 ? display.slice(0, 18) : display;
-      _azDiscWeapon.ref = knownRef || refRaw;
+      _azDiscWeapon.ref     = knownRef || null;
+      _azDiscWeapon._rawRef = refRaw;
     }
   }
 
@@ -22038,15 +23908,16 @@ function azDiscordApplyAndAnalyze() {
     const ynRaw = rawParts[2].toLowerCase();
     const refRaw = rawParts.slice(3).join(' ').trim();
     const knownRef = refRaw !== ''
-      ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase()) || 'None')
+      ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase()) || null)
       : 'None';
 
     document.getElementById('az-damage').value = dmg;
-    azSelectedDmg     = dmg;
-    azSelectedUpg     = upg;
-    azIntendedUpg     = upg;
-    azSelectedReforge = knownRef;
-    azIsCorrupted     = (ynRaw === 'y' || ynRaw === 'yes');
+    azSelectedDmg  = dmg;
+    azSelectedUpg  = upg;
+    azIntendedUpg  = upg;
+    // Если reforge введён, но не распознан — не меняем текущий выбор
+    if (knownRef !== null) azSelectedReforge = knownRef;
+    azIsCorrupted  = (ynRaw === 'y' || ynRaw === 'yes');
 
     return true;
   } else {
@@ -22272,7 +24143,14 @@ function spRefreshWebsiteInputs() {
   // ====================== 4. REFORGE (только оружие) ======================
   if (!isArmor) {
     if (_spDiscWeapon) {
-      spSelectedReforge = _spDiscWeapon.ref || 'None';
+      if (_spDiscWeapon.ref !== null) {
+        // Reforge введён и распознан → применяем
+        spSelectedReforge = _spDiscWeapon.ref;
+      } else if (!_spDiscWeapon._rawRef) {
+        // Reforge не вводился вообще → сбрасываем в None
+        spSelectedReforge = 'None';
+      }
+      // _rawRef есть, но ref === null → неизвестный → не трогаем spSelectedReforge
     }
     const spRefValEl = document.getElementById('sp-ref-val');
     if (spRefValEl) {
@@ -22387,12 +24265,14 @@ function spDiscordParse() {
   if (reforgeLine) {
     if (!refRaw) {
       reforgeLine.textContent = '—';
-      _spDiscWeapon.ref = null;
+      _spDiscWeapon.ref     = null;
+      _spDiscWeapon._rawRef = null;
     } else {
       const knownRef = Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase());
       const display = knownRef ? (knownRef + ' Reforge') : refRaw;
       reforgeLine.textContent = display.length > 18 ? display.slice(0, 18) : display;
-      _spDiscWeapon.ref = knownRef || refRaw;
+      _spDiscWeapon.ref     = knownRef || null;
+      _spDiscWeapon._rawRef = refRaw;
     }
   }
 
@@ -22636,7 +24516,7 @@ function spDiscordApplyAndAnalyze() {
     const ynRaw = (rawParts[2] || '').toLowerCase();
     const refRaw = rawParts.slice(3).join(' ').trim();
     const knownRef = refRaw !== ''
-      ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase()) || 'None')
+      ? (Object.keys(REFORGE_MODS).find(r => r.toLowerCase() === refRaw.toLowerCase()) || null)
       : 'None';
 
     let rollNum = parseInt(rawParts[0], 10);
@@ -22647,7 +24527,8 @@ function spDiscordApplyAndAnalyze() {
     spSelectedUpg     = parseInt(rawParts[1], 10);
     spIntendedUpg     = spSelectedUpg;
     spIsCorrupted     = (ynRaw === 'y' || ynRaw === 'yes');
-    spSelectedReforge = knownRef;
+    // Если reforge введён, но не распознан — не меняем текущий выбор
+    if (knownRef !== null) spSelectedReforge = knownRef;
 
     return true;
   } else {
@@ -23135,10 +25016,22 @@ function dtRefreshWebsiteInputs(mode) {
   const corrVal = (disc.yn === 'y' || disc.yn === 'yes');
   dtSetCorrupted(corrVal, mode);
 
-  _dtState[mode].ref = disc.ref !== null ? disc.ref : 'None';
-  const refValEl = document.getElementById('dt-ref-val-' + mode);
-  if (refValEl) refValEl.textContent = disc.ref !== null ? (disc.ref + ' Reforge') : t('ref_none_select');
-  dtBuildRefDrop(mode);
+  // disc.ref === null означает либо «не введён», либо «введён, но неизвестен»
+  // disc._rawRef хранит сырой текст — если он есть, но ref === null → неизвестный → не трогаем
+  if (disc._rawRef === null || disc._rawRef === undefined || disc._rawRef === '') {
+    // reforge не вводился → ставим None
+    _dtState[mode].ref = 'None';
+    const refValEl = document.getElementById('dt-ref-val-' + mode);
+    if (refValEl) refValEl.textContent = t('ref_none_select');
+    dtBuildRefDrop(mode);
+  } else if (disc.ref !== null) {
+    // reforge введён и распознан → применяем
+    _dtState[mode].ref = disc.ref;
+    const refValEl = document.getElementById('dt-ref-val-' + mode);
+    if (refValEl) refValEl.textContent = disc.ref + ' Reforge';
+    dtBuildRefDrop(mode);
+  }
+  // если disc._rawRef есть, но disc.ref === null → неизвестный reforge → не меняем ничего
 
   dtUpdateBtn();
 }
@@ -23734,9 +25627,13 @@ function clearItemSearch(panelId) {
   const _savedTheme = localStorage.getItem('_ed_theme') || 'easter';
   const _themeToApply = (_savedTheme === 'gold') ? 'time' : _savedTheme;
   window._applyTheme(_themeToApply);
+  if (typeof window.__applyAtlanticStatsBoxStyle === 'function') {
+    window.__applyAtlanticStatsBoxStyle();
+  }
 
   // Apply saved entry type and sync settings UI
   _applyEntryTypeUI();
+  _applyBgSoundUI();
   _applySettingsLangUI();
   _applyRandBtnTitles();
   if (typeof _paletteUpdateActive === 'function') _paletteUpdateActive();
@@ -24026,6 +25923,388 @@ function clearItemSearch(panelId) {
 })();
 
 /* ── TOTAL PROCESSES scroll helpers уже объявлены через window.* в firebase-блоке ── */
+
+/* =====================================================================
+   ЗВУКОВАЯ СИСТЕМА (по палитрам, с учётом настройки и видимости вкладки)
+   ===================================================================== */
+(function(){
+  // Карта звуков по палитрам. Если файла нет — просто молчит.
+  // Структура: sounds/<theme>/<key>.mp3
+  const _THEME_SOUNDS = {
+    galaxy: {
+      entry_bg:     null,
+      home_bg:      'sounds/galaxy/home_bg.mp3',
+      tables_bg:    'sounds/galaxy/home_bg.mp3',
+      analyze_bg:   'sounds/galaxy/analyze_bg.mp3',
+      preview_bg:   'sounds/galaxy/analyze_bg.mp3',
+      compare_bg:   'sounds/galaxy/analyze_bg.mp3',
+      devtool_bg:   'sounds/galaxy/analyze_bg.mp3',
+      correct_click:null,
+      wrong_click:  'sounds/galaxy/wrong_click.mp3',
+      page_enter:   'sounds/galaxy/page_enter.mp3'
+    },
+    time: {
+      entry_bg:     null,
+      home_bg:      'sounds/time/home_bg.mp3',
+      tables_bg:    'sounds/time/home_bg.mp3',
+      analyze_bg:   'sounds/time/analyze_bg.mp3',
+      preview_bg:   'sounds/time/analyze_bg.mp3',
+      compare_bg:   'sounds/time/analyze_bg.mp3',
+      devtool_bg:   'sounds/time/analyze_bg.mp3',
+      correct_click: null,
+      wrong_click:  'sounds/time/wrong_click.mp3',
+      page_enter:   'sounds/time/page_enter.mp3'
+    },
+    easter: {
+      entry_bg:     'sounds/easter/entry_bg.mp3',
+      home_bg:      'sounds/easter/home_bg.mp3',
+      tables_bg:    'sounds/easter/home_bg.mp3',
+      analyze_bg:   'sounds/easter/home_bg.mp3',
+      preview_bg:   'sounds/easter/home_bg.mp3',
+      compare_bg:   'sounds/easter/home_bg.mp3',
+      devtool_bg:   'sounds/easter/home_bg.mp3',
+      correct_click:'sounds/easter/correct_click.mp3',
+      wrong_click:  'sounds/easter/wrong_click.mp3',
+      page_enter:   'sounds/easter/page_enter.mp3'
+    },
+    classic: {
+      entry_bg:     'sounds/classic/entry_bg.mp3',
+      home_bg:      'sounds/classic/home_bg.mp3',
+      tables_bg:    'sounds/classic/home_bg.mp3',
+      analyze_bg:   'sounds/classic/home_bg.mp3',
+      preview_bg:   'sounds/classic/home_bg.mp3',
+      compare_bg:   'sounds/classic/home_bg.mp3',
+      devtool_bg:   'sounds/classic/home_bg.mp3',
+      correct_click:'sounds/classic/correct_click.mp3',
+      wrong_click:  'sounds/classic/wrong_click.mp3',
+      page_enter:   'sounds/classic/page_enter.mp3'
+    },
+    baldi: {
+      entry_bg:     'sounds/baldi/entry_bg.mp3',
+      home_bg:      'sounds/baldi/home_bg.mp3',
+      tables_bg:    'sounds/baldi/home_bg.mp3',
+      analyze_bg:   'sounds/baldi/analyze_bg.mp3',
+      preview_bg:   'sounds/baldi/analyze_bg.mp3',
+      compare_bg:   'sounds/baldi/analyze_bg.mp3',
+      devtool_bg:   'sounds/baldi/analyze_bg.mp3',
+      correct_click:['sounds/baldi/correct_click1.mp3','sounds/baldi/correct_click2.mp3','sounds/baldi/correct_click3.mp3','sounds/baldi/correct_click4.mp3'],
+      wrong_click:  'sounds/baldi/wrong_click.mp3',
+      page_enter:   'sounds/baldi/page_enter.mp3'
+    },
+    discord: {
+      entry_bg:     'sounds/discord/entry_bg.mp3',
+      home_bg:      null,
+      tables_bg:    null,
+      analyze_bg:   null,
+      preview_bg:   null,
+      compare_bg:   null,
+      devtool_bg:   null,
+      correct_click:'sounds/discord/correct_click.mp3',
+      wrong_click:  'sounds/discord/wrong_click.mp3',
+      page_enter:   'sounds/discord/page_enter.mp3'
+    },
+    atlantic: {
+      entry_bg:     null,
+      home_bg:      'sounds/atlantic/home_bg.mp3',
+      tables_bg:    'sounds/atlantic/home_bg.mp3',
+      analyze_bg:   'sounds/atlantic/home_bg.mp3',
+      preview_bg:   'sounds/atlantic/home_bg.mp3',
+      compare_bg:   'sounds/atlantic/home_bg.mp3',
+      devtool_bg:   'sounds/atlantic/home_bg.mp3',
+      correct_click:'sounds/atlantic/correct_click.mp3',
+      wrong_click:  'sounds/atlantic/wrong_click.mp3',
+      page_enter:   'sounds/atlantic/page_enter.mp3'
+    }
+  };
+
+  const _PAGE_SOUND_KEY = {
+    home:    'home_bg',
+    rolls:   'tables_bg',
+    analyze: 'analyze_bg',
+    stuff:   'preview_bg',
+    compare: 'compare_bg',
+    devtool: 'devtool_bg'
+  };
+
+  const _SND = {
+    bgEl: null,        // основной фоновый трек
+    bgSrc: null,       // текущий src фонового трека (для предотвращения перезапуска)
+    entryEl: null,     // вступительный трек
+    clickEl: null,     // клики
+    pageEnterEl: null, // звук входа на страницу
+    visible: !document.hidden,
+    focused: document.hasFocus(),
+    pendingBgKey: null, // если играет entry — какой bg ставить после
+    baldiBgMuted: false, // флаг: bg заглушен из-за wrong_click в балди
+    baldiBgTimer: null  // таймер на 5 сек
+  };
+  window._SND = _SND;
+
+  function _curTheme(){ return localStorage.getItem('_ed_theme') || 'galaxy'; }
+  function _getVol(){ return Math.max(0, Math.min(100, parseInt(localStorage.getItem('_ed_bg_volume') ?? '100', 10))); }
+  function _isEnabled(){ return _getVol() > 0; }
+  function _isActive(){ return _SND.visible && _SND.focused; }
+  function _shouldSound(){ return _isEnabled() && _isActive(); }
+  function _shouldBg(){ return _shouldSound() && !_SND.baldiBgMuted; }
+
+  function _resolve(key){
+    const t = _curTheme();
+    const map = _THEME_SOUNDS[t];
+    if (!map) return null;
+    const val = map[key];
+    if (!val) return null;
+    if (Array.isArray(val)) return val[Math.floor(Math.random() * val.length)];
+    return val;
+  }
+
+  function _applyVolume(){
+    const vol = _isActive() ? _getVol() / 100 : 0;
+    const bgVol = (!_SND.baldiBgMuted) ? vol : 0;
+    if (_SND.bgEl)        _SND.bgEl.volume        = bgVol;
+    if (_SND.entryEl)     _SND.entryEl.volume     = vol;
+    if (_SND.clickEl)     _SND.clickEl.volume     = vol;
+    if (_SND.pageEnterEl) _SND.pageEnterEl.volume = vol;
+  }
+
+  function _stop(el){
+    if (!el) return;
+    try { el.pause(); el.currentTime = 0; } catch(_){}
+  }
+
+  function _playEl(el, forceMute){
+    if (!el) return;
+    el.volume = (forceMute || !_shouldSound()) ? 0 : (_getVol() / 100);
+    const p = el.play();
+    if (p && p.catch) p.catch(()=>{});
+  }
+
+  function _playPageEnter(){
+    const src = _resolve('page_enter');
+    if (!src) return;
+    if (!_SND.pageEnterEl){
+      _SND.pageEnterEl = new Audio();
+      _SND.pageEnterEl.loop = false;
+    }
+    _stop(_SND.pageEnterEl);
+    _SND.pageEnterEl.src = src;
+    _playEl(_SND.pageEnterEl);
+  }
+
+  function _startBg(key){
+    // Если балди-мут активен — запоминаем ключ, но не запускаем bg
+    if (_SND.baldiBgMuted){
+      _SND.pendingBgKey = key;
+      // bgSrc обновляем чтобы после снятия мута трек запустился
+      const src = _resolve(key);
+      _SND.bgSrc = null; // сбросим чтобы после мута перезапустился
+      if (_SND.bgEl) { try { _SND.bgEl.pause(); _SND.bgEl.currentTime = 0; } catch(_){} }
+      return;
+    }
+    const src = _resolve(key);
+    _SND.pendingBgKey = key;
+    if (!src){
+      _stop(_SND.bgEl);
+      _SND.bgSrc = null;
+      return;
+    }
+    if (_SND.bgSrc === src && _SND.bgEl && !_SND.bgEl.paused){
+      _applyVolume();
+      return; // тот же трек — не перезапускаем
+    }
+    if (!_SND.bgEl){
+      _SND.bgEl = new Audio();
+      _SND.bgEl.loop = true;
+    }
+    _stop(_SND.bgEl);
+    _SND.bgEl.src = src;
+    _SND.bgSrc = src;
+    _playEl(_SND.bgEl);
+  }
+
+  function _playEntryThenBg(bgKey){
+    const entrySrc = _resolve('entry_bg');
+    if (!entrySrc){
+      _startBg(bgKey);
+      return;
+    }
+    if (!_SND.entryEl){
+      _SND.entryEl = new Audio();
+      _SND.entryEl.loop = false;
+    }
+    _stop(_SND.bgEl);
+    _SND.bgSrc = null;
+    _stop(_SND.entryEl);
+    _SND.entryEl.src = entrySrc;
+    _SND.pendingBgKey = bgKey;
+    _SND.entryEl.onended = () => { _startBg(_SND.pendingBgKey); };
+    _SND.entryEl.onerror = () => { _startBg(_SND.pendingBgKey); };
+    _playEl(_SND.entryEl);
+  }
+
+  function _currentBgKey(){
+    const page = (window.currentPage || 'home');
+    return _PAGE_SOUND_KEY[page] || 'home_bg';
+  }
+
+  // ── Балди: заглушить bg на 5 секунд ──
+  function _baldiBgMuteFor5s(){
+    // Снимаем предыдущий таймер если был
+    if (_SND.baldiBgTimer) { clearTimeout(_SND.baldiBgTimer); _SND.baldiBgTimer = null; }
+    _SND.baldiBgMuted = true;
+    // Останавливаем bg
+    if (_SND.bgEl){ try { _SND.bgEl.pause(); _SND.bgEl.currentTime = 0; } catch(_){} }
+    _SND.bgSrc = null;
+    _SND.baldiBgTimer = setTimeout(() => {
+      _SND.baldiBgMuted = false;
+      _SND.baldiBgTimer = null;
+      // Запускаем bg текущей страницы
+      const key = _currentBgKey();
+      _startBg(key);
+    }, 5000);
+  }
+
+  // ── публичные хуки ──
+  window.sndOnInit = function(){
+    _playEntryThenBg(_currentBgKey());
+  };
+  window.sndOnThemeChange = function(){
+    // Прерываем entry если играет — новая палитра должна начаться с чистого листа
+    _stop(_SND.entryEl);
+    _stop(_SND.bgEl);
+    _stop(_SND.clickEl); // прерываем wrong_click при смене палитры
+    // Отменяем таймер заглушки bg (от wrong_click) если он активен
+    if (_SND.baldiBgTimer) { clearTimeout(_SND.baldiBgTimer); _SND.baldiBgTimer = null; }
+    _SND.baldiBgMuted = false;
+    _SND.bgSrc = null;
+    _playEntryThenBg(_currentBgKey());
+  };
+  window.sndOnPageChange = function(page){
+    const key = _PAGE_SOUND_KEY[page] || 'home_bg';
+    // Воспроизводим page_enter всегда при смене страницы
+    _playPageEnter();
+    // Если entry ещё играет — просто обновим pending
+    if (_SND.entryEl && !_SND.entryEl.paused){
+      _SND.pendingBgKey = key;
+      return;
+    }
+    _startBg(key);
+  };
+  window.sndPlayClick = function(type){
+    // Пока проигрывается entry_bg — не перебиваем его кликовыми звуками
+    if (_SND.entryEl && !_SND.entryEl.paused && !_SND.entryEl.ended) return;
+    const isWrong = type !== 'correct';
+    const src = _resolve(isWrong ? 'wrong_click' : 'correct_click');
+    if (!src) return;
+    if (!_SND.clickEl) _SND.clickEl = new Audio();
+    _stop(_SND.clickEl);
+    _SND.clickEl.src = src;
+    _playEl(_SND.clickEl);
+    // Балди / Галактика: при wrong_click → глушим bg на 5 секунд
+    if (isWrong && (_curTheme() === 'baldi' || _curTheme() === 'galaxy' || _curTheme() === 'time')){
+      _baldiBgMuteFor5s();
+    }
+  };
+  window.sndApplyVolume = _applyVolume;
+
+  // ── видимость / фокус ──
+  document.addEventListener('visibilitychange', () => {
+    _SND.visible = !document.hidden;
+    _applyVolume();
+  });
+  window.addEventListener('blur',  () => { _SND.focused = false; _applyVolume(); });
+  window.addEventListener('focus', () => { _SND.focused = true;  _applyVolume(); });
+
+  // ── монки-патч setBgSound, чтобы громкость моментально применялась ──
+  if (typeof window.setBgSound === 'function'){
+    const _origSetBg = window.setBgSound;
+    window.setBgSound = function(v){
+      const r = _origSetBg.apply(this, arguments);
+      _applyVolume();
+      return r;
+    };
+  }
+
+  // ── монки-патч navigateTo ──
+  if (typeof window.navigateTo === 'function'){
+    const _origNav = window.navigateTo;
+    window.navigateTo = function(page){
+      const r = _origNav.apply(this, arguments);
+      try { window.sndOnPageChange(page); } catch(_){}
+      return r;
+    };
+  }
+
+  // ── монки-патч _applyTheme ──
+  if (typeof window._applyTheme === 'function'){
+    const _origTheme = window._applyTheme;
+    let _firstTheme = true;
+    window._applyTheme = function(name){
+      const prev = localStorage.getItem('_ed_theme');
+      const r = _origTheme.apply(this, arguments);
+      // Запускаем entry+bg только если тема реально изменилась (или это первый вызов)
+      if (_firstTheme || prev !== name){
+        _firstTheme = false;
+        try { window.sndOnThemeChange(); } catch(_){}
+      }
+      return r;
+    };
+  }
+
+  // ── монки-патч showSiteError → wrong_click ──
+  if (typeof window.showSiteError === 'function'){
+    const _origErr = window.showSiteError;
+    window.showSiteError = function(){
+      window.__sndErrorFired = true;
+      try { window.sndPlayClick('wrong'); } catch(_){}
+      return _origErr.apply(this, arguments);
+    };
+  }
+
+  // ── обёртка кнопок: если в ходе вызова showSiteError не сработал → correct ──
+  function _wrapAction(name){
+    const fn = window[name];
+    if (typeof fn !== 'function') return;
+    window[name] = function(){
+      window.__sndErrorFired = false;
+      const r = fn.apply(this, arguments);
+      if (!window.__sndErrorFired){
+        try { window.sndPlayClick('correct'); } catch(_){}
+      }
+      window.__sndErrorFired = false;
+      return r;
+    };
+  }
+  ['azDoAnalyze','spDoAnalyze','cmpCheckSpecifics','dtCheckValue','dtConfirmValue']
+    .forEach(_wrapAction);
+
+  // Первый запуск (после готовности страницы)
+  function _kickoff(){
+    try { window.sndOnInit(); } catch(_){}
+  }
+  if (document.readyState === 'complete' || document.readyState === 'interactive'){
+    setTimeout(_kickoff, 0);
+  } else {
+    window.addEventListener('DOMContentLoaded', _kickoff);
+  }
+  // Автоплей часто блокирован — повторим запуск при первом клике пользователя.
+  const _userKick = () => {
+    try {
+      // Если entry был подготовлен, но не стартанул из-за блокировки автоплея — запускаем его
+      if (_SND.entryEl && _SND.entryEl.src && _SND.entryEl.paused && (_SND.entryEl.currentTime || 0) === 0){
+        _playEl(_SND.entryEl);
+      } else if (_SND.bgEl && _SND.bgEl.paused && _SND.bgSrc){
+        _playEl(_SND.bgEl);
+      } else if (!_SND.bgEl && !_SND.entryEl){
+        _kickoff();
+      }
+    } catch(_){}
+    window.removeEventListener('pointerdown', _userKick);
+    window.removeEventListener('keydown', _userKick);
+  };
+  window.addEventListener('pointerdown', _userKick, { once:false });
+  window.addEventListener('keydown', _userKick, { once:false });
+})();
+
 </script>
 
 </body>

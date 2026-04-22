@@ -12747,6 +12747,15 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         <input type="range" min="0" max="100" value="100" class="sett-volume-slider" id="sett-volume-slider" oninput="setBgVolume(this.value)">
       </div>
     </div>
+    <!-- Off-site playback -->
+    <div class="sett-section">
+      <div class="sett-section-label" id="sett-offsite-label">Off-site playback:</div>
+      <div class="sett-entry-row">
+        <button class="sett-entry-btn sett-offsite-btn sett-offsite-yes" id="sett-offsite-yes" onclick="setOffsitePlayback('yes')">Yes</button>
+        <span class="sett-entry-sep" id="sett-offsite-sep">/</span>
+        <button class="sett-entry-btn sett-offsite-btn sett-offsite-no" id="sett-offsite-no" onclick="setOffsitePlayback('no')">No</button>
+      </div>
+    </div>
     <!-- Color Palette hint -->
     <div class="sett-section sett-section--palette">
       <div class="sett-section-label" id="sett-palette-label">Color palette:</div>
@@ -23058,12 +23067,15 @@ function _applySettingsLangUI() {
   if (paletteLbl) paletteLbl.textContent = lang === 'en' ? 'Color palette:' : 'Цветовая палитра:';
   const soundLbl = document.getElementById('sett-sound-label');
   if (soundLbl) { /* handled by _applyBgSoundUI below */ }
+  const offsiteLbl = document.getElementById('sett-offsite-label');
+  if (offsiteLbl) offsiteLbl.textContent = lang === 'en' ? 'Off-site playback:' : 'Фоновое воспроизведение:';
   const paletteHint = document.getElementById('sett-palette-hint');
   if (paletteHint) paletteHint.textContent = lang === 'en'
     ? 'To change the color palette\n— click on the site avatar on the home page'
     : 'Чтобы поменять цветовую палитру\n— нажмите на аватарку сайта, на домашней странице';
   _applyEntryTypeUI();
   _applyBgSoundUI();
+  _applyOffsiteUI();
 }
 
 // Data entry type
@@ -23112,6 +23124,37 @@ function setBgVolume(val) {
 // Keep legacy setBgSound callable just in case
 function setBgSound(val) {
   setBgVolume(val === 'off' ? 0 : 100);
+}
+
+// Off-site playback — yes: играет на фоне, no: глушится (default: yes)
+let _offsitePlayback = (window._edGetCookie && window._edGetCookie('_ed_offsite_playback')) || localStorage.getItem('_ed_offsite_playback') || 'yes';
+
+function setOffsitePlayback(val) {
+  _offsitePlayback = val;
+  localStorage.setItem('_ed_offsite_playback', val);
+  window._edSetCookie('_ed_offsite_playback', val);
+  _applyOffsiteUI();
+  // Применяем громкость с учётом нового режима
+  if (typeof window.sndApplyVolume === 'function') window.sndApplyVolume();
+}
+
+function _applyOffsiteUI() {
+  const yesBtn = document.getElementById('sett-offsite-yes');
+  const noBtn  = document.getElementById('sett-offsite-no');
+  const sep    = document.getElementById('sett-offsite-sep');
+  if (!yesBtn || !noBtn) return;
+  const _lang = localStorage.getItem('_ed_lang') || 'en';
+  yesBtn.textContent = _lang === 'en' ? 'Yes' : 'Да';
+  noBtn.textContent  = _lang === 'en' ? 'No'  : 'Нет';
+  if (_offsitePlayback === 'yes') {
+    yesBtn.className = 'sett-entry-btn sett-offsite-btn sett-offsite-yes active';
+    noBtn.className  = 'sett-entry-btn sett-offsite-btn sett-offsite-no dim';
+    if (sep) sep.textContent = '/';
+  } else {
+    yesBtn.className = 'sett-entry-btn sett-offsite-btn sett-offsite-yes dim';
+    noBtn.className  = 'sett-entry-btn sett-offsite-btn sett-offsite-no active';
+    if (sep) sep.textContent = '\\';
+  }
 }
 
 function _applyBgSoundUI() {
@@ -25634,6 +25677,7 @@ function clearItemSearch(panelId) {
   // Apply saved entry type and sync settings UI
   _applyEntryTypeUI();
   _applyBgSoundUI();
+  _applyOffsiteUI();
   _applySettingsLangUI();
   _applyRandBtnTitles();
   if (typeof _paletteUpdateActive === 'function') _paletteUpdateActive();
@@ -26043,7 +26087,8 @@ function clearItemSearch(panelId) {
   function _curTheme(){ return localStorage.getItem('_ed_theme') || 'galaxy'; }
   function _getVol(){ return Math.max(0, Math.min(100, parseInt(localStorage.getItem('_ed_bg_volume') ?? '100', 10))); }
   function _isEnabled(){ return _getVol() > 0; }
-  function _isActive(){ return true; }
+  function _offsiteEnabled(){ return (localStorage.getItem('_ed_offsite_playback') || 'yes') === 'yes'; }
+  function _isActive(){ return _offsiteEnabled() || (_SND.visible && _SND.focused); }
   function _shouldSound(){ return _isEnabled() && _isActive(); }
   function _shouldBg(){ return _shouldSound() && !_SND.baldiBgMuted; }
 
@@ -26207,9 +26252,9 @@ function clearItemSearch(panelId) {
   window.sndApplyVolume = _applyVolume;
 
   // ── видимость / фокус ──
-  document.addEventListener('visibilitychange', () => { _SND.visible = !document.hidden; });
-  window.addEventListener('blur',  () => { _SND.focused = false; });
-  window.addEventListener('focus', () => { _SND.focused = true;  });
+  document.addEventListener('visibilitychange', () => { _SND.visible = !document.hidden; _applyVolume(); });
+  window.addEventListener('blur',  () => { _SND.focused = false; _applyVolume(); });
+  window.addEventListener('focus', () => { _SND.focused = true;  _applyVolume(); });
 
   // ── монки-патч setBgSound, чтобы громкость моментально применялась ──
   if (typeof window.setBgSound === 'function'){

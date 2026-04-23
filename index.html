@@ -10435,8 +10435,24 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 
 /* ── Volume slider ── */
 .sett-volume-row {
-  display: flex; align-items: center;
+  display: flex; align-items: center; gap: 8px;
 }
+.sett-mute-icon-btn {
+  background: none; border: none; cursor: pointer; padding: 0;
+  flex-shrink: 0;
+  color: var(--gold-bright);
+  filter: drop-shadow(0 0 4px currentColor);
+  transition: all .18s;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 1;
+}
+.sett-mute-icon-btn:hover { opacity: .72; }
+.sett-mute-icon-btn.is-muted {
+  opacity: 0.38;
+  filter: none;
+}
+.sett-mute-icon-btn svg { display: block; overflow: visible; }
 .sett-volume-slider {
   -webkit-appearance: none; appearance: none;
   width: 100%; height: 4px;
@@ -12744,7 +12760,17 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     <div class="sett-section">
       <div class="sett-section-label" id="sett-sound-label">Background sound: 100%</div>
       <div class="sett-volume-row">
-        <input type="range" min="0" max="100" value="100" class="sett-volume-slider" id="sett-volume-slider" oninput="setBgVolume(this.value)">
+        <button class="sett-mute-icon-btn" id="sett-mute-icon-btn" onclick="toggleMute()" title="Mute">
+          <svg viewBox="0 0 20 20" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Корпус динамика -->
+            <path d="M3 7.5 L3 12.5 L6 12.5 L10.5 16 L10.5 4 L6 7.5 Z" fill="currentColor"/>
+            <!-- Малая волна -->
+            <path d="M12.5 7.2 Q14 10 12.5 12.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <!-- Большая волна -->
+            <path d="M14.2 5.2 Q17 10 14.2 14.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <input type="range" min="0" max="100" value="100" class="sett-volume-slider" id="sett-volume-slider" oninput="onVolumeSliderInput(this.value)">
       </div>
     </div>
     <!-- Off-site playback -->
@@ -23121,6 +23147,59 @@ function setBgVolume(val) {
   if (typeof window.sndApplyVolume === 'function') window.sndApplyVolume();
 }
 
+/* ── Mute toggle ── */
+let _preMuteVolume = (() => {
+  const stored = (window._edGetCookie && window._edGetCookie('_ed_pre_mute_vol')) || localStorage.getItem('_ed_pre_mute_vol');
+  return stored !== null ? parseInt(stored, 10) : null;
+})();
+
+function _savePreMute(val) {
+  _preMuteVolume = val;
+  if (val !== null) {
+    localStorage.setItem('_ed_pre_mute_vol', val);
+    window._edSetCookie('_ed_pre_mute_vol', val);
+  } else {
+    localStorage.removeItem('_ed_pre_mute_vol');
+    window._edSetCookie('_ed_pre_mute_vol', '');
+  }
+}
+
+function toggleMute() {
+  if (_bgVolume > 0) {
+    _savePreMute(_bgVolume);
+    setBgVolume(0);
+  } else {
+    const restore = (_preMuteVolume !== null && _preMuteVolume > 0) ? _preMuteVolume : 100;
+    _savePreMute(null);
+    setBgVolume(restore);
+  }
+}
+
+function onVolumeSliderInput(val) {
+  const parsed = Math.max(0, Math.min(100, parseInt(val, 10)));
+  if (parsed > 0 && _bgVolume === 0) {
+    _savePreMute(null);
+  }
+  setBgVolume(parsed);
+}
+
+const _SVG_VOL_ON  = `<svg viewBox="0 0 20 20" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7.5 L3 12.5 L6 12.5 L10.5 16 L10.5 4 L6 7.5 Z" fill="currentColor"/><path d="M12.5 7.2 Q14 10 12.5 12.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M14.2 5.2 Q17 10 14.2 14.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+const _SVG_VOL_OFF = `<svg viewBox="0 0 20 20" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7.5 L3 12.5 L6 12.5 L10.5 16 L10.5 4 L6 7.5 Z" fill="currentColor"/><line x1="13" y1="7" x2="18" y2="13" stroke="#ff3333" stroke-width="1.8" stroke-linecap="round"/><line x1="18" y1="7" x2="13" y2="13" stroke="#ff3333" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
+function _applyMuteIconUI() {
+  const btn = document.getElementById('sett-mute-icon-btn');
+  if (!btn) return;
+  if (_bgVolume === 0) {
+    btn.classList.add('is-muted');
+    btn.innerHTML = _SVG_VOL_OFF;
+    btn.title = 'Unmute';
+  } else {
+    btn.classList.remove('is-muted');
+    btn.innerHTML = _SVG_VOL_ON;
+    btn.title = 'Mute';
+  }
+}
+
 // Keep legacy setBgSound callable just in case
 function setBgSound(val) {
   setBgVolume(val === 'off' ? 0 : 100);
@@ -23169,6 +23248,7 @@ function _applyBgSoundUI() {
   const base = _sndLang === 'en' ? 'Background sound:' : 'Фоновый звук:';
   const lbl = document.getElementById('sett-sound-label');
   if (lbl) lbl.textContent = base + ' ' + _bgVolume + '%';
+  _applyMuteIconUI();
 }
 
 function _applyEntryTypeUI() {
@@ -26037,12 +26117,12 @@ function clearItemSearch(panelId) {
     },
     discord: {
       entry_bg:     'sounds/discord/entry_bg.mp3',
-      home_bg:      null,
-      tables_bg:    null,
-      analyze_bg:   null,
-      preview_bg:   null,
-      compare_bg:   null,
-      devtool_bg:   null,
+      home_bg:      'sounds/discord/home_bg.mp3',
+      tables_bg:    'sounds/discord/home_bg.mp3',
+      analyze_bg:   'sounds/discord/home_bg.mp3',
+      preview_bg:   'sounds/discord/home_bg.mp3',
+      compare_bg:   'sounds/discord/home_bg.mp3',
+      devtool_bg:   'sounds/discord/home_bg.mp3',
       correct_click:'sounds/discord/correct_click.mp3',
       wrong_click:  'sounds/discord/wrong_click.mp3',
       page_enter:   'sounds/discord/page_enter.mp3'

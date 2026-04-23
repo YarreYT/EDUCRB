@@ -1031,14 +1031,11 @@
 @media(max-width:1306px){
   :root.theme-time .credits-block {
     background: rgba(245,200,66,0.04) !important;
-    border-top: 1px solid rgba(245,200,66,0.12) !important;
-    border-bottom: 1px solid rgba(245,200,66,0.12) !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid rgba(245,200,66,0.12) !important;
     border-radius: 10px !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
@@ -1051,9 +1048,11 @@
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -1253,24 +1252,20 @@
 :root.theme-atlantic .bot-tagline { color: rgba(61,46,26,0.62) !important; }
 :root.theme-atlantic .bot-desc    { color: rgba(61,46,26,0.78) !important; }
 
-/* ATLANTIC: credit-card — ПРОЗРАЧНЫЙ фон + КОРАЛЛОВАЯ рамка с плавными
-   прозрачными краями (через mask-image из базовой формулы — как в Easter).
-   Одинаково на десктопе и мобиле <1306px. Селекторы с #page-home — чтобы
-   перебить общую мобильную формулу. */
-:root.theme-atlantic .credit-card,
-:root.theme-atlantic #page-home .credit-card {
-  background: transparent !important;
-  border: 1px solid #C84766 !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-  padding: 10px 14px !important;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
-          mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%) !important;
+/* ATLANTIC: credit-card — десктоп (>1306px).
+   Фон и рамка на карточке. Мобильная формула в @media(max-width:1306px) ниже. */
+:root.theme-atlantic .credit-card {
+  background: transparent;
+  border: 1px solid #C84766;
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 10px 14px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
 }
-:root.theme-atlantic .credit-card:hover,
-:root.theme-atlantic #page-home .credit-card:hover {
-  border-color: #E25A78 !important;
-  box-shadow: none !important;
+:root.theme-atlantic .credit-card:hover {
+  border-color: #E25A78;
+  box-shadow: none;
 }
 /* Подпись роли — коралл с прозрачностью, читаема на песке */
 :root.theme-atlantic .credit-card-role  {
@@ -2047,13 +2042,9 @@
    Сами .credit-card — без рамки/фона/маски (их базовые мобильные стили
    с .credit-card{background:rgba(0,0,0,.45);border:...} перебиваем). */
 @media(max-width:1306px) {
-  :root.theme-atlantic .credits-block,
-  :root.theme-atlantic #page-home .credits-block {
+  :root.theme-atlantic .credits-block {
     background: transparent !important;
-    border-top: 1px solid #C84766 !important;
-    border-bottom: 1px solid #C84766 !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid #C84766 !important;
     border-radius: 10px !important;
     box-shadow: none !important;
     gap: 20px !important;
@@ -2063,13 +2054,11 @@
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: border-color .2s !important;
   }
-  :root.theme-atlantic .credits-block:hover,
-  :root.theme-atlantic #page-home .credits-block:hover {
+  :root.theme-atlantic .credits-block:hover {
     border-color: #E25A78 !important;
   }
-  :root.theme-atlantic .credit-card,
-  :root.theme-atlantic #page-home .credit-card {
-    background: transparent !important;
+  :root.theme-atlantic .credit-card {
+    background: none !important;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -3265,6 +3254,9 @@
 :root.theme-discord .credit-card {
   background: #232428;
   border-color: #3b3d44;
+}
+:root.theme-discord .credit-card:hover {
+  border-color: #5865F2;
 }
 :root.theme-discord .credit-card-role { color: rgba(219,222,225,0.45) !important; }
 :root.theme-discord .credit-card-name { color: #dbdee1 !important; }
@@ -5503,8 +5495,8 @@
 
 /* ── КАРТОЧКИ КРЕДИТОВ ── */
 :root.theme-easter .credit-card {
-  background: rgba(237, 228, 220, 0.6) !important;
-  border-color: #D4B8A4 !important;
+  background: rgba(237, 228, 220, 0.6);
+  border-color: #D4B8A4;
 }
 :root.theme-easter .console-header {
   background: rgba(140, 190, 210, 0.60) !important;
@@ -6047,14 +6039,11 @@
 @media(max-width:1306px) {
   :root.theme-easter .credits-block {
     background: rgba(237,228,220,0.6) !important;
-    border-top: 1px solid #D4B8A4 !important;
-    border-bottom: 1px solid #D4B8A4 !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid #D4B8A4 !important;
     border-radius: 10px !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
@@ -6067,9 +6056,11 @@
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -6607,6 +6598,85 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .bot-name{font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--gold-bright);letter-spacing:1px;text-align:center;margin-bottom:4px;}
 .bot-tagline{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;text-align:center;margin-bottom:14px;}
 .bot-desc{font-size:14px;line-height:1.65;color:#9a9080;text-align:center;max-width:580px;margin-bottom:16px;}
+/* ╔══════════════════════════════════════════════════════════════════════════════╗
+   ║               ФОРМУЛА CREDIT-BLOCKS — ОБЯЗАТЕЛЬНО К ПРОЧТЕНИЮ              ║
+   ║          при создании ЛЮБОЙ новой палитры / редактировании кредитов         ║
+   ╠══════════════════════════════════════════════════════════════════════════════╣
+   ║                                                                              ║
+   ║  ГЛАВНОЕ ПРАВИЛО:                                                            ║
+   ║  Все три карточки (.credit-card) должны быть АБСОЛЮТНО ИДЕНТИЧНЫ по цвету   ║
+   ║  и стилю во ВСЕХ диапазонах — десктоп, планшет, мобила. Разница только      ║
+   ║  в РАСКЛАДКЕ: на десктопе 3 ряда (column), в остальных — 1 ряд (row).       ║
+   ║                                                                              ║
+   ╠══════════════════════════════════════════════════════════════════════════════╣
+   ║                                                                              ║
+   ║  КАК РАБОТАЕТ СТРУКТУРА:                                                     ║
+   ║                                                                              ║
+   ║  >1306px  (ДЕСКТОП)                                                          ║
+   ║  ├─ .credits-block  — без фона, без рамки, без padding                      ║
+   ║  └─ .credit-card    — фон + рамка + mask на КАЖДОЙ карточке отдельно        ║
+   ║                       hover → border-color меняется на карточке             ║
+   ║                                                                              ║
+   ║  ≤1306px  (ПЛАНШЕТ / МОБИЛА, включая 989–1306px)                            ║
+   ║  ├─ .credits-block  — фон + рамка + mask переезжают на КОНТЕЙНЕР            ║
+   ║  │                    border: 1px solid <цвет> со ВСЕХ ЧЕТЫРЁХ сторон       ║
+   ║  │                    mask: transparent 0%, black 12%, black 88%, trans 100% ║
+   ║  │                    gap: 20px, padding: 10px 16px                          ║
+   ║  │                    hover → border-color / background на контейнере        ║
+   ║  └─ .credit-card    — background: none, border: none, border-radius: 0      ║
+   ║                        padding: 0, mask: none                               ║
+   ║                        flex: none, width: auto                              ║
+   ║                                                                              ║
+   ║  КЛЮЧЕВОЕ: фон карточки может быть любым — прозрачным, частично              ║
+   ║  прозрачным, или полностью непрозрачным цветом. Это декоративный выбор.     ║
+   ║  НО: background десктопного .credit-card и background мобильного            ║
+   ║  .credits-block должны быть АБСОЛЮТНО ОДИНАКОВЫ — тот же цвет, тот же      ║
+   ║  alpha, та же яркость. Иначе карточки будут выглядеть по-разному            ║
+   ║  в зависимости от ширины экрана, что нарушает главное правило.              ║
+   ║                                                                              ║
+   ╠══════════════════════════════════════════════════════════════════════════════╣
+   ║                                                                              ║
+   ║  ЧТО ПРОПИСЫВАТЬ ДЛЯ НОВОЙ ПАЛИТРЫ:                                         ║
+   ║                                                                              ║
+   ║  1. БЕЗ медиа-запроса (десктоп):                                             ║
+   ║       :root.theme-X .credit-card { background: ...; border-color: ...; }    ║
+   ║       :root.theme-X .credit-card:hover { border-color: ...; }               ║
+   ║       :root.theme-X .credit-card-role  { color: ... !important; }           ║
+   ║       :root.theme-X .credit-card-name  { color: ... !important; }           ║
+   ║       :root.theme-X .credit-card-name.cyan  { color: ... !important; }      ║
+   ║       :root.theme-X .credit-card-name.green { color: ... !important; }      ║
+   ║                                                                              ║
+   ║  2. @media(max-width:1306px):                                                ║
+   ║       :root.theme-X .credits-block {                                         ║
+   ║         background: <тот же фон что у .credit-card> !important;             ║
+   ║         border: 1px solid <тот же цвет рамки> !important;                   ║
+   ║         border-radius: 10px !important;                                      ║
+   ║         gap: 20px !important; padding: 10px 16px !important;                ║
+   ║         mask-image: linear-gradient(to right,                                ║
+   ║           transparent 0%, black 12%, black 88%, transparent 100%) !important;║
+   ║         transition: background .2s, border-color .2s !important;            ║
+   ║       }                                                                      ║
+   ║       :root.theme-X .credits-block:hover { border-color/background: ... }   ║
+   ║       :root.theme-X .credit-card { background: none !important;             ║
+   ║         border: none !important; border-radius: 0 !important;               ║
+   ║         padding: 0 !important; flex: none !important;                       ║
+   ║         width: auto !important; mask-image: none !important; }              ║
+   ║                                                                              ║
+   ║  3. В блоке @media(min-width:989px) and (max-width:1306px) — секция          ║
+   ║     «Тематические фоны credits-block для 989–1306px»:                        ║
+   ║       :root.theme-X #page-home .credits-block { -- то же что п.2 -- }       ║
+   ║       :root.theme-X #page-home .credits-block:hover { ... }                 ║
+   ║       :root.theme-X #page-home .credit-card { -- сброс как в п.2 -- }       ║
+   ║                                                                              ║
+   ║  НЕ ДЕЛАТЬ:                                                                  ║
+   ║  ✗ Разные цвета/стили карточек в разных диапазонах                           ║
+   ║  ✗ Селекторы с #page-home на десктопных стилях                              ║
+   ║  ✗ !important на десктопных стилях (только в медиа-запросах)                ║
+   ║  ✗ border только top/bottom — рамка всегда со всех 4 сторон                 ║
+   ║  ✗ Разный alpha у desktop .credit-card и mobile .credits-block               ║
+   ║                                                                              ║
+   ╚══════════════════════════════════════════════════════════════════════════════╝ */
+
 .credits-block{display:flex;gap:8px;flex-direction:column;margin-bottom:0;width:100%;flex:1;min-height:0;}
 .credit-card{
   flex:1;
@@ -10987,15 +11057,12 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @media(max-width:1306px) {
   :root.theme-baldi .credits-block {
     background: #E0F2D8 !important;
-    border-top: 1px solid #7AAB6A !important;
-    border-bottom: 1px solid #7AAB6A !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid #7AAB6A !important;
     border-radius: 10px !important;
     box-shadow: none !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
@@ -11009,9 +11076,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     border: none !important;
     box-shadow: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -11019,15 +11088,12 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @media(max-width:1306px) {
   :root.theme-classic .credits-block {
     background: #1e2d3e !important;
-    border-top: 1px solid #253a4e !important;
-    border-bottom: 1px solid #253a4e !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid #253a4e !important;
     border-radius: 10px !important;
     box-shadow: none !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
@@ -11040,9 +11106,12 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    box-shadow: none !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -11068,15 +11137,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 :root.theme-discord .stat-chip--total {
   border-color: #5865F2;
   box-shadow: 0 0 10px rgba(88,101,242,0.15), inset 0 0 12px rgba(88,101,242,0.05);
-}
-
-/* 2. Home: credits cards — dark background, remove blue tint */
-:root.theme-discord .credit-card {
-  background: #232428;
-  border-color: #3b3d44;
-}
-:root.theme-discord .credit-card:hover {
-  border-color: #5865F2;
 }
 
 /* 3. Home: banner title — add black stroke like other themes */
@@ -11217,14 +11277,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @media(max-width:1306px) {
   :root.theme-discord .credits-block {
     background: #232428 !important;
-    border-top: 1px solid #3b3d44 !important;
-    border-bottom: 1px solid #3b3d44 !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid #3b3d44 !important;
     border-radius: 10px !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
@@ -11237,9 +11294,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -11440,17 +11499,6 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 :root.theme-discord .total-proc-count,
 :root.theme-discord .total-proc-arrow {
   color: #ffffff !important;
-}
-
-@media(min-width:961px) {
-  :root.theme-discord .credit-card {
-    background: #232428 !important;
-    border-color: #3b3d44 !important;
-  }
-  :root.theme-discord .credit-card:hover {
-    background: #2b2d31 !important;
-    border-color: #5865F2 !important;
-  }
 }
 
 :root.theme-discord .updates-title,
@@ -11675,19 +11723,16 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
 @media(max-width:1306px){
   :root.theme-galaxy .credits-block {
     background: rgba(100,20,200,0.08) !important;
-    border-top: 1px solid rgba(155,48,255,0.18) !important;
-    border-bottom: 1px solid rgba(155,48,255,0.18) !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: 1px solid rgba(155,48,255,0.18) !important;
     border-radius: 10px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
     justify-content: center !important;
-    gap: 0 !important;
+    gap: 20px !important;
     width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 16px !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-galaxy .credits-block:hover {
@@ -11698,9 +11743,11 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 10px 18px !important;
+    padding: 0 !important;
     flex: none !important;
     width: auto !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
 
@@ -12041,107 +12088,94 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
   /* TIME */
   :root.theme-time #page-home .credits-block {
     background: rgba(245,200,66,0.04) !important;
-    border-top: 1px solid rgba(245,200,66,0.12) !important;
-    border-bottom: 1px solid rgba(245,200,66,0.12) !important;
-    border-left: none !important; border-right: none !important;
-    border-radius: 10px !important; gap: 0 !important;
-    width: 100% !important; padding: 0 !important;
+    border: 1px solid rgba(245,200,66,0.12) !important;
+    border-radius: 10px !important; gap: 20px !important;
+    width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-time #page-home .credits-block:hover { background: rgba(245,200,66,0.09) !important; border-color: rgba(245,200,66,0.35) !important; }
-  :root.theme-time #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-time #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* GALAXY */
   :root.theme-galaxy #page-home .credits-block {
     background: rgba(100,20,200,0.08) !important;
-    border-top: 1px solid rgba(155,48,255,0.18) !important;
-    border-bottom: 1px solid rgba(155,48,255,0.18) !important;
-    border-left: none !important; border-right: none !important;
-    border-radius: 10px !important; gap: 0 !important;
-    width: 100% !important; padding: 0 !important;
+    border: 1px solid rgba(155,48,255,0.18) !important;
+    border-radius: 10px !important; gap: 20px !important;
+    width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-galaxy #page-home .credits-block:hover { background: rgba(100,20,200,0.15) !important; border-color: rgba(155,48,255,0.42) !important; }
-  :root.theme-galaxy #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-galaxy #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* DISCORD */
   :root.theme-discord #page-home .credits-block {
     background: #232428 !important;
-    border-top: 1px solid #3b3d44 !important;
-    border-bottom: 1px solid #3b3d44 !important;
-    border-left: none !important; border-right: none !important;
-    border-radius: 10px !important; gap: 0 !important;
-    width: 100% !important; padding: 0 !important;
+    border: 1px solid #3b3d44 !important;
+    border-radius: 10px !important; gap: 20px !important;
+    width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-discord #page-home .credits-block:hover { background: #2b2d31 !important; border-color: #5865F2 !important; }
-  :root.theme-discord #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-discord #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* BALDI */
   :root.theme-baldi #page-home .credits-block {
     background: #E0F2D8 !important;
-    border-top: 1px solid #7AAB6A !important;
-    border-bottom: 1px solid #7AAB6A !important;
-    border-left: none !important; border-right: none !important;
+    border: 1px solid #7AAB6A !important;
     border-radius: 10px !important; box-shadow: none !important;
-    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    gap: 20px !important; width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-baldi #page-home .credits-block:hover { background: #cce8c0 !important; border-color: #5A8B4A !important; }
-  :root.theme-baldi #page-home .credit-card { background: none !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-baldi #page-home .credit-card { background: none !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* CLASSIC */
   :root.theme-classic #page-home .credits-block {
     background: #1e2d3e !important;
-    border-top: 1px solid #253a4e !important;
-    border-bottom: 1px solid #253a4e !important;
-    border-left: none !important; border-right: none !important;
+    border: 1px solid #253a4e !important;
     border-radius: 10px !important; box-shadow: none !important;
-    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    gap: 20px !important; width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-classic #page-home .credits-block:hover { background: #253a4e !important; border-color: #2e4a60 !important; }
-  :root.theme-classic #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-classic #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* EASTER */
   :root.theme-easter #page-home .credits-block {
     background: rgba(237,228,220,0.6) !important;
-    border-top: 1px solid #D4B8A4 !important;
-    border-bottom: 1px solid #D4B8A4 !important;
-    border-left: none !important; border-right: none !important;
+    border: 1px solid #D4B8A4 !important;
     border-radius: 10px !important;
-    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    gap: 20px !important; width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: background .2s, border-color .2s !important;
   }
   :root.theme-easter #page-home .credits-block:hover { background: rgba(237,228,220,0.8) !important; border-color: #C4A090 !important; }
-  :root.theme-easter #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 10px 18px !important; }
+  :root.theme-easter #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; }
 
   /* ATLANTIC */
   :root.theme-atlantic #page-home .credits-block {
     background: transparent !important;
-    border-top: 1px solid #C84766 !important;
-    border-bottom: 1px solid #C84766 !important;
-    border-left: none !important; border-right: none !important;
+    border: 1px solid #C84766 !important;
     border-radius: 10px !important; box-shadow: none !important;
-    gap: 0 !important; width: 100% !important; padding: 0 !important;
+    gap: 20px !important; width: 100% !important; padding: 10px 16px !important;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%) !important;
     transition: border-color .2s !important;
   }
   :root.theme-atlantic #page-home .credits-block:hover { border-color: #E25A78 !important; }
-  :root.theme-atlantic #page-home .credit-card { background: transparent !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 10px 18px !important; -webkit-mask-image: none !important; mask-image: none !important; }
+  :root.theme-atlantic #page-home .credit-card { background: none !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; -webkit-mask-image: none !important; mask-image: none !important; }
+
   /* stats-col-mobile: та же ширина что и bot-panel */
   #page-home .stats-col-mobile {
     width: 100% !important;

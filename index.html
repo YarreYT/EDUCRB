@@ -15552,7 +15552,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.1.1</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -15562,15 +15562,15 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
             </div>
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
           </div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.1.1</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
-        <div class="stat-chip"><span class="stat-num">20</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+        <div class="stat-chip"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         <div class="stat-chip stat-chip--total">
@@ -17732,6 +17732,8 @@ const VLS = {1:3727.5,2:3764.775,3:3802.05,4:3839.325,5:3876.6,6:3913.875,7:3951
 const SRS = {1:5040,2:5090.4,3:5140.8,4:5191.2,5:5241.6,6:5292,7:5342.4,8:5392.8,9:5443.2,10:5493.6,11:5544};
 const EAS = {1:8190,2:8271.9,3:8353.8,4:8435.7,5:8517.6,6:8599.5,7:8681.4,8:8763.3,9:8845.2,10:8927.1,11:9009};
 const CBA = {1:2100,2:2121,3:2142,4:2163,5:2184,6:2205,7:2226,8:2247,9:2268,10:2289,11:2310};
+const GBL = {1:42,2:42.42,3:42.84,4:43.26,5:43.68,6:44.1,7:44.52,8:44.94,9:45.36,10:45.78,11:46.2};
+const LNSFMR = {1:31.5,2:31.815,3:32.13,4:32.445,5:32.76,6:33.075,7:33.39,8:33.705,9:34.02,10:34.335,11:34.65};
 
 const FZH = {
   Helmet:     {1:787.5,2:795.375,3:803.25,4:811.125,5:819,6:826.875,7:834.75,8:842.625,9:850.5,10:858.375,11:866.25},
@@ -17814,8 +17816,10 @@ const ITEMS = {
     {id:'dcr',   name:"Diamond Cracker",               stats:DCR, maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'db',    name:"Doombringer",                   stats:DB,  maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'ea_st', name:"Easter Spear",                  stats:EAS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
+    {id:'gb_ln', name:"Gubby Launcher",                stats:GBL, maxUpg:99,  rarity:'secret',    delay:1,     minRoll:11},
     {id:'gl_st', name:"Glitched Staff",                stats:GLS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:6},
     {id:'asc_lk',name:"Lightning Katana V2",           stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
+    {id:'lnsfmr',name:"Like N' Subscribe For More Content", stats:LNSFMR, maxUpg:99, rarity:'secret', delay:0.5, minRoll:11},
     {id:'me',    name:"Magma's Edge",                  stats:ME,  maxUpg:44,  rarity:'mythic',    delay:0.6,   minRoll:1},
     {id:'asc_me',name:"Magma's Edge V2",               stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.65,  minRoll:6},
     {id:'asc_mb',name:"Menta Blade V2",                stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
@@ -17889,6 +17893,8 @@ const IMAGE_PATHS = {
     'sr_st':    'Weapons/seriously.webp',
     'ea_st':    'Weapons/easterstaff.webp',
     'ct_ba':    'Weapons/cupidwrath.webp',
+    'gb_ln':    'Weapons/gubbylauncher.webp',
+    'lnsfmr':   'Weapons/lnsfmr.webp',
   },
   armors: {
     'fzh': { Helmet:'Armors/fzhelmet.webp', Chestplate:'Armors/fzchest.webp', Leggings:'Armors/fzleggings.webp' },
@@ -17912,6 +17918,12 @@ function getItemImageSrc(item) {
 }
 
 const GODLY_AUTO = new Set(['asc_ws','asc_mb','asc_lk','asc_me','asc_at','asc_ad','asc_av','gl_st','vl_st','sr_st']);
+
+// Оружие с minRoll === 11 имеет ровно один валидный ролл (11-ый) — UI авто-фиксирует
+// этот ролл и скрывает выбор, вместо точечных проверок по id для каждого такого предмета.
+function isAutoRollItem(item) {
+  return !!item && !item.isArmor && item.minRoll === 11;
+}
 
 function getRolls(item) {
   const keys = Object.keys(item.isArmor ? item.stats.Helmet : item.stats).map(Number).sort((a,b)=>a-b);
@@ -18677,6 +18689,23 @@ const T = {
     upd12_title: 'UPDATES OF v1.0.9 VERSION!',
     upd12_sub: 'Developer Notes 20.04.2026',
     upd12_body: `It's been more than a day since the link wasn't removed — which is honestly great!\nFewer questions about rolls are appearing in the chat. Everyone knows to head over to <span class="upd-accent">#game-faqs</span> and visit the site. That's a real win.\n\n<span class="upd-accent">What's new in v1.0.9?</span>\nGiven that we've become more official, it was time to seriously think about responsiveness. SO!\nI'VE ADAPTED THE SITE FOR ALL POSSIBLE SCREEN WIDTHS, FOR THE MAXIMUM COMFORT OF EVERYONE WHO USES IT!\n<span class="upd-muted">(I can't be 100% sure everything works correctly on every device — I'll be asking for your feedback and any bugs you find)</span>\n\n<span class="upd-accent">What's coming in the milestone update v1.1.0?</span>\nA new palette — <span class="upd-accent">Atlantic!</span> Just felt like it, and it's a nod to the developer's name — H2O.\nAnd of course we're waiting for new items! Especially:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor, not guaranteed to appear\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nWell, it was at least mentioned in a contest on the <span class="upd-accent">#contests</span> channel in Discord.\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to all of you! :D</span>`,
+    upd15_title: 'UPDATES OF v1.1.1.5 VERSION!',
+    upd15_sub: 'Developer Notes 19.06.2026',
+    upd15_body: `Summer, summer, summer. Updates keep getting rarer for now, but that's temporary — either way, the developers don't mind running contests with real prizes from time to time. This time we got treated to new limited variations for limited items, and on top of that — NEW WEAPONS!
+
+<span class="upd-accent">So what's actually new in v1.1.1.5?</span>
+New weapons!
+<span class="upd-cyan">›</span> <span class="upd-accent">Gubby Launcher!</span> — a new secret weapon!
+<span class="upd-cyan">›</span> <span class="upd-accent">Like N' Subscribe For More Content</span> — a new secret weapon!
+
+Want a fun fact? They're the same as <span class="upd-accent">Wooden Sword V2</span> — they only have a single roll, and it's the 11th. Honestly not sure why I even bothered adding this, feels more like filling out a wiki entry...
+
+Is that all?
+<span class="upd-accent">What's expected in v1.1.2?</span>
+Hell if I know. Maybe something new if it actually gets added to the game, we'll see what's worth including.
+
+<span class="upd-muted">That's all!
+A wonderful morning / day / evening / night to all of you!</span>`,
     upd14_title: 'UPDATES OF v1.1.1 VERSION!',
     upd14_sub: 'Developer Notes 30.05.2026',
     upd14_body: `It's been quite a while without updates. A whole month!\nBut there's no news about the game either, and that's hardly surprising. No reason to add weapons or armor... and the site developer has run out of ideas aside from creating new palettes — and even those ideas are scarce.\n\nA rather joyful occasion for developer H2O.\nToday he turns 19. It's his birthday.\nWe wish him kindness, love, and prosperity. Keep growing! :D\n\n<span class="upd-accent">What's new?</span>\n<span class="upd-cyan">›</span> IN HONOR OF DEVELOPER H2O'S BIRTHDAY, A NEW PALETTE HAS BEEN CREATED — <span class="upd-accent">Birthday!</span>\n<span class="upd-cyan">›</span> ON TWO SITES! — <span class="upd-accent">Calculator Roll Bot</span> and <span class="upd-accent">Values &amp; Trading Website</span>!\n\nWait... A NEW SITE?\nYes! A new site — <span class="upd-accent">"Values &amp; Trading Website"</span>\n\n<span class="upd-accent">SUSUheyb</span>'s site in collaboration with the design and mechanics of developer H2O!\nA new price list! Matching the original site's design, with a rich interface and features!\n\nYou can learn more about them by clicking the button next to the site avatar!\nAs a gift to the community from the developer!\n\nThat's all!\nA wonderful morning / day / evening / night to everyone!\n\n<span class="upd-muted">Dear H2O (YarreYT), we congratulate you once again.\nHope this year is calmer than the last :D</span>`,
@@ -18887,6 +18916,23 @@ const T = {
     upd12_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.9v!',
     upd12_sub: 'Записи разработчика 20.04.2026',
     upd12_body: `Уже прошло больше чем день как ссылку не удалили, что даже круто!\nПользователей в чате стало меньше, касаемо вопросов про ролл. Все знают что надо переходить на канал <span class="upd-accent">#game-faqs</span> и зайти на сайт. Это реально успех.\n\n<span class="upd-accent">Что касаемо обновления 1.0.9</span>\nУчитывая, что мы стали более официальными, нужно было всерьёз задуматься насчёт адаптации. ПОЭТОМУ!\nЯ АДАПТИРОВАЛ САЙТ ПОД ВСЕ ВОЗМОЖНЫЕ ШИРИНЫ ЭКРАНОВ, ДЛЯ МАКСИМАЛЬНОГО УДОБСТВА КАЖДОГО, КТО ЗДЕСЬ ПОЛЬЗУЕТСЯ САЙТОМ!\n<span class="upd-muted">(я не могу быть уверенным в том что всё работает корректно на каждом устройстве, буду интересоваться вашим мнением и найденными багами)</span>\n\n<span class="upd-accent">Что ожидается в юбилейном? обновлении 1.1.0..</span>\nНовая палитра — <span class="upd-accent">Atlantic!</span> Просто захотелось, да и отсылка на имя разработчика — H2O.\nНу и ждём конечно же новые предметы! Особенно:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня, не гарантировано её появление\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nНу, по крайней мере, упоминалась в конкурсе на канале <span class="upd-accent">#contests</span> в дискорде.\n\n<span class="upd-muted">А на этом всё!\nВсем добрейшего утра/дня/вечера/ночи! :D</span>`,
+    upd15_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.1.1.5v!',
+    upd15_sub: 'Записи разработчика 19.06.2026',
+    upd15_body: `Лето-лето-лето. Обновления пока всё реже и реже, но это временно — так или иначе разработчики не против иногда проводить конкурсы на выигрыши. В этот раз нас порадовали новыми лимитированными вариациями для лимитированных элементов, а так-же и НОВЫЕ ОРУЖИЯ!
+
+<span class="upd-accent">Что в общем-то нового в 1.1.1.5?</span>
+Новые оружия!
+<span class="upd-cyan">›</span> <span class="upd-accent">Gubby Launcher!</span> — новое секретное оружие!
+<span class="upd-cyan">›</span> <span class="upd-accent">Like N' Subscribe For More Content</span> — новое секретное оружие!
+
+Хотите прикол? Они такие-же как <span class="upd-accent">Wooden Sword V2</span> — у них один единственный ролл это 11-ый, так что не знаю зачем я это добавил, скорее как в качестве википедии...
+
+А на этом всё?
+<span class="upd-accent">Что ожидается в 1.1.2?</span>
+А я шо ебу? Может чё нибудь новое если завезут, посмотрим что добавить.
+
+<span class="upd-muted">А на этом всё!
+Всем добрейшего утра / дня / вечера / ночи!</span>`,
     upd14_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.1.1v!',
     upd14_sub: 'Записи разработчика 30.05.2026',
     upd14_body: `Довольно таки долго не было обновлений. Аж целый месяц!\nНо, пока и новостей по игре нет, и неудивительно. Повода добавить оружие или брони нет.. А идеи у разработчика сайта кончились кроме как палитры новые создавать и то идей этого — дефицит.\n\nДовольно таки радостное событие для разработчика H2O.\nСегодня ему исполняется 19 лет. День его рождения.\nЕму же желаем добра, любви и процветания. Расти большим :D\n\n<span class="upd-accent">А что новенького?</span>\n<span class="upd-cyan">›</span> В ЧЕСТЬ ДНЯ РОЖДЕНИЯ РАЗРАБОТЧИКА H2O СОЗДАНА ПАЛИТРА — <span class="upd-accent">Birthday!</span>\n<span class="upd-cyan">›</span> НА ДВУХ САЙТАХ! соответственно <span class="upd-accent">Calculator Roll Bot</span> и <span class="upd-accent">Values &amp; Trading Website</span>!\n\nСтоп.... НОВЫЙ САЙТ?\nДа! Новый сайт — <span class="upd-accent">"Values &amp; Trading Website"</span>\n\n<span class="upd-accent">SUSUheyb</span>'а сайт в коллаборации с дизайном и механиками разработчика H2O!\nНовый список цен! Повторяющий дизайн оригинального сайта, с богатым интерфейсом и функциями!\n\nПодробнее о них вы сможете узнать, нажав на кнопку возле аватарки сайта!\nВ качестве подарка для комьюнити от разработчика!\n\nА на этом всё!\nВсем добрейшего утра/дня/вечера/ночи!\n\n<span class="upd-muted">Дорогой H2O (YarreYT), поздравляем тебя ещё раз с праздником.\nНадеюсь этот год будет спокойнее предыдущего :D</span>`,
@@ -18944,7 +18990,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 13;
+let updPage = 14;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -18960,6 +19006,7 @@ const UPD_PAGES = [
   { title:'upd12_title', sub:'upd12_sub', body:'upd12_body' },
   { title:'upd13_title', sub:'upd13_sub', body:'upd13_body' },
   { title:'upd14_title', sub:'upd14_sub', body:'upd14_body' },
+  { title:'upd15_title', sub:'upd15_sub', body:'upd15_body' },
 ];
 
 function updRender() {
@@ -19170,7 +19217,7 @@ function applyLang() {
       let quoteKey = '';
       if (isArmor) {
         quoteKey = 'qa_' + rollVal;
-      } else if (azCurrentItem.id === 'asc_ws') {
+      } else if (isAutoRollItem(azCurrentItem)) {
         quoteKey = 'q_ws';
       } else {
         const minRoll = azCurrentItem.minRoll || 1;
@@ -19251,7 +19298,7 @@ const RARITY_INFO = {
 // item — объект из ITEMS (weapon), или null для брони (у брони всегда 1..11)
 // roll — числовое значение ролла
 function getRollClass(item, roll) {
-  if (item && item.id === 'asc_ws') return 'rc-ws';
+  if (isAutoRollItem(item)) return 'rc-ws';
   const minR = (item && item.minRoll) ? item.minRoll : 1;
   if (minR === 1) return 'rc-' + roll;
   return 'rc-' + roll + 's';
@@ -20608,7 +20655,7 @@ function azDoAnalyze() {
       const dotEl  = document.getElementById('az-quote-roll-dot');
       const minRoll = azCurrentItem.minRoll || 1;
       let quoteKey = '';
-      if (azCurrentItem.id === 'asc_ws') quoteKey = 'q_ws';
+      if (isAutoRollItem(azCurrentItem)) quoteKey = 'q_ws';
       else if (minRoll === 1) quoteKey = 'q11_' + roll;
       else quoteKey = 'q6_' + roll;
       textEl.textContent = t(quoteKey) || '';
@@ -20731,7 +20778,7 @@ function azRenderWeaponResultCard(snap) {
   // Quote panel
   const minRoll = item.minRoll || 1;
   let quoteKey = '';
-  if (item.id === 'asc_ws') quoteKey = 'q_ws';
+  if (isAutoRollItem(item)) quoteKey = 'q_ws';
   else if (minRoll === 1) quoteKey = 'q11_' + roll;
   else quoteKey = 'q6_' + roll;
   const cls = rollEl.className.split(' ').find(c => c.startsWith('rc-'));
@@ -20990,7 +21037,7 @@ function azRenderProcessTablet(dmg) {
     : azIsCorrupted;
 
   let inferred;
-  if (!isArmor && azCurrentItem.id === 'asc_ws') {
+  if (!isArmor && isAutoRollItem(azCurrentItem)) {
     inferred = statsDict[11];
   } else {
     let v = dmg / refMult;
@@ -21505,7 +21552,7 @@ function spSelectItem(item, btn) {
       spIntendedRoll = null;
       spSelectedUpg  = null;
       spSelectedRoll = null;
-    } else if (item.id === 'asc_ws') {
+    } else if (isAutoRollItem(item)) {
       // Wooden Sword — авто 11, intended не трогаем
       spSelectedUpg  = spIntendedUpg !== null ? Math.min(spIntendedUpg, item.maxUpg) : null;
       spSelectedRoll = 11;
@@ -21751,7 +21798,7 @@ function spBuildRollBtns() {
   if (!statsDict) return;
 
   // Wooden Sword V2 — single roll, auto
-  if (spCurrentItem.id === 'asc_ws') {
+  if (isAutoRollItem(spCurrentItem)) {
     container.style.overflowX = 'visible';
     const autoDiv = document.createElement('div');
     autoDiv.className = 'sp-roll-auto';
@@ -23174,7 +23221,7 @@ function cmpSelectItem(item, btn) {
     }
     cmpOpenPicker = 'a';
 
-    if (item.id === 'asc_ws') {
+    if (isAutoRollItem(item)) {
       cmpRollA = 11; cmpIntendedRollA = 11;
       cmpRollB = null; cmpIntendedRollB = null;
       cmpOpenPicker = null;
@@ -23316,7 +23363,7 @@ function cmpOpenRollPicker(side) {
 function cmpBuildRollLists() {
   if (!cmpCurrentItem) return;
   const rolls = cmpGetRolls(cmpCurrentItem);
-  const isAutoRoll = cmpCurrentItem.id === 'asc_ws';
+  const isAutoRoll = isAutoRollItem(cmpCurrentItem);
 
   // Picker A
   const contA = document.getElementById('cmp-roll-btns-a');
@@ -23403,7 +23450,7 @@ function cmpRefreshAll() {
   // Save current armor part data before rebuilding
   if (cmpCurrentItem?.isArmor) cmpSavePartData(cmpCurrentPart);
 
-  const isAutoRoll = cmpCurrentItem?.id === 'asc_ws';
+  const isAutoRoll = isAutoRollItem(cmpCurrentItem);
   cmpBuildRollLists();
 
   // Show/hide pickers
@@ -23835,7 +23882,7 @@ function cmpRandomize() {
   if (!cmpCurrentItem) return;
   const isArmor   = !!cmpCurrentItem.isArmor;
   const isDiscord = (typeof _entryType !== 'undefined') && _entryType === 'old';
-  const isAutoRoll = cmpCurrentItem.id === 'asc_ws';
+  const isAutoRoll = isAutoRollItem(cmpCurrentItem);
   const maxUpg = cmpCurrentItem.maxUpg;
 
   // Helper: pick two different values randomly from array
@@ -27071,7 +27118,7 @@ function spDiscordParse() {
 
   const rollEl = document.getElementById('sp-disc-roll-val');
 
-  if (spCurrentItem.id === 'asc_ws') {
+  if (isAutoRollItem(spCurrentItem)) {
     const anyNum = parseInt(rollRaw, 10);
     _spDiscWeapon.roll = (!isNaN(anyNum) && rollRaw !== '' && anyNum > 0) ? 11 : null;
     if (rollEl) {
@@ -27275,7 +27322,7 @@ function spDiscordValidateWeapon() {
 
   if (rollRaw === '' || isNaN(rollNum) || rollNum <= 0) {
     errors.push(lang === 'ru' ? 'roll — не число' : 'roll is not a number');
-  } else if (spCurrentItem.id !== 'asc_ws') {
+  } else if (!isAutoRollItem(spCurrentItem)) {
     const statsDict = spCurrentItem.stats;
     const allRolls = Object.keys(statsDict).map(Number).sort((a,b) => a-b);
     const minR = spCurrentItem.minRoll || 1;
@@ -27396,7 +27443,7 @@ function spDiscordApplyAndAnalyze() {
       : 'None';
 
     let rollNum = parseInt(rawParts[0], 10);
-    if (spCurrentItem.id === 'asc_ws') rollNum = 11;
+    if (isAutoRollItem(spCurrentItem)) rollNum = 11;
 
     spSelectedRoll    = rollNum;
     spIntendedRoll    = rollNum;

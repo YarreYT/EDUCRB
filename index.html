@@ -15563,7 +15563,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
           </div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         </div>
       </div>
@@ -15571,7 +15571,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
         <div class="stat-chip"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
-        <div class="stat-chip"><span class="stat-num">5</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
+        <div class="stat-chip"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         <div class="stat-chip stat-chip--total">
           <div class="total-proc-wrap">
@@ -17756,6 +17756,18 @@ const KRS = {
   Leggings:   {1:787.5,2:795.375,3:803.25,4:811.125,5:819,6:826.875,7:834.75,8:842.625,9:850.5,10:858.375,11:866.25}
 };
 
+const VS = {
+  Helmet:     {1:1050,2:1060.5,3:1071,4:1081.5,5:1092,6:1102.5,7:1113,8:1123.5,9:1134,10:1144.5,11:1155},
+  Chestplate: {1:1050,2:1060.5,3:1071,4:1081.5,5:1092,6:1102.5,7:1113,8:1123.5,9:1134,10:1144.5,11:1155},
+  Leggings:   {1:1050,2:1060.5,3:1071,4:1081.5,5:1092,6:1102.5,7:1113,8:1123.5,9:1134,10:1144.5,11:1155}
+};
+
+const HVS = {
+  Helmet:     {1:1575,2:1590.75,3:1606.5,4:1622.25,5:1638,6:1653.75,7:1669.5,8:1685.25,9:1701,10:1716.75,11:1732.5},
+  Chestplate: {1:1575,2:1590.75,3:1606.5,4:1622.25,5:1638,6:1653.75,7:1669.5,8:1685.25,9:1701,10:1716.75,11:1732.5},
+  Leggings:   {1:1575,2:1590.75,3:1606.5,4:1622.25,5:1638,6:1653.75,7:1669.5,8:1685.25,9:1701,10:1716.75,11:1732.5},
+};
+
 const REFORGE_MODS = {
   Vicious:1.4,Cruel:1.3,Savage:1.1,Dangerous:1.1,Frenzied:1.3,
   Furious:1.2,Legendary:1.2,Hasty:1.1,Swift:1.0,Relentless:1.2,
@@ -17835,6 +17847,8 @@ const ITEMS = {
     {id:'hks', name:"Heroic Kronax Set",   stats:HKR, maxUpg:44, isArmor:true, rarity:'mythic',    minRoll:1},
     {id:'ks',  name:"Kronax Set",          stats:KRS, maxUpg:44, isArmor:true, rarity:'mythic',    minRoll:1},
     {id:'lzs', name:"Zeus Set (Legendary)",stats:LZS, maxUpg:34, isArmor:true, rarity:'legendary', minRoll:1},
+    {id:'vs',  name:"Viltron Set",         stats:VS,  maxUpg:44, isArmor:true, rarity:'mythic',    minRoll:1},
+    {id:'hvs',  name:"Heroic Viltron Set", stats:HVS, maxUpg:44, isArmor:true, rarity:'mythic',    minRoll:1},
   ]
 };
 
@@ -17901,7 +17915,9 @@ const IMAGE_PATHS = {
     'hds': { Helmet:'Armors/hadeshelmet.webp', Chestplate:'Armors/hadeschest.webp', Leggings:'Armors/hadesleggings.webp' },
     'hks': { Helmet:'Armors/kronaxhelmet.webp', Chestplate:'Armors/kronaxchest.webp', Leggings:'Armors/kronaxleggings.webp' },
     'ks':  { Helmet:'Armors/kronaxhelmet.webp', Chestplate:'Armors/kronaxchest.webp', Leggings:'Armors/kronaxleggings.webp' },
-    'lzs': { Helmet:'Armors/zhelmet.webp', Chestplate:'Armors/zchest.webp', Leggings:'Armors/zleggings.webp' }
+    'lzs': { Helmet:'Armors/zhelmet.webp', Chestplate:'Armors/zchest.webp', Leggings:'Armors/zleggings.webp' },
+    'vs':  { Helmet:'Armors/vhelmet.webp', Chestplate:'Armors/vchest.webp', Leggings:'Armors/vleggings.webp' },
+    'hvs':  { Helmet:'Armors/vhelmet.webp', Chestplate:'Armors/vchest.webp', Leggings:'Armors/vleggings.webp' }
   }
 };
 

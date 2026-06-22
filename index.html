@@ -17852,6 +17852,12 @@ const ITEMS = {
   ]
 };
 
+// Автоматическая сортировка по алфавиту (по name), чтобы не нужно было вручную
+// следить за порядком добавления предметов в массивах выше.
+Object.values(ITEMS).forEach(list => {
+  list.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base', numeric: true }));
+});
+
 // ── ACCESSORIES DATA ──
 const ACC_DATA = {
   underworld: [
@@ -17880,6 +17886,11 @@ const ACC_DATA = {
     { id:'torrential_aspect',    name:'Torrential Aspect',         type:'magic',  rolls:{1:33.00,2:33.33,3:33.66,4:33.99,5:34.32,6:34.65,7:34.98,8:35.31,9:35.64,10:35.97,11:36.30} },
   ]
 };
+
+// Та же автосортировка по алфавиту, что и для ITEMS.
+Object.values(ACC_DATA).forEach(list => {
+  list.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base', numeric: true }));
+});
 
 let currentAccSubcat = 'underworld';
 let currentAccItem = null;

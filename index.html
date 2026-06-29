@@ -15562,7 +15562,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
             </div>
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
           </div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">24</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         </div>
@@ -15570,7 +15570,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
       <div class="stats-col">
         <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
-        <div class="stat-chip"><span class="stat-num">22</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+        <div class="stat-chip"><span class="stat-num">24</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         <div class="stat-chip stat-chip--total">
@@ -17734,6 +17734,8 @@ const EAS = {1:8190,2:8271.9,3:8353.8,4:8435.7,5:8517.6,6:8599.5,7:8681.4,8:8763
 const CBA = {1:2100,2:2121,3:2142,4:2163,5:2184,6:2205,7:2226,8:2247,9:2268,10:2289,11:2310};
 const GBL = {1:42,2:42.42,3:42.84,4:43.26,5:43.68,6:44.1,7:44.52,8:44.94,9:45.36,10:45.78,11:46.2};
 const LNSFMR = {1:31.5,2:31.815,3:32.13,4:32.445,5:32.76,6:33.075,7:33.39,8:33.705,9:34.02,10:34.335,11:34.65};
+const WB = {1:10500,2:10605,3:10710,4:10815,5:10920,6:11025,7:11130,8:11235,9:11340,10:11445,11:11550};
+const SS = {1:7350,2:7423.5,3:7497,4:7570.5,5:7644,6:7717.5,7:7791,8:7864.5,9:7938,10:8011.5,11:8085};
 
 const FZH = {
   Helmet:     {1:787.5,2:795.375,3:803.25,4:811.125,5:819,6:826.875,7:834.75,8:842.625,9:850.5,10:858.375,11:866.25},
@@ -17828,10 +17830,10 @@ const ITEMS = {
     {id:'dcr',   name:"Diamond Cracker",               stats:DCR, maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'db',    name:"Doombringer",                   stats:DB,  maxUpg:34,  rarity:'legendary', delay:0.5,   minRoll:1},
     {id:'ea_st', name:"Easter Spear",                  stats:EAS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:1},
-    {id:'gb_ln', name:"Gubby Launcher",                stats:GBL, maxUpg:99,  rarity:'secret',    delay:1,     minRoll:11},
+    {id:'gb_ln', name:"Gubby Launcher",                stats:GBL, maxUpg:99,  rarity:'secret',    delay:1,     minRoll:1},
     {id:'gl_st', name:"Glitched Staff",                stats:GLS, maxUpg:99,  rarity:'secret',    delay:0.5,   minRoll:6},
     {id:'asc_lk',name:"Lightning Katana V2",           stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
-    {id:'lnsfmr',name:"Like N' Subscribe For More Content", stats:LNSFMR, maxUpg:99, rarity:'secret', delay:0.5, minRoll:11},
+    {id:'lnsfmr',name:"Like N' Subscribe For More Content", stats:LNSFMR, maxUpg:99, rarity:'secret', delay:0.5, minRoll:1},
     {id:'me',    name:"Magma's Edge",                  stats:ME,  maxUpg:44,  rarity:'mythic',    delay:0.6,   minRoll:1},
     {id:'asc_me',name:"Magma's Edge V2",               stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.65,  minRoll:6},
     {id:'asc_mb',name:"Menta Blade V2",                stats:CB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:6},
@@ -17840,6 +17842,8 @@ const ITEMS = {
     {id:'tl_le', name:"Timelost Conqueror's Blade LE", stats:TLE, maxUpg:44,  rarity:'mythic',    delay:0.375, minRoll:1},
     {id:'vl_st', name:"Viltron's Staff",               stats:VLS, maxUpg:74,  rarity:'ascended',  delay:0.4,   minRoll:6},
     {id:'asc_ws',name:"Wooden Sword V2",               stats:WS,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:11},
+    {id:'sh_sc', name:"Shadow Scythe",                 stats:SS,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
+    {id:'wb',    name:"Wooden Bow",                    stats:WB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
   ],
   armor:[
     {id:'fzh', name:"Furious Zeus Set",    stats:FZH, maxUpg:45, isArmor:true, rarity:'mythic',    minRoll:1},
@@ -17920,6 +17924,8 @@ const IMAGE_PATHS = {
     'ct_ba':    'Weapons/cupidwrath.webp',
     'gb_ln':    'Weapons/gubbylauncher.webp',
     'lnsfmr':   'Weapons/lnsfmr.webp',
+    'sh_sc':    'Weapons/shadowscythe.webp',
+    'wb':       'Weapons/woodenbow.webp',
   },
   armors: {
     'fzh': { Helmet:'Armors/fzhelmet.webp', Chestplate:'Armors/fzchest.webp', Leggings:'Armors/fzleggings.webp' },

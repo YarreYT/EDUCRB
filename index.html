@@ -19,8 +19,8 @@
 
   // cookie приоритетнее localStorage — переживает ITP в Safari
   var t = window._edGetCookie('_ed_theme') || localStorage.getItem('_ed_theme');
-  // Первый визит — birthday тема по умолчанию
-  if (!t) { t = 'birthday'; }
+  // Первый визит — Atlantic тема по умолчанию
+  if (!t) { t = 'atlantic'; }
   if (t === 'gold') { t = 'time'; }
   // Сохраняем в оба хранилища
   window._edSetCookie('_ed_theme', t);
@@ -15552,7 +15552,7 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
         </div><!-- /bot-main-col -->
         <!-- Stats только для мобиля (десктоп видит stats-col снаружи) -->
         <div class="stats-col-mobile">
-          <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+          <div class="stat-chip"><span class="stat-num">1.1.2</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
           <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
           <div class="stat-chip stat-chip--total">
             <div class="total-proc-wrap">
@@ -15562,15 +15562,15 @@ td.cell-best{background:color-mix(in srgb,#00e8a0 18%,transparent)!important;col
             </div>
             <span class="stat-lbl" data-i18n="stat_total">Записи за всё время</span>
           </div>
-          <div class="stat-chip stat-chip--third"><span class="stat-num">25</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+          <div class="stat-chip stat-chip--third"><span class="stat-num">30</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
           <div class="stat-chip stat-chip--third"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         </div>
       </div>
       <div class="stats-col">
-        <div class="stat-chip"><span class="stat-num">1.1.1.5</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
+        <div class="stat-chip"><span class="stat-num">1.1.2</span><span class="stat-lbl" data-i18n="stat_version">Bot Version</span></div>
         <div class="stat-chip"><span class="stat-num">27.02.2026</span><span class="stat-lbl" data-i18n="stat_date">Data Created</span></div>
-        <div class="stat-chip"><span class="stat-num">25</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
+        <div class="stat-chip"><span class="stat-num">30</span><span class="stat-lbl" data-i18n="stat_weapons">Weapons</span></div>
         <div class="stat-chip"><span class="stat-num">7</span><span class="stat-lbl" data-i18n="stat_sets">Armor</span></div>
         <div class="stat-chip"><span class="stat-num">19</span><span class="stat-lbl" data-i18n="stat_accessories">Relics</span></div>
         <div class="stat-chip stat-chip--total">
@@ -17737,6 +17737,11 @@ const LNSFMR = {1:31.5,2:31.815,3:32.13,4:32.445,5:32.76,6:33.075,7:33.39,8:33.7
 const WB = {1:10500,2:10605,3:10710,4:10815,5:10920,6:11025,7:11130,8:11235,9:11340,10:11445,11:11550};
 const SS = {1:7350,2:7423.5,3:7497,4:7570.5,5:7644,6:7717.5,7:7791,8:7864.5,9:7938,10:8011.5,11:8085};
 const FB = {1:15750,2:15907.5,3:16065,4:16222.5,5:16380,6:16537.5,7:16695,8:16852.5,9:17010,10:17167.5,11:17325};
+const HMLR = {1:5250,2:5302.5,3:5355,4:5407.5,5:5460,6:5512.5,7:5565,8:5617.5,9:5670,10:5722.5,11:5775};
+const RN = {1:6300,2:6363,3:6426,4:6489,5:6552,6:6615,7:6678,8:6741,9:6804,10:6867,11:6930};
+const TBLE = {1:7875,2:7953.75,3:8032.5,4:8111.25,5:8190,6:8268.75,7:8347.5,8:8426.25,9:8505,10:8583.75,11:8662.5};
+const HMCQB = {1:2887.5,2:2916.375,3:2945.25,4:2974.125,5:3003,6:3031.875,7:3060.75,8:3089.625,9:3118.5,10:3147.375,11:3176.25};
+const TB = {1:8400,2:8484,3:8568,4:8652,5:8736,6:8820,7:8904,8:8988,9:9072,10:9156,11:9240};
 
 const FZH = {
   Helmet:     {1:787.5,2:795.375,3:803.25,4:811.125,5:819,6:826.875,7:834.75,8:842.625,9:850.5,10:858.375,11:866.25},
@@ -17846,6 +17851,11 @@ const ITEMS = {
     {id:'sh_sc', name:"Shadow Scythe",                 stats:SS,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
     {id:'wb',    name:"Curious Wooden Bow",            stats:WB,  maxUpg:74,  rarity:'ascended',  delay:0.5,   minRoll:1},
     {id:'fb',    name:"Firework Bow",                  stats:FB,  maxUpg:44,  rarity:'mythic',    delay:0.5,   minRoll:1},
+    {id:'tb',    name:"Terrablade",                    stats:TB,  maxUpg:44,    rarity:'mythic',  delay:0.5,   minRoll:1},
+    {id:'tble',  name:"Terrablade LE",                 stats:TBLE,  maxUpg:99,  rarity:'secret',  delay:0.5,   minRoll:1},
+    {id:'rn',    name:"Rainbow Noodle",                stats:RN,    maxUpg:44,  rarity:'mythic',  delay:0.5,   minRoll:1},
+    {id:'hm_lr',  name:"HydroMaxx LR",                 stats:HMLR,  maxUpg:44,  rarity:'secret',  delay:0.5,   minRoll:1},
+    {id:'hm_cqb', name:"HydroMaxx CQB",                stats:HMCQB, maxUpg:44,  rarity:'mythic',  delay:0.5,   minRoll:1},
   ],
   armor:[
     {id:'fzh', name:"Furious Zeus Set",    stats:FZH, maxUpg:45, isArmor:true, rarity:'mythic',    minRoll:1},
@@ -17929,6 +17939,11 @@ const IMAGE_PATHS = {
     'sh_sc':    'Weapons/shadowscythe.webp',
     'wb':       'Weapons/woodenbow.webp',
     'fb':       'Weapons/fireworkbow.webp',
+    'tb':       'Weapons/terrablade.webp',
+    'tble':     'Weapons/terrablade.webp',
+    'rn':       'Weapons/rainbownoodle.webp',
+    'hm_cqb':   'Weapons/hydromaxxcqb.webp',
+    'hm_lr':    'Weapons/hydromaxxlr.webp',
   },
   armors: {
     'fzh': { Helmet:'Armors/fzhelmet.webp', Chestplate:'Armors/fzchest.webp', Leggings:'Armors/fzleggings.webp' },
@@ -18725,6 +18740,9 @@ const T = {
     upd12_title: 'UPDATES OF v1.0.9 VERSION!',
     upd12_sub: 'Developer Notes 20.04.2026',
     upd12_body: `It's been more than a day since the link wasn't removed — which is honestly great!\nFewer questions about rolls are appearing in the chat. Everyone knows to head over to <span class="upd-accent">#game-faqs</span> and visit the site. That's a real win.\n\n<span class="upd-accent">What's new in v1.0.9?</span>\nGiven that we've become more official, it was time to seriously think about responsiveness. SO!\nI'VE ADAPTED THE SITE FOR ALL POSSIBLE SCREEN WIDTHS, FOR THE MAXIMUM COMFORT OF EVERYONE WHO USES IT!\n<span class="upd-muted">(I can't be 100% sure everything works correctly on every device — I'll be asking for your feedback and any bugs you find)</span>\n\n<span class="upd-accent">What's coming in the milestone update v1.1.0?</span>\nA new palette — <span class="upd-accent">Atlantic!</span> Just felt like it, and it's a nod to the developer's name — H2O.\nAnd of course we're waiting for new items! Especially:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — likely Ascended armor, not guaranteed to appear\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — likely Secret armor.\nWell, it was at least mentioned in a contest on the <span class="upd-accent">#contests</span> channel in Discord.\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to all of you! :D</span>`,
+    upd16_title: 'UPDATES OF v1.1.2 VERSION!',
+    upd16_sub: 'Developer Notes 09.07.2026',
+    upd16_body: `Summer, summer, summer! It's scorching hot in Europe though!\nSo much time has passed! The site hasn't been updated in a while!\nBut the game itself has definitely been updated!\n\n<span class="upd-accent">WHAT'S NEW IN VERSION 1.1.2?</span>\n<span class="upd-accent">NEW WEAPONS!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Curious Wooden Bow</span> — a new Ascended weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Firework Bow</span> — a new mythical weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Shadow Scythe</span> — a new Ascended weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Terrablade</span> — a new mythical weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Terrablade LE</span> — a new secret weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">HydroMaxx CQB</span> — a new mythical weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">HydroMaxx LR</span> — a new secret weapon!\n<span class="upd-cyan">›</span> <span class="upd-accent">Rainbow Noodle</span> — a new mythical weapon!\n\n<span class="upd-accent">NEW ARMOR! WE'VE BEEN WAITING FOR THIS!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Viltron Set</span> — a new mythical armor!\n<span class="upd-cyan">›</span> <span class="upd-accent">Heroic Viltron Set</span> — a new mythical armor!\n\n<span class="upd-accent">What's expected in 1.1.3?</span>\nNew weapons and accessories!\n\n<span class="upd-accent">A quick word about the Values &amp; Trading Website!</span>\nWe're working on price changes and updates to some mechanics.\nDevelopment of new pages hasn't started yet, but it will begin soon!\nThere will be a hell of a lot of changes when it comes to prices.\n\n<span class="upd-muted">That's all!\nA wonderful morning / day / evening / night to all of you!\nHave a fun summer! Don't waste it!</span>`,
     upd15_title: 'UPDATES OF v1.1.1.5 VERSION!',
     upd15_sub: 'Developer Notes 19.06.2026',
     upd15_body: `Summer, summer, summer. Updates keep getting rarer for now, but that's temporary — either way, the developers don't mind running contests with real prizes from time to time. This time we got treated to new limited variations for limited items, and on top of that — NEW WEAPONS!
@@ -18952,6 +18970,9 @@ A wonderful morning / day / evening / night to all of you!</span>`,
     upd12_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.0.9v!',
     upd12_sub: 'Записи разработчика 20.04.2026',
     upd12_body: `Уже прошло больше чем день как ссылку не удалили, что даже круто!\nПользователей в чате стало меньше, касаемо вопросов про ролл. Все знают что надо переходить на канал <span class="upd-accent">#game-faqs</span> и зайти на сайт. Это реально успех.\n\n<span class="upd-accent">Что касаемо обновления 1.0.9</span>\nУчитывая, что мы стали более официальными, нужно было всерьёз задуматься насчёт адаптации. ПОЭТОМУ!\nЯ АДАПТИРОВАЛ САЙТ ПОД ВСЕ ВОЗМОЖНЫЕ ШИРИНЫ ЭКРАНОВ, ДЛЯ МАКСИМАЛЬНОГО УДОБСТВА КАЖДОГО, КТО ЗДЕСЬ ПОЛЬЗУЕТСЯ САЙТОМ!\n<span class="upd-muted">(я не могу быть уверенным в том что всё работает корректно на каждом устройстве, буду интересоваться вашим мнением и найденными багами)</span>\n\n<span class="upd-accent">Что ожидается в юбилейном? обновлении 1.1.0..</span>\nНовая палитра — <span class="upd-accent">Atlantic!</span> Просто захотелось, да и отсылка на имя разработчика — H2O.\nНу и ждём конечно же новые предметы! Особенно:\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's Armor Set</span> — вероятно Ascended броня, не гарантировано её появление\n<span class="upd-cyan">›</span> <span class="upd-accent">Glitched Viltron's LE (Limited Edition) Armor Set</span> — вероятно Secret броня.\nНу, по крайней мере, упоминалась в конкурсе на канале <span class="upd-accent">#contests</span> в дискорде.\n\n<span class="upd-muted">А на этом всё!\nВсем добрейшего утра/дня/вечера/ночи! :D</span>`,
+    upd16_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.1.2v!',
+    upd16_sub: 'Записи разработчика 09.07.2026',
+    upd16_body: `Лето-лето-лето! Жарко однако в Европе!\nПрошло уже столько времени! Сайт давно не обновлялся!\nА вот игра конкретно обновилась!\n\n<span class="upd-accent">ЧТО НОВОГО В ВЕРСИИ 1.1.2?</span>\n<span class="upd-accent">НОВЫЕ ОРУЖИЯ!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Curious Wooden Bow</span> — новое Ascended оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Firework Bow</span> — новое мифическое оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Shadow Scythe</span> — новое Ascended оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Terrablade</span> — новое мифическое оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Terrablade LE</span> — новое секретное оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">HydroMaxx CQB</span> — новое мифическое оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">HydroMaxx LR</span> — новое секретное оружие!\n<span class="upd-cyan">›</span> <span class="upd-accent">Rainbow Noodle</span> — новое мифическое оружие!\n\n<span class="upd-accent">НОВАЯ БРОНЯ! МЫ ДОЖДАЛИСЬ!</span>\n\n<span class="upd-cyan">›</span> <span class="upd-accent">Viltron Set</span> — новая мифическая броня!\n<span class="upd-cyan">›</span> <span class="upd-accent">Heroic Viltron Set</span> — новая мифическая броня!\n\n<span class="upd-accent">Что ожидается в 1.1.3?</span>\nНовые оружия и аксессуары!\n\n<span class="upd-accent">Кратко про сайт Values &amp; Trading Website!</span>\nМы занимаемся изменениями цен и обновлениями некоторых механик.\nРазработка новых страниц ещё не началась, но начнётся скоро!\nИзменений в плане цен будет пиздец много.\n\n<span class="upd-muted">А на этом всё!\nВсем добрейшего утречка / дня / вечера / ночи!\nВесёлого лета! Не проебите его!</span>`,
     upd15_title: 'ОБНОВЛЕНИЯ ВЕРСИИ 1.1.1.5v!',
     upd15_sub: 'Записи разработчика 19.06.2026',
     upd15_body: `Лето-лето-лето. Обновления пока всё реже и реже, но это временно — так или иначе разработчики не против иногда проводить конкурсы на выигрыши. В этот раз нас порадовали новыми лимитированными вариациями для лимитированных элементов, а так-же и НОВЫЕ ОРУЖИЯ!
@@ -19026,7 +19047,7 @@ function renderReforgeTable() {
 
 /* ── UPDATES PAGINATION ── */
 // Pages: 0 = v1.0.1 (old), 1 = v1.0.2 (new/current). Start on page 1.
-let updPage = 14;
+let updPage = 15;
 const UPD_PAGES = [
   { title:'upd_title',  sub:'upd_sub',  body:'upd_body'  },
   { title:'upd2_title', sub:'upd2_sub', body:'upd2_body' },
@@ -19043,6 +19064,7 @@ const UPD_PAGES = [
   { title:'upd13_title', sub:'upd13_sub', body:'upd13_body' },
   { title:'upd14_title', sub:'upd14_sub', body:'upd14_body' },
   { title:'upd15_title', sub:'upd15_sub', body:'upd15_body' },
+  { title:'upd16_title', sub:'upd16_sub', body:'upd16_body' },
 ];
 
 function updRender() {
